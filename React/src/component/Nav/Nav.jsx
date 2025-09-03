@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import './Nav.css';
@@ -6,6 +6,23 @@ import ENG_LOGO from '../../assets/ENG_LOGO.png';
 
 export default function Nav() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+	useEffect(() => {
+		const handleResize = () => {
+			// 창 너비가 1024px보다 커지면 메뉴를 닫습니다.
+			if (window.innerWidth > 1024) {
+				setIsMenuOpen(false);
+			}
+		};
+
+		// resize 이벤트 리스너 추가
+		window.addEventListener('resize', handleResize);
+
+		// 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 실행되도록 설정
 
 	const toggleMenu = () => {
 		setIsMenuOpen(!isMenuOpen);
