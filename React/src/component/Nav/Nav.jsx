@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import './Nav.css';
+import ENG_LOGO from '../../assets/ENG_LOGO.png';
 
 export default function Nav() {
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+	const toggleMenu = () => {
+		setIsMenuOpen(!isMenuOpen);
+	};
+
 	const Downloadhandler = () => {
 		// document.body는 현재 보여지는 웹페이지 전체를 의미
 		html2canvas(document.body).then((canvas) => {
@@ -25,24 +32,21 @@ export default function Nav() {
 	};
 
 	return (
-		<nav className="nav-container">
+		<nav className={`nav-container ${isMenuOpen ? 'open' : ''}`}>
 			<div className="nav-wrapper">
 				{/* 1. 로고 영역 */}
 				<div className="nav-logo">
-					<Link to="/">Logo</Link>
+					<Link to="/"><img src={ENG_LOGO} alt="로고" className="logo-image" /></Link>
 				</div>
 
 				{/* 2. 메뉴 영역 (가운데 정렬) */}
 				<ul className="nav-menu">
-					<li>
-						<Link to="/product">알림</Link>
-					</li>
-					<li>
-						<Link to="/company">프로필</Link>
-					</li>
-					<li>
-						<Link to="/support">고객지원</Link>
-					</li>
+					<li><Link to="/team">회사 소개</Link></li>
+					<li><Link to="/notice">공지사항</Link></li>
+					<li><a href="https://support.toss.im" target="_blank" rel="noopener noreferrer">고객센터</a></li>
+					<li><a href="https://support.toss.im/faq" target="_blank" rel="noopener noreferrer">자주 묻는 질문</a></li>
+					<li><Link to="/tosscert">토스인증서</Link></li>
+					<li><Link to="/career">채용</Link></li>
 				</ul>
 
 				{/* 3. 다운로드 버튼 영역 */}
@@ -53,11 +57,22 @@ export default function Nav() {
 				</div>
 
 				{/* 모바일 화면에서 보여질 햄버거 메뉴 아이콘 */}
-				<div className="nav-mobile-icon">
+				<div className={`nav-mobile-icon ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
 					<span></span>
 					<span></span>
 					<span></span>
 				</div>
+			</div>
+			<div className="nav-mobile-menu">
+				<ul>
+					<li><Link to="/team">회사 소개</Link></li>
+					<li><Link to="/notice">공지사항</Link></li>
+					<li><a href="https://support.toss.im" target="_blank" rel="noopener noreferrer">고객센터</a></li>
+					<li><a href="https://support.toss.im/faq" target="_blank" rel="noopener noreferrer">자주 묻는 질문</a></li>
+					<li><Link to="/tosscert">토스인증서</Link></li>
+					<li><Link to="/career">채용</Link></li>
+				</ul>
+				<button onClick={Downloadhandler} className="mobile-download-button">보고서 다운로드</button>
 			</div>
 		</nav>
 	);
