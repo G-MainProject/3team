@@ -11,7 +11,6 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Nav />
-			<div style={{ marginBottom: '100px' }} />
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/about" element={<About />} />
