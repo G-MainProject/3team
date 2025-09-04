@@ -3,7 +3,10 @@
   <WatchList />
   <WorkProcDebugList>
     <WorkProcDebug id="23ec8941-a34e-4ad5-9c85-2685840f35d5" name="T_2_데이터수집">
-      <BreakPoints />
+      <BreakPoints>
+        <BreakPoint id="Saa0b37cf6b67463c9812508746e49363" name="Decision" />
+        <BreakPoint id="S6b5dc80dd370413b87d51f50cd6dc49a" name="ChromeGetListData" />
+      </BreakPoints>
       <FavoriteVariables />
       <RunInterval>
         <StartPoint />

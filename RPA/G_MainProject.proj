@@ -1,13 +1,16 @@
-<Project id="b166f530-e456-424a-8f54-8cd605cd7a77" namespace="" name="G_MainProject" category="project" workType="foreground" version="1.00" lastPublishedDate="" lastPublishedBy="" createdDate="2025-09-03 09:07:50" createdBy="" latestProcess="T_1_사용자정보_검색" designerVersion="3.1.125.00701" DesignedBy="">
+<Project id="b166f530-e456-424a-8f54-8cd605cd7a77" namespace="" name="G_MainProject" category="project" workType="foreground" version="1.00" lastPublishedDate="" lastPublishedBy="" createdDate="2025-09-03 09:07:50" createdBy="" latestProcess="P_G_MainProject" designerVersion="3.1.125.00701" DesignedBy="">
   <SharedTask isExpended="false" />
   <NormalTask isExpended="true">
     <LinkItem id="9a951d40-4931-4718-94e0-e584415da70f" category="NormalTask" isChanged="Y" desc="" stepCount="61" name="T_1_사용자정보_검색">
       <Properties />
     </LinkItem>
+    <LinkItem id="23ec8941-a34e-4ad5-9c85-2685840f35d5" category="NormalTask" isChanged="Y" desc="" stepCount="17" name="T_2_데이터수집">
+      <Properties />
+    </LinkItem>
   </NormalTask>
   <Event isExpended="false" />
   <Process isExpended="true">
-    <LinkItem id="70df1108-4c69-4917-b47f-a570fe456190" category="Process" isChanged="Y" desc="default process" stepCount="1" name="P_G_MainProject">
+    <LinkItem id="70df1108-4c69-4917-b47f-a570fe456190" category="Process" isChanged="Y" desc="default process" stepCount="2" name="P_G_MainProject">
       <Properties />
     </LinkItem>
   </Process>
