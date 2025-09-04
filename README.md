@@ -60,3 +60,30 @@
 -   `feat: 로그인 페이지 UI 구현`
 -   `fix: 로그인 API 연동 오류 수정`
 -   `docs: README.md 프로젝트 구조 업데이트`
+
+## Python 폴더구조 구축 및 APi 호출
+
+- 폴더구조
+3team/
+├─ data/                       # JSON, 심볼 CSV 저장
+└─ Python/
+   ├─ Apps/price_to_json.py    # 실행 스크립트
+   └─ Libs/
+      ├─ kiwoom_client.py
+      ├─ env.py                # 환경변수 파일(API 키)
+      ├─ io_utils.py
+      └─ symbols.py            # (종목명→코드 매핑용, CSV 읽음)
+
+- 설치 라이브러리: pip install requests python-dotenv
+
+- 사용법(프로젝트 루트에서 실행: …/3team)
+1. 종목코드로 조회
+(bash) python -m Python.Apps.price_to_json 005930
+2. 종목명으로 조회
+(bash) python -m Python.Apps.price_to_json --name 삼성전자
+  내부에서 data/symbols_krx.csv를 읽어 종목명 → 코드(6자리) 로 변환 후 조회
+  다중 후보일 경우 후보 리스트를 출력하고 종료
+3. 실행결과: 
+    터미널: [저장 완료] data/stock_005930_YYYYMMDD_HHMMSS.json
+            - 체결시각: 09:12:03  현재가: 78900  전일대비: +1200  등락률: +1.54
+    파일: data/stock_종목코드_날짜시간.json 생성
