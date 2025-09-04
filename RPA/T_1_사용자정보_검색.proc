@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 09:18:31" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-04 11:52:38" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-04 12:38:06" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -35,11 +35,11 @@
         <Property type="Desktop" key="Conditions_PromptType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Text" valuelist="OK;OK/Cancel;Yes/No;Yes/No/Cancel;Abort/Retry/Ignore;Retry/Cancel;Text" />
         <Property type="Desktop" key="Conditions_DefaultValue" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'ex)날짜'" />
         <Property type="Desktop" key="Conditions_DefaultItem" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="''" />
-        <Property type="Desktop" key="Conditions_PromptMessage" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'조건 입력\n(날짜, 증권사, 종목중 하나만 선택 없을 경우 확인버튼 클릭)'" />
+        <Property type="Desktop" key="Conditions_PromptMessage" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'조건 입력\n(날짜, 증권사, 종목중 하나만 선택, 없을 경우 확인버튼 클릭)'" />
         <Property type="Desktop" key="Conditions_TimeoutSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.Search = InputBox('ex)날짜','Text', '조건 입력\n(날짜, 증권사, 종목중 하나만 선택 없을 경우 확인버튼 클릭)', 0);]]></Script>
+      <Script><![CDATA[this.Search = InputBox('ex)날짜','Text', '조건 입력\n(날짜, 증권사, 종목중 하나만 선택, 없을 경우 확인버튼 클릭)', 0);]]></Script>
     </Step>
     <Step id="S558f18dc382a4d2089c4c8bfe9cfe13b" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6c9bd06b-cd40-42b5-b9da-5e6d4a886516" type="Flow">
@@ -1915,7 +1915,7 @@ this.Date_end = new Date().toISOString().slice(0, 10);
 
         //------------------------------------------------
         STEP('S1b41b2ad19ec493098a8693250272276', '[1] InputBox');
-        this.Search = InputBox('ex)날짜','Text', '조건 입력\n(날짜, 증권사, 종목중 하나만 선택 없을 경우 확인버튼 클릭)', 0);
+        this.Search = InputBox('ex)날짜','Text', '조건 입력\n(날짜, 증권사, 종목중 하나만 선택, 없을 경우 확인버튼 클릭)', 0);
 
         //------------------------------------------------
         STEP('S558f18dc382a4d2089c4c8bfe9cfe13b', '[2] ExecuteScript');
