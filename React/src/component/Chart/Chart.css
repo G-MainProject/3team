@@ -1,0 +1,38 @@
+/* 차트 전체를 감싸는 컨테이너 */
+.chart-container {
+  background-color: #2c3e50; /* 어두운 남회색 배경 */
+  padding: 20px;
+  border-radius: 8px; /* 모서리를 둥글게 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  margin: 20px;
+}
+
+/* 차트 제목 스타일 */
+.chart-title {
+  color: #ecf0f1; /* 밝은 회색 텍스트 */
+  text-align: center; /* 가운데 정렬 */
+  margin-bottom: 20px;
+  font-size: 1.5em; /* 글자 크기 */
+}
+
+/* 마우스를 올렸을 때 표시되는 툴팁 스타일 */
+.custom-tooltip {
+  background-color: rgba(44, 62, 80, 0.8); /* 반투명한 어두운 배경 */
+  border: 1px solid #7f8c8d; /* 회색 테두리 */
+  padding: 10px;
+  border-radius: 5px;
+  color: #ecf0f1; /* 밝은 회색 텍스트 */
+}
+
+/* 툴팁 내부의 날짜(label) 스타일 */
+.custom-tooltip .label {
+  font-weight: bold; /* 글자를 굵게 */
+  margin-bottom: 5px;
+}
+
+/* recharts 라이브러리 요소 스타일링 */
+/* 차트 배경의 가로 및 세로 격자 라인 */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #4a627a; /* 더 어두운 격자 라인 색상 */
+}
