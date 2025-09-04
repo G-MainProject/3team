@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DebugData>
+  <WatchList />
+  <WorkProcDebugList>
+    <WorkProcDebug id="23ec8941-a34e-4ad5-9c85-2685840f35d5" name="T_2_데이터수집">
+      <BreakPoints />
+      <FavoriteVariables />
+      <RunInterval>
+        <StartPoint />
+        <EndPoint />
+      </RunInterval>
+    </WorkProcDebug>
+  </WorkProcDebugList>
+</DebugData>
