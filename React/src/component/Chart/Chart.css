@@ -1,0 +1,31 @@
+.chart-container {
+	background-color: #282c34; /* 어두운 배경색 */
+	padding: 20px;
+	border-radius: 10px;
+	color: white; /* 기본 텍스트 색상 */
+	margin: 20px;
+}
+
+.chart-container h2 {
+	text-align: center;
+	margin-bottom: 20px;
+	font-size: 1.5rem;
+}
+
+/* Recharts 스타일 오버라이드 */
+.recharts-wrapper .recharts-cartesian-grid-horizontal line,
+.recharts-wrapper .recharts-cartesian-grid-vertical line {
+	stroke: #444; /* 그리드 라인 색상 */
+}
+
+.recharts-wrapper .recharts-text.recharts-label {
+	fill: #ccc; /* 축 레이블 색상 */
+}
+
+.recharts-wrapper .recharts-text.recharts-cartesian-axis-tick-value {
+	fill: #aaa; /* 축 틱 값 색상 */
+}
+
+.recharts-wrapper .recharts-legend-item-text {
+	color: #ccc !important; /* 범례 텍스트 색상 */
+}
