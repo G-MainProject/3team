@@ -15,7 +15,8 @@ try:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     csv_path = os.path.join(script_dir, '..', '..', 'data', '주식데이터.csv')
     # csv_path = os.path.join(script_dir, '..', '..', 'data', 'symbols_krx.csv')
-    df = pd.read_csv(os.path.abspath(csv_path), encoding='cp949')
+    df = pd.read_csv(os.path.abspath(csv_path))
+    # df = pd.read_csv(os.path.abspath(csv_path), encoding='cp949')
     # 데이터프레임을 문자열로 변환
     stock_data_string = df.to_string()
 except FileNotFoundError:
