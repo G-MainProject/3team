@@ -1,0 +1,37 @@
+@font-face {
+    font-family: 'font';
+    src: url('./assets/fonts/PretendardVariable.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 100 900;
+}
+
+* {
+    font-family: 'font', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-size: 17px;
+    overflow-x: hidden; /* 가로 스크롤바 숨김 */
+}
+
+/* 전체 페이지 스크롤바 숨김 */
+html {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul, ol {
+    list-style: none;
+}
