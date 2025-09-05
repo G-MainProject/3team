@@ -61,29 +61,73 @@
 -   `fix: 로그인 API 연동 오류 수정`
 -   `docs: README.md 프로젝트 구조 업데이트`
 
-## Python 폴더구조 구축 및 APi 호출
+## 🐍 Python: 주식 시세 API 호출
 
-- 폴더구조
+이 스크립트는 키움증권 API를 사용하여 특정 종목의 현재 시세를 조회하고, 결과를 JSON 파일로 저장합니다.
+
+### 📁 폴더 구조
+
+```
 3team/
-├─ data/                       # JSON, 심볼 CSV 저장
+├─ data/                       # JSON 파일 및 종목 정보(CSV) 저장
 └─ Python/
-   ├─ Apps/price_to_json.py    # 실행 스크립트
-   └─ Libs/
-      ├─ kiwoom_client.py
-      ├─ env.py                # 환경변수 파일(API 키)
-      ├─ io_utils.py
-      └─ symbols.py            # (종목명→코드 매핑용, CSV 읽음)
+   └─ Sentiment/
+      ├─ Apps/price_to_json.py # 메인 실행 스크립트
+      └─ Libs/
+         ├─ kiwoom_client.py   # API 요청 처리
+         ├─ env.py             # 환경변수 관리 (API 키 등)
+         ├─ io_utils.py        # 파일 입출력 유틸리티
+         └─ symbols.py         # 종목 코드 <-> 종목명 변환
+```
 
-- 설치 라이브러리: pip install requests python-dotenv
+### ⚙️ 사전 준비
 
-- 사용법(프로젝트 루트에서 실행: …/3team)
-1. 종목코드로 조회
-(bash) python -m Python.Apps.price_to_json 005930
-2. 종목명으로 조회
-(bash) python -m Python.Apps.price_to_json --name 삼성전자
-  내부에서 data/symbols_krx.csv를 읽어 종목명 → 코드(6자리) 로 변환 후 조회
-  다중 후보일 경우 후보 리스트를 출력하고 종료
-3. 실행결과: 
-    터미널: [저장 완료] data/stock_005930_YYYYMMDD_HHMMSS.json
-            - 체결시각: 09:12:03  현재가: 78900  전일대비: +1200  등락률: +1.54
-    파일: data/stock_종목코드_날짜시간.json 생성
+프로젝트에 필요한 라이브러리를 설치합니다.
+
+```bash
+pip install requests python-dotenv
+```
+
+### ▶️ 실행 방법
+
+프로젝트 최상위 폴더(`c:/코드/3team`)에서 아래 명령어를 실행하세요.
+
+**1. 종목 코드로 조회**
+
+```bash
+python -m Python.Sentiment.Apps.price_to_json 005930
+```
+
+**2. 종목명으로 조회**
+
+`--name` 또는 `-n` 옵션을 사용합니다.
+
+```bash
+python -m Python.Sentiment.Apps.price_to_json --name 삼성전자
+```
+
+> **참고**: 종목명으로 조회 시 `data/symbols_krx.csv` 파일을 참조하여 코드로 변환합니다. 만약 검색된 종목이 여러 개일 경우, 후보 목록을 보여주고 프로그램을 종료합니다.
+
+### ✅ 실행 결과
+
+**1. 터미널 출력**
+
+실행 완료 시 저장된 파일 경로와 함께 주요 시세 정보가 출력됩니다.
+
+```
+[저장 완료] data/stock_005930_20250905_142228.json
+- 체결시각: 14:22:28  현재가: 85,000  전일대비: +1,200  등락률: +1.43%
+```
+
+**2. JSON 파일 생성**
+
+`data` 폴더에 `stock_{종목코드}_{현재시간}.json` 형식의 파일이 생성됩니다.
+
+```json
+{
+  "stck_cntg_hour": "142228",
+  "stck_prpr": "85000",
+  "prdy_vrss": "1200",
+  "prdy_ctrt": "1.43"
+}
+```
