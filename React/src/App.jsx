@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-// import { useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Home from './component/Home/Home.jsx';
-import About from './component/About/About.jsx';
+import Home from './pages/Home/Home.jsx';
 import Nav from './component/Nav/Nav.jsx';
+import Login from './pages/Login/Login.jsx';
+import Dashboard from './pages/Dashboard/Dashboard.jsx';
 
 function App() {
 	return (
@@ -13,7 +13,8 @@ function App() {
 			<Nav />
 			<Routes>
 				<Route path="/" element={<Home />} />
-				<Route path="/about" element={<About />} />
+				<Route path="/login" element={<Login />} />
+				<Route path="/dashboard" element={<Dashboard />} />
 			</Routes>
 		</BrowserRouter>
 	);

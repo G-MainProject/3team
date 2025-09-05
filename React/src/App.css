@@ -14,6 +14,17 @@
 
 body {
     font-size: 17px;
+    overflow-x: hidden; /* 가로 스크롤바 숨김 */
+}
+
+/* 전체 페이지 스크롤바 숨김 */
+html {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 a {
