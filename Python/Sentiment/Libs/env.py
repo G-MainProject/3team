@@ -16,7 +16,7 @@ def load_env() -> None:
     """
     here = Path(__file__).resolve()
     candidates = [
-        here.parents[1] / ".env",  # 3TEAM/Python/Sentiment/.env
+        # here.parents[1] / ".env",  # 3TEAM/Python/Sentiment/.env
         here.parents[2] / ".env",  # 3TEAM/Python/.env
         here.parents[3] / ".env",  # 3TEAM/.env (있으면 로드)
     ]
