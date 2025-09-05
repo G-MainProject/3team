@@ -3,7 +3,7 @@ from pathlib import Path
 import json, time
 
 # 프로젝트 루트 = 3team
-ROOT_DIR = Path(__file__).resolve().parents[2]
+ROOT_DIR = Path(__file__).resolve().parents[3]
 DATA_DIR = ROOT_DIR / "data"
 
 def default_json_path(stk: str, ts: str | None = None) -> Path:

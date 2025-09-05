@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 from urllib.parse import urljoin
-from Python.Libs.env import env  # ← 우리가 만든 env() 사용
+from Python.Sentiment.Libs.env import env  # ← 우리가 만든 env() 사용
 
 def _normalize_base(url: str) -> str:
     url = url.strip()

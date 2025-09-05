@@ -10,13 +10,15 @@ def load_env() -> None:
     
     """
     .env 탐색 우선순위:
-    1) 3TEAM/Python/.env
-    2) 3TEAM/.env (옵션)
+    1) 3TEAM/Python/Sentiment/.env
+    2) 3TEAM/Python/.env
+    3) 3TEAM/.env (옵션)
     """
     here = Path(__file__).resolve()
     candidates = [
-        here.parents[1] / ".env",  # 3TEAM/Python/.env
-        here.parents[2] / ".env",  # 3TEAM/.env (있으면 로드)
+        here.parents[1] / ".env",  # 3TEAM/Python/Sentiment/.env
+        here.parents[2] / ".env",  # 3TEAM/Python/.env
+        here.parents[3] / ".env",  # 3TEAM/.env (있으면 로드)
     ]
     for p in candidates:
         if p.exists():

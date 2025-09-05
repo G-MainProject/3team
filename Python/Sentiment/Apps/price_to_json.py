@@ -4,10 +4,10 @@ from pathlib import Path
 from urllib.parse import urljoin         # ★ 추가
 import requests                          # ★ 추가
 
-from Python.Libs.env import load_env
-from Python.Libs.kiwoom_client import get_base, issue_token, get_trade_info
-from Python.Libs.io_utils import default_json_path, save_json
-from Python.Libs.symbols import load_symbol_map, resolve_code_by_name
+from Python.Sentiment.Libs.env import load_env
+from Python.Sentiment.Libs.kiwoom_client import get_base, issue_token, get_trade_info
+from Python.Sentiment.Libs.io_utils import default_json_path, save_json
+from Python.Sentiment.Libs.symbols import load_symbol_map, resolve_code_by_name
 
 def get_code_by_name(base: str, auth: str, name: str) -> dict:
     """

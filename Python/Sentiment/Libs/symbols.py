@@ -3,7 +3,7 @@ from pathlib import Path
 import csv
 import re
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
+ROOT_DIR = Path(__file__).resolve().parents[3]
 DATA_DIR = ROOT_DIR / "data"
 SYMBOLS_CSV = DATA_DIR / "symbols_krx.csv"
 
