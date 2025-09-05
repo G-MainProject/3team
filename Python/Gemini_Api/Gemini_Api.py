@@ -11,10 +11,11 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # 1. CSV 파일 읽기 (gemini_api.py와 같은 폴더에 있다고 가정)
 try:
-    # 스크립트의 상위 폴더에 있는 Docs 폴더에서 '주식데이터.csv' 파일 경로를 구성합니다.
+    # 프로젝트 루트의 data 폴더에서 '주식데이터.csv' 파일 경로를 구성합니다.
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    csv_path = os.path.join(script_dir, '..', 'Docs', '주식데이터.csv')
-    df = pd.read_csv(os.path.abspath(csv_path))
+    csv_path = os.path.join(script_dir, '..', '..', 'data', '주식데이터.csv')
+    # csv_path = os.path.join(script_dir, '..', '..', 'data', 'symbols_krx.csv')
+    df = pd.read_csv(os.path.abspath(csv_path), encoding='cp949')
     # 데이터프레임을 문자열로 변환
     stock_data_string = df.to_string()
 except FileNotFoundError:
