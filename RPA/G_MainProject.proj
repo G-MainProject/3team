@@ -1,13 +1,19 @@
-<Project id="b166f530-e456-424a-8f54-8cd605cd7a77" namespace="" name="G_MainProject" category="project" workType="foreground" version="1.00" lastPublishedDate="" lastPublishedBy="" createdDate="2025-09-03 09:07:50" createdBy="" latestProcess="T_1_사용자정보_검색" designerVersion="3.1.125.00701" DesignedBy="">
+<Project id="b166f530-e456-424a-8f54-8cd605cd7a77" namespace="" name="G_MainProject" category="project" workType="foreground" version="1.00" lastPublishedDate="" lastPublishedBy="" createdDate="2025-09-03 09:07:50" createdBy="" latestProcess="T_2_데이터추출" designerVersion="3.1.125.00701" DesignedBy="">
   <SharedTask isExpended="false" />
   <NormalTask isExpended="true">
     <LinkItem id="9a951d40-4931-4718-94e0-e584415da70f" category="NormalTask" isChanged="Y" desc="" stepCount="61" name="T_1_사용자정보_검색">
       <Properties />
     </LinkItem>
+    <LinkItem id="23ec8941-a34e-4ad5-9c85-2685840f35d5" category="NormalTask" isChanged="Y" desc="" stepCount="28" name="T_2_데이터추출">
+      <Properties />
+    </LinkItem>
+    <LinkItem id="668635f4-aa88-4f9f-ba95-2432e670c2df" category="NormalTask" isChanged="Y" desc="" stepCount="9" name="T_3_엑셀저장">
+      <Properties />
+    </LinkItem>
   </NormalTask>
   <Event isExpended="false" />
   <Process isExpended="true">
-    <LinkItem id="70df1108-4c69-4917-b47f-a570fe456190" category="Process" isChanged="Y" desc="default process" stepCount="1" name="P_G_MainProject">
+    <LinkItem id="70df1108-4c69-4917-b47f-a570fe456190" category="Process" isChanged="Y" desc="default process" stepCount="3" name="P_G_MainProject">
       <Properties />
     </LinkItem>
   </Process>
@@ -18,7 +24,10 @@
   <RecorderData isExpended="false" />
   <Asset />
   <Library />
-  <Variables />
+  <Variables>
+    <Variable name="Excel_header" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="" colorValue="#FFD864A9" showMarker="False" />
+    <Variable name="Data" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="" colorValue="#FFFF731D" showMarker="False" />
+  </Variables>
   <Properties>
     <Property key="PlayOption_StepInterval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="1" />
     <Property key="PlayOption_DisableDrawBounds" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />

@@ -5,12 +5,12 @@
     <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
-    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="16" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="22" />
     <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 09:18:31" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-04 11:52:38" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 09:21:09" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -2944,8 +2944,8 @@ this.Date_end = new Date().toISOString().slice(0, 10);
       <StepNode step_id="S23d232cf3ba8402496f64ae2951010ed" group_name="" folded="True" color="" />
       <StepNode step_id="Sdc0c399f97724c3495521a8a4a3400d7" group_name="" folded="True" color="" />
       <StepNode step_id="Sf7c071d031c24207ba0ec495aae0141e" group_name="" folded="True" color="" />
-      <StepNode step_id="Sef9f5f6f105b40a181a1b13e8a0f86e8" group_name="dc699389-5858-4be0-94c8-33cd74e2c19e_종목분석 리포트 열기" folded="False" color="" />
-      <StepNode step_id="Sd1000b8a64234d6b86cac385f9474954" group_name="dc699389-5858-4be0-94c8-33cd74e2c19e_종목분석 리포트 열기" folded="False" color="" />
+      <StepNode step_id="Sef9f5f6f105b40a181a1b13e8a0f86e8" group_name="e1c70cf4-e1e0-40c3-84a0-b9de842ede91_종목분석 리포트 열기" folded="False" color="" />
+      <StepNode step_id="Sd1000b8a64234d6b86cac385f9474954" group_name="e1c70cf4-e1e0-40c3-84a0-b9de842ede91_종목분석 리포트 열기" folded="False" color="" />
       <StepNode step_id="Se3af94e0e7b543158b390fcc88b0d799" group_name="" folded="True" color="" />
       <StepNode step_id="S52c1cd286787448d9b9878de702916fa" group_name="" folded="True" color="" />
       <StepNode step_id="Sc29e5a92915c4d4bb4f7bc762e9d6d2e" group_name="5b8d57ea-d656-4770-8d6f-42f421f39eeb_Untitled" folded="False" color="" />
