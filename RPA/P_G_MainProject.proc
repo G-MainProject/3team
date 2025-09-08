@@ -1,16 +1,16 @@
-<Process id="70df1108-4c69-4917-b47f-a570fe456190" type="process" workType="foreground" name="P_G_MainProject" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="2" Orientation="horizontal">
+<Process id="70df1108-4c69-4917-b47f-a570fe456190" type="process" workType="foreground" name="P_G_MainProject" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="4" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="default process" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
-    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="33" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="51" />
     <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 09:07:50" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-04 12:35:55" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 09:22:01" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -18,6 +18,15 @@
   <LinkItems />
   <Variables />
   <Steps>
+    <Step id="S088db12b3de6410eadb9122e173a60f1" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClose" dpName="ChromeClose" dpValue="LATEST_BROWSER" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="01e5c5c9-fd71-4b15-8b84-31f9082d4146" type="Chrome">
+        <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_1);]]></Script>
+    </Step>
     <Step id="Se546a22c2fde41c998dae4543b16ceda" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="8ad9c3a7-93d2-40ea-bbec-78b9af2fd1a5" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -36,6 +45,15 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'T_2_데이터수집', null);]]></Script>
     </Step>
+    <Step id="S76286d081672467db9582cf34a015465" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="cd4b656f-3c01-46ca-8057-9761010b7aa7" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_TaskName" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="T_3_엑셀저장" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RunTask(this, 'T_3_엑셀저장', null);]]></Script>
+    </Step>
   </Steps>
   <JScript><![CDATA[function P_G_MainProject() {
 
@@ -49,12 +67,20 @@
     this.run = function() {
 
         //------------------------------------------------
-        STEP('Se546a22c2fde41c998dae4543b16ceda', '[1] RunTask');
+        STEP('S088db12b3de6410eadb9122e173a60f1', '[1] ChromeClose');
+        StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_1);
+
+        //------------------------------------------------
+        STEP('Se546a22c2fde41c998dae4543b16ceda', '[2] RunTask');
         RunTask(this, 'T_1_사용자정보_검색', null);
 
         //------------------------------------------------
-        STEP('S31f6f23d87d54d2ca7b5031329878d74', '[2] RunTask');
+        STEP('S31f6f23d87d54d2ca7b5031329878d74', '[3] RunTask');
         RunTask(this, 'T_2_데이터수집', null);
+
+        //------------------------------------------------
+        STEP('S76286d081672467db9582cf34a015465', '[4] RunTask');
+        RunTask(this, 'T_3_엑셀저장', null);
 
 
     }
@@ -69,8 +95,10 @@
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
+      <StepNode step_id="S088db12b3de6410eadb9122e173a60f1" group_name="b9c7c6a2-b7e4-4062-9fe1-a8986bbcd733_Untitled" folded="False" color="" />
       <StepNode step_id="Se546a22c2fde41c998dae4543b16ceda" group_name="" folded="False" color="" />
       <StepNode step_id="S31f6f23d87d54d2ca7b5031329878d74" group_name="" folded="False" color="" />
+      <StepNode step_id="S76286d081672467db9582cf34a015465" group_name="" folded="False" color="" />
     </StepNodes>
   </Diagram>
 </Process>
