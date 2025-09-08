@@ -1,4 +1,4 @@
-<Process id="23ec8941-a34e-4ad5-9c85-2685840f35d5" type="task" workType="foreground" name="T_2_데이터수집" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="27" Orientation="horizontal">
+<Process id="23ec8941-a34e-4ad5-9c85-2685840f35d5" type="task" workType="foreground" name="T_2_데이터추출" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="28" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 11:40:59" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-04 17:38:02" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 09:39:28" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -515,6 +515,15 @@ for(let i = 0; i < this.Data_content.length; i++) {
       </RelatedSteps>
       <Script><![CDATA[if (RESULT == 'Yes') {]]></Script>
     </Step>
+    <Step id="Sad09db30ff61430aac3dfa0feeae3466" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClose" dpName="ChromeClose" dpValue="LATEST_BROWSER" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="01e5c5c9-fd71-4b15-8b84-31f9082d4146" type="Chrome">
+        <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_22);]]></Script>
+    </Step>
     <Step id="Sc81196cc053a4ff0a2c8e137952eb5db" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="932c785a-197c-4ca6-83d9-41a83184d489" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -568,10 +577,10 @@ for(let i = 0; i < this.Data_content.length; i++) {
         <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_27);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_28);]]></Script>
     </Step>
   </Steps>
-  <JScript><![CDATA[function T_2_데이터수집() {
+  <JScript><![CDATA[function T_2_데이터추출() {
 
     this.i;
     this.j;
@@ -583,9 +592,9 @@ for(let i = 0; i < this.Data_content.length; i++) {
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {4:[19,26],5:[17],6:[16],7:[9],21:[23,25]};
-    this.GotoReverseBlockMap = {19:4,26:4,17:5,16:6,9:7,23:21,25:21};
-    this.GotoStepBlockTypeMap = {4:'Decision',19:'Else',26:'EndDecision',5:'Loop',17:'EndLoop',6:'Loop',16:'EndLoop',7:'DecisionThen',9:'EndDecisionThen',21:'Decision',23:'Else',25:'EndDecision'};
+    this.GotoBlockMap = {4:[19,27],5:[17],6:[16],7:[9],21:[24,26]};
+    this.GotoReverseBlockMap = {19:4,27:4,17:5,16:6,9:7,24:21,26:21};
+    this.GotoStepBlockTypeMap = {4:'Decision',19:'Else',27:'EndDecision',5:'Loop',17:'EndLoop',6:'Loop',16:'EndLoop',7:'DecisionThen',9:'EndDecisionThen',21:'Decision',24:'Else',26:'EndDecision'};
 
 
     this.run = function() {
@@ -715,28 +724,32 @@ for(let i = 0; i < this.Data_content.length; i++) {
             if (RESULT == 'Yes') {
 
                 //------------------------------------------------
-                STEP('Sc81196cc053a4ff0a2c8e137952eb5db', '[22] RunTask');
+                STEP('Sad09db30ff61430aac3dfa0feeae3466', '[22] ChromeClose');
+                StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_22);
+
+                //------------------------------------------------
+                STEP('Sc81196cc053a4ff0a2c8e137952eb5db', '[23] RunTask');
                 RunTask(this, 'P_G_MainProject', null);
 
             //------------------------------------------------
             }else{
-                STEP('S2778e3c8e9cc4c23891f85286fe49419', '[23] Else');
+                STEP('S2778e3c8e9cc4c23891f85286fe49419', '[24] Else');
 
                 //------------------------------------------------
-                STEP('S446ea370ddca4dd3b64676682c3ffb1a', '[24] TerminateAll');
+                STEP('S446ea370ddca4dd3b64676682c3ffb1a', '[25] TerminateAll');
                 Exit('Fail', null, null);
 
             //------------------------------------------------
             }
-            STEP('Sd77a990245144c24ba638fff7e6597c9', '[25] End-IfElse');
+            STEP('Sd77a990245144c24ba638fff7e6597c9', '[26] End-IfElse');
 
         //------------------------------------------------
         }
-        STEP('S1deea2e5bae841209bf0bb18e9148e03', '[26] End-IfElse');
+        STEP('S1deea2e5bae841209bf0bb18e9148e03', '[27] End-IfElse');
 
         //------------------------------------------------
-        STEP('S8964dcfa8261442ba654ae01417d6a9d', '[27] ChromeClose');
-        StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_27);
+        STEP('S8964dcfa8261442ba654ae01417d6a9d', '[28] ChromeClose');
+        StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_28);
 
 
     }
@@ -772,6 +785,7 @@ for(let i = 0; i < this.Data_content.length; i++) {
       <StepNode step_id="S7890657ba6744a209cd9197ae216917d" group_name="" folded="False" color="" />
       <StepNode step_id="S51a44b92f20442baaa5148578829a261" group_name="e380d540-4f43-4f73-9e86-d8a68c4be2d4_Untitled" folded="False" color="" />
       <StepNode step_id="S0e0ab39d8da346bbb34b5d5c31322873" group_name="" folded="False" color="" />
+      <StepNode step_id="Sad09db30ff61430aac3dfa0feeae3466" group_name="56dba586-008f-4852-9d32-faff4ee56bb6_Untitled" folded="False" color="" />
       <StepNode step_id="Sc81196cc053a4ff0a2c8e137952eb5db" group_name="" folded="False" color="" />
       <StepNode step_id="S2778e3c8e9cc4c23891f85286fe49419" group_name="" folded="False" color="" />
       <StepNode step_id="S446ea370ddca4dd3b64676682c3ffb1a" group_name="a07d82da-38a3-491e-98ab-58e5be966f02_Untitled" folded="False" color="" />
