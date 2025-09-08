@@ -42,30 +42,14 @@ export default function MyWordCloud() {
 	};
 
 	return (
-		<div
-			style={{
-				width: '600px',
-				height: '450px',
-				border: '1px solid #eee',
-				borderRadius: '8px',
-				padding: '20px',
-				boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
-			}}
-		>
-			<h3
-				style={{
-					textAlign: 'center',
-					marginBottom: '20px',
-					fontFamily: options.font,
-					color: '#333',
-				}}
-			>
+		<div className="word-cloud-container">
+			<h3 className="word-cloud-title">
 				주요 키워드 분석
 			</h3>
 			<WordCloud
 				words={data11}
-				width={600}
-				height={350} // Adjusted height for the title
+				width={560} // Adjusted for padding
+				height={350} // Adjusted for title and padding
 				{...options}
 			/>
 		</div>
