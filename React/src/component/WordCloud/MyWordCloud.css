@@ -1,0 +1,33 @@
+.word-cloud-container {
+	width: 600px;
+	height: 450px;
+	background-color: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	padding: 20px;
+	margin: 20px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.word-cloud-title {
+	text-align: center;
+	margin-bottom: 20px;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	color: #333;
+}
+
+/* 커스텀 툴팁 스타일 */
+[data-testid='.recharts-default-tooltip'] {
+	background-color: #fff !important;
+	border: 1px solid #ccc !important;
+	border-radius: 8px !important;
+	padding: 10px !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+	/* 툴팁의 글자색이 인라인 스타일로 지정되어 있어, 추가적으로 내부 요소를 선택하여 수정합니다. */
+	color: #333 !important;
+}
+
+[data-testid='.recharts-default-tooltip'] span {
+	color: #333 !important;
+	font-family: 'font', sans-serif !important; /* 프로젝트 기본 폰트 적용 */
+}
