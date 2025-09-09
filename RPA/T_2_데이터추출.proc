@@ -1,16 +1,16 @@
-<Process id="23ec8941-a34e-4ad5-9c85-2685840f35d5" type="task" workType="foreground" name="T_2_데이터추출" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="28" Orientation="horizontal">
+<Process id="23ec8941-a34e-4ad5-9c85-2685840f35d5" type="task" workType="foreground" name="T_2_데이터추출" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="30" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
-    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="7" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="181" />
     <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 11:40:59" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 09:39:28" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-09 10:26:36" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -18,7 +18,6 @@
   <LinkItems />
   <Variables>
     <Variable name="i" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFEBB02D" showMarker="False" />
-    <Variable name="j" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF0E8388" showMarker="False" />
     <Variable name="index" scope="Normal" valueType="Any" formatType="Any" initValue="0" desc="" colorValue="#FFAA77FF" showMarker="False" />
     <Variable name="Data_content" scope="Normal" valueType="Any" formatType="Any" initValue="[]" desc="부제목 내용" colorValue="#FF38E54D" showMarker="False" />
     <Variable name="Data_header" scope="Normal" valueType="Any" formatType="Any" initValue="[]" desc="제목 증권사 날짜" colorValue="#FF9E4784" showMarker="False" />
@@ -154,30 +153,30 @@ if(this.Data_use[0][1] === '검색 결과가 없습니다.') {
       </RelatedSteps>
       <Script><![CDATA[for (this.i = 3; this.i < this.Data_num; this.i += 8) {]]></Script>
     </Step>
-    <Step id="S9803a4fa8c7643018e7ce732570753c7" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="this.j &lt; this.i + 5" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S9803a4fa8c7643018e7ce732570753c7" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="Global.j &lt; this.i + 5" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="e17bd200-a70e-4aa8-b87b-1e5f59e698aa" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_InitializeIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.j =  this.i" />
-        <Property type="Flow" key="Conditions_LoopCondition" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.j &lt; this.i + 5" />
-        <Property type="Flow" key="Conditions_UpdateIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.j++" />
+        <Property type="Flow" key="Conditions_InitializeIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.j =  this.i" />
+        <Property type="Flow" key="Conditions_LoopCondition" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.j &lt; this.i + 5" />
+        <Property type="Flow" key="Conditions_UpdateIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.j++" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S4dbb92b1057b4599a675a955a762c877" type="Flow" name="EndLoop" />
       </RelatedSteps>
-      <Script><![CDATA[for (this.j =  this.i; this.j < this.i + 5; this.j++) {]]></Script>
+      <Script><![CDATA[for (Global.j =  this.i; Global.j < this.i + 5; Global.j++) {]]></Script>
     </Step>
-    <Step id="S632740ca182e49f5b3bdeafce95bd512" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.j&gt;= this.Data_num" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S632740ca182e49f5b3bdeafce95bd512" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.j&gt;= this.Data_num" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="6ea0e489-5491-4793-abac-ed51190b13d0" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.j&gt;= this.Data_num" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.j&gt;= this.Data_num" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.j&gt;= this.Data_num" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.j&gt;= this.Data_num" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="Sb968547279d14c66af6e8a9ba8f7fb2e" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (this.j>= this.Data_num) {]]></Script>
+      <Script><![CDATA[if (Global.j>= this.Data_num) {]]></Script>
     </Step>
     <Step id="S00f1d748a545476ca180be6e3480bc1d" ver="311241220" createVer="311241220" type="Flow" name="Break" dpName="Break" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Jump" enabled="True" mainSet="0">
       <Properties id="9be72963-304e-4da8-9b91-bf878a7731e8" type="Flow">
@@ -207,7 +206,7 @@ if(this.Data_use[0][1] === '검색 결과가 없습니다.') {
         <Property type="Chrome" key="CHROME_IframeSrc" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="CHROME_IframeIndexes" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="CHROME_ElementPath" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="'/html/body/div[3]/div[2]/div[2]/div[1]/div[2]/table[1]/tbody/tr[3]/td[2]/a'" />
-        <Property type="Chrome" key="CHROME_ExecuteQuery" controlType="PropertyItemChromeQueryEditView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'//div[@id=\'contentarea_left\']/div[2]/table[1]/tbody/tr[' + this.j + ']/td[2]/a'" />
+        <Property type="Chrome" key="CHROME_ExecuteQuery" controlType="PropertyItemChromeQueryEditView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'//div[@id=\'contentarea_left\']/div[2]/table[1]/tbody/tr[' + Global.j + ']/td[2]/a'" />
         <Property type="Chrome" key="CHROME_QueryType" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" toggle="XPath;Selector" />
         <Property type="Chrome" key="CHROME_FullHTML" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="H4sIAAAAAAAEAO19+3vURpboz/BXKL2b2B5Mt6RWv/Aja8zLCa8AIRPmzvUnd8ttxepWj1qN8cxwP0NMPhI8E2eDB5PYXGeHBMiSbxwwGWeX7P2+/XPc6v/hnlNVkkpqdbuNG8KwIYRWSVWnTp06rzr1GpyyS4ZgqOXiUGzajAkF1Vb316qapRa1sj0UO2H+XjcMNZGKi0Lve3q5YM5UhZPnBEmMiwMCvEgrA8KltNInjFQqhvaeNvG2bidSyUw8mRZ63z527sTxfsHQpzXhqJafNvuE0SnLLGkJKZmNi/ifcFadVC2dFYkN78U/gxNmYVYwy4apFoZiRc0+evJgb9+A+7Wat/SKLdizFW0oZmuX7MQH6kWVvmV54M9F1RLK1fxQbFIvq+W8Fre0qqZa+anYAPuaz1eti0OxfD5eVi9qVjxvlsi3PfgfZiiWJ8aBFhf1vDbUw8D0DMBXWh4/G2bRrNlDBTNfKwHF4u+eOT4gJBKAsHNr0ZlfEepfrWz9fdNZmne+/FBofDkvWFpBt7S8LdQX1wTIvtevCbGbMC8N9ZiTkz0Ipv63zfqN68LWoznnw4+d9Z+c1Xkgi9BYWnPuzQmQiz3GhYI2qdYMu/7JTXztw5wyLbus56c5mDc+rs/fde7MC/V7i87deXjqlUTnzmIfhb4t8DjXfEK4kjZuqLOaNW5WtPJ4XjWMCTU/LQwJk7Vy3tbNcm/fH/buEQSBdAmWOI7Zz+q/1yATgDmJ705o5G0cutv7DJ2+dw90BukNt5oqFPLoDbkPGxo+HpwdK/TGvEwxUtRLxmf0gj01FKydvgzmm9L04pQdzkjfDlweaNX0vGFWtZZtxyY8cxuaGhETY6H3DGn8ACgOJqgsoCgMFvSLgg5SVBuvTusVEI89g6owZWmTQ7F/giprMcFWJ0CwtUtDMSk2PFitqOXh+oObzuqmAD/1jzeAg4X6+k1k5PW5rc11AI95BhPqMJMVDmTVVi2bhyl7MB9v1h9uOitP28ED0RpMAMoB1Kc0taBZBHV8lTfUatV9O65amoqfor7p5TItF/yKMuuXg29TkvuJSTv74LdryrYr1QOJxMzMjK8sErEAREMvT8dAgPIGyluM/OStXntKr/YLPWfPjdCSPZBg/2sXoc+JXttDq6teLAqsj2U5Jrjdis8XdW0GdUNMFERBlgV8Nwm6eShWNstaTLhUMspViijDcyYZN61iQhZFMQGAvVr2DFZUe0oAwp4AOJI0iv8m41ImlRZkKZ5MKTlBSsWTopwUZDEuKWn4nolLkpQclbLxXDKTEvBXFsl7WcqlMF8yKUpYThYxLcWltJwZRbg5moYfGe1GLpvJAvZQLikJ2Xg2pUA5+J7JZtOj6XgGwMoEj7QiC0o8kxZlicCX0mkhGZdlKZvE+jOZrDwqxdPZpJIieCRzWUGMp5OprJgiiGTICxnwTmdJC5X06H58kRTT0EQpLkpQFRghUcmkZcgM2OAzvMomM0k5IwA6OVHJYjXpXDaH6GRFIE8yLmZyGfKbllNJeJ/NZjOAFjQnmU1CM9K5TJqgo6SkZAYhy4oiQddJ8A+SJSdlFExCFVIKS0qpbM5rmNvQUWh4VoEy0JysAjUAwmA5s3IaOQCAXTghyYAtIJ+Cn/MS0k2Uj0P3ZAED8vIY/ZKOA7zssRxUlEmdl5BSmeOAiChif8LXzDHyL+QlpRjcCy6b/RPwEchyApnHY1hkLJ97QYxdiZgAaSjEhtHSrG7UH80zIWdiRUQ9UsDK2sz+Uryizu5CzKB0h0KWzLQRMui2rghZUokrSSmHXSjlFOV4EvooJ0FXy8CRmexxORPPpaSs+/2YjLKXkY8nRdIbggTclZQyx+UspEVI50DWUtlj8D2TzAK8DBZNJqXjoZounJCT8bSUIWKZgwzHUCzFZOY8gMwl5Sxyl5TNKfg9kwRxA9CiJGYJO6SzRKwyOeROSAOKo1AOBEJy09gEJQlyAGyUzsl+UoynMmnQFiydiStpMZXBlmSywPbgTQLX5TzwLD1Kq1dAnHLZJFU+WWyNIqWhNEMehFIGOkjnPXrRRp5njYRWI4GzGYJGNpcbddNZwEoE8kA1IB0SoCUm09h6IKwM1bL0KLROTkkZ/zt0gCL7xWnShe4m5XhazGWQNLJCMkmKnPNgszQ2MZdDyrHvHq5yPJVLCyHUL5xA7ZQFDZtSvH6HipJiNovtBRU9moyn5CyoauzDNKhaBXRVUszRPszliAoQ/T4bBVWUTElpvw+BrKRPWR+6SbcPWdrtQyyeIb1C+9AF7/YhVC+hpoY+xGzJuCJnc7QTZWhfHNQh6MFwH4rHmxt64UQKcmfBKrkdA0OEbAbUntsxoCtz6Zzk9YybdrvGS7O+ccu7xHfhu50DFFByft+BjVLQ+LjFvbTLVyztVg/FAW+fr0Lo706TNv68DJp0OzW6Y13pjmo61JdKO32pdMkpAaUhimnkNKBy9rhEfIQ08EwO/mRHgWfA98B0UkqB4QPyipgGtakkSVpJYVqB7+ACgLxkpKyYPi+DawP5j0H3gm8hnXe/5+Lg+YjpUfgVabl0CuoRcsDJNJ0jBjYHEpAl9cgUL2ReEXk5B4wLadC+KCku3mCn5SzFG10RcAqyCrYLlB7iQSRGIe1URIQfajfKPkFAQplMnc/FYYyM6KexfRKa+tQxN8uFE2n4jNCAWYHpjyGPgkOGnoZMHDPymmjgHEIEFpezfhJUpzTqpQBDog9oSVDKsiIwgCx5jFUHIpMlxGa5QCSyaUwSEF6KgPdStG6vJMUsiD+2J5dmkERQEFA9qBUJ1RG1QOQ1sTg5mSi3VI5LglbKyaNcUiIOHy0KzQTXiEFkyWOsPo+7WC4FZFumTZByfArhe0lau1eU4hZsQVvp57kfK0KDkURPnPRyMn1MBuZLpRXgYREMPNh+CR1jBW1AMql4n2mhYwwGtYTgIpDOSyto7nOyQpPgY0IypaT5JBh9N3lMQjkSleMSBmZEVLZpcOVBnMAVzyoKWtWU6L9Hlz6XymI6lUb2lkEcsiStpJD9IQ26V3HFGL9nlSxSLY1NIul0Go1/Gl35Y2A5FUXEJqfT2GRwk8RcVjkP9g7ToywN5aU0ER8AnCHwM7T+NMo11i+jOKP7JKcJPqDLaTrFGBukbtQtDkkZByDQmTKlDRIQfAzQ8SSpZKDtYNawbuwd/JYkPQbGDd1ykJu0QjowIynHgUwioSpAyGaRalImTTODowVJGRtNu1kI9hf0HzAwQUqBRijow0OTjiVBk8Hb80ChLPo/tN/O00zHWJndWRvnm9WtHxairc1gYkqiY2o2Ug8Nry20D4HxNfeRBrn4r3sGJ02rJJTVkuZ+jgkqiZ2APaMv2A8dE8SEkmZPmTQyiNatWpso6WCRLM2uWWWhoGFUpDBOXxNj1xcTqvasARWUVKuolw+IA0JFLRT0chEePUQMdUIzBEAHELHN/PS4bmulaiySNoLzb9fq3z6of3vtv//u3Jtzri/DI4vUDSYIJBesXq7U+HBljEQ1AjXQ1v+uplmzMcHWbUS1TQWxEDlJDTGhYqh5bco0CprVorhz51p97Wukb16rVqe1WQABqRrgYpYqhmZDvebkZCwK9Sm9UNDKFPlxrVx41zJcxN3URdWoQdItzhjM5bOJmm2bZQaN9k64ITRLe5eFZu3QY5HSvseCzwGPhXjBu/RYsPB+q4YdhniYhQK2Sa+E36Fup6oPnWD4SaP5SOdglMXS7Fcgr3OSm6SFQEHRZI54CbLgFgbN4epU8gxuDPiuaOrxA8YD+FJu2gXqpt063cIuSkGML5wIF6fJZDwnZmDARH/BpJLXXmmWHEVNC66Q91liTXKLS6EWu2laLit45cEkeLDhedSrFz8wnLxCAYx9rQimRVSyLQzxTjoVDYZCRwXwq4wSE5FOUbuSJe+zqbTip8EgALpufuI2ytQ+ZFJkiJ1O4agf/COJeis0rcTp2FOh9gB+kpgZRsgZlilNCoFR5NMANOXmP+7hijhIpEPETJahmBG4tILhq1DTtiPetlbF1Y4Bq0JF3k1ypgK1UsBQRFuqO4v1T287t+ed+e8DkPd48WMEdMQCReVZgYJeBV05e0BAoR/gRJqrfsZSK1TZqXa+VGkqGyraVBaUMvc1+Nm0ClX+457BmuF+HLe0as2wD5qXAjnAOumBNBd0b60vR949Fzf0qt2sLQVmLSdVowrt8GpXa4CAaoxjqSACIfqXayUhlPtf8mZB+5dgL0QVDRezL9kdlEK70VQj2PNpLbq0PzzmuyCiFwONn6wZBsDFn3GKF3FydgwHSQFw9PI4I8qzgUH7SsHg0zODIYEAAgafnhkMpTYF5FE+DAq8nwCnDiZqRiDd7A6WTZubdWHZKl7Ho88UxHbr8ZP6t/edvz51bs8JjaUN5/Ymc8ic1TkBPtXXbzqrTwUaNQH/ByedMBL96e3G0oP6jev1G3fjQaQrQZyDrQqlw8nX9u8XGsvzzp2HAq+PhK3N9fonX+O8qnP1ofPFg8bS8tbjNWHr8bxz4zuKhbB/f2sdwumfsXJxWxW0nQ7aRglxJC9ViyGKP2PzukvkRKI7ZMb+ioSwITRur8CLxu2bnXbMWTrj+TN2zXYtqS8uO7euO5886XKXBFJ8IviMwzt35Oi955uLs+mBAaFruOGDp35wGtm2zHIxbP9JjwMJhPq9K40rD8ESkGzDnEklCzWqbNzlJcK+wIQBAzLoMzC0gYJmkahNrjR9g1PvzVD0MuCl7feAqTysCbtMS8fC0156gZvwghTJFWd5gxWzMdJwwDgS6EX0yOhketO3gtX6o436lS1UWd3k5uOJKg/RozQbIAYmIylBjMdwuJ8hOxoyGIIFQHjvGBBcRFG0zFq5sF8vqUXtgFCzjN43flcz7QGXZtWqEa9UbRVMR7ys2Qn6mAAClsxyAgDDmE1SEnoevUjLnBmfMKR4UZ+kUPpo59Bu8NcPHRjg8YoFUef8LHjxbpWtEImTd+fMYtHAFSshz2p4UC8VPZgVywQfWhuHd9BYKw/0Um31AGlkApAbmFCrWlrpPyMaR08dMqZG3hk5ODJyKDEyOjNC/pD0yOjIoerryUOIkAZtg+E+OnxxBNjDAayUiy5A/fzBU2dmxLePFk0Ec/Lsu1OH3y3C0xFMHnxndOQEwk39fubtSXxz9Ndnjrx37My5CfmCWJCPzF545+DBC0dz+oWzB9+aeO9I+cL5t4z33zuTyucN4zQWOHTynXNHzhzJnj40k4Kx/b6LVnpf4mImrZUr+05/oGS0pJ3aN1nOJSaTmVO/r+ZOnxOzF4/PZiBTumb9Ljf5ayl16tw0fM5VfjdjFhC3d06+debwkXe1k1ZVkg6fKs6OnCieOvzeuyNHpNxkupzMn9AqxlvHzLMXJqoXlWP7Do29p46erJ6cyR89WtKLxXcu7DuUeCdlaTW1amWP5cYOiaPVY5MjxysjGeWtc8WZ02dPl8+8LY7k00esmVO/PvVB3iyOFYxz0ydrhw4VzeLRMyPnDx88VH1Hyo2d+P1oNpMbOz5SPHqyOHJhauLE6eQZFMVLb1Wl40VNTVQPvZ+ftbRjv/7gvX3m6XePndcL8on3RqW3942I1d9VD72XGZ2uHi0ZoycvmEfsXGVs8oP3i+9nJ2ZOnNAuvXv45Du1U/bv3h+9NHnMPpcZKRTeNwuH8hWxOHb68FRu7OAls1bdVz5YU8/pVeXkTOLU2ePnZwzz5L63Dpc+OPrWmdSR2bFDZypj713QRsyD0/kLR0+cKU6PHZ7+vXgoc/SDX7/zzsiJk4mjF2fezo+MHD569NhbU2KppFK+Ovvu+VNn3k6Nvj82NtQT81ahcOETfFYNeKhfBeNycx4URmNpnnhVf9sEF8vVSGFWh39szQJ/sTrtyRP/zlVLQpNeIs6vBw9Tkq/EtFJ4rcHVDWdtqf54Q4D/yboirRTUdZ4q8KGgkuPGUVzlWqni142J4V7nzrxz74rz5WJjeaXx4WofVZFo0yLUnDFrBbXkrBWpDvNm2YYRWfM3UBHMLDYRJkA3ol9+USW/qJKXW5VkRV+V4DNRJdFqpGlRUMA7wuXJckKt6Any7jRVM2+WhvJTWn56rHButqIFJDk/pZaLWkiM3Gl1HwFwJO/Ng+6Y23r0U8AHihJwcJlc4awE/Nh8HrwWO0Jmm5WZHHYPcaFue8+wo7YPjyPe9RvLbit264OaNftN4tQYQyTz68mR1+Uj8NddWu0Vg3fuMmt4xDkFtTxLYjXu3A3nywLY5+zMklXXgb6sNHNXSdUNbgV4UM/qxrhaKECbYDz2L14mAis4vtAKuk3GFWF/WS9Pmh3y9JRmVBKl2TEo8SauzR2aMjH64y2iGzvUyimvavmaxbEXTY8bGPXZedVDOEtyFkHo9uwbaqkyQLCpsjeA0eMNZ+m6A3itLbVCKa9Z3IgLUztARzurF8uJi1ICKZAwVBDVJlDjKrX5q5vON6vO/IqPCAacwgJbUcHUopD4gPxXISEuaaUJzapO6c1RXxYx9g27n3W7lvlZE00ji0CVnNMQAK+HHR6XL4T6g7vw43wMekv3GR3cn5PCaXWWOkJh5CqmXraDKy2DpCEZXMmMIgMhPwuxNT59CB3R+GSzWXPy/0a5P6VSrUy4qglFGEQXOQKemD3ovQjQD/NRZOqbN6noBxw7b8SokWnleF6d1FpIPH6KDW+tzzl3rjWWVgTnxw1oYCS0EOmCvBYk5YSKK9Hb8pUXMCDkY/3W7KNuy1ofmKjZO0CmrM1M6K2nRAb1Zv668Z3gPFmpL8wJqdcFZ+1K/RuO4Uj/RrvS0M3ASpo1qeabK2RxgijbfHsZTLGrZcJspU/ilE7Iwx6nb7059PqP18lQZe06+O4hshSoi05nsNlqAM9b4ZwVeKzmLdMApIo4TRwTSB0TpkXm2UWvRbZZOZBUKpcGyAqIA/vxkYA7kJRFeKYAD0ipLCQCgUKzouZBBA6IA/tL1f10cHRANSpTai/7NCT2ocmjzYvUt7ZqTAciM/RFu9iMGshb9WbfQ1BxO4dV1IAUIGkqrii0NDJhjvt9NAs4Bvocxg5YUZBLCViOT9+ctEpDlTwAJlYFfIcpGHCQ57xqa0XTmh2K5gWPFxsffdXK8sPwrhw1PmTfxsu1Uog6dAPM9gzpQdBmIr5Qjy8I2fUCXbZlPx2OSCO6l06RBDrYfdW+i0POThxLTc4GO8XEXgFnJ9j3bFam896P7DlnaaH+zdOu9FlJez49BnB3118hs+Z2DB8B4N4F8lcv5sk3AR8AoGY0f6fqp/k9bnNqiosTFtShLc7avPNoQ/Doz8LiHAxbrU6PE2UFUNjqHD7CGdiXV9BwedAZqPI4uPNsgtldeuM1E0cXMCwqkDaNF7A1zupPOClH8YBh1nfO2oo37b9ttdUpc+YQqXrEAMevN1yZahhcXTjz99liUyUtXBCkIW415Ydl3Ka+WFvfxZiFugM+rv+mlU0Nepk4kcM6j0kJTmEFmtBYWnZurGw9WqOzN1s/Lrzp9yT6eCGkgCJVvy8RMRcpjDNN6lYptl0PjxhGRAeDMV4icwOd9tuUXtBC/Tbs/P2+89FCuFsYpNAQlWyobINsFHz0WcDSr244fwFX8Ma/kyAg+ifBCnevE5HrqMPpcjWRNTfuGHJ9Q56KrwleUm9FzuV8byWZlLvtrZBRdWAOibzYkRlrP2Zv4UPgrtYuWSLE+PnYIoTcxhq1DACQjasBsnrvOp2pjJoMa64jKJQnwPx3NAsW5RrMr9R/nHc+uSvU/3TTFZ5OemfnJtmjBW+T+ZdNJSbVi6al29q4uybZLRX+0LokCxC2+mxU7RmrEpFBt6r2+EW9qkevK2jB3VeX6/cWnNVlwflmcevRfWf9v3AtwNegnH64CQPaxhKZGHHmN50vbr7mhwajBmxU+UZXw9RqeDgWPTnvYoJHB3i93WqKnidMBLmjgmugB2N8I8KswTJQbCkdWknQKwiKxME6GZJvK9DvTZmdSzXHfkKr0XukSxXYHNDiI1klYJZLZq2qmRfRpPkf4+TtKXhLV/0P+DlrdkTGmu3mG2Yr3T3NgF53YG09v3y/eb28t2bf02juQn22JB4UnFC/92fiCLt5UDa31ucbf97EBUuPFgRw9Zw7n6HPR4UU0Z8087UABaBb4HcMseJaOWHUgqTAMLwdzjWtzRbMmXIgI7w7BO96PVeeZKtVwpnerXhZWjEVOJAk/O6R0XvRsRZzPfeWirxiVtwu8YJa/iv/3Akxmnj057RZOVU+gTwgDAm2VdOalsOysmG+iShOSzSXj+bQzuuP5NuO648meFDfIt2oUiWKIiyYvpUkcsCsVYRIenYsCN7/KnhWrUmBu2/ViOqYIcQtMuHAUjCCmwC+8eO0TItGxEy1mWqgUP3jDWKO2hUqqZVgRffm6p/Oty9TrZiWDVWF64PKME6+uda+eBGc5kA50A0wIAjp9VbEbkPi6Gh4KMoOZAkE0VuiWTHdWT0ag4ahUrw8BV4athFa+sk25Qt63g6S5+pDGEe1LzSNlQS7w7mxqp9sX2pGU+0pKBNo5dU15+b9bhM1ODBJ+IOOtvyCW8GCzWL779qVwlmxYFU/zOE60Kvr7ctd1Cd49rLNgjoLpc+PHTzcvuCEaXJYApLfX+s6T06ZlQqMXPmJ6GqCToMiT320BkP79lhCGT0fJOaXPzaub0OU0iw4FoFSJ94/eOrX2ygUUO98b89oE+QVPGjTQFVStfPRAjhBIUK1cYLo9EwEbfJqqaLqRZ7/yxXoOnqgmJ0gho9IYNTAh9ju5sWIJZOtxDhJ5/H6yUKMRyi9grO+6dx6CO5I/cGG4E3wsYmf17g1Yik//KBk2LLGzldp0gYnCDLj2KJxOSnm4pUyWQHQagEG7mOgVqf9GU0lcGfjeMpdJFUwjtM0HCTBHTd66g9Ro4M7YS8VHEesMhZwJekbZpNbrWT2p9twX8MXkQOmMK8Ux22zEmuDy1QhiAmmeScpKnqM+UgEmT+ly/fkGSq880a3l3TcE+2Jy1y/Vi1qNWpm36QmP8R3PIYD+1nJ1L+3ELmM5YskGuduRTZogCewlgOKu8sIvM2uAr9x2IfjmW26GdhXI9sgwYxVN/BwQXnGboeouOq4G7h4sHxG3ydwOn2HqBG+yqsYKdg9bj4wHznnPxZdLyaIWmDVj6tVO0CWTMR3CVeExc2J0rNh/JilDiyIkWYMOJ7UZljkcIcUJiaxGxhTQJx+Y6Z1pz0O7nRXCIhwPN9/h0gQ76IbWFBAnm+y077R0HB3oWsQDvqo9W93rh1IpL0bSJCIveso7xAJujZs90gQOLwLvUM80DnGLZHdwMWDBfhcqd+7TrY17RQfXBPVDVzo2ip/SMjjEXL6OzOyhe4IUIGIDxsy7tSuAXXtCVO1usI6HDQcpGCHfbIJHk3985WdY0ZCB13BikLigw47xUWzdK07uFBIw86Nlfo3D51vrj8jLrg4qVvY4HySh49Z3jFG5uQkmQzbPT4M0rCzfLdx8+mzWCUy6uyKbSSA+GHrju1j2VbzXXHKXFDDOBz6aKH+1eqOsWHr07uBjQuKhWZ6tzavOytP+p7BaFa6YzMrfixyhyhM610RIwTDxd92iIStWaWu6BYKiCFSX/9+6/HOnQg0uN0y3CwutmszSVYid0OMyIpmNz6+U3FWDa1cULsyGPVgDTv/sVz/Zr3+p5vPNuqzL3ZtHAWg/HHJufMR3Ra5aMyo2nLEMr1KPjDT4UZKtg98/2WjsXSbD383T5B3xjTTVpe8KwpoeOvJd4DcM3pZ0NvdQYYCAvt4BZBJ4A/8fTacptTyB2o3cKKAhhtLK86dxWdE5oNKlwhEAQ3D+OnZeyvfrd7Ks966+9muuGeyW6xMAZGdfnc+A+/q2VEqaN0auxBAw/VPr+2qy6xal/ChgIbr//chLkFYmn92lC52i4sooOH6ozUcTF29/+woVbslZVUmZTCgwoDb5rOjVFErarErARwGabixsAB/tx6vdWrCwFhxq49XN7c21xPOjbWtv6+0XafVYRzdUidNQ+9KCz1Yw1t/36yvPm18uoFjtuWdj01wwrorNEc4/Cz3Tr3NLoWsJmjIav2ZAg249rMrcTOdbAQENbbajUg5Tk53RX0gHDqn3eWweIUd2NCVwYsPjNinbx7iHvhb885Py41ri00xm6ap4+gdDXa5aYKMvef2BvAzZ+CKcmsA9cleeHuELbuMq4XCWTox2tvX94dtFghebl4gGDXV6W4m8HYyhHYVNC1FDaxQ9FDL44jc6HRZItt8wKYXW9dIYbWokiyr8+jRWcUb1/35U/f+o+ApA9vsU2FTvRN2KRbV/6H9Bdyq5p91g0Fgz0Bot4Gcy3jbDVLZFLfdgCR2vMMgTAI25/7Stj+w22L3zfe0Q9P5a/6j9+Q+eL/81VhlehSb0HSllkG0WvA+LSQ3UX2sLt9N4N7u4Xd+SAIZHAvcYoFE69NLj588GMe1P1FnPQePBr3kHcvduH09vJOyGQ05gEBVr2rbYIFZOsIChjx4JsE3q+BIb49HMoDHjGkZhW0QIXk6woSeitkpJkoAE3q2J1kksg0+NGdnHYSrm7927s01PusAobRANnx4KLnHimyDj5utI4zQj5xfcX5cjtpX4u1RWWt8uFpfvL89ypkADXGaORFVKZt43g5aNtgjs2SR4Ha9QXN11PgT70fi4KmRlvqC/Yf/RFzF+ZZ6UT3rXsW5Z0/iV4KRrwrOvc+2Hs8Lv0rsFdifgV7+hkSB+4P3JBK08TAbYUiImWUY42i4ERTcsDKoZLyGVHhTiPmvDwgxvCw0NhCA9AHmjP/zkXLLuvAP4DdeMPGqSf7t5b64attqfqqX1tfv48TlvNyH5Wg76Yr/4LmivxFwnHhnUQIM6XfiGeIunbFD/eyjDB+ZAWt8iJOs8E34LUAHcgHkhDBSs81Rtt9AcD5cBcjsTkw1f8jEhbdIJjUfDy0kJddE6pNCr2HmVbLWdwqGLmjh4kS2T032xqq2WgRLtj/WJwwL+6U+Aa+r3MPD9XII+7z6EPBlQQOnR9gGvq1V7TbA6ednglzQLrqAhT/+UWiTEz8Z+HoH2dvgTCoOo7zX4wnaL+9aBuZ1Y758fniMJdR8jDAOmTw+S3QW5AelIZSnyvERbodJL9YPXEA2c5xQy8D0ls8Fe7wieT5DL+P93sA9E319/QzYIdVW28HivveSxvQLsUtTVgx+8NaNfuEPlz1Y53Vtph2ss4gBl8nHzT+Zva9f8N6W+f01+KVZZlv9gQHFCfXSAUEWxf6OC+HxVKTUbzL9ggx/f9t5WfUMu84XSAQAuKN0A11PdUi8ienaV8RDaTpqK7absr/t5zAtmRO6oZEGcHuiw7rE72+eOYVTFWxQAJU/4Im/Y4UD7m0u/ULeNKd1jXL/gWYisO8n4flAjOzyHiXLgwnjjIMfrU4YGiBABIaXGFdF0+uFvT9m+Qhu3jngXcIr9BIxDtMIJXVGI2IDssf4j13F29vDCU4PXsQbLo3qyS39xhsuoPiUWh1FKwuSR3ZAkauTQfKiEHD/uGXRgvbGYlG1hbNaWsm8qNGaeriaIlG9HHzFJS975qvx0ZPG0gNmxARyj6+wH/8MM0OE1KpSuh/TwRICrkC1nqh7Zv77743by87Kffr2y0WcIrnz0L+ABi/R3uN1DpC4aBGWoNB7mc7FCsmVOH7nhHolTkIrlC2wO9zsgFaPgFpeK+Pp+++eGUPzCeMw6FeSpQ/zRHwMta+vDyETZPaQUxSgih52G/dfNsjeWtIe3FuLqxTItr14j0Dvbd5DgwPkmbMPLufVghaCv+KIzAvyL96sloagS8an7Fn3yr43ZqY0Sxsqa5dIvjd0bejdc0eyb5D2DaHSadn4oKfDdBMe59JbI4qeHfTC5C0Q4qCmjuu80G1L5sQHoAxZB2KXAPp6UbVNK44nu43gtfKepe05cXbscA/pC8/Q7mHoVDX7nF7CDXCc8yb8gXY/JY1b2eV+ISmKlObMdaCgojKz3ti2XXxZIdgsUIH0wiOBBPjcltI8cfqJcqbbphaf40TKqu/p9lRvG83b54LBmhn30YNuaWipcfsm/YxcxW5mAs6KqJCy5R72hTAD/YCMGAt+5cvxn1teW06vSemLk/BHnEU/2L1KrCzPagzRALvtCffgHt9YwDioXaNI74VFjpKMKgWvr1yV0kwFUKrkCq3exP/+X9VfJfp7QMN4r+DNP5NXAwjTtvTS3khSDpHnFjoJVJKXDOmazirvokKCfzhKs4YwMfbF5DK1DoP7vT8hSwFdgfaBl52KWalVehFVAnuGuM183/ckQH9D02wtgae8V8YNHWrFDanxD6qVnv4eouPGCRxI0SBcKp1zg3ByJsuCcBOqVR0qm2iv7Bo+9VDUobY42cFLm3IZh690sIoX1vHxQve0Hy+ej0MSP2LoLg6p/21TwGUHt77rSlCQnrqBUUFBxgNWBBoXBMcVz14BClZ1JOUBQZ2omkbN1gaE3+8nevOAIKUGuODfXjYu9yJy5H4KMk4PBPDYsX/EewrF8MbP4svRKcxhnDMrB90taNydMDRYKUii+PoAa/YBshF+QGB36gli5RJ7Qw4WcTOJZHu9T/Do2sbton38zOHREOWQlCHKBvZ40y7zumvkUKwtwlk8h0/AozXA5cUQq6CXwYzq9oBAayStgBwgWjqOAlVDL0LTJkzbNksDgZirH4HngiR795LLRUBDCEXDnFANqCBv1AoauU5kr09zGB75d16Q3sByhjZpY+zUvXwkMIdTnhDgfxn/YZsYWNRoSnbz4HEFF7XA1kouchZ9oEc4CEbCQVNyU0wXDJIEVTZ5pFzQatJqUTUNE5KzcAOnAbcKZlXAX5Cjw1iB+SQTtzfJAm4W18tyi/mXGyuN2w/co+G/edj49CF/Tqk3B+VGwaIaGNUmSumOm5PcaXOSLU7FvP4Q3emuNyfqsOZ27VF22h6lRffQ8cMP8878ane7p1CDwp03KLXTBqVaHWGx7ty61v0GaXmzbJY6b096p+1JR7cHz2BdW+l+ewraBCBFjqnusEWZnbYo06KHvp/f+mGh8xYF4+JUv4tZMStJ3iVRwavxQFMyp9bdzxpWpnTH7F4W9I8856AQn7YuwQAAfujhCgU8FZzcfIux7rGybp9Wixo5PRVMZLkEg70hqTUF80UtLkVQMHy+J3ehRKtN3JCBTkeQuyGqqQTarXG3Z9kWdlHB23bY9vK3z/yaHJJ3Z3Hr8RPQyJ4TJcmpwBUjYbJHEWcyQJz2LY6SgufW4vS4zLXZ+fCKc+fr+iNc6yDgWn1gOKK2WzQ+1dR4b0qX4xw88rM1aaBZcbVgTmgkhACcg4dxalbiObRZBbdsQrX5Bi/NN648rH+1Un/0WKjfuOt8sYGJz1v0dlJs2WD+amkqb2HPaO9ezoFlq2h8h4re8Paf9+kqmoA3Fco/joBdimIpwNh5OodHms+v++LN+2E1vL2ADksF27DHqXPIVkIxl8yf3WYT02ReWh0W3iiCrxnpnHGOmJsv2jY23aVGKRSN+FSSxxvQbW1xp5I8GSDHV6uRBJgwL43jjN94qelaba/9NoZshWqtBF9mvcuoQ1UKuEMevLOFRWFrc47WGBPymmGw9RfExcd0FZc9uGk2h4kYSF6FeZUEols0zqtoMOFmZOWwraDLM6IkONeXQT79e/8G86ZBhqfD+OQddyG+Hgu8+FUoLaVCL8LpXCideT3GY0NsSyQ+CR8hG8+thR/Lu3/Pnhr2QrGDCe5WXvwA9vvbB6G33kGg2iWbjXOoLFCGda4+bALz6H79h7mmt3c+c+a/J3t3Qx++Wm98sQCt4D7Ao+XxiAUNKAjQKDSRQ7E0d9M6qKhxEc13wi4Ms0J797C/e3wAXnUFtzmMdfZjWw5Ion9Xoi90GD1m5xWR4CqGSYfETFLJif5JbjDqv7bp3J6jx8micH5y17+u3ItC46r7iJzc5bOkCT6evs52PW5U0QyTMminbFqW08Sq4/w2WPTh+r27QEUwIfPkVoLlrU3wMBdBO9wg58ndWHHWFjHuQ653JBp157odj9H0VDuMLqlad+/u4a7u8WjgHmnKzo85/B7rLa6peHbM1WX3MKPAN2/IqBtaRB8Fj0YKHiADb/aHhy2JVCYhi3JKzInKuEvYTDIpppKiKMYrhcmuWEA8PY8zeAQsER2wyxPVkl4oYGtad77b6oJq+wfCBDg2VbkUG5ZTcTEXF5V2pYdz/Gdfrp6XfEhSLi3x8rEJdgZtzlfrLcTCz7BLaUgFpMEBx2LtitCYJ9K2+hS9jM9X+oX6+mb962UQDJTDa8v1T+cFUD/1x09eJomoL8w5N9ZeiETIzQKRk5KylH1VBULJvlCBkFNJJcUJBG4GWKnfvOks3wV+rN9Z3nrcwmBE5dyliChBEbnzsL6+gGuNH2wIzvJDlJKlp85f134RBd82gJP1ytqGrPxCRUFMAgtyorB8F8a+jVvoCOGQ5C8b0XLQlG2XQpAMCsFPX9f/tE5uwv5yHlymgbDJwFV4eNvCo5vg69a/mnuZhAMko7G0wmK9nYvI8+eslPSCOSsnJgNeOZ6ScW0B4ww3Pm7jkoey7ZKz5LA/Xl/7GhyOFfewzZeEa86+/ULUaVpp1qdpWcnlXlV1KompllzfyUA2GxzIblOooOMEpVlmEaUdlGxZ3XMbFChiNu2LJ+5CvUL2EIOLc22llXg2Z9uleEpBxT+/Vr9xX8BA89oSuRDh+n0yUF59Wv/8e/L+xkvlCf2MYivJiqxIr6zcKq3l9rlYq2wyzQ0JcBs1HY7+uIy76lej/aDmbLsUBzEgDltPHm99v0EusyQ7cHAqwlmZF5yVNXh6meRg7ODbO/Z4nl0cFLFZHOQ0/Ke8suLwwp03Jcs5b8CCW0++w/Ne8aymtcaHV6KtQ1O23YmDlAtaBxgBrOHUlODcuoYLQ24tYqgI11F+sUDuqbnzsoVRX9rBQC79QvkJRplJfpj56Lv6jQ2cOcIZx4XokUAwzy45KRvgJPkdOSWc0fCybIF8EE4eOsMGmy8V+6Cin3+BmjWdjHA0pEwumX5lNav0YmOPGHAROUlYAY/3unPterQMuF93yf2Z4CD42/v1B8uNa+BX33m4tb6Ci4/r88t49SIe73Dn660fF14y/+Ln9LOzmUxGfFXZXxZzv4yPI+cIZFHi5LTx+X3n8aLzdDHa8XG/7lJO09uEQXHC+h6MwEFevwUPaIkODdacJXpP762PfnF/OmT73AseXuZS/BRs49pCywgL+bRLPgpNu67N19cfCLQbhMYX97cePyVDyY/+9DIxy8+p45NiTsm8qjpeSr9YZn+Zplel0PTq0nz94QaOGtEJ+nrDuXbf+evamy+TGLy8OjPzgtlIEbP8spUvF53VJ2Onz0azjvt1l+wSmoi883X9R+CVq2RPHrAN/Psy8crPqDKVXFKSXlm3OCm+2CVaShpMEMfrJJaM6vDKw/o3T+t/20Sl2GoyvkXmXUqCHApFL4LXgAeMkmupcUEuLhHEoNutxfrnc3TGViDrG6+9TCJCY5JjZxrLnzmry40vnresZKLci3RGEl/hCErylyFkpFCnZN4PwhtCqKi2mE3iM+xSeEPTqgBy/T5u4rk3R44huPqQWbaRMQHnsODLRzfrf73vXFvGvT71h5u/CHKUIMMYLpV+ZY2eJL9YBy8pZUVuUsC7pxRd83W8UixaSpqy7VJWxKYRwr3rzlcbAq7d/2EFQ6L1hTlhn+AsXcdByVcrGIX5fEU4fersyyQfP/8UbDqbxFevqnRIrSOlz2eiQJGTgQU69dWnuDWP+HqtVufweXYnF2Jo8pVMubIgki+D4A3i4e4LOEsnAOeRLUwvj1C8tINpKdvaaXou3JRWctxyr7Mnz4H6bNxYr29Gz77yGXbJR8GpVxiegBkXGsvEGcFDB6+us6O1tzbmnPlNgW7DwtEErjNf/QyjlVuP17bWV+Nxuum0yTFo3L75AnWflHZ1X9J38TNK9h/ZM0i259Zk7kUvS/+ZlV9wxvT0/lHdnsUFiVnny5s411L/4Qrepk7+fWmZEoad6dw/8E6JbZhSybRmyv/RA09RzEl8AP7qU9zmu4ZziNERJC7DLuUmOIOJIaL1BziDWb/3cePOAjnZ7MYqmayEMejSUxATd8qySYB+hg2ovuhkFCmTfWVFR5FSLza+KYoppWk94dbjJ42l79qsJKQZdsmRqRBHIlRyq8e9OTzm4yuMcwj08H/hxFlBclbm+9lBeWyuFKeLWrkePyuTKhlJSf8DLwHfRr+L6RfrI/98+6RFZbuFH9f/HU+n/4os96j/2zpZsnVvof753Rbq82cc+LTv1Zz4olcyJ1PczAoe8D//Pbhm2HnX/hS9qj+YZ5ddG5xRPH7yKDF9qxuNKxuC89GfyMTitw/wzo+lp0JjaY0dHRPVqS98uo8b3ygpKf0PHNvZRtWkpRdsD6UMPxyn5s75caP+eLONPaQZdsmPctPUwOoTAd2/O1+Tgc3jDXjqF95x14LC6JuN2fEUkx9WBLp8NNog/pwcmkyCV/PKcmgy+8tCzWirLaf4039wRLH61PmPRXrFYytp4vPsUqBCc23XyYWnd66TufF7uGKkX6jff+qswZhn/b/I26sP63cW0Lw7d/BcvZdMkNJyLvWPvJNqu6hB8sVufZGVnMJvfVl9iv7F2oqz9FMLr9LPsEvODM1s/fXp1vqcsLX5cX31J8H56SZuAqDc3zSuuXrX+XLuhXBgMtfMgbKUzuRe3WCqnHrRi4/lDDf4xoPRl+82FlainV/36654T8rlQsNu4r+szmNMv/HZCls7VP/Tzfq968iLoInrD242bnzfvP7gpVkHwKlIRZJfWfYU2xyZ8Hx84Ww2GzDgzvJ974iBVgacz7NLVg1NUK1/Vv8Rt90JeMn7rUWh/vApYdwf8Jyb+qfzkcPtlTVn6XrjwxejM6Wsy5KyH7CUxJT8DxwLktsypZzOvuAjwkSF37B67DhGWz6dj+RG9+Mu2TA45eR88iNy3KNlwoKfztdvPOwXnLtzuFwLz+wEb/LJCrk1/mXkxqwsyf/Ih8psw42i2HY6dG/Ho7Lcs4/K8ATdprIJdrpsgpzi6759jdz98udlHOzfgyH+/F3gIjxYlxy3SA+X+Gy/e1qti0bwHODWxdl8PTfWOolXR3ndk9fKtnv58B7/uN+WAJsO+m06MTcUrfR+uY7CK2j3BuW8zX0JbwZET/K4iHbyoNvTO4UlA6t0C1YyNpzsFiwlNqx0C1YqNpzqFqx0bDjdLViZ2HCmW7CyseFst2CBxOe6BQvtmSSGoEUIQ6V45lmlwT2mm6yrWNheb9PHRDmRL5UTE7XxSlG1zgSWciX9pVwppsxjgn/dktuUDtr0rI2ScZZnuH7vfv1f71IAz9asM62WqO20XWEzEq3HO1Pm9SurniaPOGmenNQedTR8PjYczu4da+9ekOxfmcHu4yIYsevBwJQexlsajgPJtbJm9faUtGoV6N3T793m2UvvcXCviCO3rJFXcdPSi3pZeG1oyL/ft2KZ4AKYxr6eRKJnX+Dy0T6BuxBtD70/D2yzKgzRqyLimBhw6Vud0W28CxBfxvH0eR+DPXm1qgmxqlYu4MW5B2dHKefQG95iB/A+KHYDVv2jfyUxu6/WnbXrbnH/Uj22chFvUI2jXzgKbqR3Bx+p2X07sH1hvFC1uTC+9QtPgA857SYv01/3plXuSjdye94RANw7aZX66Eef/viS1Y4XZP9G/G2cFNAKeDMqfpzWZmeAi11s8DI8BsUDQy+06+2hh9Xvq1/dcL54gGMm90q7Zfc6uz4PfR40d90b+RO+35Fr4B52v3QYb6kJ7wnLnMbraKEXqpqh5W2tMIaXjwmDQo/UugnuCfpknxO5Qb4l+lwNXWiB7LWgCTfk7tlS4YhlloAdsNyMBfyAaWBaLXwF4v5EsT8W85Fhxc+ZfOFzZtuiblnA87VeVnfc0MpFUHVD2T4XRR9Hj4DEmcSNYFvruHMSRtIrjeUlsuoHA97L9W//s74Io5rrzidP6Ln3ca83KF2DjQuTNpK27iWSHMbnzI7wBX1Zv0qCUbtGmZH0GRB2O3eY9lOH1CXTdSH06483AD1A+rOt79fhi7C1fhs3FZG55QfPg96EuxhruoxSrU1UbatX7FeCXFiKzqf0y337pUDOQnTONOQM8jXhatrdLWttzhNVY3MuWhuf6SKSiKGG16Rjspe0vp+0rZ9g61cPfeuXwXtXj9QM430Q+t4+sHWMbn/8YzDPCbNsT9EMpcgMpFbynZLpJZZGj2iEuj7Jzpn90C39yOzNxIIeaCYVAHDpQL/zZGr6yJEIvr2M4h+iFKqtlra4ySJEGGawywMdAG1jZloYlgDopuburPZk+9qbXJ8IqIyctuVdinw57PIgGOrAncI7a0NOT6TTFYnjEFcJ4WQf8OiUbhRCd+NGjD+wwDh/HXisPxYCAm9c13ZI7Ge34cKDf0mu2E+HGHIm1e9eo5sTPQN/mfn6vFM+iI0SVEKO7a6KZDfTxUBq3FtZOcrgHW30auGhGCO971FGkbLPHepM6ppRqGq2F/IyLzFSeLEg/240Gkllr91LxXBkVq7UbAF9dqheLehmEEXssBi5GIxhQOK1MYHe5xxjIhIT3A6NYY96Qc9BQ53QDAGwDpUfDniygwmSLxInvILJn9vlSzHn19+thKXG7UsekT3kAtfeSmm8RthrAXdF3nZ8Kwb51qOmd0fbrgjLOMdDzHd+25HTK8WIQHKMW4GbqoLEpb66UNV/D5VIPmnd/Mwpd7Hl0OicUlI0paB2kwQePeIP08oGEyYfkGwOPDY/eC9CINNibPjgydBOza5BT6Viw4cObm1ed1ae0Cq6iXoagJ99TpgrQJemHazdQ12KDesnuk/ubGz47YPdp0UOwJ47+JxoAcBPHntedEbgY6OHG59+vLU+R6/M7CL4TDI2fHZ07DlBTysxbtlV98ACk2w9vl//fK2+uVD/5v859+aeF/Vlck4LruDsNugMgMadDmRrHR4vs4RRx25WAMoFY8zLD58TcSRQjcF7i7oHOgOgH9zEcOlm96Gn0mTTbP0OuSDt2o3u923W2wHWddApNKErzhebz0lmZXKrXPNWh+7pYrL1fbFxcx5YHltAzn7oJvNkY83z9d1TCclY5CHS3euANL1G89EanQPuPvuDSWGX4958Xo1IQh3BJY/dQz8TC+0S655wKbGoxXDdg5/z9uFtrjvX11B1fvGACnKv89enfd2sS+LrunWNbn9qzK93U5STwTpoS7opbBnvCoTnZOBTdOnbXz7rvg1LxyL3rHdPxkDPNZbn0QSv328PfTBBB4HdHcDaGgYzGDYkgnWILOZx4UXEArDEMI0Ldh4DCERct4sBBMJtHna4nGq/mNsvKqHgQCZDYgMdD3Tl8EBXGMQ1RcP/B0iMv9u2pik82lGDaGiwg+Zkd9mc7jIIecFwdudq2/IHKdAU2fCv8u6UZdwSrcnqBkZDBMyJQQKGA59cGAkXHJplYxajGlEYTemFglbm66NBFS8U4hZyF1t8oF5UacjxQFO1z7LAb8Ius/AgiZrStRX++gm6ooKSii5H8FZe4FEH7tILyT8eCAHSsKK/KpBnlUTN7Rt+HYSPhsdePJkItrFnbprCLWFkrfDQ8RdfJNzQqZcGQRjeZrVGIhG5XsPPEH03PQ+1WNMLGh7CxDV/0KUSihY471uP17ASvICTTfPPuYdCLSzWb9wnt7atb2K2qw8bS9+hc/hgvV+oP950S+AF6OCsLK2wgluP1vFsUVznujDXWNrANS3Ep5wnboZzGy+qwJvqBX92HjcPPFrC26Sd76/hNipcbXBvjpwptPSJN1FD+9vD/+0zpwWvDWQr1k836/Nf4y2m9IKtxu0VuvWXTP+vzCM2zGf4fh2HYB8t4B6a+voKzrX+OO+uc4Cav8QDUZ1bDxmu4RkjIVA3Ugnr4umHh7NvrcOnTUJD1ixKvRAOpPmBvvhhDi/XJjVjmasAYPm6s/mVgEdpfw0ZPv+enbKEm5rx2oB2ZIv7cuKLSTPDRXKUn43lcv7zfuPaIgyNvRz4XrBQYAUV9JL3HlkRFXLeLNtgBvDbOMnGeHGv+y9bgCQYarlYwyVdnDbCvN5MEJniGDfMok6mgXAKyFtHxBY9CL09riCXdbYmO543S5giBePk3zdLuCwcBfGNmmUM8euRQB3iXMzlvfwkzF6yCHiQrR2iWtXScC2sr/efrGz9/anzFV5fBf10xbn1HdMsCVBbgJytJUjzqULkVqeTtWxsUgg3tzNFSJ5dTZgUUzGhpFqAu/tKRIVq22aJviYvbLPCpeisk14uDsXKYC8J8twatsEEbQ+2bw+nWoCn0D8gWgevkcEODShV8xKxlmgfo9+PAx7Yc4NTsvvRGq/WJmwDNK9hj1O83e2oO7cuFgGiVe1xd9rUV8Qh7H27InF2BVdbo8/kYofwSqaF2HjLD6t6VQOjX7WpspfdGTbPPpOfvNVrT+nVfqHHqky7s7g9kGT/0zVyA7Fh3B0FQs6upKIe22BiSkYyhVZnhzuAX5OtGQZb5066GNMAKu+lWXtIN5Dlnt4S7RBUfmH2YN40ipZZqwzjk0sxSXo9Fnjxq2AyKYa+S0l4gQKd8OEFlntzKz5ty1tSzpTCM54yWBYlrvdFKeajH+pwtsY/sIOj5YFl5CzTdl2Nk67YxzQvPklcd3umnU2ZDdc/W8Sz8W4t1uev139cgC5t3Fjnt3twtCnXShO4xj6t9EuiGJHBzrv2fKc0Yz8KIV2twlGuVvEol/EJ529XqFVw00aMWQWCEl3junfPc+1dufu9K6ZyyU57l+TFJ7ld73pnboU2gEd1aq4//Tw7NbS1hnTaS9mxye53rCKn0512LMmLT8l2HUujKOB2ka0sbTtWkrK/iKuodL1Xk5mk3KkypnnxSWnXq8ePUkVMrk1iR6Vv07vJlNIv/o/v3dRzUMZi5zJL8uJTql3vnn0bx24wbrrxMTs6tE2/yunsP0i/hneR0KEZG6C5o7MI1715FNdqtBYRjnAf2O9eRMQd2E2aprsVcK8fWoCRub8n1aq6o72mHallbWZ/KV5RZ7lBWknDTklgqLa6v2ICJ8wmyNf9k3pZLed11dhf1ayLel5rzTGTJoYcSaYIP7xp9yrOgsPAfemnrY05N7TkDZi9COQzo1+x9ItqfrY9uixTJ+gOVm3LLBeHWWyBTME6j5bBn8SzOX+8DyMLmqGDtiSsmqFVtxvXEARJYzrBD/cu3cALZQTniw0cBn+56Px4eweEndKMCkdTUFxqNcFiCFU5QRlBc3/HpU7QR5gd8QKJSLHzqZ35p2TKKoi5G0EZrHj7eLUq0xRepKuxsEDiNpvOtRUa9cK1x2sr5AhMFoDHVV0C7T98ERWJ5YPBtlksGtpptawZR4jc9fZQ+SOvxB5OESJC49hkPHtwmUVraO3OrWvOI3IdCd7D/MMcNFCor3+JCLALBaOifTTqxEJlDtlDw/YjoAG9tV5fXMOwEd7YzQWdJqxtiEIuLoxEkATzSLq+uMKI1BRoFLhIIwkegjxsEwgTKHf6QEno7eEGRjppPK2+vt749CE5uA8bdOsjvzDp/Eqw7/XypInLdMh5o8A9ABznVkh41J30JMQNRvx63z7z6z5cADK/4rHFAy9YR+uAQb6lVauU+cJCMjMzQ/kexCBvWhUiKk387M1mmEWzvYCUp8pRMYvOt1K6YgkFEljduKew45Vy0XcU0nx0X3YP+x85f/iMcGTs5MjJ0bGR416IH358IoTMDmV7r4kVy7yoFzA6qM6iNmATKwW9WoE3B8pmWUPyTOi4aYxESszyhFGzyFQJihVAC0sUM8NUn0ZXNI5LjOkxO008Thg2xN6edg7b3CawlzzDyUpErVthn9hFXcC8n+Il0MDQbGkOE0EPxttHcVEz3nmy6RfGwypvb5JzA+Y3++n5AV/jurbPXClpgsMOAFq+3vjwCkghHm/15aIPEc+Fhr8bq40vgBxP+wU6MAaxbQMTI9mfkjjXh1e4llHRalxbIEcLkaIhj6YNFal48tV01o3bdl2Hfec3jpyJ5Px0t6lllOxcy/im+U8TNds2y2zaiib8qTGSHM8bZpV3i7Zj7B1slHalWxZlsMAEFq0uINwyJ9uyO8dXv/HveFA5aw9FlXMsqe9I/voupjsh4M+uJgIzAv7WkOp5vaqDN9xrTnyA24AF+IPbkCGJm1vdKWh3gzHZZ7JX8LK9RorxW3oCn8C9s6D0SRintMiFmYiqcStv+hBnKojstUU11BMBqrkUHg0yoRu6TQvS+dyoope55rDtK2ACcN9zzdYKZ8O44b4XUoO/2yWcHbHoF2KxvgBqO2/MMzaExxDpka9Z2AkEtb0B2GGak5e/6WE49vy2cyx/0+Ojycptjyj7EOBBnmP2Xt7LcyrZHnRqsrc0S+iLHi0MhTXrFOXcPTPwXaNfcaNbDQwViJ1WoLvbEVX6jWPrOA4I2e53b//4ZSGcvamqpm1XuOmIZRfIL2vHYUPDeuh0WGDn255A64rlieOo+0ZRJ/RqfVAHdiN1R3AXf5w9vuk/HoBHUD5+FYizT0yvjZCX5Tk4O1bo7YG6xtnwbtyYtXr6+nCzYIcFy6YdKNdhsdKsW8Tvjdf8LqUt6hfawYDCjPaQGDEMjl59rAsuE6KSnWnVscNAtl48eaeo2qYVr0GTR4oI2zaPmzNQVMWSceLPAAqxUlXXYn2vDe2XcMs8E20PIdUw+oD42N8H2NZFSu6xwwQrP6Ntq/kpcvRDb49ZLplQMYYkwCsMdDLgfFkge9+RdVueGdGuOMc/1SlzhpkqYkPHCn1/8JQBeQPU+ABrif+zl2OA5CCpoKod6pkwzPx0z8BeT1+wMigNMTbNhj0aC6tGku8YsWF+jawrKZC+ODVxvax+/BPK59WgT0INbn4ONCt6OUADzlx3hQZE8QXJ3DyGdOEIflWacY6w8/FglW7jWPKfkcfP6mWA1xv7p5iwT3BB9XFkD8ICrVauISMG1XYgE7UXALSPz4Z/Iujj94DHi3yJCK7iSvhdkEgIwLrkYI79KGcqytleTyTcB0aBeFWzR2zb0sGX0Xp7gqV6+iNEFikCdYyzJQontZnqcb08Td03AWOVK/O47EMVGh+ubP19U2CLCBpfzoORKeiWlrf3MrofKfd63dlLRNftkN5YvKkGFdhv0rQOg0j3+qe2GERBEw1ds4wq6mdgHBxgxoF3dGDgN+l2VOwdzIGbET1Fg5GvKnfiHcjQsCCiDo7OeiaUk2lBrB2MjFryWewsrUz6bR+an6p2FohcLrLN15jf1HGTLikVNycnUZPDmzeb3hwIvBkreABUDoBqgSkwAhC4VweCrxAGAkFCeVbNHWYPuF+QhHxz/GBhHCnBRwoxnWDAE69X4S/tqpJq90Iz+xFVzy6gtuxjqtkzVOCiFcwS9sMs9pa/WGWv50iDv00jxlN2yRj+/z5FxDtkNgEA" />
         <Property type="Chrome" key="CHROME_Element" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -257,6 +256,15 @@ if(this.Data_use[0][1] === '검색 결과가 없습니다.') {
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_10);]]></Script>
+    </Step>
+    <Step id="S1ce2c6a525ba471caa2edb12602013b6" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="5b1d20fb-1fd4-4a9e-afac-f2e1e99a6664" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_TaskName" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="T_2_첨부파일저장" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RunTask(this, 'T_2_첨부파일저장', null);]]></Script>
     </Step>
     <Step id="S13e9074c4fc14ebebaa56a2d804ca9bf" ver="311241220" createVer="311241220" type="Chrome" name="ChromeGetListData" dpName="ChromeGetListData" dpValue="RESULT" dpValue2="카카오페이 종목분석 - 카카오와 함께 걸어갈 길 : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="521c49e1-3155-4296-b0a9-2cc1b190ed71" type="Chrome">
@@ -323,7 +331,7 @@ if(this.Data_use[0][1] === '검색 결과가 없습니다.') {
         <Property type="Win" key="Mouse_OffsetPoint" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'0, 0'" order="12" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_11);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_12);]]></Script>
     </Step>
     <Step id="S5ae4f295bc934211953a4cf53e9263c3" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="731ce37c-1096-4c30-be9a-1154f477a5a3" type="Flow">
@@ -403,7 +411,7 @@ for(var k = 0; k < RESULT.length; k++) {
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_13);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_14);]]></Script>
     </Step>
     <Step id="S83aecd4672334d0b888b936095662a22" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="731ce37c-1096-4c30-be9a-1154f477a5a3" type="Flow">
@@ -430,7 +438,7 @@ this.index++;]]></Script>
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_15);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_16);]]></Script>
     </Step>
     <Step id="S4dbb92b1057b4599a675a955a762c877" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="4a641b77-df7e-435b-8cb7-f5393c09841d" type="Flow">
@@ -522,7 +530,7 @@ for(let i = 0; i < this.Data_content.length; i++) {
         <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_22);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_23);]]></Script>
     </Step>
     <Step id="Sc81196cc053a4ff0a2c8e137952eb5db" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="932c785a-197c-4ca6-83d9-41a83184d489" type="Flow">
@@ -532,6 +540,16 @@ for(let i = 0; i < this.Data_content.length; i++) {
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'P_G_MainProject', null);]]></Script>
+    </Step>
+    <Step id="Sdc61aeeb888949c9b6b2ae3a17e7c494" ver="311241220" createVer="311241220" type="Flow" name="TerminateAll" dpName="TerminateAll" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Jump" enabled="True" mainSet="0">
+      <Properties id="2e53cf37-46de-459a-9c3a-e5dde6d2beee" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_ExitType" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Pass" toggle="Pass;Fail;Stop" order="1" />
+        <Property type="Flow" key="Conditions_ExitCode" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Result" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[Exit('Pass', null, null);]]></Script>
     </Step>
     <Step id="S2778e3c8e9cc4c23891f85286fe49419" ver="311241220" createVer="311241220" type="Flow" name="Else" dpName="Else" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseOpenBlock" enabled="True" mainSet="0">
       <Properties id="354d6af9-e7a7-4046-98f3-ca36770280b2" type="Flow">
@@ -545,12 +563,12 @@ for(let i = 0; i < this.Data_content.length; i++) {
     <Step id="S446ea370ddca4dd3b64676682c3ffb1a" ver="311241220" createVer="311241220" type="Flow" name="TerminateAll" dpName="TerminateAll" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Jump" enabled="True" mainSet="0">
       <Properties id="2e53cf37-46de-459a-9c3a-e5dde6d2beee" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_ExitType" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Fail" toggle="Pass;Fail;Stop" order="1" />
+        <Property type="Flow" key="Conditions_ExitType" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Pass" toggle="Pass;Fail;Stop" order="1" />
         <Property type="Flow" key="Conditions_ExitCode" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Result" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[Exit('Fail', null, null);]]></Script>
+      <Script><![CDATA[Exit('Pass', null, null);]]></Script>
     </Step>
     <Step id="Sd77a990245144c24ba638fff7e6597c9" ver="311241220" createVer="311241220" type="Flow" name="EndDecision" dpName="End-IfElse" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="2efd4a4c-822c-4616-88d1-8290eaae5aed" type="Flow">
@@ -577,13 +595,12 @@ for(let i = 0; i < this.Data_content.length; i++) {
         <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_28);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_30);]]></Script>
     </Step>
   </Steps>
   <JScript><![CDATA[function T_2_데이터추출() {
 
     this.i;
-    this.j;
     this.index = 0;
     this.Data_content = [];
     this.Data_header = [];
@@ -592,9 +609,9 @@ for(let i = 0; i < this.Data_content.length; i++) {
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {4:[19,27],5:[17],6:[16],7:[9],21:[24,26]};
-    this.GotoReverseBlockMap = {19:4,27:4,17:5,16:6,9:7,24:21,26:21};
-    this.GotoStepBlockTypeMap = {4:'Decision',19:'Else',27:'EndDecision',5:'Loop',17:'EndLoop',6:'Loop',16:'EndLoop',7:'DecisionThen',9:'EndDecisionThen',21:'Decision',24:'Else',26:'EndDecision'};
+    this.GotoBlockMap = {4:[20,29],5:[18],6:[17],7:[9],22:[26,28]};
+    this.GotoReverseBlockMap = {20:4,29:4,18:5,17:6,9:7,26:22,28:22};
+    this.GotoStepBlockTypeMap = {4:'Decision',20:'Else',29:'EndDecision',5:'Loop',18:'EndLoop',6:'Loop',17:'EndLoop',7:'DecisionThen',9:'EndDecisionThen',22:'Decision',26:'Else',28:'EndDecision'};
 
 
     this.run = function() {
@@ -636,11 +653,11 @@ for(let i = 0; i < this.Data_content.length; i++) {
 
                 //------------------------------------------------
                 STEP('S9803a4fa8c7643018e7ce732570753c7', '[6] For');
-                for (this.j =  this.i; this.j < this.i + 5; this.j++) {
+                for (Global.j =  this.i; Global.j < this.i + 5; Global.j++) {
 
                     //------------------------------------------------
                     STEP('S632740ca182e49f5b3bdeafce95bd512', '[7] IfThen');
-                    if (this.j>= this.Data_num) {
+                    if (Global.j>= this.Data_num) {
 
                         //------------------------------------------------
                         STEP('S00f1d748a545476ca180be6e3480bc1d', '[8] Break');
@@ -655,22 +672,26 @@ for(let i = 0; i < this.Data_content.length; i++) {
                     StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_10);
 
                     //------------------------------------------------
-                    STEP('S13e9074c4fc14ebebaa56a2d804ca9bf', '[11] ChromeGetListData');
-                    RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_11);
+                    STEP('S1ce2c6a525ba471caa2edb12602013b6', '[11] RunTask');
+                    RunTask(this, 'T_2_첨부파일저장', null);
 
                     //------------------------------------------------
-                    STEP('S5ae4f295bc934211953a4cf53e9263c3', '[12] ExecuteScript');
+                    STEP('S13e9074c4fc14ebebaa56a2d804ca9bf', '[12] ChromeGetListData');
+                    RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_12);
+
+                    //------------------------------------------------
+                    STEP('S5ae4f295bc934211953a4cf53e9263c3', '[13] ExecuteScript');
                     this.Data_header[this.index] = [];
                     for(var k = 0; k < RESULT.length; k++) {
                         this.Data_header[this.index][k] = RESULT[k]
                     }
 
                     //------------------------------------------------
-                    STEP('S669eab79b52c470b87f9f666fc07768f', '[13] ChromeGetListData');
-                    RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_13);
+                    STEP('S669eab79b52c470b87f9f666fc07768f', '[14] ChromeGetListData');
+                    RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_14);
 
                     //------------------------------------------------
-                    STEP('S83aecd4672334d0b888b936095662a22', '[14] ExecuteScript');
+                    STEP('S83aecd4672334d0b888b936095662a22', '[15] ExecuteScript');
                     RESULT = ToJson(RESULT)
 
                     this.Data_content[this.index] = [];
@@ -678,19 +699,19 @@ for(let i = 0; i < this.Data_content.length; i++) {
                     this.index++;
 
                     //------------------------------------------------
-                    STEP('S12b5b144c97b4d1ea07a702e8050eddd', '[15] KeyInput');
-                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_15);
+                    STEP('S12b5b144c97b4d1ea07a702e8050eddd', '[16] KeyInput');
+                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_16);
 
                 //------------------------------------------------
                 }
-                STEP('S4dbb92b1057b4599a675a955a762c877', '[16] End-For');
+                STEP('S4dbb92b1057b4599a675a955a762c877', '[17] End-For');
 
             //------------------------------------------------
             }
-            STEP('S733a90ae015b46a4a6f0229dbbf34ac9', '[17] End-For');
+            STEP('S733a90ae015b46a4a6f0229dbbf34ac9', '[18] End-For');
 
             //------------------------------------------------
-            STEP('S7aa4d68872a5473ea5abe50a8d401319', '[18] ExecuteScript');
+            STEP('S7aa4d68872a5473ea5abe50a8d401319', '[19] ExecuteScript');
             for(let i = 0; i < this.Data_header.length; i++) {
               let parts = this.Data_header[i][0].split('\n\n');  
               let body = parts[0].trim();
@@ -713,43 +734,47 @@ for(let i = 0; i < this.Data_content.length; i++) {
 
         //------------------------------------------------
         }else{
-            STEP('S7890657ba6744a209cd9197ae216917d', '[19] Else');
+            STEP('S7890657ba6744a209cd9197ae216917d', '[20] Else');
 
             //------------------------------------------------
-            STEP('S51a44b92f20442baaa5148578829a261', '[20] InputBox');
+            STEP('S51a44b92f20442baaa5148578829a261', '[21] InputBox');
             RESULT = InputBox('Yes','Yes/No', '검색결과가 없습니다 다른 조건으로 다시 검색하시겠습니까', 0);
 
             //------------------------------------------------
-            STEP('S0e0ab39d8da346bbb34b5d5c31322873', '[21] IfElse');
+            STEP('S0e0ab39d8da346bbb34b5d5c31322873', '[22] IfElse');
             if (RESULT == 'Yes') {
 
                 //------------------------------------------------
-                STEP('Sad09db30ff61430aac3dfa0feeae3466', '[22] ChromeClose');
-                StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_22);
+                STEP('Sad09db30ff61430aac3dfa0feeae3466', '[23] ChromeClose');
+                StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_23);
 
                 //------------------------------------------------
-                STEP('Sc81196cc053a4ff0a2c8e137952eb5db', '[23] RunTask');
+                STEP('Sc81196cc053a4ff0a2c8e137952eb5db', '[24] RunTask');
                 RunTask(this, 'P_G_MainProject', null);
+
+                //------------------------------------------------
+                STEP('Sdc61aeeb888949c9b6b2ae3a17e7c494', '[25] TerminateAll');
+                Exit('Pass', null, null);
 
             //------------------------------------------------
             }else{
-                STEP('S2778e3c8e9cc4c23891f85286fe49419', '[24] Else');
+                STEP('S2778e3c8e9cc4c23891f85286fe49419', '[26] Else');
 
                 //------------------------------------------------
-                STEP('S446ea370ddca4dd3b64676682c3ffb1a', '[25] TerminateAll');
-                Exit('Fail', null, null);
+                STEP('S446ea370ddca4dd3b64676682c3ffb1a', '[27] TerminateAll');
+                Exit('Pass', null, null);
 
             //------------------------------------------------
             }
-            STEP('Sd77a990245144c24ba638fff7e6597c9', '[26] End-IfElse');
+            STEP('Sd77a990245144c24ba638fff7e6597c9', '[28] End-IfElse');
 
         //------------------------------------------------
         }
-        STEP('S1deea2e5bae841209bf0bb18e9148e03', '[27] End-IfElse');
+        STEP('S1deea2e5bae841209bf0bb18e9148e03', '[29] End-IfElse');
 
         //------------------------------------------------
-        STEP('S8964dcfa8261442ba654ae01417d6a9d', '[28] ChromeClose');
-        StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_28);
+        STEP('S8964dcfa8261442ba654ae01417d6a9d', '[30] ChromeClose');
+        StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_30);
 
 
     }
@@ -774,6 +799,7 @@ for(let i = 0; i < this.Data_content.length; i++) {
       <StepNode step_id="S00f1d748a545476ca180be6e3480bc1d" group_name="fc968780-ff8a-494a-9437-cc2f95f01911_Untitled" folded="False" color="" />
       <StepNode step_id="Sb968547279d14c66af6e8a9ba8f7fb2e" group_name="" folded="False" color="" />
       <StepNode step_id="S7990c0a8cccc4f0ba067eefe8cc794b9" group_name="bcb048d1-c532-4a50-b1c1-3e52846290d9_리서치 선택" folded="False" color="" />
+      <StepNode step_id="S1ce2c6a525ba471caa2edb12602013b6" group_name="" folded="False" color="" />
       <StepNode step_id="S13e9074c4fc14ebebaa56a2d804ca9bf" group_name="de075137-19da-4a43-a8a9-41689583a181_제목, 증권사, 날짜 가져오기" folded="False" color="" />
       <StepNode step_id="S5ae4f295bc934211953a4cf53e9263c3" group_name="de075137-19da-4a43-a8a9-41689583a181_제목, 증권사, 날짜 가져오기" folded="False" color="" />
       <StepNode step_id="S669eab79b52c470b87f9f666fc07768f" group_name="a8e95bfa-c8c3-42a3-b1e2-8913077d0bcc_부제목, 내용 가져오기" folded="False" color="" />
@@ -787,6 +813,7 @@ for(let i = 0; i < this.Data_content.length; i++) {
       <StepNode step_id="S0e0ab39d8da346bbb34b5d5c31322873" group_name="" folded="False" color="" />
       <StepNode step_id="Sad09db30ff61430aac3dfa0feeae3466" group_name="56dba586-008f-4852-9d32-faff4ee56bb6_Untitled" folded="False" color="" />
       <StepNode step_id="Sc81196cc053a4ff0a2c8e137952eb5db" group_name="" folded="False" color="" />
+      <StepNode step_id="Sdc61aeeb888949c9b6b2ae3a17e7c494" group_name="c93bd1c2-0090-4a0a-8112-18a07212ffe7_Untitled" folded="False" color="" />
       <StepNode step_id="S2778e3c8e9cc4c23891f85286fe49419" group_name="" folded="False" color="" />
       <StepNode step_id="S446ea370ddca4dd3b64676682c3ffb1a" group_name="a07d82da-38a3-491e-98ab-58e5be966f02_Untitled" folded="False" color="" />
       <StepNode step_id="Sd77a990245144c24ba638fff7e6597c9" group_name="" folded="False" color="" />
