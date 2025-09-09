@@ -1,4 +1,4 @@
-<Process id="92673322-e20a-4ea8-b4a6-5eae6767e161" type="task" workType="foreground" name="T_2_첨부파일저장" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="29" Orientation="horizontal">
+<Process id="92673322-e20a-4ea8-b4a6-5eae6767e161" type="task" workType="foreground" name="T_2_첨부파일저장" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="33" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 09:51:05" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 15:37:45" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-09 10:17:37" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -18,7 +18,20 @@
   <LinkItems />
   <Variables />
   <Steps>
-    <Step id="Se80f168b9b8e4b92a5b92497d2c99661" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="RESULT" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sb6fa012706da4f58affad86b9c137e00" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.flag == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="6bea93c5-0918-4a09-8d5f-bd075c0e121d" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.flag == true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.flag == true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S8241fceb0b4a4c60b39a70c4e6a1ca77" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (Global.flag == true) {]]></Script>
+    </Step>
+    <Step id="Se80f168b9b8e4b92a5b92497d2c99661" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="RESULT" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="a927a8cf-b589-4f06-95af-86aca2623f94" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -26,46 +39,73 @@
         <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_2);]]></Script>
     </Step>
-    <Step id="S9aa1e38e322a47e2a0bf615ab5223157" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="(RESULT == true) &amp;&amp; (Global.flag == true)" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
-      <Properties id="513dacb0-03bf-49ed-bf08-33e900cbfb75" type="Flow">
+    <Step id="S38b8b9e979064e06bbad7f568edd862f" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="(RESULT == true)" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="03ea23c4-9942-42fc-bbe1-691578d98b27" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="True" encrypted="False" isChanged="N" value="(RESULT == true) &amp;&amp; (Global.flag == true)" order="1" />
-        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="(RESULT == true)" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="(RESULT == true)" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="IfThen_Condition2" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.flag == true" order="4" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S179f046108264c4fa4947ccc85c3e664" type="Flow" name="EndDecisionThen" />
+        <RelatedStep id="S6e796fb61cb44915bc6a73750ccdbb42" type="Flow" name="Else" />
+        <RelatedStep id="Saf567434dfe24af1a70c0cb75d1f1440" type="Flow" name="EndDecision" />
       </RelatedSteps>
-      <Script><![CDATA[if ((RESULT == true) && (Global.flag == true)) {]]></Script>
+      <Script><![CDATA[if ((RESULT == true)) {]]></Script>
     </Step>
-    <Step id="S40e8149f3220426bb2bc359a62c43cf3" ver="311241220" createVer="311241220" type="Desktop" name="DeleteDirectory" dpName="DeleteDirectory" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S40e8149f3220426bb2bc359a62c43cf3" ver="311241220" createVer="311241220" type="Desktop" name="DeleteDirectory" dpName="DeleteDirectory" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="83f99da0-9d58-4532-87fb-c241b6cc87b1" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_3);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_4);]]></Script>
     </Step>
-    <Step id="S46a9b6a12b1d4290b647861877b17583" ver="311241220" createVer="311241220" type="Desktop" name="CreateDirectory" dpName="CreateDirectory" dpValue="C:\Users\3CLASS_010\OneDrive\Desktop\3team\RPA\데이터추출\첨부파일" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S46a9b6a12b1d4290b647861877b17583" ver="311241220" createVer="311241220" type="Desktop" name="CreateDirectory" dpName="CreateDirectory" dpValue="C:\Users\3CLASS_010\OneDrive\Desktop\3team\RPA\데이터추출\첨부파일" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="03835c5e-da09-4887-9127-dd6fc5b021b3" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_4);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_5);]]></Script>
     </Step>
-    <Step id="S179f046108264c4fa4947ccc85c3e664" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
-      <Properties id="e1b04236-3bc5-476e-ac21-4553e1c20823" type="Flow">
+    <Step id="S6e796fb61cb44915bc6a73750ccdbb42" ver="311241220" createVer="311241220" type="Flow" name="Else" dpName="Else" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseOpenBlock" enabled="True" mainSet="0">
+      <Properties id="d3b29f16-644d-4b4d-8294-e8222950be2d" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S9aa1e38e322a47e2a0bf615ab5223157" type="Flow" name="DecisionThen" />
+        <RelatedStep id="S38b8b9e979064e06bbad7f568edd862f" type="Flow" name="Decision" />
+      </RelatedSteps>
+      <Script><![CDATA[}else{]]></Script>
+    </Step>
+    <Step id="S272a2442a20d4ea7b5cf5106acfb440f" ver="311241220" createVer="311241220" type="Desktop" name="CreateDirectory" dpName="CreateDirectory" dpValue="C:\Users\3CLASS_010\OneDrive\Desktop\3team\RPA\데이터추출\첨부파일" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="03835c5e-da09-4887-9127-dd6fc5b021b3" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_7);]]></Script>
+    </Step>
+    <Step id="Saf567434dfe24af1a70c0cb75d1f1440" ver="311241220" createVer="311241220" type="Flow" name="EndDecision" dpName="End-IfElse" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="a4017f97-e22c-4e83-94c9-f5039a9badac" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S38b8b9e979064e06bbad7f568edd862f" type="Flow" name="Decision" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S8241fceb0b4a4c60b39a70c4e6a1ca77" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="8da28639-384b-40a6-af4a-3e9ca3b0b431" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="Sb6fa012706da4f58affad86b9c137e00" type="Flow" name="DecisionThen" />
       </RelatedSteps>
       <Script><![CDATA[}]]></Script>
     </Step>
@@ -74,7 +114,7 @@
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
-        <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
+        <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="3" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://finance.naver.com/research/company_read.naver'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Chrome" key="CHROME_FullPageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="https://finance.naver.com/research/company_read.naver?nid=86268&amp;page=1" />
@@ -129,7 +169,7 @@
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeIsExist', this.chromeisexist_info_6);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeIsExist', this.chromeisexist_info_10);]]></Script>
     </Step>
     <Step id="Sd11265412e364b07aca5c310b25cb3d1" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="286d0658-b49d-4646-b28f-fde506558752" type="Flow">
@@ -205,7 +245,7 @@
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_8);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_12);]]></Script>
     </Step>
     <Step id="S9eebc9af7b5c4dcd8bf8d9540f6f2459" ver="311241220" createVer="311241220" type="Win" name="IsExist" dpName="IsExist" dpValue="다운로드" dpValue2="1448863679877.pdf - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="b75e65a5-5036-4c5e-bdc2-5835aba1b705" type="Win">
@@ -272,7 +312,7 @@
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'16, 16'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_9);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_13);]]></Script>
     </Step>
     <Step id="Sb67227c1fde4476db66c3c49c545e7f5" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="f55aaf54-e05d-49e9-a0ed-dfb8e8210a6e" type="Flow">
@@ -353,7 +393,7 @@
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'16, 16'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_11);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_15);]]></Script>
     </Step>
     <Step id="S833e1fae76bd480ca3c4ef256b7ac1c1" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.flag == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="2b870ac4-afd5-4e1c-bc47-038b091593e4" type="Flow">
@@ -379,7 +419,7 @@
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_13);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_17);]]></Script>
     </Step>
     <Step id="S9bc63d5f899c4396b07b74ddcf57568f" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="54341728-94ed-4a20-9d54-2e480b26374f" type="Flow">
@@ -465,7 +505,7 @@
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'44, 13'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_16);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_20);]]></Script>
     </Step>
     <Step id="S4047d2b2fda24f9d903eb0966e8fb1b3" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="a3867c6c-22dc-4a16-b932-54d7b8d21e9d" type="Win">
@@ -478,7 +518,7 @@
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_17);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_21);]]></Script>
     </Step>
     <Step id="Sf5de7ce0f8504285aef07249e72ed9ba" ver="311241220" createVer="311241220" type="Flow" name="Else" dpName="Else" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseOpenBlock" enabled="True" mainSet="0">
       <Properties id="48478354-2dd4-44b0-9e53-28fa34dbf498" type="Flow">
@@ -554,7 +594,7 @@
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'100, 50'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_19);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_23);]]></Script>
     </Step>
     <Step id="Sc9b0f1008d514f27a7b8ff58979fa5ec" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="9e3ba4de-a01f-4d09-9971-15e1a38bad64" type="Flow">
@@ -634,7 +674,7 @@
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'100, 50'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_21);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_25);]]></Script>
     </Step>
     <Step id="S2ceab1660b77495c85d649d7d4d1b2fd" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.flag == true" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="2b870ac4-afd5-4e1c-bc47-038b091593e4" type="Flow">
@@ -660,7 +700,7 @@
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_23);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_27);]]></Script>
     </Step>
     <Step id="Sdded270d7f6546adbd9c4c029dd527da" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="54341728-94ed-4a20-9d54-2e480b26374f" type="Flow">
@@ -746,7 +786,7 @@
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'44, 13'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_26);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_30);]]></Script>
     </Step>
     <Step id="S318fa128b88d4303a13ab9ca209b1d12" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="5c217da0-7984-4cd9-8a89-aa23c7916010" type="Flow">
@@ -780,128 +820,144 @@
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {2:[5],7:[29],10:[18,28],12:[15],20:[27],22:[25]};
-    this.GotoReverseBlockMap = {5:2,29:7,18:10,28:10,15:12,27:20,25:22};
-    this.GotoStepBlockTypeMap = {2:'DecisionThen',5:'EndDecisionThen',7:'DecisionThen',29:'EndDecisionThen',10:'Decision',18:'Else',28:'EndDecision',12:'DecisionThen',15:'EndDecisionThen',20:'DecisionThen',27:'EndDecisionThen',22:'DecisionThen',25:'EndDecisionThen'};
+    this.GotoBlockMap = {1:[9],3:[6,8],11:[33],14:[22,32],16:[19],24:[31],26:[29]};
+    this.GotoReverseBlockMap = {9:1,6:3,8:3,33:11,22:14,32:14,19:16,31:24,29:26};
+    this.GotoStepBlockTypeMap = {1:'DecisionThen',9:'EndDecisionThen',3:'Decision',6:'Else',8:'EndDecision',11:'DecisionThen',33:'EndDecisionThen',14:'Decision',22:'Else',32:'EndDecision',16:'DecisionThen',19:'EndDecisionThen',24:'DecisionThen',31:'EndDecisionThen',26:'DecisionThen',29:'EndDecisionThen'};
 
 
     this.run = function() {
 
         //------------------------------------------------
-        STEP('Se80f168b9b8e4b92a5b92497d2c99661', '[1] IsDirectoryExist');
-        RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);
-
-        //------------------------------------------------
-        STEP('S9aa1e38e322a47e2a0bf615ab5223157', '[2] IfThen');
-        if ((RESULT == true) && (Global.flag == true)) {
+        STEP('Sb6fa012706da4f58affad86b9c137e00', '[1] IfThen');
+        if (Global.flag == true) {
 
             //------------------------------------------------
-            STEP('S40e8149f3220426bb2bc359a62c43cf3', '[3] DeleteDirectory');
-            StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_3);
+            STEP('Se80f168b9b8e4b92a5b92497d2c99661', '[2] IsDirectoryExist');
+            RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_2);
 
             //------------------------------------------------
-            STEP('S46a9b6a12b1d4290b647861877b17583', '[4] CreateDirectory');
-            StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_4);
+            STEP('S38b8b9e979064e06bbad7f568edd862f', '[3] IfElse');
+            if ((RESULT == true)) {
+
+                //------------------------------------------------
+                STEP('S40e8149f3220426bb2bc359a62c43cf3', '[4] DeleteDirectory');
+                StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_4);
+
+                //------------------------------------------------
+                STEP('S46a9b6a12b1d4290b647861877b17583', '[5] CreateDirectory');
+                StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_5);
+
+            //------------------------------------------------
+            }else{
+                STEP('S6e796fb61cb44915bc6a73750ccdbb42', '[6] Else');
+
+                //------------------------------------------------
+                STEP('S272a2442a20d4ea7b5cf5106acfb440f', '[7] CreateDirectory');
+                StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_7);
+
+            //------------------------------------------------
+            }
+            STEP('Saf567434dfe24af1a70c0cb75d1f1440', '[8] End-IfElse');
 
         //------------------------------------------------
         }
-        STEP('S179f046108264c4fa4947ccc85c3e664', '[5] End-IfThen');
+        STEP('S8241fceb0b4a4c60b39a70c4e6a1ca77', '[9] End-IfThen');
 
         //------------------------------------------------
-        STEP('S6415298f9d2c424ba18722a906d22f8b', '[6] ChromeIsExist');
-        RESULT = StepPlayer.Run('Chrome.ChromeIsExist', this.chromeisexist_info_6);
+        STEP('S6415298f9d2c424ba18722a906d22f8b', '[10] ChromeIsExist');
+        RESULT = StepPlayer.Run('Chrome.ChromeIsExist', this.chromeisexist_info_10);
 
         //------------------------------------------------
-        STEP('Sd11265412e364b07aca5c310b25cb3d1', '[7] IfThen');
+        STEP('Sd11265412e364b07aca5c310b25cb3d1', '[11] IfThen');
         if (RESULT == true) {
 
             //------------------------------------------------
-            STEP('Sbd49cbfd2fc44782b0dc3fd4b9fdd4ba', '[8] ChromeClick');
-            StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_8);
+            STEP('Sbd49cbfd2fc44782b0dc3fd4b9fdd4ba', '[12] ChromeClick');
+            StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_12);
 
             //------------------------------------------------
-            STEP('S9eebc9af7b5c4dcd8bf8d9540f6f2459', '[9] IsExist');
-            RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_9);
+            STEP('S9eebc9af7b5c4dcd8bf8d9540f6f2459', '[13] IsExist');
+            RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_13);
 
             //------------------------------------------------
-            STEP('Sb67227c1fde4476db66c3c49c545e7f5', '[10] IfElse');
+            STEP('Sb67227c1fde4476db66c3c49c545e7f5', '[14] IfElse');
             if (RESULT == true) {
 
                 //------------------------------------------------
-                STEP('Sea84735cc1c8494686781cf4839f3041', '[11] Click');
-                StepPlayer.Run('Win.Click', this.click_info_11);
+                STEP('Sea84735cc1c8494686781cf4839f3041', '[15] Click');
+                StepPlayer.Run('Win.Click', this.click_info_15);
 
                 //------------------------------------------------
-                STEP('S833e1fae76bd480ca3c4ef256b7ac1c1', '[12] IfThen');
+                STEP('S833e1fae76bd480ca3c4ef256b7ac1c1', '[16] IfThen');
                 if (Global.flag == true) {
 
                     //------------------------------------------------
-                    STEP('S6104606bacb742e3b2dd3e78ccf8eb82', '[13] KeyInput');
-                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_13);
+                    STEP('S6104606bacb742e3b2dd3e78ccf8eb82', '[17] KeyInput');
+                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_17);
 
                     //------------------------------------------------
-                    STEP('S9bc63d5f899c4396b07b74ddcf57568f', '[14] ExecuteScript');
+                    STEP('S9bc63d5f899c4396b07b74ddcf57568f', '[18] ExecuteScript');
                     Global.flag = false
 
                 //------------------------------------------------
                 }
-                STEP('S71f0ba840a854db0855f2bd3ff3b324b', '[15] End-IfThen');
+                STEP('S71f0ba840a854db0855f2bd3ff3b324b', '[19] End-IfThen');
 
                 //------------------------------------------------
-                STEP('S0f2d0eb2b95e4346b5974733d8b056f0', '[16] Click');
-                StepPlayer.Run('Win.Click', this.click_info_16);
+                STEP('S0f2d0eb2b95e4346b5974733d8b056f0', '[20] Click');
+                StepPlayer.Run('Win.Click', this.click_info_20);
 
                 //------------------------------------------------
-                STEP('S4047d2b2fda24f9d903eb0966e8fb1b3', '[17] KeyInput');
-                StepPlayer.Run('Win.KeyInput', this.keyinput_info_17);
+                STEP('S4047d2b2fda24f9d903eb0966e8fb1b3', '[21] KeyInput');
+                StepPlayer.Run('Win.KeyInput', this.keyinput_info_21);
 
             //------------------------------------------------
             }else{
-                STEP('Sf5de7ce0f8504285aef07249e72ed9ba', '[18] Else');
+                STEP('Sf5de7ce0f8504285aef07249e72ed9ba', '[22] Else');
 
                 //------------------------------------------------
-                STEP('S319295c6f1454be3984597744b10f801', '[19] IsExist');
-                RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_19);
+                STEP('S319295c6f1454be3984597744b10f801', '[23] IsExist');
+                RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_23);
 
                 //------------------------------------------------
-                STEP('Sc9b0f1008d514f27a7b8ff58979fa5ec', '[20] IfThen');
+                STEP('Sc9b0f1008d514f27a7b8ff58979fa5ec', '[24] IfThen');
                 if (RESULT == true) {
 
                     //------------------------------------------------
-                    STEP('Seaa0668b327e4480ba1fef7d996735e1', '[21] Click');
-                    StepPlayer.Run('Win.Click', this.click_info_21);
+                    STEP('Seaa0668b327e4480ba1fef7d996735e1', '[25] Click');
+                    StepPlayer.Run('Win.Click', this.click_info_25);
 
                     //------------------------------------------------
-                    STEP('S2ceab1660b77495c85d649d7d4d1b2fd', '[22] IfThen');
+                    STEP('S2ceab1660b77495c85d649d7d4d1b2fd', '[26] IfThen');
                     if (Global.flag == true) {
 
                         //------------------------------------------------
-                        STEP('S1fc4e9fa04d0467b8f04a61301fe5152', '[23] KeyInput');
-                        StepPlayer.Run('Win.KeyInput', this.keyinput_info_23);
+                        STEP('S1fc4e9fa04d0467b8f04a61301fe5152', '[27] KeyInput');
+                        StepPlayer.Run('Win.KeyInput', this.keyinput_info_27);
 
                         //------------------------------------------------
-                        STEP('Sdded270d7f6546adbd9c4c029dd527da', '[24] ExecuteScript');
+                        STEP('Sdded270d7f6546adbd9c4c029dd527da', '[28] ExecuteScript');
                         Global.flag = false
 
                     //------------------------------------------------
                     }
-                    STEP('S231ff8b3d1bd4f6f89cd37c53e88e8e1', '[25] End-IfThen');
+                    STEP('S231ff8b3d1bd4f6f89cd37c53e88e8e1', '[29] End-IfThen');
 
                     //------------------------------------------------
-                    STEP('S2c68bd9f4dcf443fa038b2b5ee499df4', '[26] Click');
-                    StepPlayer.Run('Win.Click', this.click_info_26);
+                    STEP('S2c68bd9f4dcf443fa038b2b5ee499df4', '[30] Click');
+                    StepPlayer.Run('Win.Click', this.click_info_30);
 
                 //------------------------------------------------
                 }
-                STEP('S318fa128b88d4303a13ab9ca209b1d12', '[27] End-IfThen');
+                STEP('S318fa128b88d4303a13ab9ca209b1d12', '[31] End-IfThen');
 
             //------------------------------------------------
             }
-            STEP('S4c9bdcc7f8eb40e18314d13c6b685a6b', '[28] End-IfElse');
+            STEP('S4c9bdcc7f8eb40e18314d13c6b685a6b', '[32] End-IfElse');
 
         //------------------------------------------------
         }
-        STEP('Sd342532cfe99407fbfd73e49682f64f7', '[29] End-IfThen');
+        STEP('Sd342532cfe99407fbfd73e49682f64f7', '[33] End-IfThen');
 
 
     }
@@ -916,11 +972,15 @@
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="Se80f168b9b8e4b92a5b92497d2c99661" group_name="cae2f037-594a-4bce-a65d-fdbb7e8b0b8e_Untitled" folded="False" color="" />
-      <StepNode step_id="S9aa1e38e322a47e2a0bf615ab5223157" group_name="" folded="False" color="" />
-      <StepNode step_id="S40e8149f3220426bb2bc359a62c43cf3" group_name="be9d508e-17ce-40b8-a0c1-e3c9b7df3a53_Untitled" folded="False" color="" />
-      <StepNode step_id="S46a9b6a12b1d4290b647861877b17583" group_name="be9d508e-17ce-40b8-a0c1-e3c9b7df3a53_Untitled" folded="False" color="" />
-      <StepNode step_id="S179f046108264c4fa4947ccc85c3e664" group_name="" folded="False" color="" />
+      <StepNode step_id="Sb6fa012706da4f58affad86b9c137e00" group_name="" folded="False" color="" />
+      <StepNode step_id="Se80f168b9b8e4b92a5b92497d2c99661" group_name="de1c5421-b668-49da-837e-3cb3cd57137a_Untitled" folded="False" color="" />
+      <StepNode step_id="S38b8b9e979064e06bbad7f568edd862f" group_name="" folded="False" color="#0db2ad" />
+      <StepNode step_id="S40e8149f3220426bb2bc359a62c43cf3" group_name="30e5d105-c35c-4fdf-9631-87ca516d8477_폴더생성" folded="False" color="" />
+      <StepNode step_id="S46a9b6a12b1d4290b647861877b17583" group_name="30e5d105-c35c-4fdf-9631-87ca516d8477_폴더생성" folded="False" color="" />
+      <StepNode step_id="S6e796fb61cb44915bc6a73750ccdbb42" group_name="" folded="False" color="" />
+      <StepNode step_id="S272a2442a20d4ea7b5cf5106acfb440f" group_name="c666a17e-6528-414f-9829-87fdd63a1b6c_폴더생성" folded="False" color="" />
+      <StepNode step_id="Saf567434dfe24af1a70c0cb75d1f1440" group_name="" folded="False" color="#0db2ad" />
+      <StepNode step_id="S8241fceb0b4a4c60b39a70c4e6a1ca77" group_name="" folded="False" color="" />
       <StepNode step_id="S6415298f9d2c424ba18722a906d22f8b" group_name="21e74832-fe65-4f1d-bbfb-ac4c3adb8336_첨부파일 유무 확인" folded="False" color="" />
       <StepNode step_id="Sd11265412e364b07aca5c310b25cb3d1" group_name="" folded="False" color="" />
       <StepNode step_id="Sbd49cbfd2fc44782b0dc3fd4b9fdd4ba" group_name="cd66190f-d4b6-4014-a974-f8dd52d691f8_첨부파일 저장" folded="False" color="" />
