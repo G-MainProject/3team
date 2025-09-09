@@ -1,24 +1,45 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
 import './Nav.css';
 import logo from '../../assets/images/logo.png';
+import banner1 from '../../assets/images/banner1.png';
 
 export default function Nav() {
-    const [isMenuOpen] = useState(false);
-    const navigate = useNavigate();
-
     return (
-        <nav className={`nav-container ${isMenuOpen ? 'open' : ''}`}>
-            <div className="nav-wrapper">
-                <div className="nav-logo">
-                    <Link to="/login"><img src={logo} alt="로고" className="logo-image" /></Link>
+        <div className='nav'>
+            <div className='nav-wrapper'>
+                <a href="/" className='nav-logo'><img src={logo} alt="logoWOC" /></a>
+                <div className='nav-menu'>
+                    <button className='nav-item'>
+                        <i className="fas fa-chart-line"></i>
+                        주식 정보
+                    </button>
+                    <button className='nav-item'>
+                        <i className="fas fa-chart-area"></i>
+                        일별 주가 차트
+                    </button>
+                    <button className='nav-item'>
+                        <i className="fas fa-file-invoice-dollar"></i>
+                        재무제표
+                    </button>
+                    <button className='nav-item'>
+                        <i className="fas fa-newspaper"></i>
+                        뉴스 분석
+                    </button>
+                    <button className='nav-item'>
+                        <i className="fas fa-robot"></i>
+                        AI 분석
+                    </button>
                 </div>
-                <div className="nav-download">
-                    <button className="login-button" onClick={() => navigate('/login')}>
-                        로그인                        
-					</button>
+                <div className='nav-bottom'>
+                    <a href="#" className='nav-banner'>
+                        <img src={banner1} alt="Upgrade to PRO Account" />
+                    </a>
+                    <button className='nav-logout'>
+                        <span>로그아웃</span>
+                        <i className="fas fa-arrow-right-from-bracket"></i>
+                    </button>
                 </div>
             </div>
-        </nav>
+        </div>
     );
 }

@@ -1,10 +1,12 @@
 import React from 'react';
 import './Login.css';
 import logoS from '../../assets/images/logoS.png';
+import HomeNav from '../../component/Nav/HomeNav';
 
 export default function Login() {
     return (
         <div className='login-container'>
+            <HomeNav />
             <div className='login-card'>
                 <img src={logoS} alt="logoS" />
                 <p className='login-card-title'>로그인</p>

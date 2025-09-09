@@ -53,11 +53,6 @@
     transform: scale(1) !important;
 }
 
-.home-nav li button:hover {
-    color: #fff;
-    transform: translateY(-1px);
-}
-
 .home-nav li button:active {
     transform: translateY(0);
     transition: transform 0.1s ease;
@@ -65,7 +60,6 @@
 
 button.home-nav-on {
     color: #fff;
-    transform: translateY(-1px);
 }
 
 .signal {
@@ -92,6 +86,7 @@ button.home-nav-on {
     font-size: 17px;
     font-weight: 400;
     margin-bottom: 40px;
+    line-height: 1.4;
     width: 20%;
     display: flex;
     justify-content: flex-end;

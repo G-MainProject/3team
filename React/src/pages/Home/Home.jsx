@@ -5,6 +5,7 @@ import signalVideo from '../../assets/images/signal.mp4';
 import brity from '../../assets/images/brity.png';
 import ocr from '../../assets/images/ocr.jpg';
 import emotion from '../../assets/images/emotion.jpg';
+import HomeNav from '../../component/Nav/HomeNav';
 
 export default function Home() {
     const [activeIdx, setActiveIdx] = useState(-1);
@@ -127,6 +128,7 @@ export default function Home() {
 
     return (
         <div className="home-container">
+            <HomeNav />
             <ul
                 className='home-nav'
                 style={{ pointerEvents: isScrolling ? 'none' : 'auto' }}
