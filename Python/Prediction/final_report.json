@@ -1,0 +1,9 @@
+﻿Warning: failed to open Excel file (C:\Users\3CLASS_008\Documents\카카오톡 받은 파일\크롤링\크롤링\~$리포트_1.xlsx): [Errno 13] Permission denied: 'C:\\Users\\3CLASS_008\\Documents\\카카오톡 받은 파일\\크롤링\\크롤링\\~$리포트_1.xlsx'
+[Start] Analysis for 'Crawled Excel'
+1) Sentiment analysis..
+2) Keyword extraction..
+3) Sales prediction..
+4) Building report..
+[Done] Analysis complete.
+
+--- Crawled Excel Final Report ---
