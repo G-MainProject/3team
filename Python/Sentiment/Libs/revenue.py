@@ -28,6 +28,11 @@ def derive_quarters_from_reports(reports: dict):
         "Q3": _sub(q3_add, h1_add),
         "Q4": _sub(fy_add, q3_add),
     }
+    # Q4 보강: FY.add가 없고 FY.amount가 있는 경우 Q4 = FY.amount - Q3.add
+    if q["Q4"] is None:
+        fy_amount = (reports.get("FY") or {}).get("amount")
+        if fy_amount is not None and q3_add is not None:
+            q["Q4"] = _sub(fy_amount, q3_add)
     # 누적이 전혀 없는 경우 최소한 Q1.amount라도 대입
     if q["Q1"] is None and (reports.get("Q1") or {}).get("amount") is not None:
         q["Q1"] = (reports["Q1"]["amount"])
