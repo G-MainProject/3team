@@ -1,0 +1,132 @@
+<Process id="1e9e284c-4709-478d-87bd-1351a1ed1b40" type="task" workType="foreground" name="T_4_PDF가공" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="5" Orientation="horizontal">
+  <Properties>
+    <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="5" />
+    <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
+    <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
+    <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 11:49:43" />
+    <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 11:36:35" />
+    <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
+    <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+    <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+  </Properties>
+  <LinkItems />
+  <Variables />
+  <Steps>
+    <Step id="Sfeaf4272fb04429bba857f834d70197b" ver="311241220" createVer="311241220" type="Desktop" name="GetFileList" dpName="GetFileList" dpValue="RESULT" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="d07daf46-3ab4-4f8c-82dd-bcf9e21bf4c9" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일'" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object[]" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Desktop" key="Command_SearchPattern" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" filter="filename" />
+        <Property type="Desktop" key="Command_SearchOption" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="TopDirectoryOnly" valuelist="TopDirectoryOnly;AllDirectories" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RESULT = StepPlayer.Run('Desktop.GetFileList', this.getfilelist_info_1);]]></Script>
+    </Step>
+    <Step id="S705cde71743541728bfa8f149aa546d3" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT.length !== 0" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="2315dd44-edd9-41e8-b5bf-ed7e0e7c2764" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT.length !== 0" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT.length !== 0" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S2cc2ceb528154b2dadc620fe3cd50f45" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (RESULT.length !== 0) {]]></Script>
+    </Step>
+    <Step id="S4f7c94fed3814a359fb3354cd16523d8" ver="311241220" createVer="311241220" type="Pdf" name="MergePdfActivity" dpName="MergePdf" dpValue="C:\Users\3CLASS_010\OneDrive\Desktop\3team\RPA\데이터추출\첨부파일" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="bca997c2-1c28-433c-970f-b9cbc9e317a9" type="Pdf">
+        <Property type="Pdf" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Pdf" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Pdf" key="Input_InputDirPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일'" />
+        <Property type="Pdf" key="Input_OutputFilePath" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일\\추출_' + Global.Stock + '.pdf'" />
+        <Property type="Pdf" key="Input_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_3);]]></Script>
+    </Step>
+    <Step id="S993e361424594b16a4f6dbb721df108d" ver="311241220" createVer="311241220" type="Pdf" name="ExportPdfToImageActivity" dpName="ExportPdfToImage" dpValue="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일\\추출_' + Global.Stock + '.pdf'" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="f6b14ec4-88d2-47f4-ac7c-a56be753f80a" type="Pdf">
+        <Property type="Pdf" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Pdf" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Pdf" key="Input_File" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일\\추출_' + Global.Stock + '.pdf'" order="1" />
+        <Property type="Pdf" key="Input_Password" controlType="PropertyItemPasswordView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="True" isChanged="Y" encryptedFrom="" value="OFHXrJv2HBkJpaqdsGVnRA==" order="2" />
+        <Property type="Pdf" key="Input_TargetDirectory" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\Users\\3CLASS_010\\OneDrive\\Desktop\\3team\\RPA\\데이터추출\\첨부파일\\이미지_' + Global.Stock" order="3" />
+        <Property type="Pdf" key="Input_ImageFormat" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Png" valuelist="Png;Gif;Tiff;Bmp;Jpeg" order="4" />
+        <Property type="Pdf" key="Input_PageRange" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'All'" order="5" />
+        <Property type="Pdf" key="Input_DPI" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="96" order="6" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[ActivityWorker.Play('Pdf', 'ExportPdfToImageActivity', this.activitylibraryitem_info_4);]]></Script>
+    </Step>
+    <Step id="S2cc2ceb528154b2dadc620fe3cd50f45" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="85e51e74-3c50-4616-9ed6-eda54791a831" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S705cde71743541728bfa8f149aa546d3" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+  </Steps>
+  <JScript><![CDATA[function T_4_PDF가공() {
+
+    this.RPAGOTOENABLE = false;
+    this.GotoStepRetryCntMap = {};
+    this.GotoBlockMap = {2:[5]};
+    this.GotoReverseBlockMap = {5:2};
+    this.GotoStepBlockTypeMap = {2:'DecisionThen',5:'EndDecisionThen'};
+
+
+    this.run = function() {
+
+        //------------------------------------------------
+        STEP('Sfeaf4272fb04429bba857f834d70197b', '[1] GetFileList');
+        RESULT = StepPlayer.Run('Desktop.GetFileList', this.getfilelist_info_1);
+
+        //------------------------------------------------
+        STEP('S705cde71743541728bfa8f149aa546d3', '[2] IfThen');
+        if (RESULT.length !== 0) {
+
+            //------------------------------------------------
+            STEP('S4f7c94fed3814a359fb3354cd16523d8', '[3] MergePdf');
+            ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_3);
+
+            //------------------------------------------------
+            STEP('S993e361424594b16a4f6dbb721df108d', '[4] ExportPdfToImage');
+            ActivityWorker.Play('Pdf', 'ExportPdfToImageActivity', this.activitylibraryitem_info_4);
+
+        //------------------------------------------------
+        }
+        STEP('S2cc2ceb528154b2dadc620fe3cd50f45', '[5] End-IfThen');
+
+
+    }
+
+    this.execute = function() {
+        var result = null;
+        result = this.run()
+        if (result != null)
+            return result;
+    }
+}
+]]></JScript>
+  <Diagram version="1.300" nodesize="Normal">
+    <StepNodes>
+      <StepNode step_id="Sfeaf4272fb04429bba857f834d70197b" group_name="6060259e-6086-4ef7-9dac-c7b8957b4095_pdf유무확인" folded="False" color="" />
+      <StepNode step_id="S705cde71743541728bfa8f149aa546d3" group_name="" folded="False" color="" />
+      <StepNode step_id="S4f7c94fed3814a359fb3354cd16523d8" group_name="37f03c0b-779a-4ab9-82ac-9c0723faaa44_pdf 병합" folded="False" color="" />
+      <StepNode step_id="S993e361424594b16a4f6dbb721df108d" group_name="28538710-488d-4e90-b4c1-ab911169fb3f_이미지 변환" folded="False" color="" />
+      <StepNode step_id="S2cc2ceb528154b2dadc620fe3cd50f45" group_name="" folded="False" color="" />
+    </StepNodes>
+  </Diagram>
+</Process>
