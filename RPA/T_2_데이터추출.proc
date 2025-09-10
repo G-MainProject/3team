@@ -5,12 +5,12 @@
     <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
-    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="181" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="4" />
     <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 11:40:59" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-09 10:26:36" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 13:28:11" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -338,13 +338,15 @@ if(this.Data_use[0][1] === '검색 결과가 없습니다.') {
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="데이터저장" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Data_header[this.index] = [];&#xD;&#xA;for(var k = 0; k &lt; RESULT.length; k++) {&#xD;&#xA;    this.Data_header[this.index][k] = RESULT[k]&#xD;&#xA;}" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Data_header[this.index] = [];&#xD;&#xA;&#xD;&#xA;for(var k = 0; k &lt; RESULT.length; k++) {&#xD;&#xA;    this.Data_header[this.index][k] = RESULT[k]&#xD;&#xA;}&#xD;&#xA;" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[this.Data_header[this.index] = [];
+
 for(var k = 0; k < RESULT.length; k++) {
     this.Data_header[this.index][k] = RESULT[k]
-}]]></Script>
+}
+]]></Script>
     </Step>
     <Step id="S669eab79b52c470b87f9f666fc07768f" ver="311241220" createVer="311241220" type="Chrome" name="ChromeGetListData" dpName="ChromeGetListData" dpValue="RESULT" dpValue2="플럼라인생명과학 종목분석 - 반려견에게 선물하는 가치 있는 생의 연장 : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="c2559b22-1e05-4a40-88e9-25f605f70ce4" type="Chrome">
@@ -463,12 +465,16 @@ this.index++;]]></Script>
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="데이터정제" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="for(let i = 0; i &lt; this.Data_header.length; i++) {&#xD;&#xA;  let parts = this.Data_header[i][0].split('\n\n');  &#xD;&#xA;  let body = parts[0].trim();&#xD;&#xA;&#xD;&#xA;  // 증권사, 날짜, 조회수&#xD;&#xA;  let metaParts = [];&#xD;&#xA;  let temp = parts[1].split('|');&#xD;&#xA;  &#xD;&#xA;  for (let j = 0; j &lt; temp.length; j++) { &#xD;&#xA;      metaParts.push(temp[j].trim()); &#xD;&#xA;  }&#xD;&#xA;&#xD;&#xA;  Global.Data[i] = [body, ...metaParts];&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;for(let i = 0; i &lt; this.Data_content.length; i++) {&#xD;&#xA;    let content = this.Data_content[i][0].replace(/\r\n/g, '\n')&#xD;&#xA;    Global.Data[i].push(content)&#xD;&#xA;}" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="for(let i = 0; i &lt; this.Data_header.length; i++) {&#xD;&#xA;  let parts = this.Data_header[i][0].split('\n\n');  &#xD;&#xA;  let body = parts[0].trim();&#xD;&#xA;  &#xD;&#xA;  let firstSpaceIndex = body.indexOf(' ');&#xD;&#xA;  // 제목만 저장하도록&#xD;&#xA;  body = body.substring(firstSpaceIndex + 1);&#xD;&#xA;&#xD;&#xA;  // 증권사, 날짜, 조회수&#xD;&#xA;  let metaParts = [];&#xD;&#xA;  let temp = parts[1].split('|');&#xD;&#xA;  &#xD;&#xA;  for (let j = 0; j &lt; temp.length; j++) { &#xD;&#xA;      metaParts.push(temp[j].trim()); &#xD;&#xA;  }&#xD;&#xA;&#xD;&#xA;  Global.Data[i] = [body, ...metaParts];&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;for(let i = 0; i &lt; this.Data_content.length; i++) {&#xD;&#xA;    let content = this.Data_content[i][0].replace(/\r\n/g, '\n')&#xD;&#xA;    Global.Data[i].push(content)&#xD;&#xA;}" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[for(let i = 0; i < this.Data_header.length; i++) {
   let parts = this.Data_header[i][0].split('\n\n');  
   let body = parts[0].trim();
+  
+  let firstSpaceIndex = body.indexOf(' ');
+  // 제목만 저장하도록
+  body = body.substring(firstSpaceIndex + 1);
 
   // 증권사, 날짜, 조회수
   let metaParts = [];
@@ -682,9 +688,11 @@ for(let i = 0; i < this.Data_content.length; i++) {
                     //------------------------------------------------
                     STEP('S5ae4f295bc934211953a4cf53e9263c3', '[13] ExecuteScript');
                     this.Data_header[this.index] = [];
+
                     for(var k = 0; k < RESULT.length; k++) {
                         this.Data_header[this.index][k] = RESULT[k]
                     }
+
 
                     //------------------------------------------------
                     STEP('S669eab79b52c470b87f9f666fc07768f', '[14] ChromeGetListData');
@@ -715,6 +723,10 @@ for(let i = 0; i < this.Data_content.length; i++) {
             for(let i = 0; i < this.Data_header.length; i++) {
               let parts = this.Data_header[i][0].split('\n\n');  
               let body = parts[0].trim();
+              
+              let firstSpaceIndex = body.indexOf(' ');
+              // 제목만 저장하도록
+              body = body.substring(firstSpaceIndex + 1);
 
               // 증권사, 날짜, 조회수
               let metaParts = [];
@@ -789,9 +801,9 @@ for(let i = 0; i < this.Data_content.length; i++) {
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="Sb6ecc6f61ced4283bc5deb4e3a0dab17" group_name="31e885e5-1387-4b45-a284-9af3dbb2fe59_Untitled" folded="False" color="" />
-      <StepNode step_id="S51a6625a5abf4395b271d19cbd967934" group_name="d8396b33-23e4-4045-ad2d-64bea2255ff5_Untitled" folded="False" color="" />
-      <StepNode step_id="Sc4ad403ae6b8485fb1794375dea84416" group_name="d8396b33-23e4-4045-ad2d-64bea2255ff5_Untitled" folded="False" color="" />
+      <StepNode step_id="Sb6ecc6f61ced4283bc5deb4e3a0dab17" group_name="c2fb6ede-324e-4e63-8e93-47428b986db6_검색결과창 딜레이" folded="False" color="" />
+      <StepNode step_id="S51a6625a5abf4395b271d19cbd967934" group_name="06f54c5e-3cab-40ae-8a9a-bbaf4b79960d_검색결과 유무 확인 및 갯수 확인" folded="False" color="" />
+      <StepNode step_id="Sc4ad403ae6b8485fb1794375dea84416" group_name="06f54c5e-3cab-40ae-8a9a-bbaf4b79960d_검색결과 유무 확인 및 갯수 확인" folded="False" color="" />
       <StepNode step_id="Saa0b37cf6b67463c9812508746e49363" group_name="" folded="False" color="" />
       <StepNode step_id="S7d2f58f11a224782a59b6287da2caf62" group_name="" folded="False" color="" />
       <StepNode step_id="S9803a4fa8c7643018e7ce732570753c7" group_name="" folded="False" color="" />
@@ -807,15 +819,15 @@ for(let i = 0; i < this.Data_content.length; i++) {
       <StepNode step_id="S12b5b144c97b4d1ea07a702e8050eddd" group_name="dd5c5f31-7aba-4930-9181-32851b88bbbc_뒤로가기" folded="False" color="" />
       <StepNode step_id="S4dbb92b1057b4599a675a955a762c877" group_name="" folded="False" color="" />
       <StepNode step_id="S733a90ae015b46a4a6f0229dbbf34ac9" group_name="" folded="False" color="" />
-      <StepNode step_id="S7aa4d68872a5473ea5abe50a8d401319" group_name="23898ab7-59ad-4815-b926-336a6f3c3468_제목, 증권사, 날짜 가져오기" folded="False" color="" />
+      <StepNode step_id="S7aa4d68872a5473ea5abe50a8d401319" group_name="44ee379e-5721-4f29-a513-21a0e2f19342_제목, 증권사, 날짜, 내용 가져오기" folded="False" color="" />
       <StepNode step_id="S7890657ba6744a209cd9197ae216917d" group_name="" folded="False" color="" />
-      <StepNode step_id="S51a44b92f20442baaa5148578829a261" group_name="e380d540-4f43-4f73-9e86-d8a68c4be2d4_Untitled" folded="False" color="" />
+      <StepNode step_id="S51a44b92f20442baaa5148578829a261" group_name="54774da2-1eea-4706-9efc-bf8726699359_재검색 여부 입력창" folded="False" color="" />
       <StepNode step_id="S0e0ab39d8da346bbb34b5d5c31322873" group_name="" folded="False" color="" />
       <StepNode step_id="Sad09db30ff61430aac3dfa0feeae3466" group_name="56dba586-008f-4852-9d32-faff4ee56bb6_Untitled" folded="False" color="" />
       <StepNode step_id="Sc81196cc053a4ff0a2c8e137952eb5db" group_name="" folded="False" color="" />
-      <StepNode step_id="Sdc61aeeb888949c9b6b2ae3a17e7c494" group_name="c93bd1c2-0090-4a0a-8112-18a07212ffe7_Untitled" folded="False" color="" />
+      <StepNode step_id="Sdc61aeeb888949c9b6b2ae3a17e7c494" group_name="644cdb6f-e2aa-404f-aa89-d0e4fd33fa8e_RPA종료" folded="False" color="" />
       <StepNode step_id="S2778e3c8e9cc4c23891f85286fe49419" group_name="" folded="False" color="" />
-      <StepNode step_id="S446ea370ddca4dd3b64676682c3ffb1a" group_name="a07d82da-38a3-491e-98ab-58e5be966f02_Untitled" folded="False" color="" />
+      <StepNode step_id="S446ea370ddca4dd3b64676682c3ffb1a" group_name="a3c3717a-0900-490a-8cb8-079edb68bcec_RPA종료" folded="False" color="" />
       <StepNode step_id="Sd77a990245144c24ba638fff7e6597c9" group_name="" folded="False" color="" />
       <StepNode step_id="S1deea2e5bae841209bf0bb18e9148e03" group_name="" folded="False" color="" />
       <StepNode step_id="S8964dcfa8261442ba654ae01417d6a9d" group_name="1578ce43-d2df-4b33-ad91-c61c9f79c19d_Untitled" folded="False" color="" />
