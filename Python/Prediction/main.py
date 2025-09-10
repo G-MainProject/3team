@@ -176,8 +176,6 @@ def main():
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.abspath(os.path.join(script_dir, '..', '..', 'data'))
-    output_dir = script_dir
-
     report_files = glob.glob(os.path.join(data_dir, "리포트_*.xlsx"))
 
     if not report_files:
@@ -206,7 +204,7 @@ def main():
         all_reports.append(report)
 
     # 모든 리포트를 final_report.json 파일에 저장
-    output_path = os.path.join(output_dir, "final_report.json")
+    output_path = os.path.join(data_dir, "final_report.json")
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(all_reports, f, ensure_ascii=False, indent=4)
