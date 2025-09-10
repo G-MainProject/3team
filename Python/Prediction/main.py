@@ -69,8 +69,8 @@ def generate_comprehensive_report(stock_name, news_list, resources_dir="."):
         "sentimentAnalysis": {
             "averageScore": round(avg_sentiment_score, 2),
             "overallSentiment": (
-                "positive" if avg_sentiment_score > 0.1 else (
-                    "negative" if avg_sentiment_score < -0.1 else "neutral"
+                "positive" if avg_sentiment_score > 20 else (
+                    "negative" if avg_sentiment_score < -20 else "neutral"
                 )
             ),
             "sentimentDistribution": dict(sentiment_counts)
@@ -118,7 +118,7 @@ def _normalize_date_value(v):
     return str(v)
 
 
-def load_news_from_excel_file(file_path: str, max_rows_per_sheet: int | None = None):
+def load_news_from_excel_file(file_path: str, max_rows_per_sheet: int | None = None, skiprows: int = 0):
     """
     단일 엑셀 파일에서 표준 뉴스 포맷 리스트를 로드한다.
     """
@@ -131,7 +131,7 @@ def load_news_from_excel_file(file_path: str, max_rows_per_sheet: int | None = N
         xls = pd.ExcelFile(file_path)
         for sheet in xls.sheet_names:
             try:
-                df = pd.read_excel(file_path, sheet_name=sheet, dtype=str)
+                df = pd.read_excel(file_path, sheet_name=sheet, dtype=str, skiprows=skiprows)
                 if df.empty:
                     continue
                 
@@ -172,45 +172,51 @@ def load_news_from_excel_file(file_path: str, max_rows_per_sheet: int | None = N
 
 def main():
     """
-    메인 실행 함수
+    메인 실행 함수: 'data/리포트.xlsx' 파일을 읽어 분석하고 'data/final_report.json'으로 저장합니다.
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.abspath(os.path.join(script_dir, '..', '..', 'data'))
-    report_files = glob.glob(os.path.join(data_dir, "리포트_*.xlsx"))
+    report_file = os.path.join(data_dir, "리포트.xlsx")
 
-    if not report_files:
-        print(f"No report files found in '{data_dir}'. (e.g., 리포트_신한투자증권.xlsx)")
+    if not os.path.exists(report_file):
+        print(f"리포트 파일을 찾을 수 없습니다: '{report_file}'")
         return
 
-    print(f"Found {len(report_files)} report files to analyze.")
+    # 엑셀 파일의 첫 번째 시트 A1 셀에서 회사 이름 읽기
+    try:
+        # header=None으로 첫 행을 헤더로 읽지 않도록 하고, usecols/nrows로 A1만 지정
+        df_company = pd.read_excel(report_file, header=None, usecols=[0], nrows=1, sheet_name=0)
+        company_name = df_company.iloc[0, 0]
+        if not isinstance(company_name, str) or not company_name.strip():
+            print(f"오류: '{report_file}' 파일의 A1 셀에 회사 이름이 없거나 유효하지 않습니다.")
+            return
+        company_name = company_name.strip()
+    except Exception as e:
+        print(f"오류: '{report_file}' 파일에서 회사 이름을 읽는 중 문제가 발생했습니다: {e}")
+        return
 
-    all_reports = []
-    for report_file in report_files:
-        base_name = os.path.splitext(os.path.basename(report_file))[0]
-        if base_name.startswith('리포트_'):
-            company_name = base_name[4:]
-        else:
-            company_name = base_name
+    print(f"\n--- 처리 시작: {company_name} ---")
 
-        print(f"\n--- Processing: {company_name} ---")
-        
-        news_data = load_news_from_excel_file(report_file)
-        
-        if not news_data:
-            print(f"No news data could be loaded from '{report_file}'. Skipping.")
-            continue
+    # 첫 번째 행을 건너뛰고 뉴스 데이터 로드 (헤더는 두 번째 행에 있다고 가정)
+    news_data = load_news_from_excel_file(report_file, skiprows=1)
 
-        report = generate_comprehensive_report(company_name, news_data, resources_dir=script_dir)
-        all_reports.append(report)
+    if not news_data:
+        print(f"'{report_file}'에서 뉴스 데이터를 로드할 수 없습니다.")
+        return
 
-    # 모든 리포트를 final_report.json 파일에 저장
+    # 리포트 생성
+    report = generate_comprehensive_report(company_name, news_data, resources_dir=script_dir)
+
+    # 최종 리포트를 final_report.json 파일에 저장
     output_path = os.path.join(data_dir, "final_report.json")
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(all_reports, f, ensure_ascii=False, indent=4)
-        print(f"\nSuccessfully saved all reports to '{output_path}'")
+            # 단일 리포트 객체를 저장
+            json.dump(report, f, ensure_ascii=False, indent=4)
+        print(f"\n리포트를 '{output_path}'에 성공적으로 저장했습니다.")
     except Exception as e:
-        print(f"Error saving final report to '{output_path}': {e}")
+        print(f"최종 리포트 저장 오류 '{output_path}': {e}")
+
 
 if __name__ == '__main__':
     main()

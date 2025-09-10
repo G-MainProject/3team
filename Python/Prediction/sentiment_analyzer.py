@@ -86,14 +86,14 @@ class SentimentAnalyzer:
         # 점수를 정규화 (단어 수로 나누어) 하여 일관된 스케일 유지
         normalized_score = sentiment_score / word_count if word_count > 0 else 0
 
-        if normalized_score > 0.1:
+        if normalized_score > 20:
             sentiment_class = '긍정'
-        elif normalized_score < -0.1:
+        elif normalized_score < -20:
             sentiment_class = '부정'
         else:
             sentiment_class = '중립'
             
-        return sentiment_class, sentiment_score
+        return sentiment_class, normalized_score
 
     def extract_key_sentences(self, text, keywords):
         """
