@@ -67,8 +67,15 @@ def print_summary_dart(dart_data: Dict[str, Any]) -> None:
     # 최근 연도만 1~2개 간략 표시
     for row in rows[-2:]:
         y = _safe_get(row, "year", "?")
+        # backward-compat: prefer revenue.quarters if present
         q = (row or {}).get("quarters") or {}
-        fy_add = _safe_get(((row or {}).get("reports") or {}).get("FY", {}), "add")
+        if not q and isinstance(row, dict):
+            q = ((row.get("revenue") or {}).get("quarters") or {})
+        # FY(add)도 revenue.reports.FY.add를 우선 사용
+        reports = (row or {}).get("reports") or {}
+        if not reports and isinstance(row, dict):
+            reports = ((row.get("revenue") or {}).get("reports") or {})
+        fy_add = _safe_get((reports.get("FY") or {}), "add")
         print(
             f"  · {y}: Q1={_fmt(q.get('Q1'))}, Q2={_fmt(q.get('Q2'))}, "
             f"Q3={_fmt(q.get('Q3'))}, Q4={_fmt(q.get('Q4'))}, FY(add)={_fmt(fy_add)}"

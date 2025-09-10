@@ -161,7 +161,8 @@ def _seasonal_baseline(series: List[Tuple[int, int, int | None]], current_year: 
     return q3, q4
 
 
-def forecast_q3_q4(merged_path: Path, seq: int, epochs: int, no_tf: bool) -> dict:
+def forecast_q3_q4(merged_path: Path, seq: int, epochs: int, no_tf: bool,
+                   half_life: float = 3.0, w_min: float = 0.1) -> dict:
     obj = json.loads(merged_path.read_text(encoding="utf-8"))
     stk = obj.get("stock_code") or merged_path.stem.split("_")[0]
     dart = obj.get("dart") or {}
@@ -189,41 +190,54 @@ def forecast_q3_q4(merged_path: Path, seq: int, epochs: int, no_tf: bool) -> dic
     q4 = q4_ml or q4_bl
 
     # Heuristic confidence via backtested baseline MAPE on past years
+    # (exponentially-weighted with half-life and minimum weight)
     def _lookup(y: int, q: int) -> int | None:
         for yy, qq, vv in series:
             if yy == y and qq == q:
                 return None if vv is None else int(vv)
         return None
 
+    # index mapping for EW age calculation
+    idx = {(y, q): i for i, (y, q, _) in enumerate(series)}
+    max_idx = max(idx.values()) if idx else 0
     years = sorted({y for (y, _, _) in series})
-    q3_errs: List[float] = []
-    q4_errs: List[float] = []
-    for y in years:
-        # need previous year to predict, and exclude current_year
-        if y <= min(years) or y >= current_year:
-            continue
-        p3, p4 = _seasonal_baseline(series, current_year=y)
-        a3 = _lookup(y, 3)
-        a4 = _lookup(y, 4)
-        if a3 is not None and a3 != 0 and p3 is not None:
-            q3_errs.append(abs(a3 - p3) / abs(a3))
-        if a4 is not None and a4 != 0 and p4 is not None:
-            q4_errs.append(abs(a4 - p4) / abs(a4))
 
-    def _conf(errs: List[float]) -> float:
-        if not errs:
+    def _ew_conf(target_q: int) -> float:
+        pairs: List[tuple[float, float]] = []  # (weight, ape)
+        if not years:
             return 0.5
-        mape = float(statistics.fmean(errs))
-        c = 1.0 - mape
-        # clamp to [0.1, 0.95] and round to 2 decimals
+        min_year = min(years)
+        for y in years:
+            if y <= min_year or y >= current_year:
+                continue
+            p3, p4 = _seasonal_baseline(series, current_year=y)
+            p = p3 if target_q == 3 else p4
+            a = _lookup(y, target_q)
+            if p is None or a in (None, 0):
+                continue
+            # EW weight by age measured in quarters
+            i = idx.get((y, target_q))
+            if i is None:
+                continue
+            age = max_idx - i
+            w = 2 ** (-(age / max(1e-9, half_life)))
+            if w < w_min:
+                w = w_min
+            ape = abs(a - p) / abs(a)
+            pairs.append((w, ape))
+        if not pairs:
+            return 0.5
+        sw = sum(w for w, _ in pairs)
+        wmape = sum(w * e for w, e in pairs) / sw if sw > 0 else 1.0
+        c = 1.0 - wmape
         if c < 0.1:
             c = 0.1
         if c > 0.95:
             c = 0.95
         return round(c, 2)
 
-    q3_conf = _conf(q3_errs)
-    q4_conf = _conf(q4_errs)
+    q3_conf = _ew_conf(3)
+    q4_conf = _ew_conf(4)
 
     return {
         "stock_code": stk,
@@ -237,6 +251,8 @@ def forecast_q3_q4(merged_path: Path, seq: int, epochs: int, no_tf: bool) -> dic
         "epochs": epochs,
         "q3_confidence": q3_conf,
         "q4_confidence": q4_conf,
+        "ew_half_life": half_life,
+        "ew_w_min": w_min,
     }
 
 
@@ -247,13 +263,16 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--epochs", type=int, default=120, help="Training epochs (default 120)")
     p.add_argument("--no-tf", action="store_true", help="Disable TensorFlow and use baseline only")
     p.add_argument("--out", default="", help="Output path (default: data/{code}_revenue_forecast.json)")
+    p.add_argument("--half-life", type=float, default=3.0, help="EW half-life in quarters (default 3)")
+    p.add_argument("--wmin", type=float, default=0.1, help="EW minimum sample weight (default 0.1)")
     args = p.parse_args(argv)
 
     merged_path = Path(args.json)
     if not merged_path.exists():
         raise SystemExit(f"File not found: {merged_path}")
 
-    result = forecast_q3_q4(merged_path, seq=args.seq, epochs=args.epochs, no_tf=args.no_tf)
+    result = forecast_q3_q4(merged_path, seq=args.seq, epochs=args.epochs, no_tf=args.no_tf,
+                            half_life=args.half_life, w_min=args.wmin)
 
     code = result.get("stock_code") or merged_path.stem.split("_")[0]
     out_path = Path(args.out) if args.out else merged_path.parent / f"{code}_revenue_forecast.json"

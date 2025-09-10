@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 price_to_json.py
-- 실행 시 Kiwoom(체결/주가) + DART(최근 N년 분기 매출액)를 수집하여
-  하나의 JSON 파일(data/{종목코드}_merged.json)로 저장한다.
-- 선택적으로 --no-kiwoom, --no-dart 로 한쪽을 제외할 수 있다(기본: 둘 다 포함).
+- Run Kiwoom (trade/price, optional) and DART (quarterly revenue) collectors
+  and save a merged JSON to data/{stock_code}_merged.json.
 """
 
 import argparse
@@ -13,35 +12,29 @@ from pathlib import Path
 from urllib.parse import urljoin
 import requests
 
-# 환경/유틸/클라이언트
+# env/utils/clients
 from Python.Sentiment.Libs.env import load_env
 from Python.Sentiment.Libs.kiwoom_client import get_base, issue_token, get_trade_info
 from Python.Sentiment.Libs.io_utils import save_json
 from Python.Sentiment.Libs.symbols import load_symbol_map, resolve_code_by_name
-from Python.Sentiment.Libs.revenue import collect_recent_years
+from Python.Sentiment.Libs.revenue import collect_recent_financials
 
-# 요약(콘솔 출력) 모듈
+# console summaries
 from Python.Sentiment.Libs.summaries import (
     print_summary_kiwoom,
     print_summary_dart,
     print_summary_merged,
 )
 
-# ─────────────────────────────────────────
-# 경로 계산
-# ─────────────────────────────────────────
+# paths
 _CUR = Path(__file__).resolve()
 _SENTIMENT_DIR = _CUR.parents[1]          # .../Sentiment
-# BUGFIX: parents[2] points one level above repo; use parents[1] for repo root
-# 프로젝트 루트(3team)
 _PROJECT_ROOT = _SENTIMENT_DIR.parents[1] # .../3team
 _DATA_DIR = _PROJECT_ROOT / "data"
 
-# ─────────────────────────────────────────
-# (보조) 이름→코드 조회 (Kiwoom TR 보조용; 내부 CSV 매핑이 우선)
-# ─────────────────────────────────────────
+
 def _get_code_by_name_via_api(base: str, auth: str, name: str) -> str | None:
-    """키움 REST로 종목명→코드 보조 조회(필요시). 보통은 symbols.csv 매핑으로 해결."""
+    """Aux lookup: name -> code via Kiwoom REST (rarely needed)."""
     url = urljoin(base, "/api/dostk/stkinfo")
     headers = {
         "Content-Type": "application/json;charset=UTF-8",
@@ -54,7 +47,6 @@ def _get_code_by_name_via_api(base: str, auth: str, name: str) -> str | None:
     r = requests.post(url, headers=headers, json=body, timeout=10)
     r.raise_for_status()
     data = r.json()
-    # 필드 방어적 파싱
     if isinstance(data, dict) and data.get("stk_cd"):
         return str(data["stk_cd"]).strip()
     for key in ("stk_list", "list", "items", "data"):
@@ -66,20 +58,16 @@ def _get_code_by_name_via_api(base: str, auth: str, name: str) -> str | None:
                 return str(code).strip()
     return None
 
-# ─────────────────────────────────────────
-# 수집 함수 (얇게 유지)
-# ─────────────────────────────────────────
+
 def _normalize_kiwoom_payload(stk: str, data: dict | list | None) -> dict | list | None:
-    """요약 출력 친화적으로 최소 키(stk_cd/tp)를 보강.
-    - 기존 구조는 그대로 두고, 누락 시에만 보강 필드를 추가.
-    - 가격 후보: stck_prpr > tp > price > trade_price > cntr_infr[0].cur_prc
+    """Make Kiwoom payload friendlier for summary printing.
+    - Ensure stk_cd exists
+    - Ensure tp (price) exists by probing common keys or first cntr_infr item
     """
     if not isinstance(data, dict):
         return data
-    payload = dict(data)  # 얕은 복사
-    # 종목코드 보강
+    payload = dict(data)
     payload.setdefault("stk_cd", stk)
-    # 가격 추출
     price = (
         payload.get("stck_prpr")
         or payload.get("tp")
@@ -94,61 +82,62 @@ def _normalize_kiwoom_payload(stk: str, data: dict | list | None) -> dict | list
         payload["tp"] = price
     return payload
 
+
 def fetch_kiwoom(stk: str, mock: bool) -> dict:
     base = get_base(mock)
     auth = issue_token(base)
     return get_trade_info(base, auth, stk)
 
+
 def fetch_dart(stk: str, years_n: int, fs_div: str) -> dict:
-    return collect_recent_years(
+    # Extended financials: revenue/op_profit/net_profit/ratios
+    return collect_recent_financials(
         project_root=str(_PROJECT_ROOT),
         stock_code=stk,
         years=years_n,
-        fs_div=fs_div
+        fs_div=fs_div,
     )
+
 
 def _default_merged_path(stk: str) -> Path:
     return _DATA_DIR / f"{stk}_merged.json"
 
-# ─────────────────────────────────────────
-# 메인
-# ─────────────────────────────────────────
+
 def main():
     load_env()
 
-    p = argparse.ArgumentParser(description="Sentiment Apps: (기본) Kiwoom + DART 병합 JSON 저장")
-    # 공통 입력
+    p = argparse.ArgumentParser(description="Sentiment Apps: Kiwoom+DART 병합 JSON 저장")
+    # common inputs
     p.add_argument("stk", nargs="?", help="종목코드(6자리) 예: 005930")
     p.add_argument("--name", help="종목명 예: 삼성전자")
 
-    # 출력 경로 (병합 파일)
+    # output path
     p.add_argument("--out", default="", help="병합 JSON 저장 경로 (기본: data/{종목코드}_merged.json)")
 
-    # 선택 제외 옵션 (기본: 둘 다 포함)
+    # selective toggles (default: include both)
     p.add_argument("--no-kiwoom", action="store_true", help="Kiwoom 데이터 제외")
-    p.add_argument("--no-dart",   action="store_true", help="DART 데이터 제외")
+    p.add_argument("--no-dart", action="store_true", help="DART 데이터 제외")
 
-    # Kiwoom 옵션
+    # Kiwoom options
     p.add_argument("--mock", action="store_true", help="(kiwoom) 모의투자 도메인 사용")
 
-    # DART 옵션
-    p.add_argument("--years", type=int, default=5, help="(dart) 최근 N년 (기본 5)")
+    # DART options
+    p.add_argument("--years", type=int, default=8, help="(dart) 최근 N년 (기본 8)")
     p.add_argument("--fs", default="CFS", choices=["CFS", "OFS"], help="(dart) 연결/개별 재무제표 (기본 CFS)")
 
     args = p.parse_args()
 
-    # 1) 종목코드 확정
+    # 1) resolve stock code
     if not args.stk and not args.name:
         raise SystemExit("종목코드(stk) 또는 --name 중 하나는 반드시 입력하세요.")
     if args.stk and args.name:
         raise SystemExit("종목코드와 --name은 동시에 사용할 수 없습니다.")
 
     if args.name:
-        # 내부 CSV 매핑 우선
         m = load_symbol_map()
         code, cands = resolve_code_by_name(args.name, m)
         if not code:
-            # 필요시 API 보조 조회 (주석 해제하여 사용 가능)
+            # Optional: REST fallback (disabled by default)
             # base = get_base(args.mock); auth = issue_token(base)
             # code = _get_code_by_name_via_api(base, auth, args.name)
             if cands:
@@ -164,7 +153,7 @@ def main():
     if not (len(stk) == 6 and stk.isdigit()):
         raise SystemExit(f"종목코드 형식이 잘못됐어요: {stk} (예: 005930)")
 
-    # 2) 데이터 수집 (기본: 둘 다)
+    # 2) fetch (default: both)
     kiwoom_data = None
     dart_data = None
     errors: list[str] = []
@@ -191,7 +180,7 @@ def main():
             dart_data = None
 
     if kiwoom_data is None and dart_data is None:
-        # 양쪽이 모두 실패해도 최소 스켈레톤 JSON 저장
+        # Save skeleton JSON even when both failed
         merged = {
             "stock_code": stk,
             "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -204,7 +193,7 @@ def main():
         print_summary_merged(merged)
         return
 
-    # 3) 병합 JSON 구성
+    # 3) merge JSON structure
     merged = {
         "stock_code": stk,
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -212,19 +201,20 @@ def main():
     if kiwoom_data is not None:
         merged["kiwoom"] = {
             "saved_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-            "data": kiwoom_data
+            "data": kiwoom_data,
         }
     if dart_data is not None:
-        merged["dart"] = dart_data  # (fs_div, collected_years, data[...] 포함)
+        merged["dart"] = dart_data
 
-    # 4) 저장
+    # 4) save
     out_path = Path(args.out) if args.out else _default_merged_path(stk)
     os.makedirs(out_path.parent, exist_ok=True)
     saved = save_json(merged, out_path)
     print(f"[병합 저장 완료] {saved}")
 
-    # 5) 요약 출력 (프로젝트 목적 맞춘 요약)
+    # 5) summaries
     print_summary_merged(merged)
+
 
 if __name__ == "__main__":
     main()
