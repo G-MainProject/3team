@@ -1,34 +1,60 @@
-# C:\Users\3CLASS_008\Documents\GitHub\3team\Python\Prediction\sentiment_analyzer.py
 import json
 import pandas as pd
 from konlpy.tag import Okt
 
 class SentimentAnalyzer:
     """
-    KoNLPy와 KNU 한국어 감성사전을 이용한 뉴스 기사 감성 분석 클래스
+    KoNLPy와 금융 뉴스 CSV 데이터를 이용한 뉴스 기사 감성 분석 클래스
     """
-    def __init__(self, sentiment_dict_path='SentiWord_info.json'):
+    def __init__(self, sentiment_data_path='finance_data.csv'):
         """
         분석기 초기화 및 감성 사전 로드
-        :param sentiment_dict_path: KNU 감성 사전 (SentiWord_info.json) 파일 경로
+        :param sentiment_data_path: 금융 감성 데이터 (finance_data.csv) 파일 경로
         """
         import os
         self.okt = Okt()
         
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        absolute_path = os.path.join(script_dir, sentiment_dict_path)
+        absolute_path = os.path.join(script_dir, sentiment_data_path)
 
         try:
-            with open(absolute_path, 'r', encoding='utf-8') as f:
-                self.sentiment_dict = json.load(f)
+            # CSV 파일 로드
+            df = pd.read_csv(absolute_path, encoding='utf-8')
         except FileNotFoundError:
             raise FileNotFoundError(
-                f"감성 사전 파일을 찾을 수 없습니다: '{absolute_path}'\n"
-                "KNU 한국어 감성사전(SentiWord_info.json)을 다운로드하여 동일한 폴더에 저장해주세요."
+                f"감성 데이터 파일을 찾을 수 없습니다: '{absolute_path}'\n"
+                "finance_data.csv 파일을 폴더에 저장해주세요."
             )
         
-        # 감성 사전 포맷을 {단어: 점수} 형태로 변환
-        self.word_dict = {item['word']: int(item['polarity']) for item in self.sentiment_dict}
+        # CSV 데이터로부터 단어-점수 사전을 구축합니다.
+        self.word_dict = self._build_word_dict_from_csv(df)
+
+    def _build_word_dict_from_csv(self, df):
+        """
+        DataFrame에서 단어별 감성 점수 사전을 생성합니다.
+        긍정(positive)은 +1, 부정(negative)은 -1로 계산하여 단어별로 누적합니다.
+        """
+        word_dict = {}
+        label_map = {'positive': 1, 'negative': -1, 'neutral': 0}
+
+        for index, row in df.iterrows():
+            label = row['labels']
+            sentence = row['kor_sentence']
+            
+            if not isinstance(sentence, str):
+                continue
+
+            score = label_map.get(label, 0)
+            if score == 0:
+                continue
+
+            # 문장에서 명사, 동사, 형용사 추출
+            morphemes = self.okt.pos(sentence, stem=True, norm=True)
+            for word, pos in morphemes:
+                if pos in ['Noun', 'Verb', 'Adjective']:
+                    word_dict[word] = word_dict.get(word, 0) + score
+        
+        return word_dict
 
     def analyze_sentiment(self, text):
         """
@@ -57,12 +83,12 @@ class SentimentAnalyzer:
                     word_count += 1
         
         # 3. 감성 분류
-        # 감성 단어가 하나도 없는 경우 '중립'으로 처리
-        if word_count == 0:
-            sentiment_class = '중립'
-        elif sentiment_score > 0:
+        # 점수를 정규화 (단어 수로 나누어) 하여 일관된 스케일 유지
+        normalized_score = sentiment_score / word_count if word_count > 0 else 0
+
+        if normalized_score > 0.1:
             sentiment_class = '긍정'
-        elif sentiment_score < 0:
+        elif normalized_score < -0.1:
             sentiment_class = '부정'
         else:
             sentiment_class = '중립'
@@ -87,10 +113,10 @@ class SentimentAnalyzer:
 
 # --- 예제 사용법 ---
 if __name__ == '__main__':
-    # 클래스 인스턴스 생성
-    analyzer = SentimentAnalyzer()
+    # 클래스 인스턴스 생성 (새로운 CSV 파일 사용)
+    analyzer = SentimentAnalyzer(sentiment_data_path='finance_data.csv')
 
-    # 분석할 샘플 뉴스 데이터 (프로젝트 1단계에서 수집한 데이터라고 가정)
+    # 분석할 샘플 뉴스 데이터
     sample_news = [
         {
             "title": "A전자, 신기술 개발로 역대 최고 실적 달성",
@@ -106,31 +132,9 @@ if __name__ == '__main__':
         }
     ]
 
-    # 데이터프레임으로 변환
     df = pd.DataFrame(sample_news)
-
-    # 각 뉴스에 대한 감성 분석 수행
     results = df['content'].apply(lambda text: analyzer.analyze_sentiment(text))
-    
-    # 결과(튜플)를 두 개의 새로운 컬럼으로 분리
     df[['sentiment_class', 'sentiment_score']] = pd.DataFrame(results.tolist(), index=df.index)
 
     print("--- 감성 분석 결과 ---")
     print(df[['title', 'sentiment_class', 'sentiment_score']])
-
-    # 특정 기사 하나만 분석해보기
-    print("\n--- 단일 기사 분석 예시 ---")
-    single_text = "대규모 계약 체결 소식에 투자자들의 관심이 집중되고 있으며, 향후 실적 개선이 기대됩니다."
-    s_class, s_score = analyzer.analyze_sentiment(single_text)
-    print(f"기사 내용: {single_text}")
-    print(f"감성 분류: {s_class}")
-    print(f"감성 점수: {s_score}")
-
-    # 핵심 문장 추출 예시
-    print("\n--- 핵심 문장 추출 예시 ---")
-    sample_content = "A전자가 혁신적인 신기술 개발에 성공하여 시장의 예상을 뛰어넘는 분기 실적을 발표했습니다. 이번 실적 발표는 주가에 긍정적인 영향을 미쳤습니다."
-    sample_keywords = ["신기술", "실적"]
-    key_sents = analyzer.extract_key_sentences(sample_content, sample_keywords)
-    print(f"원본: {sample_content}")
-    print(f"키워드: {sample_keywords}")
-    print(f"추출된 문장: {key_sents}")

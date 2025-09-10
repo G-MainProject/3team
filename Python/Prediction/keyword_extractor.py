@@ -209,6 +209,7 @@ class KeywordExtractor:
             picked.append({
                 "keyword": ph,
                 "score": round(sc, 4),
+                "frequency": cand_counter[ph]
                 # "category": cats,
                 # "evidence": meta[ph]["evidence"]
             })
