@@ -1,4 +1,4 @@
-<Process id="92673322-e20a-4ea8-b4a6-5eae6767e161" type="task" workType="foreground" name="T_2_첨부파일저장" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="33" Orientation="horizontal">
+<Process id="92673322-e20a-4ea8-b4a6-5eae6767e161" type="task" workType="foreground" name="T_2_첨부파일저장" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="31" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 09:51:05" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-09 10:17:37" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 11:43:37" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -247,8 +247,8 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_12);]]></Script>
     </Step>
-    <Step id="S9eebc9af7b5c4dcd8bf8d9540f6f2459" ver="311241220" createVer="311241220" type="Win" name="IsExist" dpName="IsExist" dpValue="다운로드" dpValue2="1448863679877.pdf - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
-      <Properties id="b75e65a5-5036-4c5e-bdc2-5835aba1b705" type="Win">
+    <Step id="S82b11b9e346e454fb603d4e43d1e02f8" ver="311241220" createVer="311241220" type="Win" name="IsVisible" dpName="IsVisible" dpValue="다른 이름으로 저장" dpValue2="삼성전자 종목분석 - HBM 출하량 급증, 실적 서프라이즈 예상 : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="e1402916-e969-40da-8efe-4151e49cc09a" type="Win">
         <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Win" key="Target_Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="1" />
@@ -266,10 +266,10 @@
         <Property type="Win" key="Target_DrawBounds" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="Win" key="Target_UseObjectPath" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="Win" key="Target_UseRelativePath" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
-        <Property type="Win" key="Target_ObjectPathEx" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'Window|Chrome_WidgetWin_1||Win32|False||3|1448863679877.pdf - Chrome/Pane|BrowserRootView||Chrome|False||0|1448863679877.pdf - Chrome - 카페모카/Pane|NonClientView||Chrome|False||0|/Pane|BrowserFrameViewWin||Chrome|False||0|/Pane|BrowserView||Chrome|False||1|/Pane|View||Chrome|False||1|/Pane|Chrome_RenderWidgetHostHWND|19582736|Win32|False||2|Chrome Legacy Window/Document||RootWebArea|Chrome|False||0|/Group|||Chrome|False||0|/Pane|||Chrome|False||0|/Document||RootWebArea|Chrome|False||0|1448863679877.pdf/Group||viewer|Chrome|False||0|/Group||toolbar|Chrome|False||0|/Button||download|Chrome|False||13|다운로드'" order="10" />
+        <Property type="Win" key="Target_ObjectPathEx" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'Window|Chrome_WidgetWin_1||Win32|False||1|삼성전자 종목분석 - HBM 출하량 급증, 실적 서프라이즈 예상 : 네이버페이 증권 - Chrome/Window|#32770||Win32|False||0|다른 이름으로 저장'" order="10" />
         <Property type="Win" key="Target_RelativePath" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" order="11" />
-        <Property type="Win" key="Mouse_OffsetPoint" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'12, 10'" order="12" />
-        <Property type="Win" key="Mouse_Point" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'12, 10'" order="13" />
+        <Property type="Win" key="Mouse_OffsetPoint" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'803, 725'" order="12" />
+        <Property type="Win" key="Mouse_Point" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'803, 725'" order="13" />
         <Property type="Win" key="Mouse_OriginPoint" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Center" valuelist="LeftTop;RightTop;LeftBottom;RightBottom;Center" order="14" />
         <Property type="Win" key="Target_UseSearchAround" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Win" key="Target_UseImageMatch" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="NotUse" order="80" valuelist="NotUse;Always;WhenFailed" />
@@ -277,56 +277,56 @@
         <Property type="Win" key="Target_SelectImageIndex" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" order="82" />
         <Property type="Win" key="Target_SearchBounds" controlType="String" valueType="System.String" formatType="String_Rect" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Win" key="Target_IgnoreOffScreen" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
-        <Property type="Win" key="Application_PID" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="12572" />
+        <Property type="Win" key="Application_PID" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2868" />
         <Property type="Win" key="Application_ProcessName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="True" encrypted="False" isChanged="N" value="chrome" order="2" />
         <Property type="Win" key="Target_RemoteAppName" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="" />
-        <Property type="Win" key="Application_Title" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'1448863679877.pdf - Chrome'" />
+        <Property type="Win" key="Application_Title" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'삼성전자 종목분석 - HBM 출하량 급증, 실적 서프라이즈 예상 : 네이버페이 증권 - Chrome'" />
         <Property type="Win" key="Application_ClassName" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Chrome_WidgetWin_1" />
         <Property type="Win" key="Application_ClassType" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Window" />
-        <Property type="Win" key="Application_WindowHandle" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2950246" />
+        <Property type="Win" key="Application_WindowHandle" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="1968348" />
         <Property type="Win" key="Application_Bounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="-8,-8,1936,1056" />
-        <Property type="Win" key="Target_SupportedPatterns" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Invoke;ScrollItem" />
-        <Property type="Win" key="Target_AutomationID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="download" />
-        <Property type="Win" key="Target_FrameworkID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Chrome" />
-        <Property type="Win" key="Target_RuntimeID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="42.12126370.4.57.1.278" />
-        <Property type="Win" key="Target_ClassName" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Win" key="Target_ClassType" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="True" encrypted="False" isChanged="N" value="Button" order="3" />
-        <Property type="Win" key="Target_Name" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'다운로드'" />
-        <Property type="Win" key="Target_ObjectPath" controlType="String" valueType="System.String" formatType="String" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'Window|Chrome_WidgetWin_1||Win32/Pane|BrowserRootView||Chrome/Pane|NonClientView||Chrome/Pane|BrowserFrameViewWin||Chrome/Pane|BrowserView||Chrome/Pane|View||Chrome/Pane|Chrome_RenderWidgetHostHWND|19582736|Win32/Document||RootWebArea|Chrome/Group|||Chrome/Pane|||Chrome/Document||RootWebArea|Chrome/Group||viewer|Chrome/Group||toolbar|Chrome/Button||download|Chrome'" />
-        <Property type="Win" key="Target_Bounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1808,141,32,32" />
-        <Property type="Win" key="Mouse_WinPoint" controlType="Point" valueType="System.Windows.Point" formatType="Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="1812,143" />
-        <Property type="Win" key="Mouse_AppPoint" controlType="Point" valueType="System.Windows.Point" formatType="Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="1820,151" />
+        <Property type="Win" key="Target_SupportedPatterns" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Window;Transform" />
+        <Property type="Win" key="Target_AutomationID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Target_FrameworkID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Win32" />
+        <Property type="Win" key="Target_RuntimeID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="42.2492300" />
+        <Property type="Win" key="Target_ClassName" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="#32770" />
+        <Property type="Win" key="Target_ClassType" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="True" encrypted="False" isChanged="N" value="Window" order="3" />
+        <Property type="Win" key="Target_Name" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'다른 이름으로 저장'" />
+        <Property type="Win" key="Target_ObjectPath" controlType="String" valueType="System.String" formatType="String" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'Window|Chrome_WidgetWin_1||Win32/Window|#32770||Win32'" />
+        <Property type="Win" key="Target_Bounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="8,8,1243,747" />
+        <Property type="Win" key="Mouse_WinPoint" controlType="Point" valueType="System.Windows.Point" formatType="Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="803,725" />
+        <Property type="Win" key="Mouse_AppPoint" controlType="Point" valueType="System.Windows.Point" formatType="Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="811,733" />
         <Property type="Win" key="Target_Value" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
-        <Property type="Win" key="Target_LegacyName" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'다운로드'" />
+        <Property type="Win" key="Target_LegacyName" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'다른 이름으로 저장'" />
         <Property type="Win" key="Target_LegacyValue" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
         <Property type="Win" key="Target_LegacyDesc" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
-        <Property type="Win" key="Target_LegacyHelp" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'다운로드'" />
+        <Property type="Win" key="Target_LegacyHelp" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
         <Property type="Win" key="Target_IsReadOnly" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Win" key="Target_IsEditable" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
-        <Property type="Win" key="Target_SizeTolerance" controlType="Size" valueType="System.Windows.Size" formatType="Size" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="30,15" />
-        <Property type="Win" key="Target_TimeStamp" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2025-09-08 14:39:36.984" />
+        <Property type="Win" key="Target_SizeTolerance" controlType="Size" valueType="System.Windows.Size" formatType="Size" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="372,112" />
+        <Property type="Win" key="Target_TimeStamp" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2025-09-10 11:40:26.205" />
         <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
-        <Property type="Win" key="Target_Capture" controlType="Bitmap" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="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" />
-        <Property type="Win" key="Target_ImageCompareBounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="88,40,32,32" />
-        <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'16, 16'" />
+        <Property type="Win" key="Target_Capture" controlType="Bitmap" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAYAAADDhn8LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATESURBVHhe7drNSlxBEIbhvg3v0hvzKly6cuXChYggiCAiIuJfh5aUqRRVX59zZoJJeBse5nTV131mArUy7fLysgPIMSCAwIAAAgMCCAwIILSjo6MOINfu7+87gBwDAggMCCAwIIDAgAACAwIIDAggMCCAwIAAAgMCCAwIIDAggMCAAAIDAggMCCAwIIDAgAACAwIIDAggMCCAwIAAAgMCCAwIIDAggMCAAAIDAggMCCAwIIDAgAACAwIIDAggMCCAwIAAAgMCCAwIIDAggMCAAAIDAggMCCAwIIDAgAACAwIIDAggMCCAwIAAAgMCCAwIIDAggMCAAAIDAggMCCAwIIDAgAACAwIIDAggMCCAwIAAAgMCCO3w8LBXDg4O0noUc36vetHS91XWnN/6ri3nxplMlos143sxt2Sv+Oy+ZPdaTfVmRi7KMrEWLc204+PjblprX8/ZPlNlrJ7dqfjsWup87M2ySnamovKx59+RqbK+br1Yq2T3+v1W6t7sHVvea2dmd2dULtz36x/65OTk69n2u4r3qHt3fee+7t71e3hrvtN3fP8132GNcY+3tr+EnfPn/Z1rxXs/n09PT/ufNF4W94rPrqXOx/dEW7NLZHcMS3Mm5iu7ZP37Mj77v/rtN5+dnXUAuXZ+ft4B5NrFxUUHkGtXV1cdQK5dX193ALl2c3PTAeTa7e1tB5Brd3d3HUBup/+sOP6QktX/Vv4PQLHu91XtX1P9Bvs3iLLsMMv6fcz5Xsyukd2j+KzlY62q+3vaw8NDN781fvJ9z3pr85XZHVnf1zLxfLWfZTMjY+I+q/uzlXh2KXUu1tTdquftcmeVHfUo9v1esay/K4rZSnt8fOzGDsea38f62nxmdseffsfS+02Wz874WnZmzb6y5Z5Ry8RcJWbVHWuyXnYu7pWY9Z+xl5356j89PXVjQV+zerVfk8+yWb3Kmaw/e8cweibWs2evqg/ZnVafPWf7rD6eTdb3Yr3KbZHdtfR7VLVMzM32lV3uGb32/Pzch7Hxn16s+f2afJbN6lXOzPKz85HPV2fVnaMXxZ7f27Oq+XrsV3Wj8kv4s17Vy+prspmYy/ZKlfV168War7eXl5c+jIL/9Hwt9vedz/ZWM7Hmc77nnytZ1p5tH8V6dc7vq9qSenX30vuq3FLjvLrD99ZkK1lmdm7JvUv5u9rr6+tnYXzG56wW+/vOZ/uo6s/ODbP3b7l7dmfcj+e4t2fP6rFf1U2Vt2fFn/su2ffwNf99laV5y2Xa29vbZ2h8xudYU72qNp4jn7WM2kdVf3Zu8JnxbLK+V9WHrFfdmT3H87E+6y+tz6jc6Clbs1HVn53basH3af39/f2L2sdeVpvls3q2V/fE/aw+rOmp7JDlqzuqunreV6/aKz671JpzVXb2/tizfGVr1vvZb/3j4+OLHTK+7nO+nuWt5/eqHu+Imay/hD9vzzNLstU7Yi1TZeJ5n4k9L/Z8Jubjfh/W3Ln1/bu8Y5d3tqyR2fqSv8XnjxWyfKz9a6rfpcT8EmvOfcc7xl7xWe+z31ksVrkYEBZLLAaExRKLAWGxxGJAWCyxGBAWSywGhMUSiwFhscRiQFgssRgQFkssBoTFEosBYbHEYkBYrHL1/gOFmbcUbxItfAAAAABJRU5ErkJggg==" />
+        <Property type="Win" key="Target_ImageCompareBounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="0,0,200,100" />
+        <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'100, 50'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_13);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsVisible', this.isvisible_info_13);]]></Script>
     </Step>
-    <Step id="Sb67227c1fde4476db66c3c49c545e7f5" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="Sb67227c1fde4476db66c3c49c545e7f5" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="RESULT != true" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="f55aaf54-e05d-49e9-a0ed-dfb8e8210a6e" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT != true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT != true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="Sf5de7ce0f8504285aef07249e72ed9ba" type="Flow" name="Else" />
         <RelatedStep id="S4c9bdcc7f8eb40e18314d13c6b685a6b" type="Flow" name="EndDecision" />
       </RelatedSteps>
-      <Script><![CDATA[if (RESULT == true) {]]></Script>
+      <Script><![CDATA[if (RESULT != true) {]]></Script>
     </Step>
     <Step id="Sea84735cc1c8494686781cf4839f3041" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="다운로드" dpValue2="1448863679877.pdf - Chrome" dpImage="Target_Capture" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="75eb489f-aaef-4f76-9f22-7bb2653ff35e" type="Win">
@@ -596,18 +596,18 @@
       <RelatedSteps />
       <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_23);]]></Script>
     </Step>
-    <Step id="Sc9b0f1008d514f27a7b8ff58979fa5ec" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
-      <Properties id="9e3ba4de-a01f-4d09-9971-15e1a38bad64" type="Flow">
+    <Step id="S2ceab1660b77495c85d649d7d4d1b2fd" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.flag == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="2b870ac4-afd5-4e1c-bc47-038b091593e4" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.flag == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.flag == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S318fa128b88d4303a13ab9ca209b1d12" type="Flow" name="EndDecisionThen" />
+        <RelatedStep id="S231ff8b3d1bd4f6f89cd37c53e88e8e1" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (RESULT == true) {]]></Script>
+      <Script><![CDATA[if (Global.flag == true) {]]></Script>
     </Step>
     <Step id="Seaa0668b327e4480ba1fef7d996735e1" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="다른 이름으로 저장" dpValue2="신세계푸드 종목분석 - 말이 안되는 Valuation : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="99b5fb5b-e338-473a-9bfe-65251c179b2e" type="Win">
@@ -676,20 +676,7 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_25);]]></Script>
     </Step>
-    <Step id="S2ceab1660b77495c85d649d7d4d1b2fd" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.flag == true" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
-      <Properties id="2b870ac4-afd5-4e1c-bc47-038b091593e4" type="Flow">
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.flag == true" order="1" />
-        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.flag == true" order="3" />
-        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-      </Properties>
-      <RelatedSteps>
-        <RelatedStep id="S231ff8b3d1bd4f6f89cd37c53e88e8e1" type="Flow" name="EndDecisionThen" />
-      </RelatedSteps>
-      <Script><![CDATA[if (Global.flag == true) {]]></Script>
-    </Step>
-    <Step id="S1fc4e9fa04d0467b8f04a61301fe5152" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S1fc4e9fa04d0467b8f04a61301fe5152" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="a3867c6c-22dc-4a16-b932-54d7b8d21e9d" type="Win">
         <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -700,9 +687,9 @@
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_27);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_26);]]></Script>
     </Step>
-    <Step id="Sdded270d7f6546adbd9c4c029dd527da" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sdded270d7f6546adbd9c4c029dd527da" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="54341728-94ed-4a20-9d54-2e480b26374f" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -712,7 +699,7 @@
       <RelatedSteps />
       <Script><![CDATA[Global.flag = false]]></Script>
     </Step>
-    <Step id="S231ff8b3d1bd4f6f89cd37c53e88e8e1" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="CloseBlock" enabled="True" mainSet="0">
+    <Step id="S231ff8b3d1bd4f6f89cd37c53e88e8e1" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="dbb6f696-062d-466f-9772-1f66719d2d82" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
@@ -721,7 +708,7 @@
       </RelatedSteps>
       <Script><![CDATA[}]]></Script>
     </Step>
-    <Step id="S2c68bd9f4dcf443fa038b2b5ee499df4" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="저장(S)" dpValue2="1448863679877.pdf - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S2c68bd9f4dcf443fa038b2b5ee499df4" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="저장(S)" dpValue2="1448863679877.pdf - Chrome" dpImage="Target_Capture" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="8a71d31d-9d98-47ea-b3c9-f8beb3916999" type="Win">
         <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -786,16 +773,7 @@
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'44, 13'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_30);]]></Script>
-    </Step>
-    <Step id="S318fa128b88d4303a13ab9ca209b1d12" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
-      <Properties id="5c217da0-7984-4cd9-8a89-aa23c7916010" type="Flow">
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-      </Properties>
-      <RelatedSteps>
-        <RelatedStep id="Sc9b0f1008d514f27a7b8ff58979fa5ec" type="Flow" name="DecisionThen" />
-      </RelatedSteps>
-      <Script><![CDATA[}]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_29);]]></Script>
     </Step>
     <Step id="S4c9bdcc7f8eb40e18314d13c6b685a6b" ver="311241220" createVer="311241220" type="Flow" name="EndDecision" dpName="End-IfElse" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="0e90c0f0-bcab-4211-aa6e-3982e22fa994" type="Flow">
@@ -820,9 +798,9 @@
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {1:[9],3:[6,8],11:[33],14:[22,32],16:[19],24:[31],26:[29]};
-    this.GotoReverseBlockMap = {9:1,6:3,8:3,33:11,22:14,32:14,19:16,31:24,29:26};
-    this.GotoStepBlockTypeMap = {1:'DecisionThen',9:'EndDecisionThen',3:'Decision',6:'Else',8:'EndDecision',11:'DecisionThen',33:'EndDecisionThen',14:'Decision',22:'Else',32:'EndDecision',16:'DecisionThen',19:'EndDecisionThen',24:'DecisionThen',31:'EndDecisionThen',26:'DecisionThen',29:'EndDecisionThen'};
+    this.GotoBlockMap = {1:[9],3:[6,8],11:[31],14:[22,30],16:[19],24:[28]};
+    this.GotoReverseBlockMap = {9:1,6:3,8:3,31:11,22:14,30:14,19:16,28:24};
+    this.GotoStepBlockTypeMap = {1:'DecisionThen',9:'EndDecisionThen',3:'Decision',6:'Else',8:'EndDecision',11:'DecisionThen',31:'EndDecisionThen',14:'Decision',22:'Else',30:'EndDecision',16:'DecisionThen',19:'EndDecisionThen',24:'DecisionThen',28:'EndDecisionThen'};
 
 
     this.run = function() {
@@ -876,12 +854,12 @@
             StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_12);
 
             //------------------------------------------------
-            STEP('S9eebc9af7b5c4dcd8bf8d9540f6f2459', '[13] IsExist');
-            RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_13);
+            STEP('S82b11b9e346e454fb603d4e43d1e02f8', '[13] IsVisible');
+            RESULT = StepPlayer.Run('Win.IsVisible', this.isvisible_info_13);
 
             //------------------------------------------------
             STEP('Sb67227c1fde4476db66c3c49c545e7f5', '[14] IfElse');
-            if (RESULT == true) {
+            if (RESULT != true) {
 
                 //------------------------------------------------
                 STEP('Sea84735cc1c8494686781cf4839f3041', '[15] Click');
@@ -920,44 +898,36 @@
                 RESULT = StepPlayer.Run('Win.IsExist', this.isexist_info_23);
 
                 //------------------------------------------------
-                STEP('Sc9b0f1008d514f27a7b8ff58979fa5ec', '[24] IfThen');
-                if (RESULT == true) {
+                STEP('S2ceab1660b77495c85d649d7d4d1b2fd', '[24] IfThen');
+                if (Global.flag == true) {
 
                     //------------------------------------------------
                     STEP('Seaa0668b327e4480ba1fef7d996735e1', '[25] Click');
                     StepPlayer.Run('Win.Click', this.click_info_25);
 
                     //------------------------------------------------
-                    STEP('S2ceab1660b77495c85d649d7d4d1b2fd', '[26] IfThen');
-                    if (Global.flag == true) {
-
-                        //------------------------------------------------
-                        STEP('S1fc4e9fa04d0467b8f04a61301fe5152', '[27] KeyInput');
-                        StepPlayer.Run('Win.KeyInput', this.keyinput_info_27);
-
-                        //------------------------------------------------
-                        STEP('Sdded270d7f6546adbd9c4c029dd527da', '[28] ExecuteScript');
-                        Global.flag = false
+                    STEP('S1fc4e9fa04d0467b8f04a61301fe5152', '[26] KeyInput');
+                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_26);
 
                     //------------------------------------------------
-                    }
-                    STEP('S231ff8b3d1bd4f6f89cd37c53e88e8e1', '[29] End-IfThen');
-
-                    //------------------------------------------------
-                    STEP('S2c68bd9f4dcf443fa038b2b5ee499df4', '[30] Click');
-                    StepPlayer.Run('Win.Click', this.click_info_30);
+                    STEP('Sdded270d7f6546adbd9c4c029dd527da', '[27] ExecuteScript');
+                    Global.flag = false
 
                 //------------------------------------------------
                 }
-                STEP('S318fa128b88d4303a13ab9ca209b1d12', '[31] End-IfThen');
+                STEP('S231ff8b3d1bd4f6f89cd37c53e88e8e1', '[28] End-IfThen');
+
+                //------------------------------------------------
+                STEP('S2c68bd9f4dcf443fa038b2b5ee499df4', '[29] Click');
+                StepPlayer.Run('Win.Click', this.click_info_29);
 
             //------------------------------------------------
             }
-            STEP('S4c9bdcc7f8eb40e18314d13c6b685a6b', '[32] End-IfElse');
+            STEP('S4c9bdcc7f8eb40e18314d13c6b685a6b', '[30] End-IfElse');
 
         //------------------------------------------------
         }
-        STEP('Sd342532cfe99407fbfd73e49682f64f7', '[33] End-IfThen');
+        STEP('Sd342532cfe99407fbfd73e49682f64f7', '[31] End-IfThen');
 
 
     }
@@ -973,36 +943,34 @@
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
       <StepNode step_id="Sb6fa012706da4f58affad86b9c137e00" group_name="" folded="False" color="" />
-      <StepNode step_id="Se80f168b9b8e4b92a5b92497d2c99661" group_name="de1c5421-b668-49da-837e-3cb3cd57137a_Untitled" folded="False" color="" />
+      <StepNode step_id="Se80f168b9b8e4b92a5b92497d2c99661" group_name="924dc190-c315-4bf6-b49c-8440bba8ba8d_다운로드 폴더 확인" folded="False" color="" />
       <StepNode step_id="S38b8b9e979064e06bbad7f568edd862f" group_name="" folded="False" color="#0db2ad" />
-      <StepNode step_id="S40e8149f3220426bb2bc359a62c43cf3" group_name="30e5d105-c35c-4fdf-9631-87ca516d8477_폴더생성" folded="False" color="" />
-      <StepNode step_id="S46a9b6a12b1d4290b647861877b17583" group_name="30e5d105-c35c-4fdf-9631-87ca516d8477_폴더생성" folded="False" color="" />
+      <StepNode step_id="S40e8149f3220426bb2bc359a62c43cf3" group_name="7b665878-15b6-4c3f-81b3-ba4392ddce73_폴더 초기화" folded="False" color="" />
+      <StepNode step_id="S46a9b6a12b1d4290b647861877b17583" group_name="7b665878-15b6-4c3f-81b3-ba4392ddce73_폴더 초기화" folded="False" color="" />
       <StepNode step_id="S6e796fb61cb44915bc6a73750ccdbb42" group_name="" folded="False" color="" />
       <StepNode step_id="S272a2442a20d4ea7b5cf5106acfb440f" group_name="c666a17e-6528-414f-9829-87fdd63a1b6c_폴더생성" folded="False" color="" />
       <StepNode step_id="Saf567434dfe24af1a70c0cb75d1f1440" group_name="" folded="False" color="#0db2ad" />
       <StepNode step_id="S8241fceb0b4a4c60b39a70c4e6a1ca77" group_name="" folded="False" color="" />
-      <StepNode step_id="S6415298f9d2c424ba18722a906d22f8b" group_name="21e74832-fe65-4f1d-bbfb-ac4c3adb8336_첨부파일 유무 확인" folded="False" color="" />
+      <StepNode step_id="S6415298f9d2c424ba18722a906d22f8b" group_name="f5afa5f5-2fd3-4996-8054-09f9c092fc70_첨부파일 유무 확인" folded="False" color="" />
       <StepNode step_id="Sd11265412e364b07aca5c310b25cb3d1" group_name="" folded="False" color="" />
-      <StepNode step_id="Sbd49cbfd2fc44782b0dc3fd4b9fdd4ba" group_name="cd66190f-d4b6-4014-a974-f8dd52d691f8_첨부파일 저장" folded="False" color="" />
-      <StepNode step_id="S9eebc9af7b5c4dcd8bf8d9540f6f2459" group_name="d5469bac-17df-4a36-815a-d9d2422eac26_저장방식 확인" folded="False" color="" />
+      <StepNode step_id="Sbd49cbfd2fc44782b0dc3fd4b9fdd4ba" group_name="f782f98d-5e8c-47b9-8fa0-42ed48295879_다운로드 시작" folded="False" color="" />
+      <StepNode step_id="S82b11b9e346e454fb603d4e43d1e02f8" group_name="45865057-d27a-4faf-9bae-662754780ad9_방식확인" folded="False" color="" />
       <StepNode step_id="Sb67227c1fde4476db66c3c49c545e7f5" group_name="" folded="False" color="" />
       <StepNode step_id="Sea84735cc1c8494686781cf4839f3041" group_name="8310acb1-f50f-4e62-9387-791089b75efe_Untitled" folded="False" color="" />
       <StepNode step_id="S833e1fae76bd480ca3c4ef256b7ac1c1" group_name="" folded="False" color="" />
-      <StepNode step_id="S6104606bacb742e3b2dd3e78ccf8eb82" group_name="114e3de8-5a19-4374-abac-25144a487d81_첨부파일 저장" folded="False" color="" />
-      <StepNode step_id="S9bc63d5f899c4396b07b74ddcf57568f" group_name="114e3de8-5a19-4374-abac-25144a487d81_첨부파일 저장" folded="False" color="" />
+      <StepNode step_id="S6104606bacb742e3b2dd3e78ccf8eb82" group_name="6d394d18-0257-4c5c-abaa-1b2c72e68897_경로설정" folded="False" color="" />
+      <StepNode step_id="S9bc63d5f899c4396b07b74ddcf57568f" group_name="6d394d18-0257-4c5c-abaa-1b2c72e68897_경로설정" folded="False" color="" />
       <StepNode step_id="S71f0ba840a854db0855f2bd3ff3b324b" group_name="" folded="False" color="" />
-      <StepNode step_id="S0f2d0eb2b95e4346b5974733d8b056f0" group_name="0e076a1a-4203-4288-96bf-ed92d059ac27_Untitled" folded="False" color="" />
-      <StepNode step_id="S4047d2b2fda24f9d903eb0966e8fb1b3" group_name="f643d735-2d82-4272-9fe6-1a86e021f8ce_첨부파일 저장" folded="False" color="" />
+      <StepNode step_id="S0f2d0eb2b95e4346b5974733d8b056f0" group_name="7044a49d-0d32-47ae-a11c-6732ea274baf_저장" folded="False" color="" />
+      <StepNode step_id="S4047d2b2fda24f9d903eb0966e8fb1b3" group_name="f7578b37-9664-44f2-9912-e9a47cb6e88d_웹페이지 뒤로가기 단축키" folded="False" color="" />
       <StepNode step_id="Sf5de7ce0f8504285aef07249e72ed9ba" group_name="" folded="False" color="" />
-      <StepNode step_id="S319295c6f1454be3984597744b10f801" group_name="adb8c287-a2df-4ba5-a9cd-cd7b0b5f90b0_Untitled" folded="False" color="" />
-      <StepNode step_id="Sc9b0f1008d514f27a7b8ff58979fa5ec" group_name="" folded="False" color="" />
-      <StepNode step_id="Seaa0668b327e4480ba1fef7d996735e1" group_name="c1a4eaa0-af3d-46eb-af9f-dcfe884791fc_Untitled" folded="False" color="" />
+      <StepNode step_id="S319295c6f1454be3984597744b10f801" group_name="b06caa54-cba6-4fd0-a17e-a14c19505a40_창 열림 확인" folded="False" color="" />
       <StepNode step_id="S2ceab1660b77495c85d649d7d4d1b2fd" group_name="" folded="False" color="" />
-      <StepNode step_id="S1fc4e9fa04d0467b8f04a61301fe5152" group_name="4c9b9976-8d9b-4800-ba24-a73178f75a6b_첨부파일 저장" folded="False" color="" />
-      <StepNode step_id="Sdded270d7f6546adbd9c4c029dd527da" group_name="4c9b9976-8d9b-4800-ba24-a73178f75a6b_첨부파일 저장" folded="False" color="" />
+      <StepNode step_id="Seaa0668b327e4480ba1fef7d996735e1" group_name="2aa0392a-e912-4096-af04-766732c929f7_경로설정" folded="False" color="" />
+      <StepNode step_id="S1fc4e9fa04d0467b8f04a61301fe5152" group_name="2aa0392a-e912-4096-af04-766732c929f7_경로설정" folded="False" color="" />
+      <StepNode step_id="Sdded270d7f6546adbd9c4c029dd527da" group_name="2aa0392a-e912-4096-af04-766732c929f7_경로설정" folded="False" color="" />
       <StepNode step_id="S231ff8b3d1bd4f6f89cd37c53e88e8e1" group_name="" folded="False" color="" />
-      <StepNode step_id="S2c68bd9f4dcf443fa038b2b5ee499df4" group_name="f57e7ac3-7456-4ead-ada9-1054091f7f9f_Untitled" folded="False" color="" />
-      <StepNode step_id="S318fa128b88d4303a13ab9ca209b1d12" group_name="" folded="False" color="" />
+      <StepNode step_id="S2c68bd9f4dcf443fa038b2b5ee499df4" group_name="24d03935-447f-4e54-9a29-48fe70f7a47b_저장" folded="False" color="" />
       <StepNode step_id="S4c9bdcc7f8eb40e18314d13c6b685a6b" group_name="" folded="False" color="" />
       <StepNode step_id="Sd342532cfe99407fbfd73e49682f64f7" group_name="" folded="False" color="" />
     </StepNodes>
