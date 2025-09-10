@@ -35,8 +35,11 @@ def issue_token(base: str) -> str:
     # 성공 코드가 0 또는 미제공인 경우가 있어, 방어적으로 체크
     if data.get("return_code") not in (0, "0", None):
         raise RuntimeError(f"토큰 발급 실패: {data}")
-    token_type = data.get("token_type", "bearer")
-    token = data["token"]
+    # 토큰 필드 호환 처리
+    token = data.get("token") or data.get("access_token") or data.get("accessToken")
+    token_type = data.get("token_type") or data.get("tokenType") or "Bearer"
+    if not token:
+        raise RuntimeError(f"토큰 필드 확인 필요: {data}")
     return f"{token_type} {token}"
 
 def get_trade_info(base: str, authorization: str, stk_cd: str) -> dict:
@@ -54,4 +57,15 @@ def get_trade_info(base: str, authorization: str, stk_cd: str) -> dict:
     body = {"stk_cd": stk_cd}
     r = requests.post(url, headers=headers, json=body, timeout=10)
     r.raise_for_status()
-    return r.json()
+    data = r.json()
+    # Normalize common wrappers: { data: {...} } or list payloads
+    if isinstance(data, dict):
+        for key in ("data", "output", "result", "response"):
+            v = data.get(key)
+            if isinstance(v, dict):
+                return v
+            if isinstance(v, list) and v:
+                first = v[0]
+                if isinstance(first, dict):
+                    return first
+    return data
