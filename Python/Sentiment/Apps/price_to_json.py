@@ -32,7 +32,9 @@ from Python.Sentiment.Libs.summaries import (
 # ─────────────────────────────────────────
 _CUR = Path(__file__).resolve()
 _SENTIMENT_DIR = _CUR.parents[1]          # .../Sentiment
-_PROJECT_ROOT = _SENTIMENT_DIR.parents[2] # .../3team
+# BUGFIX: parents[2] points one level above repo; use parents[1] for repo root
+# 프로젝트 루트(3team)
+_PROJECT_ROOT = _SENTIMENT_DIR.parents[1] # .../3team
 _DATA_DIR = _PROJECT_ROOT / "data"
 
 # ─────────────────────────────────────────
@@ -67,6 +69,31 @@ def _get_code_by_name_via_api(base: str, auth: str, name: str) -> str | None:
 # ─────────────────────────────────────────
 # 수집 함수 (얇게 유지)
 # ─────────────────────────────────────────
+def _normalize_kiwoom_payload(stk: str, data: dict | list | None) -> dict | list | None:
+    """요약 출력 친화적으로 최소 키(stk_cd/tp)를 보강.
+    - 기존 구조는 그대로 두고, 누락 시에만 보강 필드를 추가.
+    - 가격 후보: stck_prpr > tp > price > trade_price > cntr_infr[0].cur_prc
+    """
+    if not isinstance(data, dict):
+        return data
+    payload = dict(data)  # 얕은 복사
+    # 종목코드 보강
+    payload.setdefault("stk_cd", stk)
+    # 가격 추출
+    price = (
+        payload.get("stck_prpr")
+        or payload.get("tp")
+        or payload.get("price")
+        or payload.get("trade_price")
+    )
+    if price is None:
+        cn = payload.get("cntr_infr")
+        if isinstance(cn, list) and cn and isinstance(cn[0], dict):
+            price = cn[0].get("cur_prc")
+    if price is not None and payload.get("tp") is None:
+        payload["tp"] = price
+    return payload
+
 def fetch_kiwoom(stk: str, mock: bool) -> dict:
     base = get_base(mock)
     auth = issue_token(base)
@@ -105,7 +132,7 @@ def main():
     p.add_argument("--mock", action="store_true", help="(kiwoom) 모의투자 도메인 사용")
 
     # DART 옵션
-    p.add_argument("--years", type=int, default=3, help="(dart) 최근 N년 (기본 3)")
+    p.add_argument("--years", type=int, default=5, help="(dart) 최근 N년 (기본 5)")
     p.add_argument("--fs", default="CFS", choices=["CFS", "OFS"], help="(dart) 연결/개별 재무제표 (기본 CFS)")
 
     args = p.parse_args()
@@ -140,15 +167,42 @@ def main():
     # 2) 데이터 수집 (기본: 둘 다)
     kiwoom_data = None
     dart_data = None
+    errors: list[str] = []
 
     if not args.no_kiwoom:
-        kiwoom_data = fetch_kiwoom(stk, args.mock)
+        try:
+            kiwoom_data = fetch_kiwoom(stk, args.mock)
+            kiwoom_data = _normalize_kiwoom_payload(stk, kiwoom_data)
+            if args.name and isinstance(kiwoom_data, dict) and not kiwoom_data.get("stk_nm"):
+                kiwoom_data["stk_nm"] = args.name
+        except Exception as e:
+            msg = f"Kiwoom 오류: {e}"
+            print(f"[{msg}]")
+            errors.append(msg)
+            kiwoom_data = None
 
     if not args.no_dart:
-        dart_data = fetch_dart(stk, args.years, args.fs)
+        try:
+            dart_data = fetch_dart(stk, args.years, args.fs)
+        except Exception as e:
+            msg = f"DART 오류: {e}"
+            print(f"[{msg}]")
+            errors.append(msg)
+            dart_data = None
 
     if kiwoom_data is None and dart_data is None:
-        raise SystemExit("둘 다 제외되어 저장할 데이터가 없습니다. (--no-kiwoom, --no-dart 둘 다 사용됨)")
+        # 양쪽이 모두 실패해도 최소 스켈레톤 JSON 저장
+        merged = {
+            "stock_code": stk,
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "errors": errors,
+        }
+        out_path = Path(args.out) if args.out else _default_merged_path(stk)
+        os.makedirs(out_path.parent, exist_ok=True)
+        saved = save_json(merged, out_path)
+        print(f"[병합 저장 완료] {saved}")
+        print_summary_merged(merged)
+        return
 
     # 3) 병합 JSON 구성
     merged = {

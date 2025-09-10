@@ -33,7 +33,7 @@ def derive_quarters_from_reports(reports: dict):
         q["Q1"] = (reports["Q1"]["amount"])
     return q
 
-def collect_recent_years(project_root: str, stock_code: str, years: int = 3, fs_div="CFS"):
+def collect_recent_years(project_root: str, stock_code: str, years: int = 5, fs_div="CFS"):
     """
     종목코드를 받아 최근 N년 분기 매출액을 수집해 구조화해 반환
     return:
