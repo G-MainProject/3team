@@ -21,3 +21,19 @@ def save_json(obj, path: Path) -> str:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
     return str(path)
+
+def save_tsv(rows: list[list[str]], path: Path, headers: list[str] | None = None, include_header: bool = True) -> str:
+    """
+    Save rows to a tab-separated text file.
+    - rows: list of list of stringifiable values
+    - headers: optional header names
+    - include_header: whether to write header row (default: True)
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines: list[str] = []
+    if headers and include_header:
+        lines.append("\t".join(str(h) for h in headers))
+    for row in rows:
+        lines.append("\t".join("" if v is None else str(v) for v in row))
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return str(path)
