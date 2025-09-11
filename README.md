@@ -131,3 +131,44 @@ python -m Python.Sentiment.Apps.price_to_json --name 삼성전자
   "prdy_ctrt": "1.43"
 }
 ```
+
+**Top Movers 실행 가이드**
+
+- 기본 실행: `python Python/Sentiment/Apps/top_movers.py --source ka10019 --direction both`
+- 저장 포맷: TSV(탭). 경로 `data/top_movers_{direction}_{YYYYMMDD_HHMMSS}.txt`
+- 컬럼: `code  name  side  price  change_abs  change_pct`
+- 모의/운영: `--mock` 사용 시 모의(일부 TR만 지원), 미사용 시 운영 도메인
+- 디버그: `--debug` 추가 시 원본 응답 JSON을 `data/debug_ka10019_*.json`으로 저장
+
+**ka10019 필수 옵션(기본값 포함)**
+
+- `--mrkt-tp`: 시장구분. 기본 `000`(전체). 예: `001` 코스피, `101` 코스닥, `201` 코스피200
+- `--tm-tp`: 시간구분. 기본 `1`(분전). `2`(일전)
+- `--tm`: 시간 값. 기본 `5`(분/일)
+- `--trde-qty-tp`: 거래량 구분. 기본 `00000`(전체)
+- `--stk-cnd`: 종목조건. 기본 `0`(전체)
+- `--crd-cnd`: 신용조건. 기본 `0`(전체)
+- `--pric-cnd`: 가격조건. 기본 `0`(전체)
+- `--updown-incls`: 상하한 포함. 기본 `1`(포함)
+- `--stex-tp`: 거래소구분. 기본 `1`(KRX)
+- `--direction`: 정렬/필터. 기본 `both`(급등·급락을 각각 호출해 합산 후 절대등락률로 정렬)
+- `--flu-tp`: 등락구분(1 급등, 2 급락). 기본 공백이면 자동 설정. `both`일 때는 무시되고 1/2 두 번 호출
+
+**환경 변수(.env)**
+
+- `KIWOOM_BASE`: 운영 도메인. 예 `https://api.kiwoom.com`
+- `KIWOOM_MOCK_BASE`: 모의 도메인. 예 `https://mockapi.kiwoom.com`
+- `KIWOOM_APPKEY`, `KIWOOM_SECRETKEY`: 인증키
+- `KIWOOM_KA10019_PATH`(선택): 문서 경로와 다를 경우 지정. 기본 `/api/dostk/stkinfo`
+
+**percode 폴백(개별 종목 수집)**
+
+- 실행: `python Python/Sentiment/Apps/top_movers.py --source percode --codes "005930,000660 035420" --direction both`
+- 또는: `--universe-file data/my_codes.txt`(한 줄당 6자리 코드)
+- 대량 수집: `--max-workers`와 `--max-codes`로 동시성·상한 조절
+
+**심볼 CSV 생성(선택)**
+
+- 실행: `python Python/Sentiment/Apps/build_symbols_from_dart.py`
+- 필요: `.env`에 `DART_API_KEY`
+- 결과: `data/symbols_krx.csv`(이름↔코드 매핑)
