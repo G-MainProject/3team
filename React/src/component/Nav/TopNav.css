@@ -10,6 +10,92 @@
     gap: 30px;
 }
 
+/* 진행상황 표시 스타일 */
+.progress-indicator {
+    display: flex;
+    align-items: center;
+    padding: 20px 0 0 20px;
+    gap: 0;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-right: 9vw;
+}
+
+.progress-step:last-child {
+    margin-right: 0;
+}
+
+.progress-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #DEE2E6;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid #DEE2E6;
+    z-index: 2;
+    position: relative;
+}
+
+.progress-circle.active {
+    background-color: #007BFF;
+    color: white;
+    border-color: #007BFF;
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
+}
+
+.progress-circle:hover {
+    background-color: #6C757D;
+    color: white;
+    border-color: #6C757D;
+    box-shadow: none;
+}
+
+.progress-circle:hover + .progress-label {
+    color: #6C757D !important;
+    font-weight: 600;
+}
+
+.progress-label {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6C757D;
+    text-align: center;
+    min-width: 60px;
+}
+
+.progress-step.active .progress-label {
+    color: #007BFF;
+    font-weight: 600;
+}
+
+.progress-line {
+    position: absolute;
+    top: 20px;
+    left: 60px;
+    min-width: 9vw;
+    height: 3px;
+    background-color: #DEE2E6;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.progress-line.active {
+    background-color: #007BFF;
+}
+
 button.top-nav-darkmode {
     margin-left: auto;
 }

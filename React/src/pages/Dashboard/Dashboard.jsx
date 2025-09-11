@@ -1,9 +1,130 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Dashboard.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
+import RightNav from '../../component/Nav/RightNav';
+import Footer from '../../component/Footer/Footer';
 
 export default function Dashboard() {
+    const [showFooterButton, setShowFooterButton] = useState(false)
+    const [showFooter, setShowFooter] = useState(false)
+    const [buttonAnimation, setButtonAnimation] = useState('')
+    const [allowScrollToFooter, setAllowScrollToFooter] = useState(false)
+    const [isInFooter, setIsInFooter] = useState(false)
+    const footerRef = useRef(null)
+    const showFooterButtonRef = useRef(false)
+
+    useEffect(() => {
+        const dashboardMain = document.querySelector('.dashboard-main')
+        
+        const handleScroll = () => {
+            if (!dashboardMain) return
+            
+            const scrollTop = dashboardMain.scrollTop
+            const scrollHeight = dashboardMain.scrollHeight
+            const clientHeight = dashboardMain.clientHeight
+            
+            const scrollPercentage = (scrollTop + clientHeight) / scrollHeight
+            
+            if (scrollPercentage > 0.99) {
+                if (!showFooterButtonRef.current) {
+                    setButtonAnimation('')
+                    setShowFooterButton(true)
+                    showFooterButtonRef.current = true
+                }
+                setShowFooter(true)
+            } else {
+                if (showFooterButtonRef.current) {
+                    setButtonAnimation('hiding')
+                    
+                    const button = document.querySelector('.footer-scroll-button')
+                    if (button) {
+                        const handleAnimationEnd = () => {
+                            setShowFooterButton(false)
+                            setButtonAnimation('')
+                            showFooterButtonRef.current = false
+                            button.removeEventListener('animationend', handleAnimationEnd)
+                        }
+                        button.addEventListener('animationend', handleAnimationEnd)
+                    } else {
+                        setShowFooterButton(false)
+                        setButtonAnimation('')
+                        showFooterButtonRef.current = false
+                    }
+                }
+                setShowFooter(false)
+            }
+        }
+
+        if (dashboardMain) {
+            dashboardMain.addEventListener('scroll', handleScroll)
+            return () => dashboardMain.removeEventListener('scroll', handleScroll)
+        }
+    }, [allowScrollToFooter])
+
+    // 전체 페이지 스크롤 제한
+    useEffect(() => {
+        const handlePageScroll = (e) => {
+            const dashboardMain = document.querySelector('.dashboard-main')
+            if (!dashboardMain) return
+            
+            const scrollTop = dashboardMain.scrollTop
+            const scrollHeight = dashboardMain.scrollHeight
+            const clientHeight = dashboardMain.clientHeight
+            const scrollPercentage = (scrollTop + clientHeight) / scrollHeight
+            
+            // Footer 영역에 있을 때 위로 스크롤 제한
+            if (isInFooter && e.deltaY < 0) {
+                e.preventDefault()
+                return
+            }
+            
+            // Dashboard에서 Footer로 가는 것을 제한
+            if (!allowScrollToFooter && scrollPercentage >= 1.0 && e.deltaY > 0) {
+                e.preventDefault()
+                dashboardMain.scrollTo({
+                    top: dashboardMain.scrollHeight - clientHeight,
+                    behavior: 'smooth'
+                })
+            }
+        }
+
+        window.addEventListener('wheel', handlePageScroll, { passive: false })
+        return () => window.removeEventListener('wheel', handlePageScroll)
+    }, [allowScrollToFooter, isInFooter])
+
+    const handleButtonClick = () => {
+        if (isInFooter) {
+            // Footer에서 Dashboard로 이동 - fadeOut 애니메이션 적용
+            setButtonAnimation('fade-out')
+            
+            // 애니메이션 완료 후 상태 변경
+            setTimeout(() => {
+                setAllowScrollToFooter(false)
+                setIsInFooter(false)
+                
+                const dashboardMain = document.querySelector('.dashboard-main')
+                if (dashboardMain) {
+                    dashboardMain.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    })
+                }
+            }, 300) // fadeOut 애니메이션 시간과 동일
+        } else {
+            // Dashboard에서 Footer로 이동
+            setAllowScrollToFooter(false)
+            setIsInFooter(true)
+            
+            if (footerRef.current) {
+                footerRef.current.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                })
+            }
+        }
+    }
+
     return (
         <div className='dashboard-container'>
             <div className='dashboard-content'>
@@ -131,6 +252,10 @@ export default function Dashboard() {
                             </div>
                         </div>
 
+                        <RightNav />
+                    </div>
+
+                    <div className='dashboard-grid2'>
                         {/* 뉴스 섹션 */}
                         <div className='section-container'>
                             <div className='section-label'>
@@ -273,6 +398,24 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+            
+            {/* Footer/Dashboard 이동 버튼 */}
+            {showFooterButton && (
+                <button 
+                    className={`footer-scroll-button ${buttonAnimation} ${isInFooter ? 'in-footer' : ''}`}
+                    onClick={handleButtonClick}
+                >
+                    <i className={`fa-solid ${isInFooter ? 'fa-arrow-up' : 'fa-arrow-down'}`}></i>
+                    <span>{isInFooter ? 'Dashboard로 이동' : 'Footer로 이동'}</span>
+                </button>
+            )}
+            
+            {/* Footer */}
+            {showFooter && (
+                <div ref={footerRef}>
+                    <Footer />
+                </div>
+            )}
         </div>
     );
 }
