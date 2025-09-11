@@ -10,5 +10,13 @@
         <EndPoint />
       </RunInterval>
     </WorkProcDebug>
+    <WorkProcDebug id="92673322-e20a-4ea8-b4a6-5eae6767e161" name="T_2_첨부파일저장">
+      <BreakPoints />
+      <FavoriteVariables />
+      <RunInterval>
+        <StartPoint />
+        <EndPoint />
+      </RunInterval>
+    </WorkProcDebug>
   </WorkProcDebugList>
 </DebugData>
