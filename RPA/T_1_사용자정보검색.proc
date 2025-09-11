@@ -1,16 +1,16 @@
-<Process id="9a951d40-4931-4718-94e0-e584415da70f" type="task" workType="foreground" name="T_1_사용자정보검색" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="14" Orientation="horizontal">
+<Process id="9a951d40-4931-4718-94e0-e584415da70f" process_id="dd346ec6-fe0e-4533-be64-9787310120d0" task_id="9a951d40-4931-4718-94e0-e584415da70f" type="task" workType="foreground" name="T_1_사용자정보검색" version="1.0" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="19" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
-    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="19" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="31" />
     <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 09:18:31" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 12:05:37" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 09:47:48" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -20,6 +20,56 @@
     <Variable name="Stockcode" scope="Normal" valueType="Any" formatType="Any" initValue="null" desc="" colorValue="#FFA555EC" showMarker="False" />
   </Variables>
   <Steps>
+    <Step id="S75445cc6de4647c6b723505bf65b5e12" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="RESULT" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="2b395080-6dfe-4c7d-b24b-6c20d3f674c5" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\첨부파일'" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);]]></Script>
+    </Step>
+    <Step id="S67bde514f8974f11bfd20d1f4530672f" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="51b7b358-1a37-44dc-b0ec-16f362ba5101" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT == true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S559ae9e9740a4204b04e1bd529a2923d" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (RESULT == true) {]]></Script>
+    </Step>
+    <Step id="Sf71b4d40cbba45e8bb6a204cccfe1be5" ver="311241220" createVer="311241220" type="Desktop" name="DeleteDirectory" dpName="DeleteDirectory" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="f1ad3d8f-84a1-43bd-8cfa-94e61108a837" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\첨부파일'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_3);]]></Script>
+    </Step>
+    <Step id="S559ae9e9740a4204b04e1bd529a2923d" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="3c2a2c3e-18b5-4533-b7f4-67b6e9b13122" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S67bde514f8974f11bfd20d1f4530672f" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S29e1458e947f4d709d67dea71616bbd2" ver="311241220" createVer="311241220" type="Desktop" name="CreateDirectory" dpName="CreateDirectory" dpValue="C:\3team\RPA\데이터추출\첨부파일" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="75ccb500-0de4-4e85-a228-7e2805d1bfb1" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\첨부파일'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_5);]]></Script>
+    </Step>
     <Step id="S68f5d280f0934677939029ae91960b35" ver="311241220" createVer="311241220" type="Desktop" name="InputBox" dpName="InputBox" dpValue="Global.Stock" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="cfcd1e47-ceb8-4b48-bbcd-0050ec776f88" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -8694,14 +8744,14 @@ this.Stockcode = stockData[Global.Stock] || null;
         <Property type="Chrome" key="CHROME_Maximize" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="60" />
         <Property type="Chrome" key="CHROME_ExtensionList" controlType="PropertyItemChromeInstalledExtensionsView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_DownloadPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="CHROME_DownloadPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\첨부파일'" />
         <Property type="Chrome" key="CHROME_WindowsAccountPermissions" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Chrome" key="CHROME_UserAgent" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="CHROME_DisableAutomationControl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Chrome" key="CHROME_UserLaunchOptions" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_7);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_12);]]></Script>
     </Step>
     <Step id="Sd1000b8a64234d6b86cac385f9474954" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="67711df5-220a-4c1e-8b61-1eb17fb45eb3" type="Win">
@@ -8714,7 +8764,7 @@ this.Stockcode = stockData[Global.Stock] || null;
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_8);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_13);]]></Script>
     </Step>
     <Step id="Sfd06376fb7804e8a9a5e60eaec45d1eb" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6048f699-b311-414d-b1e0-46d7c966b057" type="Win">
@@ -8727,7 +8777,7 @@ this.Stockcode = stockData[Global.Stock] || null;
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_9);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_14);]]></Script>
     </Step>
     <Step id="S17f1bfd3b2a5472c970abd297b1b2b0b" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="종목검색" dpValue2="종목분석 리포트 : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="14a95406-f12d-4efd-920f-706a28110caa" type="Win">
@@ -8794,7 +8844,7 @@ this.Stockcode = stockData[Global.Stock] || null;
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'25.5, 9'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_10);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_15);]]></Script>
     </Step>
     <Step id="S58112e1f546342c4a8be9c6ba6b007f7" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetText" dpName="ChromeSetText" dpValue="LATEST_BROWSER" dpValue2="네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="d1d7f695-92c0-4f13-8cbb-d551c11fc83b" type="Chrome">
@@ -8861,7 +8911,7 @@ this.Stockcode = stockData[Global.Stock] || null;
         <Property type="Win" key="Mouse_OffsetPoint" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'0, 0'" order="12" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_11);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_16);]]></Script>
     </Step>
     <Step id="Sdbce3faf4ec947b38eb39fbf3d45eef1" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="09350af7-c77c-4208-a7fc-727459662871" type="Win">
@@ -8874,7 +8924,7 @@ this.Stockcode = stockData[Global.Stock] || null;
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_12);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_17);]]></Script>
     </Step>
     <Step id="Sa62f139b2a1b42bcaef2984c3d480981" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="선택" dpValue2="네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="0266cc31-73e1-45d3-8cb4-9b4d19bf4ebf" type="Win">
@@ -8941,7 +8991,7 @@ this.Stockcode = stockData[Global.Stock] || null;
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'18, 10.5'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_13);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_18);]]></Script>
     </Step>
     <Step id="Seb4f1e4964b74263a0b940a3623aa9ed" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="검색" dpValue2="종목분석 리포트 : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="0d071870-5b25-469d-aa17-a61c8ea483eb" type="Win">
@@ -9008,7 +9058,7 @@ this.Stockcode = stockData[Global.Stock] || null;
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'31, 20'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_14);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_19);]]></Script>
     </Step>
   </Steps>
   <JScript><![CDATA[function T_1_사용자정보검색() {
@@ -9017,19 +9067,39 @@ this.Stockcode = stockData[Global.Stock] || null;
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {3:[6]};
-    this.GotoReverseBlockMap = {6:3};
-    this.GotoStepBlockTypeMap = {3:'DecisionThen',6:'EndDecisionThen'};
+    this.GotoBlockMap = {2:[4],8:[11]};
+    this.GotoReverseBlockMap = {4:2,11:8};
+    this.GotoStepBlockTypeMap = {2:'DecisionThen',4:'EndDecisionThen',8:'DecisionThen',11:'EndDecisionThen'};
 
 
     this.run = function() {
 
         //------------------------------------------------
-        STEP('S68f5d280f0934677939029ae91960b35', '[1] InputBox');
+        STEP('S75445cc6de4647c6b723505bf65b5e12', '[1] IsDirectoryExist');
+        RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);
+
+        //------------------------------------------------
+        STEP('S67bde514f8974f11bfd20d1f4530672f', '[2] IfThen');
+        if (RESULT == true) {
+
+            //------------------------------------------------
+            STEP('Sf71b4d40cbba45e8bb6a204cccfe1be5', '[3] DeleteDirectory');
+            StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_3);
+
+        //------------------------------------------------
+        }
+        STEP('S559ae9e9740a4204b04e1bd529a2923d', '[4] End-IfThen');
+
+        //------------------------------------------------
+        STEP('S29e1458e947f4d709d67dea71616bbd2', '[5] CreateDirectory');
+        StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_5);
+
+        //------------------------------------------------
+        STEP('S68f5d280f0934677939029ae91960b35', '[6] InputBox');
         Global.Stock = InputBox('','Text', '종목을 입력해세요', 0);
 
         //------------------------------------------------
-        STEP('S2d74807ed27e4cb4bfc7674971d3e12b', '[2] ExecuteScript');
+        STEP('S2d74807ed27e4cb4bfc7674971d3e12b', '[7] ExecuteScript');
         const stockData = {
             '1Q CD금리액티브(합성)' : '491610',
             '1Q K200액티브' : '451060',
@@ -13329,15 +13399,15 @@ this.Stockcode = stockData[Global.Stock] || null;
 
 
         //------------------------------------------------
-        STEP('Sc55ab9f8c71b4fd4a8c001f1248eeb55', '[3] IfThen');
+        STEP('Sc55ab9f8c71b4fd4a8c001f1248eeb55', '[8] IfThen');
         if (this.Stockcode == null) {
 
             //------------------------------------------------
-            STEP('S765fe0d497be4129964c290ab4c931d9', '[4] InputBox');
+            STEP('S765fe0d497be4129964c290ab4c931d9', '[9] InputBox');
             Global.Stock = InputBox('','Text', '입력하신 종목이 없습니다 다시 입력하세요', 0);
 
             //------------------------------------------------
-            STEP('S5408d9d451db422cb3c1afc4147f3576', '[5] ExecuteScript');
+            STEP('S5408d9d451db422cb3c1afc4147f3576', '[10] ExecuteScript');
             const stockData = {
                 '1Q CD금리액티브(합성)' : '491610',
                 '1Q K200액티브' : '451060',
@@ -17638,39 +17708,39 @@ this.Stockcode = stockData[Global.Stock] || null;
 
         //------------------------------------------------
         }
-        STEP('Sfc1cccd664d348cb872991f738c9c145', '[6] End-IfThen');
+        STEP('Sfc1cccd664d348cb872991f738c9c145', '[11] End-IfThen');
 
         //------------------------------------------------
-        STEP('Sef9f5f6f105b40a181a1b13e8a0f86e8', '[7] ChromeOpen');
-        RESULT = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_7);
+        STEP('Sef9f5f6f105b40a181a1b13e8a0f86e8', '[12] ChromeOpen');
+        RESULT = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_12);
 
         //------------------------------------------------
-        STEP('Sd1000b8a64234d6b86cac385f9474954', '[8] KeyInput');
-        StepPlayer.Run('Win.KeyInput', this.keyinput_info_8);
+        STEP('Sd1000b8a64234d6b86cac385f9474954', '[13] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_13);
 
         //------------------------------------------------
-        STEP('Sfd06376fb7804e8a9a5e60eaec45d1eb', '[9] KeyInput');
-        StepPlayer.Run('Win.KeyInput', this.keyinput_info_9);
+        STEP('Sfd06376fb7804e8a9a5e60eaec45d1eb', '[14] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_14);
 
         //------------------------------------------------
-        STEP('S17f1bfd3b2a5472c970abd297b1b2b0b', '[10] Click');
-        StepPlayer.Run('Win.Click', this.click_info_10);
+        STEP('S17f1bfd3b2a5472c970abd297b1b2b0b', '[15] Click');
+        StepPlayer.Run('Win.Click', this.click_info_15);
 
         //------------------------------------------------
-        STEP('S58112e1f546342c4a8be9c6ba6b007f7', '[11] ChromeSetText');
-        StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_11);
+        STEP('S58112e1f546342c4a8be9c6ba6b007f7', '[16] ChromeSetText');
+        StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_16);
 
         //------------------------------------------------
-        STEP('Sdbce3faf4ec947b38eb39fbf3d45eef1', '[12] KeyInput');
-        StepPlayer.Run('Win.KeyInput', this.keyinput_info_12);
+        STEP('Sdbce3faf4ec947b38eb39fbf3d45eef1', '[17] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_17);
 
         //------------------------------------------------
-        STEP('Sa62f139b2a1b42bcaef2984c3d480981', '[13] Click');
-        StepPlayer.Run('Win.Click', this.click_info_13);
+        STEP('Sa62f139b2a1b42bcaef2984c3d480981', '[18] Click');
+        StepPlayer.Run('Win.Click', this.click_info_18);
 
         //------------------------------------------------
-        STEP('Seb4f1e4964b74263a0b940a3623aa9ed', '[14] Click');
-        StepPlayer.Run('Win.Click', this.click_info_14);
+        STEP('Seb4f1e4964b74263a0b940a3623aa9ed', '[19] Click');
+        StepPlayer.Run('Win.Click', this.click_info_19);
 
 
     }
@@ -17685,6 +17755,11 @@ this.Stockcode = stockData[Global.Stock] || null;
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
+      <StepNode step_id="S75445cc6de4647c6b723505bf65b5e12" group_name="fbfbcfeb-6b33-4d6a-bb26-ff14e063844f_Untitled" folded="False" color="" />
+      <StepNode step_id="S67bde514f8974f11bfd20d1f4530672f" group_name="" folded="False" color="" />
+      <StepNode step_id="Sf71b4d40cbba45e8bb6a204cccfe1be5" group_name="1dea36fd-8c56-4e28-a916-63a77da8e35a_Untitled" folded="False" color="" />
+      <StepNode step_id="S559ae9e9740a4204b04e1bd529a2923d" group_name="" folded="False" color="" />
+      <StepNode step_id="S29e1458e947f4d709d67dea71616bbd2" group_name="c77ca8ec-ffd9-4b86-b8d4-c38e1958ae95_Untitled" folded="False" color="" />
       <StepNode step_id="S68f5d280f0934677939029ae91960b35" group_name="110e6f94-ea91-466f-8f85-edda9ed541d9_조건 입력받기" folded="False" color="" />
       <StepNode step_id="S2d74807ed27e4cb4bfc7674971d3e12b" group_name="110e6f94-ea91-466f-8f85-edda9ed541d9_조건 입력받기" folded="False" color="" />
       <StepNode step_id="Sc55ab9f8c71b4fd4a8c001f1248eeb55" group_name="" folded="False" color="" />
