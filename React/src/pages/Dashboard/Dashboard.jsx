@@ -308,27 +308,14 @@ export default function Dashboard() {
 								</button>
 							</div>
 							<div className="sentiment-section">
-								<div className="sentiment-container">
-									<div className="sentiment-chart">
-										<div className="pie-chart-placeholder">
-											<p>원그래프 영역</p>
-										</div>
-									</div>
-									<div className="sentiment-legend">
-										<div className="legend-item">
-											<span className="legend-color positive"></span>
-											<span>긍정 45%</span>
-										</div>
-										<div className="legend-item">
-											<span className="legend-color negative"></span>
-											<span>부정 30%</span>
-										</div>
-										<div className="legend-item">
-											<span className="legend-color neutral"></span>
-											<span>중립 25%</span>
-										</div>
-									</div>
-								</div>
+								<CircleGraph
+									data={[
+										{ name: '긍정', value: 45 },
+										{ name: '부정', value: 30 },
+										{ name: '중립', value: 25 },
+									]}
+									colors={['#34a853', '#ea4335', '#fbbc04']}
+								/>
 							</div>
 						</div>
 
