@@ -74,7 +74,9 @@ export default function Dashboard() {
 			const scrollTop = dashboardMain.scrollTop;
 			const scrollHeight = dashboardMain.scrollHeight;
 			const clientHeight = dashboardMain.clientHeight;
-			const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
+
+			// 스크롤이 맨 아래에 도달했는지 확인 (1px 미만의 오차 허용)
+			const isAtBottom = scrollHeight - scrollTop - clientHeight < 1;
 
 			// Footer 영역에 있을 때 위로 스크롤 제한
 			if (isInFooter && e.deltaY < 0) {
@@ -83,7 +85,7 @@ export default function Dashboard() {
 			}
 
 			// Dashboard에서 Footer로 가는 것을 제한
-			if (!allowScrollToFooter && scrollPercentage >= 1.0 && e.deltaY > 0) {
+			if (!allowScrollToFooter && isAtBottom && e.deltaY > 0) {
 				e.preventDefault();
 				dashboardMain.scrollTo({
 					top: dashboardMain.scrollHeight - clientHeight,
