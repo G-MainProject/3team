@@ -2,17 +2,24 @@ import React, { useRef, useEffect, useState } from 'react';
 import './MyWordCloud.css';
 import { WordCloud } from '@isoterik/react-word-cloud';
 
-export default function MyWordCloud({ data }) {
+const MyWordCloud = React.memo(function MyWordCloud({ data }) {
+	
 	const containerRef = useRef(null);
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
 	useEffect(() => {
+		
 		const updateDimensions = () => {
 			if (containerRef.current) {
-				setDimensions({
-					width: containerRef.current.offsetWidth,
-					height: containerRef.current.offsetHeight,
-				});
+				const newWidth = containerRef.current.offsetWidth;
+				const newHeight = containerRef.current.offsetHeight;
+				if (newWidth !== dimensions.width || newHeight !== dimensions.height) {
+					
+					setDimensions({
+						width: newWidth,
+						height: newHeight,
+					});
+				}
 			}
 		};
 
@@ -22,7 +29,7 @@ export default function MyWordCloud({ data }) {
 		return () => {
 			window.removeEventListener('resize', updateDimensions);
 		};
-	}, []);
+	}, [dimensions]);
 
 	const wordCloudData = data;
 
@@ -65,4 +72,6 @@ export default function MyWordCloud({ data }) {
 			)}
 		</div>
 	);
-}
+});
+
+export default MyWordCloud;

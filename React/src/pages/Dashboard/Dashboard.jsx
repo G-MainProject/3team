@@ -8,6 +8,23 @@ import Chart from '../../component/Chart/Chart';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 
+const CircleGraphData = [
+	{ name: '긍정', value: 45 },
+	{ name: '부정', value: 30 },
+	{ name: '중립', value: 25 },
+];
+
+const wordCloudData = [
+	{ text: 'AI', value: 64 },
+	{ text: '반도체', value: 45 },
+	{ text: '투자', value: 80 },
+	{ text: '성장', value: 70 },
+	{ text: '기술', value: 55 },
+	{ text: '삼성전자', value: 72 },
+	{ text: '시장', value: 88 },
+	{ text: '혁신', value: 40 },
+];
+
 export default function Dashboard() {
 	const [showFooterButton, setShowFooterButton] = useState(false);
 	const [showFooter, setShowFooter] = useState(false);
@@ -16,23 +33,6 @@ export default function Dashboard() {
 	const [isInFooter, setIsInFooter] = useState(false);
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
-
-	const CircleGraphData = [
-		{ name: '긍정', value: 45 },
-		{ name: '부정', value: 30 },
-		{ name: '중립', value: 25 },
-	];
-
-	const wordCloudData = [
-		{ text: 'AI', value: 64 },
-		{ text: '반도체', value: 45 },
-		{ text: '투자', value: 80 },
-		{ text: '성장', value: 70 },
-		{ text: '기술', value: 55 },
-		{ text: '삼성전자', value: 72 },
-		{ text: '시장', value: 88 },
-		{ text: '혁신', value: 40 },
-	];
 
 	useEffect(() => {
 		const dashboardMain = document.querySelector('.dashboard-main');
