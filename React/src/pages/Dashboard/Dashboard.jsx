@@ -75,8 +75,8 @@ export default function Dashboard() {
 			const scrollHeight = dashboardMain.scrollHeight;
 			const clientHeight = dashboardMain.clientHeight;
 
-			// 스크롤이 맨 아래에 도달했는지 확인 (1px 미만의 오차 허용)
-			const isAtBottom = scrollHeight - scrollTop - clientHeight < 1;
+			// 스크롤이 맨 아래에 도달했는지 확인 (반올림 오차 허용)
+			const isAtBottom = Math.round(scrollTop + clientHeight) >= scrollHeight;
 
 			// Footer 영역에 있을 때 위로 스크롤 제한
 			if (isInFooter && e.deltaY < 0) {
