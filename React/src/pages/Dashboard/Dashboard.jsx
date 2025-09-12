@@ -25,6 +25,79 @@ const wordCloudData = [
 	{ text: '혁신', value: 40 },
 ];
 
+const financialData = [
+	{
+		year: '2020',
+		revenue: 2368100000000,
+		operatingProfit: 359900000000,
+		netProfit: 264100000000,
+	},
+	{
+		year: '2021',
+		revenue: 2796000000000,
+		operatingProfit: 516300000000,
+		netProfit: 399100000000,
+	},
+	{
+		year: '2022',
+		revenue: 3022300000000,
+		operatingProfit: 433800000000,
+		netProfit: 556500000000,
+	},
+	{
+		year: '2023',
+		revenue: 2589400000000,
+		operatingProfit: 65700000000,
+		netProfit: 154900000000,
+	},
+];
+
+const financialChartSeries = [
+	{ key: 'revenue', name: '매출액', color: '#3b82f6' },
+	{ key: 'operatingProfit', name: '영업이익', color: '#10b981' },
+	{ key: 'netProfit', name: '순이익', color: '#ef4444' },
+];
+
+const realtimeStockData = [
+	{ time: '10:00', price: 50000 },
+	{ time: '10:05', price: 50100 },
+	{ time: '10:10', price: 50050 },
+	{ time: '10:15', price: 50200 },
+	{ time: '10:20', price: 50150 },
+	{ time: '10:25', price: 50300 },
+	{ time: '10:30', price: 50250 },
+];
+
+const realtimeStockSeries = [
+	{ key: 'price', name: '실시간 주가', color: '#8884d8' },
+];
+
+const dailyStockData = [
+	{ date: '08-12', price: 50000 },
+	{ date: '08-13', price: 51000 },
+	{ date: '08-14', price: 50500 },
+	{ date: '08-15', price: 52000 },
+	{ date: '08-16', price: 51500 },
+	{ date: '08-17', price: 52500 },
+	{ date: '08-18', price: 53000 },
+];
+
+const dailyStockSeries = [
+	{ key: 'price', name: '일별 주가', color: '#82ca9d' },
+];
+
+const volumeData = [
+	{ date: '08-12', volume: 1234567 },
+	{ date: '08-13', volume: 1534567 },
+	{ date: '08-14', volume: 1134567 },
+	{ date: '08-15', volume: 1634567 },
+	{ date: '08-16', volume: 1434567 },
+	{ date: '08-17', volume: 1734567 },
+	{ date: '08-18', volume: 1834567 },
+];
+
+const volumeSeries = [{ key: 'volume', name: '거래량', color: '#ffc658' }];
+
 export default function Dashboard() {
 	const [showFooterButton, setShowFooterButton] = useState(false);
 	const [showFooter, setShowFooter] = useState(false);
@@ -173,22 +246,38 @@ export default function Dashboard() {
 									<div className="kpi-chart-item">
 										<h3>실시간 주가 차트</h3>
 										<div className="kpi-chart-placeholder">
-											{/* <p>실시간 지표</p> */}
-											<Chart />
+											<Chart
+												data={realtimeStockData}
+												series={realtimeStockSeries}
+												xAxisKey="time"
+												yAxisUnit="원"
+												simpleMode={true}
+											/>
 										</div>
 									</div>
 									<div className="kpi-chart-item">
 										<h3>일별 주가 차트</h3>
 										<div className="kpi-chart-placeholder">
-											{/* <p>최근 30일간의 일일 변동률 추이</p> */}
-											<Chart />
+											<Chart
+												data={dailyStockData}
+												series={dailyStockSeries}
+												xAxisKey="date"
+												yAxisUnit="원"
+												simpleMode={true}
+											/>
 										</div>
 									</div>
 									<div className="kpi-chart-item">
 										<h3>거래량 추이</h3>
 										<div className="kpi-chart-placeholder">
-											{/* <p>거래량과 주가 변동의 상관관계</p> */}
-											<Chart />
+											<Chart
+												data={volumeData}
+												series={volumeSeries}
+												xAxisKey="date"
+												yAxisUnit="주"
+												simpleMode={true}
+												formatTooltipValue={false}
+											/>
 										</div>
 									</div>
 								</div>
@@ -249,10 +338,15 @@ export default function Dashboard() {
 
 								{/* 재무제표 차트 */}
 								<div className="financial-chart-container">
-									<h3>연도별 재무 성과</h3>
-									<div className="financial-chart-placeholder">
-										<p>매출액/영업이익/순이익 추이 차트</p>
-									</div>
+									<h3>연도별 재무 성과 (단위 : 10억원)</h3>
+									<Chart
+										data={financialData}
+										series={financialChartSeries}
+										xAxisKey="year"
+										yAxisUnit="원"
+										xAxisUnit="년"
+										yAxisFormatType="billions"
+									/>
 								</div>
 
 								{/* 재무 비율 분석 */}
