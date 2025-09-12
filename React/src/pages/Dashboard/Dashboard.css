@@ -474,6 +474,7 @@
 	border-radius: 8px;
 	padding: 20px;
 	min-height: 400px;
+	max-height: 400px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -525,6 +526,7 @@
 	border-radius: 8px;
 	padding: 20px;
 	min-height: 400px;
+	max-height: 400px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
