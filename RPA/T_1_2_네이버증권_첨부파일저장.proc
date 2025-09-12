@@ -1,22 +1,24 @@
-<Process id="92673322-e20a-4ea8-b4a6-5eae6767e161" process_id="4a12d5bf-cd13-4269-80c8-d1f062f4ba8b" task_id="92673322-e20a-4ea8-b4a6-5eae6767e161" type="task" workType="foreground" name="T_2_첨부파일저장" version="1.0" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="26" Orientation="horizontal">
+<Process id="92673322-e20a-4ea8-b4a6-5eae6767e161" process_id="4a12d5bf-cd13-4269-80c8-d1f062f4ba8b" task_id="92673322-e20a-4ea8-b4a6-5eae6767e161" type="task" workType="foreground" name="T_1_2_네이버증권_첨부파일저장" version="1.0" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="26" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
-    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="21" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="9" />
     <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 09:51:05" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 10:29:41" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 16:54:05" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
-  <Variables />
+  <Variables>
+    <Variable name="tmp" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="지역변수로 변경" colorValue="#FF7DCE13" showMarker="False" />
+  </Variables>
   <Steps>
     <Step id="S6415298f9d2c424ba18722a906d22f8b" ver="311241220" createVer="311241220" type="Chrome" name="ChromeIsExist" dpName="ChromeIsExist" dpValue="RESULT" dpValue2="넷마블 종목분석 - 국내 Hit ratio 1위, 퍼블리싱 역량도 재평가 필요 : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="abd661bd-5611-4a14-9c11-4fcb43d4c7de" type="Chrome">
@@ -452,41 +454,42 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_9);]]></Script>
     </Step>
-    <Step id="S833e1fae76bd480ca3c4ef256b7ac1c1" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.flag == true" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S833e1fae76bd480ca3c4ef256b7ac1c1" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.Naver_flag == true" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="2b870ac4-afd5-4e1c-bc47-038b091593e4" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.flag == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.Naver_flag == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.flag == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Naver_flag == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S71f0ba840a854db0855f2bd3ff3b324b" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (Global.flag == true) {]]></Script>
+      <Script><![CDATA[if (Global.Naver_flag == true) {]]></Script>
+    </Step>
+    <Step id="Se7eada119ce04251b827a4f0b9a0a954" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="139d01fc-45c1-43e2-b23f-653ba6d48a43" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="지역변수로변경" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.tmp = 'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] + '\\pdf'&#xD;&#xA;Global.Naver_flag = false" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.tmp = 'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] + '\\pdf'
+Global.Naver_flag = false]]></Script>
     </Step>
     <Step id="S6104606bacb742e3b2dd3e78ccf8eb82" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="a3867c6c-22dc-4a16-b932-54d7b8d21e9d" type="Win">
         <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LControlKey,L,,-LControlKey,#C:\3team\RPA\데이터추출\첨부파일,Return," order="1" ready="True" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LControlKey,L,,-LControlKey,$this.tmp,Return," order="1" ready="True" />
         <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="1000" />
         <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="1000" />
         <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_11);]]></Script>
-    </Step>
-    <Step id="Sb064472c5d36469b9ae105c0fdf619bc" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
-      <Properties id="54341728-94ed-4a20-9d54-2e480b26374f" type="Flow">
-        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="다운로드경로필요여부" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.flag = false" />
-      </Properties>
-      <RelatedSteps />
-      <Script><![CDATA[Global.flag = false]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_12);]]></Script>
     </Step>
     <Step id="S71f0ba840a854db0855f2bd3ff3b324b" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="dbb6f696-062d-466f-9772-1f66719d2d82" type="Flow">
@@ -604,18 +607,18 @@
       </RelatedSteps>
       <Script><![CDATA[}else{]]></Script>
     </Step>
-    <Step id="S2ceab1660b77495c85d649d7d4d1b2fd" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.flag == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S2ceab1660b77495c85d649d7d4d1b2fd" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.Naver_flag == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="2b870ac4-afd5-4e1c-bc47-038b091593e4" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.flag == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.Naver_flag == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.flag == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Naver_flag == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S231ff8b3d1bd4f6f89cd37c53e88e8e1" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (Global.flag == true) {]]></Script>
+      <Script><![CDATA[if (Global.Naver_flag == true) {]]></Script>
     </Step>
     <Step id="Seaa0668b327e4480ba1fef7d996735e1" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="다른 이름으로 저장" dpValue2="신세계푸드 종목분석 - 말이 안되는 Valuation : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="99b5fb5b-e338-473a-9bfe-65251c179b2e" type="Win">
@@ -684,28 +687,29 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_20);]]></Script>
     </Step>
+    <Step id="Sdd50d94f05b04f61bd03a80fdad7d4fe" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="139d01fc-45c1-43e2-b23f-653ba6d48a43" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="지역변수로변경" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.tmp = 'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] + '\\pdf'&#xD;&#xA;Global.Naver_flag = false" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.tmp = 'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] + '\\pdf'
+Global.Naver_flag = false]]></Script>
+    </Step>
     <Step id="S1fc4e9fa04d0467b8f04a61301fe5152" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="a3867c6c-22dc-4a16-b932-54d7b8d21e9d" type="Win">
         <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LControlKey,L,,-LControlKey,$Global.Desktop_path,#C:\3team\RPA\데이터추출\첨부파일,Return," order="1" ready="True" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="#LControlKey,L,,-LControlKey,$this.tmp,Return," order="1" ready="True" />
         <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="1000" />
         <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="1000" />
         <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_21);]]></Script>
-    </Step>
-    <Step id="S5b812be4759040449e51ba982a74bc0d" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
-      <Properties id="54341728-94ed-4a20-9d54-2e480b26374f" type="Flow">
-        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="다운로드경로필요여부" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.flag = false" />
-      </Properties>
-      <RelatedSteps />
-      <Script><![CDATA[Global.flag = false]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_22);]]></Script>
     </Step>
     <Step id="S231ff8b3d1bd4f6f89cd37c53e88e8e1" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="dbb6f696-062d-466f-9772-1f66719d2d82" type="Flow">
@@ -802,7 +806,9 @@
       <Script><![CDATA[}]]></Script>
     </Step>
   </Steps>
-  <JScript><![CDATA[function T_2_첨부파일저장() {
+  <JScript><![CDATA[function T_1_2_네이버증권_첨부파일저장() {
+
+    this.tmp;
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
@@ -851,15 +857,16 @@
 
                     //------------------------------------------------
                     STEP('S833e1fae76bd480ca3c4ef256b7ac1c1', '[10] IfThen');
-                    if (Global.flag == true) {
+                    if (Global.Naver_flag == true) {
 
                         //------------------------------------------------
-                        STEP('S6104606bacb742e3b2dd3e78ccf8eb82', '[11] KeyInput');
-                        StepPlayer.Run('Win.KeyInput', this.keyinput_info_11);
+                        STEP('Se7eada119ce04251b827a4f0b9a0a954', '[11] ExecuteScript');
+                        this.tmp = 'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] + '\\pdf'
+                        Global.Naver_flag = false
 
                         //------------------------------------------------
-                        STEP('Sb064472c5d36469b9ae105c0fdf619bc', '[12] ExecuteScript');
-                        Global.flag = false
+                        STEP('S6104606bacb742e3b2dd3e78ccf8eb82', '[12] KeyInput');
+                        StepPlayer.Run('Win.KeyInput', this.keyinput_info_12);
 
                     //------------------------------------------------
                     }
@@ -887,19 +894,20 @@
 
                 //------------------------------------------------
                 STEP('S2ceab1660b77495c85d649d7d4d1b2fd', '[19] IfThen');
-                if (Global.flag == true) {
+                if (Global.Naver_flag == true) {
 
                     //------------------------------------------------
                     STEP('Seaa0668b327e4480ba1fef7d996735e1', '[20] Click');
                     StepPlayer.Run('Win.Click', this.click_info_20);
 
                     //------------------------------------------------
-                    STEP('S1fc4e9fa04d0467b8f04a61301fe5152', '[21] KeyInput');
-                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_21);
+                    STEP('Sdd50d94f05b04f61bd03a80fdad7d4fe', '[21] ExecuteScript');
+                    this.tmp = 'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] + '\\pdf'
+                    Global.Naver_flag = false
 
                     //------------------------------------------------
-                    STEP('S5b812be4759040449e51ba982a74bc0d', '[22] ExecuteScript');
-                    Global.flag = false
+                    STEP('S1fc4e9fa04d0467b8f04a61301fe5152', '[22] KeyInput');
+                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_22);
 
                 //------------------------------------------------
                 }
@@ -940,8 +948,8 @@
       <StepNode step_id="S319295c6f1454be3984597744b10f801" group_name="521d08e2-5944-4e97-820b-2c8d57905e0f_창 열림 확인" folded="False" color="" />
       <StepNode step_id="Sea84735cc1c8494686781cf4839f3041" group_name="7fe0b60b-3ea1-4793-8064-5f0d13934699_Untitled" folded="False" color="" />
       <StepNode step_id="S833e1fae76bd480ca3c4ef256b7ac1c1" group_name="" folded="False" color="" />
+      <StepNode step_id="Se7eada119ce04251b827a4f0b9a0a954" group_name="0ad8e9d0-ef34-4eb5-ad77-57783acc5a14_경로설정" folded="False" color="" />
       <StepNode step_id="S6104606bacb742e3b2dd3e78ccf8eb82" group_name="0ad8e9d0-ef34-4eb5-ad77-57783acc5a14_경로설정" folded="False" color="" />
-      <StepNode step_id="Sb064472c5d36469b9ae105c0fdf619bc" group_name="0ad8e9d0-ef34-4eb5-ad77-57783acc5a14_경로설정" folded="False" color="" />
       <StepNode step_id="S71f0ba840a854db0855f2bd3ff3b324b" group_name="" folded="False" color="" />
       <StepNode step_id="S0f2d0eb2b95e4346b5974733d8b056f0" group_name="d5a7f674-9047-4f29-a32f-781e40a70b83_저장" folded="False" color="" />
       <StepNode step_id="S4047d2b2fda24f9d903eb0966e8fb1b3" group_name="889eaa5f-cbae-4db7-8974-7928dd5a27f2_웹페이지 뒤로가기 단축키" folded="False" color="" />
@@ -950,8 +958,8 @@
       <StepNode step_id="S36e816342bdf43f48a38a4e1c9490221" group_name="" folded="False" color="" />
       <StepNode step_id="S2ceab1660b77495c85d649d7d4d1b2fd" group_name="" folded="False" color="" />
       <StepNode step_id="Seaa0668b327e4480ba1fef7d996735e1" group_name="5ad6976f-6467-4423-8036-da75bfac327a_경로설정" folded="False" color="" />
+      <StepNode step_id="Sdd50d94f05b04f61bd03a80fdad7d4fe" group_name="5ad6976f-6467-4423-8036-da75bfac327a_경로설정" folded="False" color="" />
       <StepNode step_id="S1fc4e9fa04d0467b8f04a61301fe5152" group_name="5ad6976f-6467-4423-8036-da75bfac327a_경로설정" folded="False" color="" />
-      <StepNode step_id="S5b812be4759040449e51ba982a74bc0d" group_name="5ad6976f-6467-4423-8036-da75bfac327a_경로설정" folded="False" color="" />
       <StepNode step_id="S231ff8b3d1bd4f6f89cd37c53e88e8e1" group_name="" folded="False" color="" />
       <StepNode step_id="S2c68bd9f4dcf443fa038b2b5ee499df4" group_name="4b48262b-fa0e-4259-9219-461e1ecf60bd_저장" folded="False" color="" />
       <StepNode step_id="S9a92c6309a04498789a1cfed03898624" group_name="" folded="False" color="" />
