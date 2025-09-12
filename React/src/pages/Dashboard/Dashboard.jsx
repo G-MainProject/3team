@@ -5,6 +5,7 @@ import TopNav from '../../component/Nav/TopNav';
 import RightNav from '../../component/Nav/RightNav';
 import Footer from '../../component/Footer/Footer';
 import Chart from '../../component/Chart/Chart';
+import CandleStickChart from '../../component/CandleStickChart/CandleStickChart';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 
@@ -86,17 +87,125 @@ const dailyStockSeries = [
 	{ key: 'price', name: '일별 주가', color: '#82ca9d' },
 ];
 
-const volumeData = [
-	{ date: '08-12', volume: 1234567 },
-	{ date: '08-13', volume: 1534567 },
-	{ date: '08-14', volume: 1134567 },
-	{ date: '08-15', volume: 1634567 },
-	{ date: '08-16', volume: 1434567 },
-	{ date: '08-17', volume: 1734567 },
-	{ date: '08-18', volume: 1834567 },
+{
+	/*	거래량 추이 데이터
+const candlestickData = [
+	{
+		date: '08-12',
+		open: 50000,
+		high: 50500,
+		low: 49800,
+		close: 50300,
+		volume: 1234567,
+	},
+	{
+		date: '08-13',
+		open: 50300,
+		high: 51200,
+		low: 50100,
+		close: 51000,
+		volume: 1534567,
+	},
+	{
+		date: '08-14',
+		open: 51000,
+		high: 51100,
+		low: 50400,
+		close: 50500,
+		volume: 1134567,
+	},
+	{
+		date: '08-15',
+		open: 50500,
+		high: 52200,
+		low: 50450,
+		close: 52000,
+		volume: 1634567,
+	},
+	{
+		date: '08-16',
+		open: 52000,
+		high: 52100,
+		low: 51300,
+		close: 51500,
+		volume: 1434567,
+	},
+	{
+		date: '08-17',
+		open: 51500,
+		high: 52800,
+		low: 51400,
+		close: 52500,
+		volume: 1734567,
+	},
+	{
+		date: '08-18',
+		open: 52500,
+		high: 53200,
+		low: 52400,
+		close: 53000,
+		volume: 1834567,
+	},
 ];
+*/
+}
 
-const volumeSeries = [{ key: 'volume', name: '거래량', color: '#ffc658' }];
+// 거래량 추이 데이터를 랜덤으로 생성하는 함수
+function generateRealisticStockData(days = 30) {
+	const data = [];
+	let lastClose = 50000; // 시작 가격
+	let lastVolume = 1500000; // 시작 거래량
+
+	for (let i = 0; i < days; i++) {
+		const date = `08-${12 + i}`; // 날짜 생성
+		const open = lastClose;
+
+		// 가격 변동폭을 -4% ~ +5% 사이로 랜덤하게 설정
+		const changePercent = (Math.random() - 0.45) * 0.09;
+		let close = open * (1 + changePercent);
+
+		// 고가와 저가 생성
+		const high = Math.max(open, close) * (1 + Math.random() * 0.02);
+		const low = Math.min(open, close) * (1 - Math.random() * 0.02);
+
+		// 거래량 변동 생성 (가격 변동이 클 때 거래량도 늘어나는 경향을 반영)
+		const volumeChange = (Math.random() - 0.5) * 0.7;
+		let volume =
+			lastVolume * (1 + volumeChange) + Math.abs(changePercent) * 5000000;
+		volume = Math.max(500000, volume); // 최소 거래량 보장
+
+		data.push({
+			date,
+			open: Math.round(open),
+			high: Math.round(high),
+			low: Math.round(low),
+			close: Math.round(close),
+			volume: Math.round(volume),
+		});
+
+		lastClose = close;
+		lastVolume = volume;
+	}
+	return data;
+}
+
+const candlestickData = generateRealisticStockData(30);
+
+// 거래량 데이터를 캔들 차트용 데이터(OHLC)로 변환하는 코드
+const volumeCandleData = candlestickData.map((d, i, arr) => {
+	// 첫 번째 데이터는 이전 데이터가 없으므로 시가(open)와 종가(close)를 동일하게 설정
+	const open = i === 0 ? d.volume : arr[i - 1].volume;
+	const close = d.volume;
+
+	return {
+		date: d.date,
+		open: open,
+		close: close,
+		// 꼬리(wick)가 없는 캔들을 위해 high와 low를 open/close 중 큰 값/작은 값으로 설정
+		high: Math.max(open, close),
+		low: Math.min(open, close),
+	};
+});
 
 export default function Dashboard() {
 	const [showFooterButton, setShowFooterButton] = useState(false);
@@ -270,13 +379,9 @@ export default function Dashboard() {
 									<div className="kpi-chart-item">
 										<h3>거래량 추이</h3>
 										<div className="kpi-chart-placeholder">
-											<Chart
-												data={volumeData}
-												series={volumeSeries}
-												xAxisKey="date"
-												yAxisUnit="주"
-												simpleMode={true}
-												formatTooltipValue={false}
+											<CandleStickChart
+												data={volumeCandleData}
+												simpleMode={false}
 											/>
 										</div>
 									</div>
