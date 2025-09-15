@@ -1,4 +1,4 @@
-<Process id="af47bc2c-8feb-43f5-801e-fb32d8fc9ac4" type="process" workType="foreground" name="P_1_네이버증권" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="8" Orientation="horizontal">
+<Process id="af47bc2c-8feb-43f5-801e-fb32d8fc9ac4" type="process" workType="foreground" name="P_1_네이버증권" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="6" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 10:50:07" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 17:29:00" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-15 14:29:28" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -18,19 +18,7 @@
   <LinkItems />
   <Variables />
   <Steps>
-    <Step id="Sefd47401ab65400e91a01579848ae9aa" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="Global.Naver_l &lt; Global.Stockcode.length" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
-      <Properties id="ff00936a-a301-44e0-aaf8-b5889c3cffca" type="Flow">
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_InitializeIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Naver_l = 0" />
-        <Property type="Flow" key="Conditions_LoopCondition" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Naver_l &lt; Global.Stockcode.length" />
-        <Property type="Flow" key="Conditions_UpdateIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Naver_l++" />
-      </Properties>
-      <RelatedSteps>
-        <RelatedStep id="Sdab0914d6d6640afa2c1fc709e03218c" type="Flow" name="EndLoop" />
-      </RelatedSteps>
-      <Script><![CDATA[for (Global.Naver_l = 0; Global.Naver_l < Global.Stockcode.length; Global.Naver_l++) {]]></Script>
-    </Step>
-    <Step id="S18a31a9b3e9c40c690e0ba08d9c7974a" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S18a31a9b3e9c40c690e0ba08d9c7974a" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="56066e5b-f348-48be-a632-7908d4637560" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -39,7 +27,7 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'T_1_1_네이버증권_열기', null);]]></Script>
     </Step>
-    <Step id="Sbfb71c4aa80a437d9cdb68f8176a04b4" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sbfb71c4aa80a437d9cdb68f8176a04b4" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="fe8be32d-99e5-448e-b534-3fcc132472ac" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -48,7 +36,7 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'T_1_2_네이버증권_데이터추출', null);]]></Script>
     </Step>
-    <Step id="S9944931b08b642dc808eec2197407e09" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.Data_use == 'true'" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S9944931b08b642dc808eec2197407e09" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.Data_use == 'true'" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="a7848199-ace0-4f89-8386-09d19bd25af7" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.Data_use == 'true'" order="1" />
@@ -61,7 +49,7 @@
       </RelatedSteps>
       <Script><![CDATA[if (Global.Data_use == 'true') {]]></Script>
     </Step>
-    <Step id="S1cc74126eb3a4a4e86afc76617c17c3b" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S1cc74126eb3a4a4e86afc76617c17c3b" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="8f156430-b3e5-4042-9bbc-9d7d146a604c" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -70,7 +58,7 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'T_1_3_네이버증권_엑셀저장', null);]]></Script>
     </Step>
-    <Step id="Se15f22fdceff47f192b59893d73fb344" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Se15f22fdceff47f192b59893d73fb344" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="9faefd32-9136-4560-8eb7-73ef2f998c44" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -79,7 +67,7 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'T_1_4_네이버증권_PDF가공', null);]]></Script>
     </Step>
-    <Step id="Sa380e172466e41e0b9ac8df328ef1cfc" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
+    <Step id="Sa380e172466e41e0b9ac8df328ef1cfc" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="332aaa80-fa8f-4cd4-90f6-950a8a5aab9c" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
@@ -88,58 +76,41 @@
       </RelatedSteps>
       <Script><![CDATA[}]]></Script>
     </Step>
-    <Step id="Sdab0914d6d6640afa2c1fc709e03218c" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
-      <Properties id="e69eb6b9-d869-4d6c-a174-e05148af701d" type="Flow">
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-      </Properties>
-      <RelatedSteps>
-        <RelatedStep id="Sefd47401ab65400e91a01579848ae9aa" type="Flow" name="Loop" />
-      </RelatedSteps>
-      <Script><![CDATA[}]]></Script>
-    </Step>
   </Steps>
   <JScript><![CDATA[function P_1_네이버증권() {
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {1:[8],4:[7]};
-    this.GotoReverseBlockMap = {8:1,7:4};
-    this.GotoStepBlockTypeMap = {1:'Loop',8:'EndLoop',4:'DecisionThen',7:'EndDecisionThen'};
+    this.GotoBlockMap = {3:[6]};
+    this.GotoReverseBlockMap = {6:3};
+    this.GotoStepBlockTypeMap = {3:'DecisionThen',6:'EndDecisionThen'};
 
 
     this.run = function() {
 
         //------------------------------------------------
-        STEP('Sefd47401ab65400e91a01579848ae9aa', '[1] For');
-        for (Global.Naver_l = 0; Global.Naver_l < Global.Stockcode.length; Global.Naver_l++) {
+        STEP('S18a31a9b3e9c40c690e0ba08d9c7974a', '[1] RunTask');
+        RunTask(this, 'T_1_1_네이버증권_열기', null);
+
+        //------------------------------------------------
+        STEP('Sbfb71c4aa80a437d9cdb68f8176a04b4', '[2] RunTask');
+        RunTask(this, 'T_1_2_네이버증권_데이터추출', null);
+
+        //------------------------------------------------
+        STEP('S9944931b08b642dc808eec2197407e09', '[3] IfThen');
+        if (Global.Data_use == 'true') {
 
             //------------------------------------------------
-            STEP('S18a31a9b3e9c40c690e0ba08d9c7974a', '[2] RunTask');
-            RunTask(this, 'T_1_1_네이버증권_열기', null);
+            STEP('S1cc74126eb3a4a4e86afc76617c17c3b', '[4] RunTask');
+            RunTask(this, 'T_1_3_네이버증권_엑셀저장', null);
 
             //------------------------------------------------
-            STEP('Sbfb71c4aa80a437d9cdb68f8176a04b4', '[3] RunTask');
-            RunTask(this, 'T_1_2_네이버증권_데이터추출', null);
-
-            //------------------------------------------------
-            STEP('S9944931b08b642dc808eec2197407e09', '[4] IfThen');
-            if (Global.Data_use == 'true') {
-
-                //------------------------------------------------
-                STEP('S1cc74126eb3a4a4e86afc76617c17c3b', '[5] RunTask');
-                RunTask(this, 'T_1_3_네이버증권_엑셀저장', null);
-
-                //------------------------------------------------
-                STEP('Se15f22fdceff47f192b59893d73fb344', '[6] RunTask');
-                RunTask(this, 'T_1_4_네이버증권_PDF가공', null);
-
-            //------------------------------------------------
-            }
-            STEP('Sa380e172466e41e0b9ac8df328ef1cfc', '[7] End-IfThen');
+            STEP('Se15f22fdceff47f192b59893d73fb344', '[5] RunTask');
+            RunTask(this, 'T_1_4_네이버증권_PDF가공', null);
 
         //------------------------------------------------
         }
-        STEP('Sdab0914d6d6640afa2c1fc709e03218c', '[8] End-For');
+        STEP('Sa380e172466e41e0b9ac8df328ef1cfc', '[6] End-IfThen');
 
 
     }
@@ -154,14 +125,12 @@
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="Sefd47401ab65400e91a01579848ae9aa" group_name="" folded="False" color="" />
       <StepNode step_id="S18a31a9b3e9c40c690e0ba08d9c7974a" group_name="" folded="False" color="" />
       <StepNode step_id="Sbfb71c4aa80a437d9cdb68f8176a04b4" group_name="" folded="False" color="" />
       <StepNode step_id="S9944931b08b642dc808eec2197407e09" group_name="" folded="False" color="" />
       <StepNode step_id="S1cc74126eb3a4a4e86afc76617c17c3b" group_name="" folded="False" color="" />
       <StepNode step_id="Se15f22fdceff47f192b59893d73fb344" group_name="" folded="False" color="" />
       <StepNode step_id="Sa380e172466e41e0b9ac8df328ef1cfc" group_name="" folded="False" color="" />
-      <StepNode step_id="Sdab0914d6d6640afa2c1fc709e03218c" group_name="" folded="False" color="" />
     </StepNodes>
   </Diagram>
 </Process>

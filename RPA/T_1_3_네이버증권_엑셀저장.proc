@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-04 16:26:23" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 16:17:47" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-12 10:35:30" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -24,7 +24,7 @@
       <Properties id="e381b17d-8c26-43d1-8ed7-c5b365b7c6b7" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Desktop" key="Command_Path" controlType="File" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] +'\\리포트_' + Global.Stock[Global.Naver_l] + '.xlsx'" />
+        <Property type="Desktop" key="Command_Path" controlType="File" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\리포트_' + Global.Stock[Global.l] + '.xlsx'" />
         <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
       </Properties>
       <RelatedSteps />
@@ -43,11 +43,11 @@
       </RelatedSteps>
       <Script><![CDATA[if (RESULT != true) {]]></Script>
     </Step>
-    <Step id="Sb0081ecd269e4b20867e605948bb7602" ver="311241220" createVer="311241220" type="Excel" name="CreateExcel" dpName="CreateExcel" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.Naver_l] +'\리포트_' + Global.Stock[Global.Naver_l] + '.xlsx" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sb0081ecd269e4b20867e605948bb7602" ver="311241220" createVer="311241220" type="Excel" name="CreateExcel" dpName="CreateExcel" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.l] +'\리포트_' + Global.Stock[Global.l] + '.xlsx" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="bd5e9097-f8b0-4e16-8242-f19eddb86336" type="Excel">
         <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Excel" key="File_Path" controlType="Excel" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] +'\\리포트_' + Global.Stock[Global.Naver_l] + '.xlsx'" />
+        <Property type="Excel" key="File_Path" controlType="Excel" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\리포트_' + Global.Stock[Global.l] + '.xlsx'" />
         <Property type="Excel" key="File_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
       </Properties>
       <RelatedSteps />
@@ -62,12 +62,12 @@
       </RelatedSteps>
       <Script><![CDATA[}]]></Script>
     </Step>
-    <Step id="S619c8b6137e44f61b7607e98e4437c11" ver="311241220" createVer="311241220" type="Excel" name="OpenExcel" dpName="OpenExcel" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.Naver_l] +'\리포트_' + Global.Stock[Global.Naver_l] + '.xlsx" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S619c8b6137e44f61b7607e98e4437c11" ver="311241220" createVer="311241220" type="Excel" name="OpenExcel" dpName="OpenExcel" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.l] +'\리포트_' + Global.Stock[Global.l] + '.xlsx" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="d56bf8a7-8723-4cba-9790-95ab091fc33a" type="Excel">
         <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Excel" key="Output_OutputExcel" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
-        <Property type="Excel" key="File_Path" controlType="Excel" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] +'\\리포트_' + Global.Stock[Global.Naver_l] + '.xlsx'" order="11" />
+        <Property type="Excel" key="File_Path" controlType="Excel" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\리포트_' + Global.Stock[Global.l] + '.xlsx'" order="11" />
         <Property type="Excel" key="File_Invisible" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" order="12" />
         <Property type="Excel" key="File_ReadOnly" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" order="16" />
         <Property type="Excel" key="File_Maximize" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" order="13" />
@@ -86,14 +86,14 @@
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="엑셀헤더" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Excel_header = []&#xD;&#xA;this.Excel_header[0] = []&#xA;this.Excel_header[1] = []&#xD;&#xA;&#xD;&#xA;this.Excel_header[0][0] = Global.Stock[Global.Naver_l]&#xD;&#xA;this.Excel_header[1][0] = '제목'&#xD;&#xA;this.Excel_header[1][1] = '증권사'&#xD;&#xA;this.Excel_header[1][2] = '날짜'&#xD;&#xA;this.Excel_header[1][3] = '내용'&#xD;&#xA;" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Excel_header = []&#xD;&#xA;this.Excel_header[0] = []&#xA;this.Excel_header[1] = []&#xD;&#xA;&#xD;&#xA;this.Excel_header[0][0] = Global.Stock[Global.l]&#xD;&#xA;this.Excel_header[1][0] = '제목'&#xD;&#xA;this.Excel_header[1][1] = '증권사'&#xD;&#xA;this.Excel_header[1][2] = '날짜'&#xD;&#xA;this.Excel_header[1][3] = '내용'&#xD;&#xA;" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[this.Excel_header = []
 this.Excel_header[0] = []
 this.Excel_header[1] = []
 
-this.Excel_header[0][0] = Global.Stock[Global.Naver_l]
+this.Excel_header[0][0] = Global.Stock[Global.l]
 this.Excel_header[1][0] = '제목'
 this.Excel_header[1][1] = '증권사'
 this.Excel_header[1][2] = '날짜'
@@ -234,7 +234,7 @@ this.Excel_header[1][3] = '내용'
         this.Excel_header[0] = []
         this.Excel_header[1] = []
 
-        this.Excel_header[0][0] = Global.Stock[Global.Naver_l]
+        this.Excel_header[0][0] = Global.Stock[Global.l]
         this.Excel_header[1][0] = '제목'
         this.Excel_header[1][1] = '증권사'
         this.Excel_header[1][2] = '날짜'

@@ -1,4 +1,4 @@
-<Process id="1e9e284c-4709-478d-87bd-1351a1ed1b40" type="task" workType="foreground" name="T_1_4_네이버증권_PDF가공" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="5" Orientation="horizontal">
+<Process id="1e9e284c-4709-478d-87bd-1351a1ed1b40" type="task" workType="foreground" name="T_1_4_네이버증권_PDF가공" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="9" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,19 +10,21 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 11:49:43" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 16:23:16" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-15 14:24:46" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
-  <Variables />
+  <Variables>
+    <Variable name="Naver_img" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF62B6B7" showMarker="False" />
+  </Variables>
   <Steps>
     <Step id="Sfeaf4272fb04429bba857f834d70197b" ver="311241220" createVer="311241220" type="Desktop" name="GetFileList" dpName="GetFileList" dpValue="RESULT" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="d07daf46-3ab4-4f8c-82dd-bcf9e21bf4c9" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] +'\\pdf'" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\pdf'" />
         <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object[]" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
         <Property type="Desktop" key="Command_SearchPattern" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" filter="filename" />
         <Property type="Desktop" key="Command_SearchOption" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="TopDirectoryOnly" valuelist="TopDirectoryOnly;AllDirectories" />
@@ -43,30 +45,75 @@
       </RelatedSteps>
       <Script><![CDATA[if (RESULT.length !== 0) {]]></Script>
     </Step>
-    <Step id="S4f7c94fed3814a359fb3354cd16523d8" ver="311241220" createVer="311241220" type="Pdf" name="MergePdfActivity" dpName="MergePdf" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.Naver_l] +'\pdf" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S4f7c94fed3814a359fb3354cd16523d8" ver="311241220" createVer="311241220" type="Pdf" name="MergePdfActivity" dpName="MergePdf" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.l] +'\pdf" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="bca997c2-1c28-433c-970f-b9cbc9e317a9" type="Pdf">
         <Property type="Pdf" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Pdf" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Pdf" key="Input_InputDirPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] +'\\pdf'" />
-        <Property type="Pdf" key="Input_OutputFilePath" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] +'\\pdf\\추출_' + Global.Stock[Global.Naver_l] + '.pdf'" />
+        <Property type="Pdf" key="Input_InputDirPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\pdf'" />
+        <Property type="Pdf" key="Input_OutputFilePath" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\pdf\\추출_' + Global.Stock[Global.l] + '.pdf'" />
         <Property type="Pdf" key="Input_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_3);]]></Script>
     </Step>
-    <Step id="S993e361424594b16a4f6dbb721df108d" ver="311241220" createVer="311241220" type="Pdf" name="ExportPdfToImageActivity" dpName="ExportPdfToImage" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.Naver_l] +'\pdf\추출_' + Global.Stock[Global.Naver_l] + '.pdf" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
-      <Properties id="f6b14ec4-88d2-47f4-ac7c-a56be753f80a" type="Pdf">
+    <Step id="S349114475b774a25b28a04c0fdacff0f" ver="311241220" createVer="311241220" type="Pdf" name="ExportPdfToImageActivity" dpName="ExportPdfToImage" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.l] +'\pdf\추출_' + Global.Stock[Global.l] + '.pdf" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="f1525b83-1975-4bee-9348-40dc7964a080" type="Pdf">
         <Property type="Pdf" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Pdf" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Pdf" key="Input_File" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] +'\\pdf\\추출_' + Global.Stock[Global.Naver_l] + '.pdf'" order="1" />
+        <Property type="Pdf" key="Input_File" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\pdf\\추출_' + Global.Stock[Global.l] + '.pdf'" order="1" />
         <Property type="Pdf" key="Input_Password" controlType="PropertyItemPasswordView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="True" isChanged="Y" encryptedFrom="" value="OFHXrJv2HBkJpaqdsGVnRA==" order="2" />
-        <Property type="Pdf" key="Input_TargetDirectory" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.Naver_l] +'\\pdf\\이미지_' + Global.Stock[Global.Naver_l]" order="3" />
+        <Property type="Pdf" key="Input_TargetDirectory" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\pdf\\이미지'" order="3" />
         <Property type="Pdf" key="Input_ImageFormat" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Png" valuelist="Png;Gif;Tiff;Bmp;Jpeg" order="4" />
         <Property type="Pdf" key="Input_PageRange" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'All'" order="5" />
         <Property type="Pdf" key="Input_DPI" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="96" order="6" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[ActivityWorker.Play('Pdf', 'ExportPdfToImageActivity', this.activitylibraryitem_info_4);]]></Script>
+    </Step>
+    <Step id="Se28abea2ce86491198f6670ccf4500b7" ver="311241220" createVer="311241220" type="Pdf" name="ExtractImageFromPdfActivity" dpName="ExtractImageFromPdf" dpValue="C:\3team\RPA\데이터추출\네이버증권' + Global.Stock[Global.l] +'\pdf\추출_' + Global.Stock[Global.l] + '.pdf" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="False" mainSet="0">
+      <Properties id="0e6ad727-0fe3-4983-8822-1f7ddad015d9" type="Pdf">
+        <Property type="Pdf" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Pdf" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Pdf" key="Output_Result" controlType="OutputControlType" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Naver_img" />
+        <Property type="Pdf" key="Input_File" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\pdf\\추출_' + Global.Stock[Global.l] + '.pdf'" order="1" />
+        <Property type="Pdf" key="Input_Password" controlType="PropertyItemPasswordView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="True" isChanged="Y" encryptedFrom="" value="OFHXrJv2HBkJpaqdsGVnRA==" order="2" />
+        <Property type="Pdf" key="Input_PageRange" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'All'" order="5" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.Naver_img = ActivityWorker.Play('Pdf', 'ExtractImageFromPdfActivity', this.activitylibraryitem_info_4);]]></Script>
+    </Step>
+    <Step id="S3d1e0b3436074cc790aaa7064250ecf3" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="this.i &lt;  this.Naver_img.length" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="False" mainSet="0">
+      <Properties id="5f1d9c3d-8fd6-4d0a-9eae-f5e425769c22" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_InitializeIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.i = 0" />
+        <Property type="Flow" key="Conditions_LoopCondition" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.i &lt;  this.Naver_img.length" />
+        <Property type="Flow" key="Conditions_UpdateIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.i++" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="Sbadbb87653784767b5e42050889ee981" type="Flow" name="EndLoop" />
+      </RelatedSteps>
+      <Script><![CDATA[for (this.i = 0; this.i <  this.Naver_img.length; this.i++) {]]></Script>
+    </Step>
+    <Step id="S486a8fbf76ec42218a3fb467addcd272" ver="311241220" createVer="311241220" type="ImageConverter" name="SaveImage" dpName="SaveImage" dpValue="this.Naver_img[this.i]" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="False" mainSet="0">
+      <Properties id="dc13da25-c568-4c6b-aa58-6d5395df6516" type="ImageConverter">
+        <Property type="ImageConverter" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="ImageConverter" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="ImageConverter" key="ImageConvertAttr_InputBitmap" controlType="InputControlType" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Naver_img[this.i]" />
+        <Property type="ImageConverter" key="ImageFile_SavePath" controlType="Image" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l] +'\\pdf\\이미지\\' + Global.Stock[Global.l]  + '_' + this.i + 1 + '.png'" />
+        <Property type="ImageConverter" key="ImageFile_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+        <Property type="ImageConverter" key="ImageFile_Encoding" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="png" valuelist="png;jpg;bmp" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('ImageConverter.SaveImage', this.saveimage_info_6);]]></Script>
+    </Step>
+    <Step id="Sbadbb87653784767b5e42050889ee981" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="False" mainSet="0">
+      <Properties id="1eac32e1-b422-4378-aa87-3150c0f544b8" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S3d1e0b3436074cc790aaa7064250ecf3" type="Flow" name="Loop" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
     </Step>
     <Step id="S2cc2ceb528154b2dadc620fe3cd50f45" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="85e51e74-3c50-4616-9ed6-eda54791a831" type="Flow">
@@ -80,11 +127,13 @@
   </Steps>
   <JScript><![CDATA[function T_1_4_네이버증권_PDF가공() {
 
+    this.Naver_img;
+
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {2:[5]};
-    this.GotoReverseBlockMap = {5:2};
-    this.GotoStepBlockTypeMap = {2:'DecisionThen',5:'EndDecisionThen'};
+    this.GotoBlockMap = {2:[9]};
+    this.GotoReverseBlockMap = {9:2};
+    this.GotoStepBlockTypeMap = {2:'DecisionThen',9:'EndDecisionThen'};
 
 
     this.run = function() {
@@ -102,12 +151,28 @@
             ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_3);
 
             //------------------------------------------------
-            STEP('S993e361424594b16a4f6dbb721df108d', '[4] ExportPdfToImage');
+            STEP('S349114475b774a25b28a04c0fdacff0f', '[4] ExportPdfToImage');
             ActivityWorker.Play('Pdf', 'ExportPdfToImageActivity', this.activitylibraryitem_info_4);
+
+            ////------------------------------------------------
+            //STEP('Se28abea2ce86491198f6670ccf4500b7', '[5] ExtractImageFromPdf');
+            //this.Naver_img = ActivityWorker.Play('Pdf', 'ExtractImageFromPdfActivity', this.activitylibraryitem_info_4);
+
+            ////------------------------------------------------
+            //STEP('S3d1e0b3436074cc790aaa7064250ecf3', '[6] For');
+            //for (this.i = 0; this.i <  this.Naver_img.length; this.i++) {
+
+                ////------------------------------------------------
+                //STEP('S486a8fbf76ec42218a3fb467addcd272', '[7] SaveImage');
+                //StepPlayer.Run('ImageConverter.SaveImage', this.saveimage_info_6);
+
+            ////------------------------------------------------
+            //}
+            //STEP('Sbadbb87653784767b5e42050889ee981', '[8] End-For');
 
         //------------------------------------------------
         }
-        STEP('S2cc2ceb528154b2dadc620fe3cd50f45', '[5] End-IfThen');
+        STEP('S2cc2ceb528154b2dadc620fe3cd50f45', '[9] End-IfThen');
 
 
     }
@@ -125,7 +190,11 @@
       <StepNode step_id="Sfeaf4272fb04429bba857f834d70197b" group_name="6060259e-6086-4ef7-9dac-c7b8957b4095_pdf유무확인" folded="False" color="" />
       <StepNode step_id="S705cde71743541728bfa8f149aa546d3" group_name="" folded="False" color="" />
       <StepNode step_id="S4f7c94fed3814a359fb3354cd16523d8" group_name="37f03c0b-779a-4ab9-82ac-9c0723faaa44_pdf 병합" folded="False" color="" />
-      <StepNode step_id="S993e361424594b16a4f6dbb721df108d" group_name="28538710-488d-4e90-b4c1-ab911169fb3f_이미지 변환" folded="False" color="" />
+      <StepNode step_id="S349114475b774a25b28a04c0fdacff0f" group_name="cf36d166-6ba4-4137-b880-c8bd6b85340d_이미지변환" folded="False" color="" />
+      <StepNode step_id="Se28abea2ce86491198f6670ccf4500b7" group_name="b1061485-e90b-4d41-89f7-2685ff4e2b82_이미지 추출" folded="False" color="" />
+      <StepNode step_id="S3d1e0b3436074cc790aaa7064250ecf3" group_name="" folded="False" color="" />
+      <StepNode step_id="S486a8fbf76ec42218a3fb467addcd272" group_name="e1ab66d2-4214-40d2-befb-63fa4fce316d_Untitled" folded="False" color="" />
+      <StepNode step_id="Sbadbb87653784767b5e42050889ee981" group_name="" folded="False" color="" />
       <StepNode step_id="S2cc2ceb528154b2dadc620fe3cd50f45" group_name="" folded="False" color="" />
     </StepNodes>
   </Diagram>
