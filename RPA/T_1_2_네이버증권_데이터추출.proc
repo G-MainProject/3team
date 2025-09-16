@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 11:40:59" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-12 10:35:30" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-15 17:33:33" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -106,39 +106,39 @@
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="데이터유무확인" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Data_use = ToJson(Global.Data_use)&#xD;&#xA;&#xD;&#xA;if(Global.Data_use[0][1] === '검색 결과가 없습니다.') {&#xD;&#xA;    Global.Data_use = 'false'&#xD;&#xA;}else if(Global.Data_use.length &gt;= 10) {&#xD;&#xA;    //리포트 10개 추출&#xD;&#xA;    this.Data_num = 16&#xD;&#xA;    Global.Data_use = 'true'&#xD;&#xA;}else if(Global.Data_use.length &gt; 5 ) {&#xD;&#xA;    //리포트 5개 이상인 경우 경우&#xD;&#xA;    this.Data_num = Global.Data_use.length + 5&#xD;&#xA;    Global.Data_use = 'true'&#xD;&#xA;}else {&#xD;&#xA;    this.Data_num = Global.Data_use.length + 2&#xD;&#xA;    Global.Data_use = 'true'&#xD;&#xA;}" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Data_use = ToJson(Global.Data_use)&#xD;&#xA;&#xD;&#xA;if(Global.Data_use[0][1] === '검색 결과가 없습니다.') {&#xD;&#xA;    Global.Data_use = false&#xD;&#xA;}else if(Global.Data_use.length &gt;= 10) {&#xD;&#xA;    //리포트 10개 추출&#xD;&#xA;    this.Data_num = 16&#xD;&#xA;    Global.Data_use = true&#xD;&#xA;}else if(Global.Data_use.length &gt; 5 ) {&#xD;&#xA;    //리포트 5개 이상인 경우 경우&#xD;&#xA;    this.Data_num = Global.Data_use.length + 5&#xD;&#xA;    Global.Data_use = true&#xD;&#xA;}else {&#xD;&#xA;    this.Data_num = Global.Data_use.length + 2&#xD;&#xA;    Global.Data_use = true&#xD;&#xA;}" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[Global.Data_use = ToJson(Global.Data_use)
 
 if(Global.Data_use[0][1] === '검색 결과가 없습니다.') {
-    Global.Data_use = 'false'
+    Global.Data_use = false
 }else if(Global.Data_use.length >= 10) {
     //리포트 10개 추출
     this.Data_num = 16
-    Global.Data_use = 'true'
+    Global.Data_use = true
 }else if(Global.Data_use.length > 5 ) {
     //리포트 5개 이상인 경우 경우
     this.Data_num = Global.Data_use.length + 5
-    Global.Data_use = 'true'
+    Global.Data_use = true
 }else {
     this.Data_num = Global.Data_use.length + 2
-    Global.Data_use = 'true'
+    Global.Data_use = true
 }]]></Script>
     </Step>
-    <Step id="Saa0b37cf6b67463c9812508746e49363" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="Global.Data_use == 'true'" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="Saa0b37cf6b67463c9812508746e49363" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="Global.Data_use == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="2885e5cd-ce27-4738-825b-15b5f50e99ed" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.Data_use == 'true'" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.Data_use == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Data_use == 'true'" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.Data_use == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S7890657ba6744a209cd9197ae216917d" type="Flow" name="Else" />
         <RelatedStep id="S1deea2e5bae841209bf0bb18e9148e03" type="Flow" name="EndDecision" />
       </RelatedSteps>
-      <Script><![CDATA[if (Global.Data_use == 'true') {]]></Script>
+      <Script><![CDATA[if (Global.Data_use == true) {]]></Script>
     </Step>
     <Step id="S7d2f58f11a224782a59b6287da2caf62" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="this.i &lt; this.Data_num" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="b4074269-388c-4da4-9c61-e1038ad46b2b" type="Flow">
@@ -337,10 +337,10 @@ if(Global.Data_use[0][1] === '검색 결과가 없습니다.') {
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="데이터저장" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Data_header[this.index] = [];&#xD;&#xA;&#xD;&#xA;for(var k = 0; k &lt; RESULT.length; k++) {&#xD;&#xA;    this.Data_header[this.index][k] = RESULT[k]&#xD;&#xA;}&#xD;&#xA;" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Data_header[this.index] = []&#xD;&#xA;&#xD;&#xA;for(var k = 0; k &lt; RESULT.length; k++) {&#xD;&#xA;    this.Data_header[this.index][k] = RESULT[k]&#xD;&#xA;}&#xD;&#xA;" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.Data_header[this.index] = [];
+      <Script><![CDATA[this.Data_header[this.index] = []
 
 for(var k = 0; k < RESULT.length; k++) {
     this.Data_header[this.index][k] = RESULT[k]
@@ -419,14 +419,14 @@ for(var k = 0; k < RESULT.length; k++) {
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="데이터저장" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT = ToJson(RESULT)&#xD;&#xA;&#xD;&#xA;this.Data_content[this.index] = [];&#xD;&#xA;this.Data_content[this.index].push(RESULT[1]);&#xD;&#xA;this.index++;" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT = ToJson(RESULT)&#xD;&#xA;&#xD;&#xA;this.Data_content[this.index] = []&#xD;&#xA;this.Data_content[this.index].push(RESULT[1])&#xD;&#xA;this.index++" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[RESULT = ToJson(RESULT)
 
-this.Data_content[this.index] = [];
-this.Data_content[this.index].push(RESULT[1]);
-this.index++;]]></Script>
+this.Data_content[this.index] = []
+this.Data_content[this.index].push(RESULT[1])
+this.index++]]></Script>
     </Step>
     <Step id="S12b5b144c97b4d1ea07a702e8050eddd" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="cef46078-0833-4306-8b0e-3578695ee8dc" type="Win">
@@ -464,26 +464,26 @@ this.index++;]]></Script>
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="데이터정제" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="for(let i = 0; i &lt; this.Data_header.length; i++) {&#xD;&#xA;  let parts = this.Data_header[i][0].split('\n\n');  &#xD;&#xA;  let body = parts[0].trim();&#xD;&#xA;  &#xD;&#xA;  let firstSpaceIndex = body.indexOf(' ');&#xD;&#xA;  // 제목만 저장하도록&#xD;&#xA;  body = body.substring(firstSpaceIndex + 1);&#xD;&#xA;&#xD;&#xA;  // 증권사, 날짜, 조회수&#xD;&#xA;  let metaParts = [];&#xD;&#xA;  let temp = parts[1].split('|');&#xD;&#xA;  &#xD;&#xA;  for (let j = 0; j &lt; temp.length; j++) { &#xD;&#xA;      metaParts.push(temp[j].trim()); &#xD;&#xA;  }&#xD;&#xA;&#xD;&#xA;  Global.Naver_Data[i] = [body, ...metaParts];&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;for(let i = 0; i &lt; this.Data_content.length; i++) {&#xD;&#xA;    let content = this.Data_content[i][0].replace(/\r\n/g, '\n')&#xD;&#xA;    Global.Naver_Data[i].push(content)&#xD;&#xA;}" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="for(let i = 0; i &lt; this.Data_header.length; i++) {&#xD;&#xA;    let parts = this.Data_header[i][0].split('\n\n') &#xD;&#xA;    let body = parts[0].trim()&#xD;&#xA;  &#xD;&#xA;    let firstSpaceIndex = body.indexOf(' ')&#xD;&#xA;    // 제목만 저장하도록&#xD;&#xA;    body = body.substring(firstSpaceIndex + 1)&#xD;&#xA;&#xD;&#xA;    // 증권사, 날짜, 조회수&#xD;&#xA;    let metaParts = []&#xD;&#xA;    let temp = parts[1].split('|')&#xD;&#xA;  &#xD;&#xA;    for(let j = 0; j &lt; temp.length; j++) { &#xD;&#xA;        metaParts.push(temp[j].trim())&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    Global.Naver_Data[i] = [body, ...metaParts]&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;for(let i = 0; i &lt; this.Data_content.length; i++) {&#xD;&#xA;    let content = this.Data_content[i][0].replace(/\r\n/g, '\n')&#xD;&#xA;    Global.Naver_Data[i].push(content)&#xD;&#xA;}" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[for(let i = 0; i < this.Data_header.length; i++) {
-  let parts = this.Data_header[i][0].split('\n\n');  
-  let body = parts[0].trim();
+    let parts = this.Data_header[i][0].split('\n\n') 
+    let body = parts[0].trim()
   
-  let firstSpaceIndex = body.indexOf(' ');
-  // 제목만 저장하도록
-  body = body.substring(firstSpaceIndex + 1);
+    let firstSpaceIndex = body.indexOf(' ')
+    // 제목만 저장하도록
+    body = body.substring(firstSpaceIndex + 1)
 
-  // 증권사, 날짜, 조회수
-  let metaParts = [];
-  let temp = parts[1].split('|');
+    // 증권사, 날짜, 조회수
+    let metaParts = []
+    let temp = parts[1].split('|')
   
-  for (let j = 0; j < temp.length; j++) { 
-      metaParts.push(temp[j].trim()); 
-  }
+    for(let j = 0; j < temp.length; j++) { 
+        metaParts.push(temp[j].trim())
+    }
 
-  Global.Naver_Data[i] = [body, ...metaParts];
+    Global.Naver_Data[i] = [body, ...metaParts]
 }
 
 for(let i = 0; i < this.Data_content.length; i++) {
@@ -575,23 +575,23 @@ for(let i = 0; i < this.Data_content.length; i++) {
         Global.Data_use = ToJson(Global.Data_use)
 
         if(Global.Data_use[0][1] === '검색 결과가 없습니다.') {
-            Global.Data_use = 'false'
+            Global.Data_use = false
         }else if(Global.Data_use.length >= 10) {
             //리포트 10개 추출
             this.Data_num = 16
-            Global.Data_use = 'true'
+            Global.Data_use = true
         }else if(Global.Data_use.length > 5 ) {
             //리포트 5개 이상인 경우 경우
             this.Data_num = Global.Data_use.length + 5
-            Global.Data_use = 'true'
+            Global.Data_use = true
         }else {
             this.Data_num = Global.Data_use.length + 2
-            Global.Data_use = 'true'
+            Global.Data_use = true
         }
 
         //------------------------------------------------
         STEP('Saa0b37cf6b67463c9812508746e49363', '[4] IfElse');
-        if (Global.Data_use == 'true') {
+        if (Global.Data_use == true) {
 
             //------------------------------------------------
             STEP('S7d2f58f11a224782a59b6287da2caf62', '[5] For');
@@ -627,7 +627,7 @@ for(let i = 0; i < this.Data_content.length; i++) {
 
                     //------------------------------------------------
                     STEP('S5ae4f295bc934211953a4cf53e9263c3', '[13] ExecuteScript');
-                    this.Data_header[this.index] = [];
+                    this.Data_header[this.index] = []
 
                     for(var k = 0; k < RESULT.length; k++) {
                         this.Data_header[this.index][k] = RESULT[k]
@@ -642,9 +642,9 @@ for(let i = 0; i < this.Data_content.length; i++) {
                     STEP('S83aecd4672334d0b888b936095662a22', '[15] ExecuteScript');
                     RESULT = ToJson(RESULT)
 
-                    this.Data_content[this.index] = [];
-                    this.Data_content[this.index].push(RESULT[1]);
-                    this.index++;
+                    this.Data_content[this.index] = []
+                    this.Data_content[this.index].push(RESULT[1])
+                    this.index++
 
                     //------------------------------------------------
                     STEP('S12b5b144c97b4d1ea07a702e8050eddd', '[16] KeyInput');
@@ -661,22 +661,22 @@ for(let i = 0; i < this.Data_content.length; i++) {
             //------------------------------------------------
             STEP('S7aa4d68872a5473ea5abe50a8d401319', '[19] ExecuteScript');
             for(let i = 0; i < this.Data_header.length; i++) {
-              let parts = this.Data_header[i][0].split('\n\n');  
-              let body = parts[0].trim();
+                let parts = this.Data_header[i][0].split('\n\n') 
+                let body = parts[0].trim()
               
-              let firstSpaceIndex = body.indexOf(' ');
-              // 제목만 저장하도록
-              body = body.substring(firstSpaceIndex + 1);
+                let firstSpaceIndex = body.indexOf(' ')
+                // 제목만 저장하도록
+                body = body.substring(firstSpaceIndex + 1)
 
-              // 증권사, 날짜, 조회수
-              let metaParts = [];
-              let temp = parts[1].split('|');
+                // 증권사, 날짜, 조회수
+                let metaParts = []
+                let temp = parts[1].split('|')
               
-              for (let j = 0; j < temp.length; j++) { 
-                  metaParts.push(temp[j].trim()); 
-              }
+                for(let j = 0; j < temp.length; j++) { 
+                    metaParts.push(temp[j].trim())
+                }
 
-              Global.Naver_Data[i] = [body, ...metaParts];
+                Global.Naver_Data[i] = [body, ...metaParts]
             }
 
             for(let i = 0; i < this.Data_content.length; i++) {

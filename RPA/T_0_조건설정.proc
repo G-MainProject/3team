@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 12:09:35" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 16:20:47" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-15 17:33:34" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -75,16 +75,16 @@
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="종목코드추출" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="const lines = RESULT.trim().split('\n'); // 데이터 줄 단위로 분리&#xD;&#xA;&#xD;&#xA;// 첫 번째 줄은 헤더이므로, 두 번째 줄부터 시작&#xD;&#xA;for (let i = 1; i &lt; lines.length; i++) {&#xD;&#xA;    const columns = lines[i].split(/\s+/); // 공백 기준으로 각 열 분리&#xD;&#xA;    Global.Stockcode.push(columns[0]);&#xD;&#xA;    Global.Stock.push(columns[1]);&#xD;&#xA;}" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="const lines = RESULT.trim().split('\n') // 데이터 줄 단위로 분리&#xD;&#xA;&#xD;&#xA;// 첫 번째 줄은 헤더이므로, 두 번째 줄부터 시작&#xD;&#xA;for(let i = 1; i &lt; lines.length; i++){&#xD;&#xA;    const columns = lines[i].split(/\s+/)  // 공백 기준으로 각 열 분리&#xD;&#xA;    Global.Stockcode.push(columns[0])&#xD;&#xA;    Global.Stock.push(columns[1])&#xD;&#xA;}" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[const lines = RESULT.trim().split('\n'); // 데이터 줄 단위로 분리
+      <Script><![CDATA[const lines = RESULT.trim().split('\n') // 데이터 줄 단위로 분리
 
 // 첫 번째 줄은 헤더이므로, 두 번째 줄부터 시작
-for (let i = 1; i < lines.length; i++) {
-    const columns = lines[i].split(/\s+/); // 공백 기준으로 각 열 분리
-    Global.Stockcode.push(columns[0]);
-    Global.Stock.push(columns[1]);
+for(let i = 1; i < lines.length; i++){
+    const columns = lines[i].split(/\s+/)  // 공백 기준으로 각 열 분리
+    Global.Stockcode.push(columns[0])
+    Global.Stock.push(columns[1])
 }]]></Script>
     </Step>
     <Step id="Sd66e892961814157889f9fb6496251e0" ver="311241220" createVer="311241220" type="Desktop" name="InputBox" dpName="InputBox" dpValue="Global.Stock" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="False" mainSet="0">
@@ -8783,13 +8783,13 @@ Global.Stockcode = stockData[Global.Stock] || null;
 
         //------------------------------------------------
         STEP('S3ac7619ab025438fb6907a0163daef2a', '[6] ExecuteScript');
-        const lines = RESULT.trim().split('\n'); // 데이터 줄 단위로 분리
+        const lines = RESULT.trim().split('\n') // 데이터 줄 단위로 분리
 
         // 첫 번째 줄은 헤더이므로, 두 번째 줄부터 시작
-        for (let i = 1; i < lines.length; i++) {
-            const columns = lines[i].split(/\s+/); // 공백 기준으로 각 열 분리
-            Global.Stockcode.push(columns[0]);
-            Global.Stock.push(columns[1]);
+        for(let i = 1; i < lines.length; i++){
+            const columns = lines[i].split(/\s+/)  // 공백 기준으로 각 열 분리
+            Global.Stockcode.push(columns[0])
+            Global.Stock.push(columns[1])
         }
 
         ////------------------------------------------------

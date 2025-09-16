@@ -77,7 +77,6 @@
   <text x="-1.15133857727051" y="11.9994535446167" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 818.25 64.5299987792969)">InputBox</text>
   <text x="-2.73633861541748" y="7.21333312988281" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 818.25 86.25)">Global.Stock</text>
   <path d="M813.75,40.5 L968.25,40.5 L968.25,96 L813.75,96  z" stroke="none" fill="#000000" fill-rule="evenodd" stroke-width="0" fill-opacity="0.2" />
-  <path d="M968.25,42.75 L977.25,42.75 L983.25,48.375 L977.25,54 L968.25,54  z" stroke="none" fill="#FA0101" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M813.75,99 L968.25,99 L968.25,154.5 L813.75,154.5  z" stroke="none" fill="#FFFFFF" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <text x="0.437161445617676" y="1.0016211271286" dx="0" dy="0" font-family="맑은 고딕" font-size="0.749999977648259pt" fill="none" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 813.75 99)">S9d0b82b540874fa5b8c2f1482b173d21</text>
   <path d="M813.75,99 L969.75,99 L969.75,154.5 L813.75,154.5  z" stroke="none" fill="none" fill-rule="evenodd" stroke-width="0" fill-opacity="0" />
@@ -86,13 +85,10 @@
   <text x="-2.52533864974976" y="11.9994535446167" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 818.25 111.059997558594)">ExecuteScript</text>
   <text x="-0.863338589668274" y="27.9594535827637" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 818.25 111.059997558594)">: 종목코드변환</text>
   <path d="M813.75,99 L968.25,99 L968.25,154.5 L813.75,154.5  z" stroke="none" fill="#000000" fill-rule="evenodd" stroke-width="0" fill-opacity="0.2" />
-  <path d="M813.75,101.25 L813.75,112.5 L798.75,112.5 L804.75,106.875 L798.75,101.25  z" stroke="none" fill="#A555EC" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
-  <path d="M813.75,114.75 L813.75,126 L798.75,126 L804.75,120.375 L798.75,114.75  z" stroke="none" fill="#FA0101" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M1020,69.75 L1041,90.75 L1020,111.75 L999,90.75  z" stroke="none" fill="#B3B3B3" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M1020,69.75 L1041,90.75 L1020,111.75 L999,90.75  z" stroke="#9A9A9A" fill="none" stroke-width="3" stroke-opacity="1" />
   <path d="M1046.25,68.625 L1046.25,112.5 " stroke="#9A9A9A" fill="none" stroke-width="10" stroke-opacity="1" />
   <path d="M1048.5,87.75 L1043.25,90.75 L1048.5,93.75  z" stroke="none" fill="#FFFFFF" fill-rule="evenodd" stroke-width="0" fill-opacity="0.6" />
-  <path d="M999,86.25 L999,97.5 L984,97.5 L990,91.875 L984,86.25  z" stroke="none" fill="#A555EC" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <text x="8.00366115570068" y="10" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#000000" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 1009.98748779297 79.8899993896484)">If</text>
   <text x="-2.28633832931519" y="24.4799995422363" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#000000" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 1009.98748779297 79.8899993896484)">Then</text>
   <text x="-4.11433839797974" y="13.7833337783813" dx="0" dy="0" font-family="Noto Sans KR" font-size="10.4999996870756pt" fill="#666666" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 970.275024414063 36.75)">Global.Stockcode == </text>
@@ -110,7 +106,6 @@
   <text x="-1.15133857727051" y="11.9994535446167" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 1085.25 64.5299987792969)">InputBox</text>
   <text x="-2.73633861541748" y="7.21333312988281" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 1085.25 86.25)">Global.Stock</text>
   <path d="M1080.75,40.5 L1235.25,40.5 L1235.25,96 L1080.75,96  z" stroke="none" fill="#000000" fill-rule="evenodd" stroke-width="0" fill-opacity="0.2" />
-  <path d="M1235.25,42.75 L1244.25,42.75 L1250.25,48.375 L1244.25,54 L1235.25,54  z" stroke="none" fill="#FA0101" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M1080.75,99 L1235.25,99 L1235.25,154.5 L1080.75,154.5  z" stroke="none" fill="#FFFFFF" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <text x="0.437161445617676" y="1.0016211271286" dx="0" dy="0" font-family="맑은 고딕" font-size="0.749999977648259pt" fill="none" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 1080.75 99)">S180a8ec29adc49ee9af1fe66f5810784</text>
   <path d="M1080.75,99 L1236.75,99 L1236.75,154.5 L1080.75,154.5  z" stroke="none" fill="none" fill-rule="evenodd" stroke-width="0" fill-opacity="0" />
@@ -119,8 +114,6 @@
   <text x="-2.52533864974976" y="11.9994535446167" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 1085.25 111.059997558594)">ExecuteScript</text>
   <text x="-0.863338589668274" y="27.9594535827637" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 1085.25 111.059997558594)">: 종목코드변환</text>
   <path d="M1080.75,99 L1235.25,99 L1235.25,154.5 L1080.75,154.5  z" stroke="none" fill="#000000" fill-rule="evenodd" stroke-width="0" fill-opacity="0.2" />
-  <path d="M1080.75,101.25 L1080.75,112.5 L1065.75,112.5 L1071.75,106.875 L1065.75,101.25  z" stroke="none" fill="#A555EC" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
-  <path d="M1080.75,114.75 L1080.75,126 L1065.75,126 L1071.75,120.375 L1065.75,114.75  z" stroke="none" fill="#FA0101" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M1315.125,90 C1315.125,100.976654052734 1306.2265625,109.875 1295.25,109.875 C1284.27331542969,109.875 1275.375,100.976654052734 1275.375,90 C1275.375,79.0233383178711 1284.27331542969,70.125 1295.25,70.125 C1306.2265625,70.125 1315.125,79.0233383178711 1315.125,90 " stroke="none" fill="#B3B3B3" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M1315.125,90 C1315.125,100.976654052734 1306.2265625,109.875 1295.25,109.875 C1284.27331542969,109.875 1275.375,100.976654052734 1275.375,90 C1275.375,79.0233383178711 1284.27331542969,70.125 1295.25,70.125 C1306.2265625,70.125 1315.125,79.0233383178711 1315.125,90 " stroke="#9A9A9A" fill="none" stroke-width="3" stroke-opacity="1" />
   <path d="M1270.5,68.625 L1270.5,112.5 " stroke="#9A9A9A" fill="none" stroke-width="10" stroke-opacity="1" />
