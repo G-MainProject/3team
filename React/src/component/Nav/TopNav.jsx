@@ -1,10 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './TopNav.css'
 import maleAvatar from '../../assets/images/male.jpg'
 import femaleAvatar from '../../assets/images/female.jpg'
+import { useAuth } from '../../contexts/AuthContext'
 
-const TopNav = ({ currentPage = 'Dashboard', onStepClick, gender = 'male' }) => {
+const TopNav = ({ currentPage = 'Dashboard', onStepClick }) => {
+  const { user, logout } = useAuth()
   const [currentStep, setCurrentStep] = useState(1) // 현재 진행상황
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
+  const navigate = useNavigate()
+  
+  // 사용자 성별 정보 가져오기
+  const getUserGender = () => {
+    if (!user) return 'male'; // 기본값
+    // 서버에서 오는 성별 값: MALE, FEMALE, OTHER
+    return user.gender === 'FEMALE' ? 'female' : 'male';
+  }
   
   const steps = [
     { id: 1, name: 'START', page: 'START' },
@@ -20,6 +33,38 @@ const TopNav = ({ currentPage = 'Dashboard', onStepClick, gender = 'male' }) => 
       setCurrentStep(stepIndex + 1)
     }
   }, [currentPage, steps])
+
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleUserClick = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleMyPage = () => {
+    setIsDropdownOpen(false);
+    // 마이페이지로 이동 (아직 구현되지 않았다면 대시보드로)
+    navigate('/dashboard');
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsDropdownOpen(false);
+    alert('로그아웃 되었습니다.');
+    navigate('/');
+  };
 
   // 진행상황 클릭 핸들러
   const handleStepClick = (step) => {
@@ -57,14 +102,27 @@ const TopNav = ({ currentPage = 'Dashboard', onStepClick, gender = 'male' }) => 
             <i className="fa-regular fa-bell"></i>
         </button>
 
-        <button className="top-nav-user">
-            <img src={gender === 'female' ? femaleAvatar : maleAvatar} alt="avatar" />
-            <ul>
-                <li>Welcome back,</li>
-                <li>JEON</li>
-            </ul>
-            <i className="fa-solid fa-chevron-down"></i>
-        </button>
+        <div className="top-nav-user-container" ref={dropdownRef}>
+          <button className="top-nav-user" onClick={handleUserClick}>
+              <img src={getUserGender() === 'female' ? femaleAvatar : maleAvatar} alt="avatar" />
+              <ul>
+                  <li>Welcome back,</li>
+                  <li>{user?.name || user?.email || '???'}</li>
+              </ul>
+              <i className={`fa-solid fa-chevron-down ${isDropdownOpen ? 'rotated' : ''}`}></i>
+          </button>
+          
+          <div className={`top-nav-dropdown ${isDropdownOpen ? 'open' : 'closed'}`}>
+            <button className="dropdown-item" onClick={handleMyPage}>
+              <i className="fa-solid fa-user"></i>
+              <span>마이페이지</span>
+            </button>
+            <button className="dropdown-item" onClick={handleLogout}>
+              <i className="fa-solid fa-arrow-right-from-bracket"></i>
+              <span>로그아웃</span>
+            </button>
+          </div>
+        </div>
     </div>
   )
 }

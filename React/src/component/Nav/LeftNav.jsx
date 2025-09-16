@@ -1,9 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LeftNav.css';
 import logo from '../../assets/images/logo.png';
 import banner1 from '../../assets/images/banner1.png';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Nav() {
+    const navigate = useNavigate();
+    const { logout } = useAuth();
+
+    const handleLogout = () => {
+        logout();
+        alert('로그아웃 되었습니다.');
+        navigate('/');
+    };
     return (
         <div className='left-nav-container'>
             <div className='left-nav-wrapper'>
@@ -30,7 +40,7 @@ export default function Nav() {
                     <a href="#" className='left-nav-banner'>
                         <img src={banner1} alt="Upgrade to PRO Account" />
                     </a>
-                    <button className='left-nav-logout'>
+                    <button className='left-nav-logout' onClick={handleLogout}>
                         <span>로그아웃</span>
                         <i className="fas fa-arrow-right-from-bracket"></i>
                     </button>
