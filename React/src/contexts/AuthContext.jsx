@@ -39,6 +39,11 @@ export const AuthProvider = ({ children }) => {
     // savedId는 로그아웃 시에도 유지 (아이디 저장 기능)
   };
 
+  const updateUser = (updatedUserData) => {
+    setUser(updatedUserData);
+    localStorage.setItem('user', JSON.stringify(updatedUserData));
+  };
+
   const isAuthenticated = () => {
     return user !== null;
   };
@@ -47,6 +52,7 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
+    updateUser,
     isAuthenticated,
     loading
   };

@@ -197,11 +197,6 @@ export default function Login() {
                             Google로 시작하기
                         </button>
                     </div>
-
-                    <div className={styles.loginInfo}>
-                        <p>테스트 계정:</p>
-                        <p>관리자: admin / admin</p>
-                    </div>
                 </form>
             </div>
             <Footer />

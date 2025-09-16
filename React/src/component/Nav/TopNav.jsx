@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './TopNav.css'
 import maleAvatar from '../../assets/images/male.jpg'
@@ -19,12 +19,12 @@ const TopNav = ({ currentPage = 'Dashboard', onStepClick }) => {
     return user.gender === 'FEMALE' ? 'female' : 'male';
   }
   
-  const steps = [
+  const steps = useMemo(() => [
     { id: 1, name: 'START', page: 'START' },
     { id: 2, name: 'RPA', page: 'RPA' },
     { id: 3, name: 'Python', page: 'Python' },
     { id: 4, name: 'Dashboard', page: 'Dashboard' }
-  ]
+  ], [])
 
   // 현재 페이지에 따라 진행상황 업데이트
   useEffect(() => {
@@ -55,8 +55,7 @@ const TopNav = ({ currentPage = 'Dashboard', onStepClick }) => {
 
   const handleMyPage = () => {
     setIsDropdownOpen(false);
-    // 마이페이지로 이동 (아직 구현되지 않았다면 대시보드로)
-    navigate('/dashboard');
+    navigate('/mypage');
   };
 
   const handleLogout = () => {
@@ -115,7 +114,7 @@ const TopNav = ({ currentPage = 'Dashboard', onStepClick }) => {
           <div className={`top-nav-dropdown ${isDropdownOpen ? 'open' : 'closed'}`}>
             <button className="dropdown-item" onClick={handleMyPage}>
               <i className="fa-solid fa-user"></i>
-              <span>마이페이지</span>
+              <span>내 정보</span>
             </button>
             <button className="dropdown-item" onClick={handleLogout}>
               <i className="fa-solid fa-arrow-right-from-bracket"></i>

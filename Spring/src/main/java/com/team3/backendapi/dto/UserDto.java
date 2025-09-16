@@ -73,6 +73,7 @@ public class UserDto {
         private String name;
         private String username;
         private User.Gender gender;
+        private LocalDate birthDate;
         private User.UserRole role;
         private String token; // JWT 토큰 (나중에 구현)
     }

@@ -8,6 +8,7 @@ import Home from './pages/Home/Home.jsx';
 import Login from './pages/Login/Login.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Signup from './pages/Signup/Signup.jsx';
+import Mypage from './pages/Mypage/Mypage.jsx';
 
 function App() {
 	return (
@@ -28,6 +29,11 @@ function App() {
 					<Route path="/dashboard" element={
 						<PrivateRoute>
 							<Dashboard />
+						</PrivateRoute>
+					} />
+					<Route path="/mypage" element={
+						<PrivateRoute>
+							<Mypage />
 						</PrivateRoute>
 					} />
 				</Routes>

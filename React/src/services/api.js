@@ -20,20 +20,14 @@ class ApiService {
     try {
       const response = await fetch(url, config);
       
-      console.log('API 응답 상태:', response.status);
-      console.log('API 응답 헤더:', response.headers);
-      
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('API 에러 응답:', errorText);
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
       
       const data = await response.json();
-      console.log('API 응답 데이터:', data);
       return data;
     } catch (error) {
-      console.error('API 요청 실패:', error);
       throw error;
     }
   }

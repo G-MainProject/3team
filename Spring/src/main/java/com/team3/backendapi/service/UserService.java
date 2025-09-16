@@ -200,6 +200,7 @@ public class UserService {
                 .name(user.getName())
                 .username(user.getUsername())
                 .gender(user.getGender())
+                .birthDate(user.getBirthDate())
                 .role(user.getRole())
                 .token("dummy-token") // 나중에 JWT 토큰으로 교체
                 .build();
