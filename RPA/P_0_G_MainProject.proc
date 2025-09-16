@@ -1,16 +1,16 @@
-<Process id="70df1108-4c69-4917-b47f-a570fe456190" type="process" workType="foreground" name="P_0_G_MainProject" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="2" Orientation="horizontal">
+<Process id="70df1108-4c69-4917-b47f-a570fe456190" type="process" workType="foreground" name="P_0_G_MainProject" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="5" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="default process" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
-    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="262" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="260" />
     <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 09:07:50" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-12 10:29:16" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-16 10:25:11" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -27,7 +27,19 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'T_0_조건설정', null);]]></Script>
     </Step>
-    <Step id="Se44b0ad04a6440baba55827d23ba0a78" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S67dedeb7b5084369982bdeac3217e455" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="Global.l &lt; Global.Stockcode.length" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="ff00936a-a301-44e0-aaf8-b5889c3cffca" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_InitializeIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.l = 0" />
+        <Property type="Flow" key="Conditions_LoopCondition" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.l &lt; Global.Stockcode.length" />
+        <Property type="Flow" key="Conditions_UpdateIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.l++" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S178d467fe64d415780f5e31382622161" type="Flow" name="EndLoop" />
+      </RelatedSteps>
+      <Script><![CDATA[for (Global.l = 0; Global.l < Global.Stockcode.length; Global.l++) {]]></Script>
+    </Step>
+    <Step id="Se44b0ad04a6440baba55827d23ba0a78" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6e82afa5-6437-4a79-9531-90782e8390c7" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -36,14 +48,32 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'P_1_네이버증권', null);]]></Script>
     </Step>
+    <Step id="S67c6298d8dc44c71a6c1316d247042c1" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="8de535c4-d3c0-4b69-b9e5-3038815e886a" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_TaskName" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="P_2_DART" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RunTask(this, 'P_2_DART', null);]]></Script>
+    </Step>
+    <Step id="S178d467fe64d415780f5e31382622161" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="e69eb6b9-d869-4d6c-a174-e05148af701d" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S67dedeb7b5084369982bdeac3217e455" type="Flow" name="Loop" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
   </Steps>
   <JScript><![CDATA[function P_0_G_MainProject() {
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {};
-    this.GotoReverseBlockMap = {};
-    this.GotoStepBlockTypeMap = {};
+    this.GotoBlockMap = {2:[5]};
+    this.GotoReverseBlockMap = {5:2};
+    this.GotoStepBlockTypeMap = {2:'Loop',5:'EndLoop'};
 
 
     this.run = function() {
@@ -53,8 +83,20 @@
         RunTask(this, 'T_0_조건설정', null);
 
         //------------------------------------------------
-        STEP('Se44b0ad04a6440baba55827d23ba0a78', '[2] RunTask');
-        RunTask(this, 'P_1_네이버증권', null);
+        STEP('S67dedeb7b5084369982bdeac3217e455', '[2] For');
+        for (Global.l = 0; Global.l < Global.Stockcode.length; Global.l++) {
+
+            //------------------------------------------------
+            STEP('Se44b0ad04a6440baba55827d23ba0a78', '[3] RunTask');
+            RunTask(this, 'P_1_네이버증권', null);
+
+            //------------------------------------------------
+            STEP('S67c6298d8dc44c71a6c1316d247042c1', '[4] RunTask');
+            RunTask(this, 'P_2_DART', null);
+
+        //------------------------------------------------
+        }
+        STEP('S178d467fe64d415780f5e31382622161', '[5] End-For');
 
 
     }
@@ -70,7 +112,10 @@
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
       <StepNode step_id="S5d9cc987737943718985b05649cee442" group_name="" folded="False" color="" />
+      <StepNode step_id="S67dedeb7b5084369982bdeac3217e455" group_name="" folded="False" color="" />
       <StepNode step_id="Se44b0ad04a6440baba55827d23ba0a78" group_name="" folded="False" color="" />
+      <StepNode step_id="S67c6298d8dc44c71a6c1316d247042c1" group_name="" folded="False" color="" />
+      <StepNode step_id="S178d467fe64d415780f5e31382622161" group_name="" folded="False" color="" />
     </StepNodes>
   </Diagram>
 </Process>
