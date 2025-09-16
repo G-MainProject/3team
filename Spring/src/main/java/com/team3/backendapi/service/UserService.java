@@ -206,6 +206,25 @@ public class UserService {
                 .build();
     }
     
+    // 패스워드 확인
+    public boolean verifyPassword(UserDto.LoginRequest request) {
+        User user = userRepository.findByEmailOrUsername(request.getEmailOrUsername())
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        
+        boolean passwordMatches;
+        
+        // BCrypt로 암호화된 비밀번호인지 확인 (BCrypt 해시는 $2a$로 시작)
+        if (user.getPassword().startsWith("$2a$")) {
+            // BCrypt로 암호화된 비밀번호와 비교
+            passwordMatches = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        } else {
+            // 평문 비밀번호와 비교 (기존 사용자용)
+            passwordMatches = request.getPassword().equals(user.getPassword());
+        }
+        
+        return passwordMatches;
+    }
+    
     // Entity를 Response DTO로 변환
     private UserDto.Response convertToResponse(User user) {
         return UserDto.Response.builder()

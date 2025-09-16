@@ -118,4 +118,29 @@ public class AuthController {
                             .build());
         }
     }
+
+    // 패스워드 확인
+    @PostMapping("/verify-password")
+    public ResponseEntity<ApiResponse<Boolean>> verifyPassword(@RequestBody UserDto.LoginRequest request) {
+        try {
+            boolean isValid = userService.verifyPassword(request);
+            return ResponseEntity.ok(ApiResponse.<Boolean>builder()
+                    .success(true)
+                    .message(isValid ? "비밀번호가 일치합니다." : "비밀번호가 일치하지 않습니다.")
+                    .data(isValid)
+                    .build());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.<Boolean>builder()
+                            .success(false)
+                            .message(e.getMessage())
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<Boolean>builder()
+                            .success(false)
+                            .message("비밀번호 확인 중 오류가 발생했습니다: " + e.getMessage())
+                            .build());
+        }
+    }
 }
