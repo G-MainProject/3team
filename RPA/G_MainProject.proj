@@ -1,4 +1,4 @@
-<Project id="b166f530-e456-424a-8f54-8cd605cd7a77" namespace="" name="G_MainProject" category="project" workType="foreground" version="1.00" lastPublishedDate="" lastPublishedBy="" createdDate="2025-09-03 09:07:50" createdBy="" latestProcess="P_0_G_MainProject" designerVersion="3.1.125.00701" DesignedBy="">
+<Project id="b166f530-e456-424a-8f54-8cd605cd7a77" namespace="" name="G_MainProject" category="project" workType="foreground" version="1.00" lastPublishedDate="" lastPublishedBy="" createdDate="2025-09-03 09:07:50" createdBy="" latestProcess="T_test" designerVersion="3.1.125.00701" DesignedBy="">
   <SharedTask isExpended="false" />
   <NormalTask isExpended="true">
     <LinkItem id="7ad6bcdf-87bd-4850-a588-95a494eb580c" category="NormalTask" isChanged="Y" desc="" stepCount="12" name="T_0_조건설정">
@@ -16,7 +16,7 @@
     <LinkItem id="744979c8-0a12-4d2a-83a0-f7aa8c5d5a83" category="NormalTask" isChanged="Y" desc="" stepCount="13" name="T_1_3_네이버증권_엑셀저장">
       <Properties />
     </LinkItem>
-    <LinkItem id="1e9e284c-4709-478d-87bd-1351a1ed1b40" category="NormalTask" isChanged="Y" desc="" stepCount="9" name="T_1_4_네이버증권_PDF가공">
+    <LinkItem id="1e9e284c-4709-478d-87bd-1351a1ed1b40" category="NormalTask" isChanged="Y" desc="" stepCount="10" name="T_1_4_네이버증권_PDF가공">
       <Properties />
     </LinkItem>
     <LinkItem id="ae714252-f4c4-48a6-8cb3-7425d48e8133" category="NormalTask" isChanged="Y" desc="" stepCount="7" name="T_2_1_DART_열기">
@@ -28,7 +28,7 @@
     <LinkItem id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" category="NormalTask" isChanged="Y" desc="" stepCount="8" name="T_2_3_DART_첨부파일가공">
       <Properties />
     </LinkItem>
-    <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="14" name="T_2_4_DART_엑셀저장">
+    <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="15" name="T_2_4_DART_엑셀저장">
       <Properties />
     </LinkItem>
   </NormalTask>

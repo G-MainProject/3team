@@ -27,9 +27,7 @@
       </RunInterval>
     </WorkProcDebug>
     <WorkProcDebug id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" name="T_2_4_DART_엑셀저장">
-      <BreakPoints>
-        <BreakPoint id="S754954bfc2b24326b5d9f9ff9863191b" name="ExtractTextFromPdfActivity" />
-      </BreakPoints>
+      <BreakPoints />
       <FavoriteVariables />
       <RunInterval>
         <StartPoint />
@@ -37,9 +35,7 @@
       </RunInterval>
     </WorkProcDebug>
     <WorkProcDebug id="5c816bc1-553e-4bc4-987b-22e059800553" name="T_2_2_DART_데이터추출">
-      <BreakPoints>
-        <BreakPoint id="S202517eb905e4777a2c7a6086dbbcf18" name="ChromeClick" />
-      </BreakPoints>
+      <BreakPoints />
       <FavoriteVariables />
       <RunInterval>
         <StartPoint />

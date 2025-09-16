@@ -20,8 +20,6 @@
   <path d="M107.25,129.75 L161.25,129.75 L161.25,140.25 L107.25,140.25  z" stroke="none" fill="none" fill-rule="evenodd" stroke-width="0" fill-opacity="0" />
   <text x="-1.15133857727051" y="11.9994535446167" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 96.75 152.279998779297)">IsDirectoryExist</text>
   <text x="-2.46633863449097" y="7.21333312988281" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 96.75 174)">RESULT</text>
-  <path d="M92.25,130.5 L92.25,141.75 L77.25,141.75 L83.25,136.125 L77.25,130.5  z" stroke="none" fill="#F7DB6A" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
-  <path d="M92.25,144 L92.25,155.25 L77.25,155.25 L83.25,149.625 L77.25,144  z" stroke="none" fill="#FA0101" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M298.5,128.25 L319.5,149.25 L298.5,170.25 L277.5,149.25  z" stroke="none" fill="#A9D1CF" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M298.5,128.25 L319.5,149.25 L298.5,170.25 L277.5,149.25  z" stroke="#0DB2AD" fill="none" stroke-width="3" stroke-opacity="1" />
   <path d="M324.75,127.125 L324.75,171 " stroke="#0DB2AD" fill="none" stroke-width="10" stroke-opacity="1" />
@@ -42,9 +40,7 @@
   <text x="-3.12533855438232" y="11.9994535446167" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 363.75 152.279998779297)">CreateDirectory</text>
   <text x="-0.681338548660278" y="7.21333312988281" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 363.75 165.75)">'C:\\3team\\RPA\\</text>
   <text x="78.6386642456055" y="7.21333312988281" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 363.75 165.75)">데이터추출\\네이버증권\\' </text>
-  <text x="-2.06633853912354" y="18.2133331298828" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 363.75 165.75)">+ Global.Stock[Global.Naver_l] +'\\pdf'</text>
-  <path d="M359.25,130.5 L359.25,141.75 L344.25,141.75 L350.25,136.125 L344.25,130.5  z" stroke="none" fill="#F7DB6A" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
-  <path d="M359.25,144 L359.25,155.25 L344.25,155.25 L350.25,149.625 L344.25,144  z" stroke="none" fill="#FA0101" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
+  <text x="-2.06633853912354" y="18.2133331298828" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 363.75 165.75)">+ Global.Stock[Global.l] +'\\pdf'</text>
   <path d="M593.625,148.5 C593.625,159.476654052734 584.726623535156,168.375 573.75,168.375 C562.773315429688,168.375 553.875,159.476654052734 553.875,148.5 C553.875,137.523330688477 562.773315429688,128.625 573.75,128.625 C584.726623535156,128.625 593.625,137.523330688477 593.625,148.5 " stroke="none" fill="#A9D1CF" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M593.625,148.5 C593.625,159.476654052734 584.726623535156,168.375 573.75,168.375 C562.773315429688,168.375 553.875,159.476654052734 553.875,148.5 C553.875,137.523330688477 562.773315429688,128.625 573.75,128.625 C584.726623535156,128.625 593.625,137.523330688477 593.625,148.5 " stroke="#0DB2AD" fill="none" stroke-width="3" stroke-opacity="1" />
   <path d="M549,127.125 L549,171 " stroke="#0DB2AD" fill="none" stroke-width="10" stroke-opacity="1" />
@@ -64,8 +60,6 @@
   <text x="-3.12533855438232" y="11.9994535446167" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 630.75 123.029998779297)">ChromeOpen</text>
   <text x="-0.681338548660278" y="7.21333312988281" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 630.75 136.5)">'https://finance.naver.com/research/</text>
   <text x="-1.70633852481842" y="18.2133331298828" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 630.75 136.5)">company_list.naver'</text>
-  <path d="M626.25,101.25 L626.25,112.5 L611.25,112.5 L617.25,106.875 L611.25,101.25  z" stroke="none" fill="#F7DB6A" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
-  <path d="M626.25,114.75 L626.25,126 L611.25,126 L617.25,120.375 L611.25,114.75  z" stroke="none" fill="#FA0101" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M626.25,157.5 L780.75,157.5 L780.75,213 L626.25,213  z" stroke="none" fill="#FFFFFF" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <text x="0.437161445617676" y="1.0016211271286" dx="0" dy="0" font-family="맑은 고딕" font-size="0.749999977648259pt" fill="none" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 626.25 157.5)">Sd1000b8a64234d6b86cac385f9474954</text>
   <path d="M626.25,157.5 L782.25,157.5 L782.25,213 L626.25,213  z" stroke="none" fill="none" fill-rule="evenodd" stroke-width="0" fill-opacity="0" />
@@ -108,8 +102,6 @@
   <text x="-2.68733835220337" y="27.9594535827637" dx="0" dy="0" font-family="맑은 고딕" font-size="8.99999973177911pt" fill="#000000" style="text-anchor:start" font-weight="bold" transform="matrix(0.750000 0.000000 0.000000 0.750000 1005.75 111.059997558594)">SetText</text>
   <text x="-2.00633859634399" y="7.21333312988281" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 1005.75 136.5)">LATEST_BROWSE</text>
   <text x="-2.46633863449097" y="18.2133331298828" dx="0" dy="0" font-family="Noto Sans KR" font-size="7.49999977648259pt" fill="#333333" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 1005.75 136.5)">R</text>
-  <path d="M1001.25,101.25 L1001.25,112.5 L986.25,112.5 L992.25,106.875 L986.25,101.25  z" stroke="none" fill="#F7DB6A" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
-  <path d="M1001.25,114.75 L1001.25,126 L986.25,126 L992.25,120.375 L986.25,114.75  z" stroke="none" fill="#A555EC" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <path d="M1001.25,157.5 L1155.75,157.5 L1155.75,213 L1001.25,213  z" stroke="none" fill="#FFFFFF" fill-rule="evenodd" stroke-width="0" fill-opacity="1" />
   <text x="0.437161445617676" y="1.0016211271286" dx="0" dy="0" font-family="맑은 고딕" font-size="0.749999977648259pt" fill="none" style="text-anchor:start" transform="matrix(0.750000 0.000000 0.000000 0.750000 1001.25 157.5)">Sdbce3faf4ec947b38eb39fbf3d45eef1</text>
   <path d="M1001.25,157.5 L1157.25,157.5 L1157.25,213 L1001.25,213  z" stroke="none" fill="none" fill-rule="evenodd" stroke-width="0" fill-opacity="0" />
