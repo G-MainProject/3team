@@ -42,5 +42,13 @@
         <EndPoint />
       </RunInterval>
     </WorkProcDebug>
+    <WorkProcDebug id="744979c8-0a12-4d2a-83a0-f7aa8c5d5a83" name="T_1_3_네이버증권_엑셀저장">
+      <BreakPoints />
+      <FavoriteVariables />
+      <RunInterval>
+        <StartPoint />
+        <EndPoint />
+      </RunInterval>
+    </WorkProcDebug>
   </WorkProcDebugList>
 </DebugData>

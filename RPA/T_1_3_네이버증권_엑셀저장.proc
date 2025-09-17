@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-04 16:26:23" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-16 10:08:07" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-17 10:29:55" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -86,7 +86,7 @@
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="엑셀헤더" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Excel_header = []&#xD;&#xA;this.Excel_header[0] = []&#xA;this.Excel_header[1] = []&#xD;&#xA;&#xD;&#xA;this.Excel_header[0][0] = Global.Stock[Global.l]&#xD;&#xA;this.Excel_header[1][0] = '제목'&#xD;&#xA;this.Excel_header[1][1] = '증권사'&#xD;&#xA;this.Excel_header[1][2] = '날짜'&#xD;&#xA;this.Excel_header[1][3] = '내용'&#xD;&#xA;" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Excel_header = []&#xD;&#xA;this.Excel_header[0] = []&#xA;this.Excel_header[1] = []&#xD;&#xA;&#xD;&#xA;this.Excel_header[0][0] = Global.Stock[Global.l]&#xD;&#xA;this.Excel_header[1][0] = '제목'&#xD;&#xA;this.Excel_header[1][1] = '목표가'&#xD;&#xA;this.Excel_header[1][2] = '투자의견'&#xD;&#xA;this.Excel_header[1][3] = '증권사'&#xD;&#xA;this.Excel_header[1][4] = '날짜'&#xD;&#xA;this.Excel_header[1][5] = '내용'&#xD;&#xA;" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[this.Excel_header = []
@@ -95,9 +95,11 @@ this.Excel_header[1] = []
 
 this.Excel_header[0][0] = Global.Stock[Global.l]
 this.Excel_header[1][0] = '제목'
-this.Excel_header[1][1] = '증권사'
-this.Excel_header[1][2] = '날짜'
-this.Excel_header[1][3] = '내용'
+this.Excel_header[1][1] = '목표가'
+this.Excel_header[1][2] = '투자의견'
+this.Excel_header[1][3] = '증권사'
+this.Excel_header[1][4] = '날짜'
+this.Excel_header[1][5] = '내용'
 ]]></Script>
     </Step>
     <Step id="S6af70b78ac434a03b5576eee574ee9e6" ver="311241220" createVer="311241220" type="Excel" name="DeleteRow" dpName="DeleteRow" dpValue="ACTIVE_SHEET" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
@@ -130,7 +132,7 @@ this.Excel_header[1][3] = '내용'
         <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
         <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
-        <Property type="Excel" key="Sheet_Position" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'D'" />
+        <Property type="Excel" key="Sheet_Position" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'F'" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Excel.DeleteCol', this.deletecol_info_9);]]></Script>
@@ -219,9 +221,11 @@ this.Excel_header[1][3] = '내용'
 
         this.Excel_header[0][0] = Global.Stock[Global.l]
         this.Excel_header[1][0] = '제목'
-        this.Excel_header[1][1] = '증권사'
-        this.Excel_header[1][2] = '날짜'
-        this.Excel_header[1][3] = '내용'
+        this.Excel_header[1][1] = '목표가'
+        this.Excel_header[1][2] = '투자의견'
+        this.Excel_header[1][3] = '증권사'
+        this.Excel_header[1][4] = '날짜'
+        this.Excel_header[1][5] = '내용'
 
 
         //------------------------------------------------
