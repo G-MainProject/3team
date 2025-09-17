@@ -6,14 +6,30 @@ import re
 ROOT_DIR = Path(__file__).resolve().parents[3]
 DATA_DIR = ROOT_DIR / "data"
 SYMBOLS_CSV = DATA_DIR / "symbols_krx.csv"
+DART_CORPCODE_CSV = DATA_DIR / "dart_corpcode.csv"
 
 # 후보 컬럼명
 NAME_COLS = [
-    "한글 종목약명","한글종목약명",
-    "한글 종목명","한글종목명",
-    "회사명","종목명","종목 이름","종목명(한글)"
+    "\ud55c\uae00 \uc885\ubaa9\uba85",
+    "\ud55c\uae00\uc885\ubaa9\uba85",
+    "\ud55c\uae00 \uc885\ubaa9\uba85(\uc8fc)",
+    "\ud55c\uae00\uc885\ubaa9\uba85(\uc8fc)",
+    "\ud68c\uc0ac\uba85",
+    "\uc885\ubaa9\uba85",
+    "\uc885\ubaa9 \uc774\ub984",
+    "\uc885\ubaa9(\ub2e8\ucd95\ucf54\ub4dc)",
+    "corp_name",
 ]
-CODE_COLS = ["단축코드","단축 코드","종목코드","종목 코드","code","CODE"]
+
+CODE_COLS = [
+    "\ub2e8\ucd95\ucf54\ub4dc",
+    "\ub2e8\ucd95 \ucf54\ub4dc",
+    "\uc885\ubaa9\ucf54\ub4dc",
+    "\uc885\ubaa9 \ucf54\ub4dc",
+    "code",
+    "CODE",
+    "stock_code",
+]
 
 def _norm_name(s: str) -> str:
     if not isinstance(s, str): return ""
@@ -23,32 +39,38 @@ def _norm_name(s: str) -> str:
     return s
 
 def _read_rows():
-    """
-    symbols_krx.csv를 읽어 행 이터레이터를 반환.
-    - 구분자: 콤마/탭 자동 시도
-    - 인코딩: utf-8-sig → cp949 순서로 시도
-    """
-    if not SYMBOLS_CSV.exists():
-        raise FileNotFoundError(f"심볼 파일이 없습니다: {SYMBOLS_CSV}")
-    encodings = ["utf-8-sig", "cp949"]
-    seps = [",", "\t"]
-    last_err = None
-    for enc in encodings:
-        for sep in seps:
-            try:
-                with SYMBOLS_CSV.open("r", encoding=enc, newline="") as f:
-                    reader = csv.DictReader(f, delimiter=sep)
-                    # 헤더가 비정상이면 건너뜀
-                    if not reader.fieldnames or len(reader.fieldnames) < 2:
-                        continue
-                    for row in reader:
-                        yield row
+    """symbols_krx.csv 또는 dart_corpcode.csv에서 심볼 정보를 읽어 순서대로 반환."""
+    if SYMBOLS_CSV.exists():
+        encodings = ["utf-8-sig", "cp949"]
+        seps = [",", "	"]
+        last_err = None
+        for enc in encodings:
+            for sep in seps:
+                try:
+                    with SYMBOLS_CSV.open("r", encoding=enc, newline="") as f:
+                        reader = csv.DictReader(f, delimiter=sep)
+                        # 헤더가 비정상이면 건너뜀
+                        if not reader.fieldnames or len(reader.fieldnames) < 2:
+                            continue
+                        for row in reader:
+                            yield row
+                    return
+                except Exception as e:
+                    last_err = e
+                    continue
+        if last_err:
+            raise last_err
+
+    if DART_CORPCODE_CSV.exists():
+        with DART_CORPCODE_CSV.open("r", encoding="utf-8-sig", newline="") as f:
+            reader = csv.DictReader(f)
+            if not reader.fieldnames or len(reader.fieldnames) < 3:
                 return
-            except Exception as e:
-                last_err = e
-                continue
-    if last_err:
-        raise last_err
+            for row in reader:
+                yield {"corp_name": row.get("corp_name", ""), "stock_code": row.get("stock_code", "")}
+        return
+
+    raise FileNotFoundError(f"symbol sources missing: {SYMBOLS_CSV} or {DART_CORPCODE_CSV}")
 
 def _pick_col(row_keys, candidates):
     for cand in candidates:
