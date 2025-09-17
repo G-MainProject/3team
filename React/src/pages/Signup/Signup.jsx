@@ -111,7 +111,6 @@ const Signup = () => {
     
     try {
       const response = await apiService.get(`/auth/check-username?username=${id}`);
-      console.log('아이디 중복 확인 응답:', response);
       
       // 서버 응답: { success: true, data: true } - data가 true면 중복됨
       const isDuplicate = response.data; // response.data.data가 아니라 response.data
@@ -191,13 +190,11 @@ const Signup = () => {
 
       const response = await apiService.post('/auth/register', registerData);
       
-      console.log('회원가입 응답:', response);
       
       if (response.success) {
         alert('회원가입이 성공적으로 완료되었습니다!');
         navigate('/login');
       } else {
-        console.log('회원가입 실패 응답:', response);
         setError(response.message || '회원가입에 실패했습니다.');
       }
     } catch (err) {

@@ -279,7 +279,6 @@ const Mypage = () => {
 
       const response = await apiService.put(`/users/${user.id}`, updateData);
       
-      console.log('정보 수정 응답:', response);
       
       if (response.success) {
         alert('정보가 성공적으로 수정되었습니다!');

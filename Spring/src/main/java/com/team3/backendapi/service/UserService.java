@@ -154,19 +154,13 @@ public class UserService {
     // 로그인
     @Transactional(readOnly = true)
     public UserDto.LoginResponse login(UserDto.LoginRequest request) {
-        System.out.println("=== 로그인 디버깅 ===");
-        System.out.println("입력된 이메일/아이디: " + request.getEmailOrUsername());
-        System.out.println("입력된 비밀번호: " + request.getPassword());
         
         // 이메일 또는 아이디로 사용자 찾기
         User user = userRepository.findByEmailOrUsername(request.getEmailOrUsername())
                 .orElseThrow(() -> {
-                    System.out.println("사용자를 찾을 수 없습니다: " + request.getEmailOrUsername());
                     return new RuntimeException("사용자를 찾을 수 없습니다.");
                 });
         
-        System.out.println("찾은 사용자: " + user.getUsername() + " (" + user.getEmail() + ")");
-        System.out.println("저장된 비밀번호 해시: " + user.getPassword());
         
         // 비밀번호 확인 (하이브리드 방식: BCrypt 또는 평문 비교)
         boolean passwordMatches;
@@ -175,14 +169,11 @@ public class UserService {
         if (user.getPassword().startsWith("$2a$")) {
             // BCrypt로 암호화된 비밀번호와 비교
             passwordMatches = passwordEncoder.matches(request.getPassword(), user.getPassword());
-            System.out.println("BCrypt 암호화된 비밀번호 비교: " + passwordMatches);
         } else {
             // 평문 비밀번호와 비교 (기존 사용자용)
             passwordMatches = request.getPassword().equals(user.getPassword());
-            System.out.println("평문 비밀번호 비교: " + passwordMatches);
         }
         
-        System.out.println("비밀번호 일치 여부: " + passwordMatches);
         
         if (!passwordMatches) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
@@ -193,7 +184,6 @@ public class UserService {
             throw new RuntimeException("비활성화된 사용자입니다.");
         }
         
-        System.out.println("로그인 성공!");
         return UserDto.LoginResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())

@@ -156,7 +156,107 @@
 	min-height: 400px;
 }
 
-/* KPI 차트 그리드 */
+/* 통합 차트 컨테이너 */
+.unified-chart-container {
+	background: #f8f9fa;
+	border-radius: 8px;
+	padding: 20px;
+	margin-bottom: 20px;
+	height: 600px;
+}
+
+.chart-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.chart-header h3 {
+	margin: 0;
+	color: #495057;
+	font-size: 1.1em;
+	font-weight: 600;
+}
+
+.chart-interval-selector {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.chart-interval-selector label {
+	font-size: 14px;
+	font-weight: 500;
+	color: #666;
+}
+
+.interval-select {
+	padding: 6px 12px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	background: white;
+	font-size: 14px;
+	color: #333;
+	cursor: pointer;
+	transition: border-color 0.2s;
+}
+
+.interval-select:hover {
+	border-color: #3b82f6;
+}
+
+.interval-select:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.unified-chart-wrapper {
+	height: calc(100% - 40px);
+	width: 100%;
+}
+
+.chart-loading,
+.chart-error {
+	height: calc(100% - 40px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	font-weight: 500;
+	padding: 20px;
+	text-align: center;
+}
+
+.chart-loading {
+	color: #007bff;
+}
+
+.chart-error {
+	color: #dc3545;
+}
+
+.chart-error i {
+	font-size: 48px;
+	margin-bottom: 16px;
+	color: #dc3545;
+	opacity: 0.7;
+}
+
+.chart-error p {
+	margin: 8px 0;
+	font-weight: 500;
+}
+
+.error-detail {
+	font-size: 14px;
+	color: #6c757d;
+	font-weight: 400;
+}
+
+/* 기존 KPI 차트 그리드 (사용하지 않음) */
 .kpi-charts-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -632,6 +732,11 @@
 	.ai-analysis-container {
 		grid-template-columns: 1fr;
 	}
+
+	.unified-chart-container {
+		height: 350px;
+		padding: 15px;
+	}
 }
 
 /* Footer 스크롤 버튼 */
@@ -775,5 +880,10 @@
 
 	.financial-ratios {
 		grid-template-columns: 1fr;
+	}
+
+	.unified-chart-container {
+		height: 300px;
+		padding: 10px;
 	}
 }

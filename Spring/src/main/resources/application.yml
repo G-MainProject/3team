@@ -31,3 +31,10 @@ logging:
     org.springframework.web: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# 외부 API 설정
+api:
+  dart:
+    api-key: bb28844c9bd9012b53fa40a6c725beb8d1390fa8
+  google:
+    api-key: AIzaSyClTgMhl7MpKD0Bfm3hEqQ4u9E5Fdy7NAU

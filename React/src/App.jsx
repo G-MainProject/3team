@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
@@ -11,6 +11,7 @@ import Signup from './pages/Signup/Signup.jsx';
 import Mypage from './pages/Mypage/Mypage.jsx';
 
 function App() {
+	const [selectedSymbol, setSelectedSymbol] = useState('005930'); // 기본값: 삼성전자
 	return (
 		<BrowserRouter>
 			<AuthProvider>
@@ -28,7 +29,10 @@ function App() {
 					} />
 					<Route path="/dashboard" element={
 						<PrivateRoute>
-							<Dashboard />
+							<Dashboard 
+								selectedSymbol={selectedSymbol}
+								onSymbolChange={setSelectedSymbol}
+							/>
 						</PrivateRoute>
 					} />
 					<Route path="/mypage" element={

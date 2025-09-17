@@ -6,9 +6,11 @@ import RightNav from '../../component/Nav/RightNav';
 import Footer from '../../component/Footer/Footer';
 import Chart from '../../component/Chart/Chart';
 import CandleStickChart from '../../component/CandleStickChart/CandleStickChart';
+import UnifiedStockChart from '../../component/UnifiedStockChart/UnifiedStockChart';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { useAuth } from '../../contexts/AuthContext';
+import { getStockSummary } from '../../services/yahooFinanceApi';
 
 const CircleGraphData = [
 	{ name: '긍정', value: 45 },
@@ -60,32 +62,42 @@ const financialChartSeries = [
 	{ key: 'netProfit', name: '순이익', color: '#ef4444' },
 ];
 
+// 통합 차트용 실시간 주가 데이터 (시간별)
 const realtimeStockData = [
+	{ time: '09:00', price: 49800 },
+	{ time: '09:30', price: 50100 },
 	{ time: '10:00', price: 50000 },
-	{ time: '10:05', price: 50100 },
-	{ time: '10:10', price: 50050 },
-	{ time: '10:15', price: 50200 },
-	{ time: '10:20', price: 50150 },
-	{ time: '10:25', price: 50300 },
-	{ time: '10:30', price: 50250 },
+	{ time: '10:30', price: 50200 },
+	{ time: '11:00', price: 50150 },
+	{ time: '11:30', price: 50300 },
+	{ time: '12:00', price: 50250 },
+	{ time: '12:30', price: 50400 },
+	{ time: '13:00', price: 50350 },
+	{ time: '13:30', price: 50500 },
+	{ time: '14:00', price: 50450 },
+	{ time: '14:30', price: 50600 },
+	{ time: '15:00', price: 50550 },
+	{ time: '15:30', price: 50700 },
+	{ time: '16:00', price: 50650 },
 ];
 
-const realtimeStockSeries = [
-	{ key: 'price', name: '실시간 주가', color: '#8884d8' },
-];
-
-const dailyStockData = [
-	{ date: '08-12', price: 50000 },
-	{ date: '08-13', price: 51000 },
-	{ date: '08-14', price: 50500 },
-	{ date: '08-15', price: 52000 },
-	{ date: '08-16', price: 51500 },
-	{ date: '08-17', price: 52500 },
-	{ date: '08-18', price: 53000 },
-];
-
-const dailyStockSeries = [
-	{ key: 'price', name: '일별 주가', color: '#82ca9d' },
+// 통합 차트용 거래량 데이터 (시간별)
+const realtimeVolumeData = [
+	{ time: '09:00', volume: 1200000 },
+	{ time: '09:30', volume: 1500000 },
+	{ time: '10:00', volume: 1800000 },
+	{ time: '10:30', volume: 1600000 },
+	{ time: '11:00', volume: 1400000 },
+	{ time: '11:30', volume: 1700000 },
+	{ time: '12:00', volume: 1900000 },
+	{ time: '12:30', volume: 1300000 },
+	{ time: '13:00', volume: 2100000 },
+	{ time: '13:30', volume: 1800000 },
+	{ time: '14:00', volume: 2000000 },
+	{ time: '14:30', volume: 1600000 },
+	{ time: '15:00', volume: 2200000 },
+	{ time: '15:30', volume: 1900000 },
+	{ time: '16:00', volume: 2500000 },
 ];
 
 {
@@ -190,26 +202,26 @@ function generateRealisticStockData(days = 30) {
 	return data;
 }
 
-const candlestickData = generateRealisticStockData(30);
+// const candlestickData = generateRealisticStockData(30);
 
-// 거래량 데이터를 캔들 차트용 데이터(OHLC)로 변환하는 코드
-const volumeCandleData = candlestickData.map((d, i, arr) => {
-	// 첫 번째 데이터는 이전 데이터가 없으므로 시가(open)와 종가(close)를 동일하게 설정
-	const open = i === 0 ? d.volume : arr[i - 1].volume;
-	const close = d.volume;
+// 거래량 데이터를 캔들 차트용 데이터(OHLC)로 변환하는 코드 (사용하지 않음)
+// const volumeCandleData = candlestickData.map((d, i, arr) => {
+// 	// 첫 번째 데이터는 이전 데이터가 없으므로 시가(open)와 종가(close)를 동일하게 설정
+// 	const open = i === 0 ? d.volume : arr[i - 1].volume;
+// 	const close = d.volume;
 
-	return {
-		date: d.date,
-		open: open,
-		close: close,
-		// 꼬리(wick)가 없는 캔들을 위해 high와 low를 open/close 중 큰 값/작은 값으로 설정
-		high: Math.max(open, close),
-		low: Math.min(open, close),
-	};
-});
+// 	return {
+// 		date: d.date,
+// 		open: open,
+// 		close: close,
+// 		// 꼬리(wick)가 없는 캔들을 위해 high와 low를 open/close 중 큰 값/작은 값으로 설정
+// 		high: Math.max(open, close),
+// 		low: Math.min(open, close),
+// 	};
+// });
 
-export default function Dashboard() {
-	const { user, logout } = useAuth();
+export default function Dashboard({ selectedSymbol = '005930', onSymbolChange }) {
+	// const { logout } = useAuth();
 	const [showFooterButton, setShowFooterButton] = useState(false);
 	const [showFooter, setShowFooter] = useState(false);
 	const [buttonAnimation, setButtonAnimation] = useState('');
@@ -218,10 +230,240 @@ export default function Dashboard() {
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
 
-	const handleLogout = () => {
-		logout();
-		window.location.href = '/';
+	// 심볼에 따른 주식 이름 매핑
+	const getStockName = (symbol) => {
+		const stockNames = {
+			'005930': '삼성전자',
+			'000660': 'SK하이닉스',
+			'035420': 'NAVER',
+			'207940': '삼성바이오로직스',
+			'006400': '삼성SDI'
+		};
+		return stockNames[symbol] || '알 수 없는 주식';
 	};
+
+	// 심볼에 따른 시장 구분 매핑
+	const getMarketType = (symbol) => {
+		const marketTypes = {
+			'005930': 'KOSPI',
+			'000660': 'KOSPI',
+			'035420': 'KOSPI',
+			'207940': 'KOSPI',
+			'006400': 'KOSPI'
+		};
+		return marketTypes[symbol] || 'KOSPI';
+	};
+
+	// 실시간 주식 데이터 상태
+	const [stockData, setStockData] = useState([]);
+	const [volumeData, setVolumeData] = useState([]);
+	const [stockSummary, setStockSummary] = useState({
+		currentPrice: 50000,
+		change: 0,
+		changePercent: 0,
+		volume: 0,
+		marketCap: 0,
+	});
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	
+	// TopNav용 주식 데이터 상태
+	const [topNavStocks, setTopNavStocks] = useState([]);
+	const [topNavLoading, setTopNavLoading] = useState(true);
+	
+	// 차트 간격 설정 상태
+	const [chartInterval, setChartInterval] = useState('1m'); // 1m, 5m, 15m, 30m, 1h
+	
+	// 주요 주식 심볼 목록
+	const stockSymbols = [
+		{ symbol: '005930', name: '삼성전자' },
+		{ symbol: '000660', name: 'SK하이닉스' },
+		{ symbol: '035420', name: 'NAVER' },
+		{ symbol: '207940', name: '삼성바이오로직스' },
+		{ symbol: '006400', name: '삼성SDI' }
+	];
+
+	// 실시간 주식 데이터 로드 (차트용) - TopNav 데이터 사용
+	useEffect(() => {
+		const loadStockData = async () => {
+			try {
+				setLoading(true);
+				setError(null);
+
+				// TopNav 데이터에서 선택된 주식 찾기
+				if (topNavStocks && topNavStocks.length > 0) {
+					const selectedStockData = topNavStocks.find(stock => stock.symbol === selectedSymbol);
+					
+					if (selectedStockData) {
+						// TopNav 데이터를 차트용 데이터로 변환
+						const now = new Date();
+						const stockData = [];
+						const volumeData = [];
+						
+						// 차트 간격에 따른 데이터 포인트 수와 간격 설정
+						const intervalSettings = {
+							'1m': { count: 15, intervalMs: 60000, label: '분' },
+							'5m': { count: 12, intervalMs: 300000, label: '분' },
+							'15m': { count: 16, intervalMs: 900000, label: '분' },
+							'30m': { count: 12, intervalMs: 1800000, label: '분' },
+							'1h': { count: 12, intervalMs: 3600000, label: '시간' }
+						};
+						
+						const settings = intervalSettings[chartInterval] || intervalSettings['1m'];
+						
+						// 설정된 간격으로 데이터 포인트 생성
+						for (let i = settings.count - 1; i >= 0; i--) {
+							const time = new Date(now.getTime() - i * settings.intervalMs);
+							const basePrice = selectedStockData.currentPrice;
+							const priceVariation = (Math.random() - 0.5) * (basePrice * 0.01); // ±1% 변동
+							const price = basePrice + priceVariation;
+							const volume = Math.floor(Math.random() * 1000000) + 500000;
+							
+							// 시간을 시:분 형식으로 변환
+							const timeString = time.toLocaleTimeString('ko-KR', { 
+								hour: '2-digit', 
+								minute: '2-digit',
+								hour12: false 
+							});
+							
+							stockData.push({
+								time: timeString,
+								price: Math.round(price),
+								open: Math.round(basePrice),
+								high: Math.round(Math.max(basePrice, price)),
+								low: Math.round(Math.min(basePrice, price)),
+								close: Math.round(price)
+							});
+							
+							volumeData.push({
+								time: timeString,
+								volume: volume
+							});
+						}
+						
+						setStockData(stockData);
+						setVolumeData(volumeData);
+						setError(null);
+					} else {
+						// 선택된 주식 데이터가 없으면 빈 배열
+						setStockData([]);
+						setVolumeData([]);
+						setError(null);
+					}
+				} else {
+					// TopNav 데이터가 없으면 빈 배열
+					setStockData([]);
+					setVolumeData([]);
+					setError(null);
+				}
+			} catch (err) {
+				console.error('주식 데이터 로드 실패:', err);
+				setError(err.message);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		loadStockData();
+
+		// 10초마다 데이터 새로고침
+		const interval = setInterval(loadStockData, 10000);
+
+		return () => clearInterval(interval);
+	}, [chartInterval, selectedSymbol, topNavStocks]); // topNavStocks도 의존성에 추가
+
+	// 선택된 주식의 요약 정보를 TopNav 데이터와 동기화 (우선순위)
+	useEffect(() => {
+		if (topNavStocks && topNavStocks.length > 0) {
+			const selectedStockData = topNavStocks.find(stock => stock.symbol === selectedSymbol);
+			if (selectedStockData) {
+				setStockSummary({
+					currentPrice: selectedStockData.currentPrice,
+					change: selectedStockData.change,
+					changePercent: selectedStockData.changePercent,
+					volume: selectedStockData.volume,
+					marketCap: selectedStockData.marketCap,
+				});
+			}
+		} else {
+			// TopNav 데이터가 없으면 기본값 사용
+			setStockSummary({
+				currentPrice: 50000,
+				change: 0,
+				changePercent: 0,
+				volume: 0,
+				marketCap: 0,
+			});
+		}
+	}, [topNavStocks, selectedSymbol]);
+
+	// TopNav용 주식 데이터 로드
+	useEffect(() => {
+		const loadTopNavData = async () => {
+			try {
+				setTopNavLoading(true);
+				
+				// 모든 주식의 요약 정보를 병렬로 가져오기
+				const stockDataPromises = stockSymbols.map(async (stock) => {
+					try {
+						const summary = await getStockSummary(stock.symbol);
+						if (summary) {
+							return {
+								...stock,
+								currentPrice: summary.currentPrice,
+								change: summary.change,
+								changePercent: summary.changePercent,
+								volume: summary.volume,
+								marketCap: summary.marketCap
+							};
+						} else {
+							return {
+								...stock,
+								currentPrice: 50000,
+								change: 0,
+								changePercent: 0,
+								volume: 0,
+								marketCap: 0
+							};
+						}
+					} catch (error) {
+						console.error(`${stock.name} 데이터 가져오기 실패:`, error);
+						return {
+							...stock,
+							currentPrice: 50000,
+							change: 0,
+							changePercent: 0,
+							volume: 0,
+							marketCap: 0
+						};
+					}
+				});
+
+				const allStockData = await Promise.all(stockDataPromises);
+				
+				// 변동폭 순으로 정렬 (절댓값 기준)
+				const sortedStocks = allStockData.sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent));
+				
+				setTopNavStocks(sortedStocks);
+				setTopNavLoading(false);
+			} catch (error) {
+				console.error('TopNav 주식 데이터 로드 실패:', error);
+				setTopNavLoading(false);
+			}
+		};
+
+		// 초기 로드
+		loadTopNavData();
+		
+		// 10초마다 업데이트
+		const interval = setInterval(loadTopNavData, 10000);
+		return () => clearInterval(interval);
+	}, []);
+
+	// const handleLogout = () => {
+	// 	logout();
+	// 	window.location.href = '/';
+	// };
 
 	useEffect(() => {
 		const dashboardMain = document.querySelector('.dashboard-main');
@@ -342,13 +584,18 @@ export default function Dashboard() {
 				<LeftNav />
 				<div className="dashboard-main">
 					<div className="dashboard-grid">
-						<TopNav />
+						<TopNav 
+							selectedSymbol={selectedSymbol}
+							onSymbolChange={onSymbolChange}
+							topNavStocks={topNavStocks}
+							topNavLoading={topNavLoading}
+						/>
 
 						{/* 주식 정보 섹션 */}
 						<div className="section-container">
 							<div className="section-label">
 								<div className="section-title">
-									<h2>주식 정보</h2>
+									<h2>{getStockName(selectedSymbol)}/{selectedSymbol}/{getMarketType(selectedSymbol)}</h2>
 									<p>실시간 주가 및 주요 지표</p>
 								</div>
 								<button className="detail-button">
@@ -357,60 +604,76 @@ export default function Dashboard() {
 								</button>
 							</div>
 							<div className="stock-info-section">
-								{/* KPI 차트들 */}
-								<div className="kpi-charts-grid">
-									<div className="kpi-chart-item">
-										<h3>실시간 주가 차트</h3>
-										<div className="kpi-chart-placeholder">
-											<Chart
-												data={realtimeStockData}
-												series={realtimeStockSeries}
-												xAxisKey="time"
-												yAxisUnit="원"
-												simpleMode={true}
-											/>
+								{/* 통합 주식 차트 */}
+								<div className="unified-chart-container">
+									<div className="chart-header">
+										<h3>실시간 주가 및 거래량</h3>
+										<div className="chart-interval-selector">
+											<label htmlFor="interval-select">차트 간격:</label>
+											<select 
+												id="interval-select"
+												value={chartInterval} 
+												onChange={(e) => setChartInterval(e.target.value)}
+												className="interval-select"
+											>
+												<option value="1m">1분</option>
+												<option value="5m">5분</option>
+												<option value="15m">15분</option>
+												<option value="30m">30분</option>
+												<option value="1h">1시간</option>
+											</select>
 										</div>
 									</div>
-									<div className="kpi-chart-item">
-										<h3>일별 주가 차트</h3>
-										<div className="kpi-chart-placeholder">
-											<Chart
-												data={dailyStockData}
-												series={dailyStockSeries}
-												xAxisKey="date"
-												yAxisUnit="원"
-												simpleMode={true}
-											/>
+									{loading ? (
+										<div className="chart-loading">데이터를 불러오는 중...</div>
+									) : error ? (
+										<div className="chart-error">
+											<i className="fas fa-exclamation-triangle"></i>
+											<p>차트 데이터를 불러올 수 없습니다</p>
+											<p className="error-detail">{error}</p>
 										</div>
+									) : stockData.length === 0 ? (
+										<div className="chart-error">
+											<i className="fas fa-chart-line"></i>
+											<p>차트 데이터가 없습니다</p>
+											<p className="error-detail">주식 데이터를 가져올 수 없습니다</p>
 									</div>
-									<div className="kpi-chart-item">
-										<h3>거래량 추이</h3>
-										<div className="kpi-chart-placeholder">
-											<CandleStickChart
-												data={volumeCandleData}
+									) : (
+										<div className="unified-chart-wrapper">
+											<UnifiedStockChart
+												stockData={stockData}
+												volumeData={volumeData}
 												simpleMode={false}
 											/>
 										</div>
-									</div>
+									)}
 								</div>
 
 								{/* 주식 정보 카드들 */}
 								<div className="stock-cards">
 									<div className="stock-card">
 										<h3>현재가</h3>
-										<p className="stock-value">₩50,000</p>
+										<p className="stock-value">
+											₩{stockSummary?.currentPrice?.toLocaleString() || '50,000'}
+										</p>
 									</div>
 									<div className="stock-card">
 										<h3>전일 대비</h3>
-										<p className="stock-value positive">+2.5%</p>
+										<p className={`stock-value ${(stockSummary?.change || 0) >= 0 ? 'positive' : 'negative'}`}>
+											{(stockSummary?.change || 0) >= 0 ? '+' : ''}{(stockSummary?.changePercent || 0).toFixed(2)}%
+										</p>
 									</div>
 									<div className="stock-card">
 										<h3>거래량</h3>
-										<p className="stock-value">1,234,567</p>
+										<p className="stock-value">
+											{(stockSummary?.volume || 0).toLocaleString()}
+										</p>
 									</div>
 									<div className="stock-card">
 										<h3>시가총액</h3>
-										<p className="stock-value">₩1.2조</p>
+										<p className="stock-value">
+											₩{((stockSummary?.marketCap || 0) / 1000000000000).toFixed(1)}조
+										</p>
 									</div>
 								</div>
 							</div>

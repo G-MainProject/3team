@@ -14,8 +14,11 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // CSRF 비활성화 (개발용)
+            .httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 인증 비활성화
+            .formLogin(formLogin -> formLogin.disable()) // 폼 로그인 비활성화
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/auth/**").permitAll() // 인증 관련 엔드포인트 허용
+                .requestMatchers("/api/stock/**").permitAll() // 주식 API 허용
                 .requestMatchers("/api/health").permitAll() // 헬스 체크 허용
                 .requestMatchers("/api/users/**").permitAll() // 사용자 관리 API 허용
                 .requestMatchers("/api/data/**").permitAll() // 데이터 분석 API 허용
@@ -25,7 +28,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll() // 나머지 모든 요청 허용 (개발용)
             )
             .headers(headers -> headers
-                .frameOptions().disable() // H2 콘솔을 위한 설정
+                .frameOptions(frameOptions -> frameOptions.disable()) // H2 콘솔을 위한 설정
             );
         
         return http.build();

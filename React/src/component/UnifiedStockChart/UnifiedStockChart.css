@@ -1,0 +1,62 @@
+.unified-stock-chart {
+	width: 100%;
+	height: 100%;
+	min-height: 300px;
+	background: #f8f9fa;
+	border-radius: 8px;
+	padding: 15px;
+	border: 1px solid #e9ecef;
+}
+
+.unified-chart-placeholder {
+	width: 100%;
+	height: 300px;
+	background: #f8f9fa;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #6c757d;
+	font-size: 14px;
+	border: 1px solid #e9ecef;
+}
+
+/* 차트 내부 스타일링 */
+.unified-stock-chart .recharts-cartesian-grid-horizontal line,
+.unified-stock-chart .recharts-cartesian-grid-vertical line {
+	stroke: #e9ecef;
+	stroke-dasharray: 3 3;
+}
+
+.unified-stock-chart .recharts-x-axis .recharts-text,
+.unified-stock-chart .recharts-y-axis .recharts-text {
+	fill: #6c757d;
+	font-size: 12px;
+}
+
+/* 툴팁 스타일 */
+.unified-stock-chart .recharts-tooltip-wrapper {
+	outline: none;
+}
+
+/* 범례 스타일 */
+.unified-stock-chart .recharts-legend-wrapper {
+	padding-top: 20px;
+}
+
+.unified-stock-chart .recharts-legend-item {
+	margin-right: 20px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+	.unified-stock-chart {
+		min-height: 250px;
+		padding: 10px;
+	}
+	
+	.unified-chart-placeholder {
+		height: 250px;
+		font-size: 12px;
+	}
+}
