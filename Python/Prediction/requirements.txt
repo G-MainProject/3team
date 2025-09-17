@@ -1,9 +1,0 @@
-konlpy
-networkx
-pandas
-numpy
-openpyxl
-jpype1  # 환경 변수에 JAVA_HOME 변수로 JDK 위치를 지정해야함
-          # ex)
-          # 변수 이름: JAVA_HOME
-          # 변수 값: C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot

@@ -4,7 +4,8 @@ import google.generativeai as genai
 import pandas as pd
 
 # .env 파일에서 환경 변수를 불러옵니다.
-dotenv.load_dotenv()
+dotenv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
+dotenv.load_dotenv(dotenv_path=dotenv_path)
 
 # API 키를 사용하여 라이브러리를 설정합니다.
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
