@@ -1,4 +1,3 @@
-# 네이버 검색 API 예제 - 뉴스 검색 및 스크레이핑 (10개 성공 보장, 중복/불필요 내용/검색어 보호 제거)
 import os
 import sys
 import urllib.request
@@ -6,6 +5,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 import dotenv
+from datetime import datetime
 
 # .env 파일에서 환경 변수를 불러옵니다.
 dotenv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
@@ -31,8 +31,9 @@ def get_news_content(link, search_word=""):
         soup = BeautifulSoup(response.content, 'html.parser')
 
         content_selectors = [
+            '#articleBody',
             '.article_body', '#articleBodyContents', '#dic_area', '.article-veiw-body', 
-            '#article_txt', '.article-formatted-body', '.view_left', '#articeBody', 
+            '#article_txt', '.article-formatted-body', '.view_left',
             '#article_body', '[itemprop="articleBody"]', '.article_view'
         ]
         
@@ -58,7 +59,8 @@ def get_news_content(link, search_word=""):
             clean_lines = []
             base_filter_keywords = [
                 '저작권자', '무단전재', '재배포 금지', '기자', 'ⓒ', 'Copyright', '▶', 
-                '다른기사 보기', '페이스북', '트위터', '카카오스토리', '기사공유하기', '바로가기'
+                '다른기사 보기', '페이스북', '트위터', '카카오스토리', '기사공유하기', '바로가기',
+                '공유', '카카오', '이메일', 'URL', '기사저장', '댓글', '구독', '특파원', '='
             ]
             
             # 검색어가 필터 키워드에 있으면, 해당 검색어는 필터링에서 제외
@@ -89,7 +91,7 @@ def main():
     """
     메인 실행 함수: 성공한 기사 10개를 모을 때까지 실행
     """
-    search_word = "페이스북" # 검색어 예시 변경
+    search_word = "삼성전자"
     encText = urllib.parse.quote(search_word)
     
     successful_articles = []
@@ -128,17 +130,29 @@ def main():
                     continue
                 seen_links.add(original_link)
 
-                # get_news_content 호출 시 검색어 전달
-                content = get_news_content(original_link, search_word)
+                # newsis.com 기사는 건너뛰기
+                if 'newsis.com' in original_link:
+                    print(f"- 건너뛰기 (미지원 사이트): {item['title'].replace('<b>','').replace('</b>','')[:30]}...")
+                    continue
+                
+                # 제목에서 HTML 태그를 제거
+                clean_title = BeautifulSoup(item['title'], "html.parser").get_text()
 
-                if content != FAIL_MESSAGE:
-                    title = item['title'].replace("<b>", "").replace("</b>", "")
-                    successful_articles.append({
-                        'title': title,
-                        'link': original_link,
-                        'content': content
-                    })
-                    print(f"- 성공: {len(successful_articles)}/10 건 수집 완료 - '{title[:30]}...'")
+                # 제목에 검색어가 포함되어 있는지 확인
+                if search_word in clean_title:
+                    content = get_news_content(original_link, search_word)
+
+                    if content != FAIL_MESSAGE:
+                        pubDate_str = item['pubDate']
+                        formatted_date = datetime.strptime(pubDate_str, '%a, %d %b %Y %H:%M:%S %z').strftime('%Y-%m-%d')
+                        
+                        successful_articles.append({
+                            'title': clean_title,
+                            'link': original_link,
+                            'date': formatted_date,
+                            'content': content
+                        })
+                        print(f"- 성공: {len(successful_articles)}/10 건 수집 완료 - '{clean_title[:30]}...'")
                 
                 if len(successful_articles) >= 10:
                     break
@@ -156,6 +170,7 @@ def main():
     for i, article in enumerate(successful_articles):
         print(f"--- {i+1}번째 뉴스 기사 ---")
         print(f"제목: {article['title']}")
+        print(f"날짜: {article['date']}")
         print(f"링크: {article['link']}")
         print("\n--- 기사 본문 (스크레이핑) ---")
         print(article['content'])
