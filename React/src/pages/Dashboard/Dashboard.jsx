@@ -2,14 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Dashboard.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
-import RightNav from '../../component/Nav/RightNav';
+import Sns from '../../component/Sns/Sns';
 import Footer from '../../component/Footer/Footer';
 import Chart from '../../component/Chart/Chart';
 import CandleStickChart from '../../component/CandleStickChart/CandleStickChart';
 import UnifiedStockChart from '../../component/UnifiedStockChart/UnifiedStockChart';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
-import { useAuth } from '../../contexts/AuthContext';
 import { getStockSummary } from '../../services/yahooFinanceApi';
 
 const CircleGraphData = [
@@ -30,6 +29,24 @@ const wordCloudData = [
 ];
 
 const financialData = [
+	{
+		year: '2017',
+		revenue: 2395800000000,
+		operatingProfit: 536000000000,
+		netProfit: 421900000000,
+	},
+	{
+		year: '2018',
+		revenue: 2437700000000,
+		operatingProfit: 588900000000,
+		netProfit: 443400000000,
+	},
+	{
+		year: '2019',
+		revenue: 2304000000000,
+		operatingProfit: 277700000000,
+		netProfit: 217400000000,
+	},
 	{
 		year: '2020',
 		revenue: 2368100000000,
@@ -62,166 +79,7 @@ const financialChartSeries = [
 	{ key: 'netProfit', name: '순이익', color: '#ef4444' },
 ];
 
-// 통합 차트용 실시간 주가 데이터 (시간별)
-const realtimeStockData = [
-	{ time: '09:00', price: 49800 },
-	{ time: '09:30', price: 50100 },
-	{ time: '10:00', price: 50000 },
-	{ time: '10:30', price: 50200 },
-	{ time: '11:00', price: 50150 },
-	{ time: '11:30', price: 50300 },
-	{ time: '12:00', price: 50250 },
-	{ time: '12:30', price: 50400 },
-	{ time: '13:00', price: 50350 },
-	{ time: '13:30', price: 50500 },
-	{ time: '14:00', price: 50450 },
-	{ time: '14:30', price: 50600 },
-	{ time: '15:00', price: 50550 },
-	{ time: '15:30', price: 50700 },
-	{ time: '16:00', price: 50650 },
-];
-
-// 통합 차트용 거래량 데이터 (시간별)
-const realtimeVolumeData = [
-	{ time: '09:00', volume: 1200000 },
-	{ time: '09:30', volume: 1500000 },
-	{ time: '10:00', volume: 1800000 },
-	{ time: '10:30', volume: 1600000 },
-	{ time: '11:00', volume: 1400000 },
-	{ time: '11:30', volume: 1700000 },
-	{ time: '12:00', volume: 1900000 },
-	{ time: '12:30', volume: 1300000 },
-	{ time: '13:00', volume: 2100000 },
-	{ time: '13:30', volume: 1800000 },
-	{ time: '14:00', volume: 2000000 },
-	{ time: '14:30', volume: 1600000 },
-	{ time: '15:00', volume: 2200000 },
-	{ time: '15:30', volume: 1900000 },
-	{ time: '16:00', volume: 2500000 },
-];
-
-{
-	/*	거래량 추이 데이터
-const candlestickData = [
-	{
-		date: '08-12',
-		open: 50000,
-		high: 50500,
-		low: 49800,
-		close: 50300,
-		volume: 1234567,
-	},
-	{
-		date: '08-13',
-		open: 50300,
-		high: 51200,
-		low: 50100,
-		close: 51000,
-		volume: 1534567,
-	},
-	{
-		date: '08-14',
-		open: 51000,
-		high: 51100,
-		low: 50400,
-		close: 50500,
-		volume: 1134567,
-	},
-	{
-		date: '08-15',
-		open: 50500,
-		high: 52200,
-		low: 50450,
-		close: 52000,
-		volume: 1634567,
-	},
-	{
-		date: '08-16',
-		open: 52000,
-		high: 52100,
-		low: 51300,
-		close: 51500,
-		volume: 1434567,
-	},
-	{
-		date: '08-17',
-		open: 51500,
-		high: 52800,
-		low: 51400,
-		close: 52500,
-		volume: 1734567,
-	},
-	{
-		date: '08-18',
-		open: 52500,
-		high: 53200,
-		low: 52400,
-		close: 53000,
-		volume: 1834567,
-	},
-];
-*/
-}
-
-// 거래량 추이 데이터를 랜덤으로 생성하는 함수
-function generateRealisticStockData(days = 30) {
-	const data = [];
-	let lastClose = 50000; // 시작 가격
-	let lastVolume = 1500000; // 시작 거래량
-
-	for (let i = 0; i < days; i++) {
-		const date = `08-${12 + i}`; // 날짜 생성
-		const open = lastClose;
-
-		// 가격 변동폭을 -4% ~ +5% 사이로 랜덤하게 설정
-		const changePercent = (Math.random() - 0.45) * 0.09;
-		let close = open * (1 + changePercent);
-
-		// 고가와 저가 생성
-		const high = Math.max(open, close) * (1 + Math.random() * 0.02);
-		const low = Math.min(open, close) * (1 - Math.random() * 0.02);
-
-		// 거래량 변동 생성 (가격 변동이 클 때 거래량도 늘어나는 경향을 반영)
-		const volumeChange = (Math.random() - 0.5) * 0.7;
-		let volume =
-			lastVolume * (1 + volumeChange) + Math.abs(changePercent) * 5000000;
-		volume = Math.max(500000, volume); // 최소 거래량 보장
-
-		data.push({
-			date,
-			open: Math.round(open),
-			high: Math.round(high),
-			low: Math.round(low),
-			close: Math.round(close),
-			volume: Math.round(volume),
-		});
-
-		lastClose = close;
-		lastVolume = volume;
-	}
-	return data;
-}
-
-// const candlestickData = generateRealisticStockData(30);
-
-// 거래량 데이터를 캔들 차트용 데이터(OHLC)로 변환하는 코드 (사용하지 않음)
-// const volumeCandleData = candlestickData.map((d, i, arr) => {
-// 	// 첫 번째 데이터는 이전 데이터가 없으므로 시가(open)와 종가(close)를 동일하게 설정
-// 	const open = i === 0 ? d.volume : arr[i - 1].volume;
-// 	const close = d.volume;
-
-// 	return {
-// 		date: d.date,
-// 		open: open,
-// 		close: close,
-// 		// 꼬리(wick)가 없는 캔들을 위해 high와 low를 open/close 중 큰 값/작은 값으로 설정
-// 		high: Math.max(open, close),
-// 		low: Math.min(open, close),
-// 	};
-// });
-
 export default function Dashboard({ selectedSymbol = '005930', onSymbolChange }) {
-	// const { logout } = useAuth();
 	const [showFooterButton, setShowFooterButton] = useState(false);
 	const [showFooter, setShowFooter] = useState(false);
 	const [buttonAnimation, setButtonAnimation] = useState('');
@@ -598,10 +456,10 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 									<h2>{getStockName(selectedSymbol)}/{selectedSymbol}/{getMarketType(selectedSymbol)}</h2>
 									<p>실시간 주가 및 주요 지표</p>
 								</div>
-								<button className="detail-button">
+								{/* <button className="detail-button">
 									상세보기
 									<i className="fas fa-chevron-right"></i>
-								</button>
+								</button> */}
 							</div>
 							<div className="stock-info-section">
 								{/* 통합 주식 차트 */}
@@ -679,6 +537,98 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 							</div>
 						</div>
 
+
+						<Sns selectedSymbol={selectedSymbol} />
+					</div>
+
+					<div className="dashboard-grid2">
+						{/* 리포트 기준 주가 섹션 */}
+						<div className="section-container">
+							<div className="section-label">
+								<div className="section-title">
+									<h2>리포트 기준 주가</h2>
+									<p>2024년 1월 15일 14:30 기준 주가 및 지표</p>
+								</div>
+								<button className="detail-button">
+									상세보기
+									<i className="fas fa-chevron-right"></i>
+								</button>
+							</div>
+							<div className="stock-info-section">
+								{/* 정적 차트 컨테이너 */}
+								<div className="unified-chart-container">
+									<div className="chart-header">
+										<h3>기준 시점 주가 및 거래량</h3>
+										<div className="analysis-timestamp">
+											<span className="timestamp-label">분석 시점:</span>
+											<span className="timestamp-value">2024-01-15 14:30</span>
+										</div>
+									</div>
+									<div className="unified-chart-wrapper">
+										<UnifiedStockChart
+											stockData={[
+												{ time: '09:00', price: 49800, open: 50000, high: 50200, low: 49700, close: 49800 },
+												{ time: '09:30', price: 50100, open: 49800, high: 50300, low: 49600, close: 50100 },
+												{ time: '10:00', price: 50000, open: 50100, high: 50400, low: 49900, close: 50000 },
+												{ time: '10:30', price: 50200, open: 50000, high: 50500, low: 49800, close: 50200 },
+												{ time: '11:00', price: 50150, open: 50200, high: 50400, low: 50000, close: 50150 },
+												{ time: '11:30', price: 50300, open: 50150, high: 50500, low: 50000, close: 50300 },
+												{ time: '12:00', price: 50250, open: 50300, high: 50400, low: 50100, close: 50250 },
+												{ time: '12:30', price: 50400, open: 50250, high: 50600, low: 50100, close: 50400 },
+												{ time: '13:00', price: 50350, open: 50400, high: 50500, low: 50200, close: 50350 },
+												{ time: '13:30', price: 50500, open: 50350, high: 50700, low: 50200, close: 50500 },
+												{ time: '14:00', price: 50450, open: 50500, high: 50600, low: 50300, close: 50450 },
+												{ time: '14:30', price: 50600, open: 50450, high: 50800, low: 50300, close: 50600 }
+											]}
+											volumeData={[
+												{ time: '09:00', volume: 1200000 },
+												{ time: '09:30', volume: 1500000 },
+												{ time: '10:00', volume: 1800000 },
+												{ time: '10:30', volume: 1600000 },
+												{ time: '11:00', volume: 1400000 },
+												{ time: '11:30', volume: 1700000 },
+												{ time: '12:00', volume: 1900000 },
+												{ time: '12:30', volume: 1300000 },
+												{ time: '13:00', volume: 2100000 },
+												{ time: '13:30', volume: 1800000 },
+												{ time: '14:00', volume: 2000000 },
+												{ time: '14:30', volume: 2500000 }
+											]}
+											simpleMode={false}
+										/>
+									</div>
+								</div>
+
+								{/* 분석 기준 시점 정보 카드들 */}
+								<div className="stock-cards">
+									<div className="stock-card">
+										<h3>기준가</h3>
+										<p className="stock-value">
+											₩50,600
+										</p>
+									</div>
+									<div className="stock-card">
+										<h3>전일 대비</h3>
+										<p className="stock-value positive">
+											+1.2%
+										</p>
+									</div>
+									<div className="stock-card">
+										<h3>거래량</h3>
+										<p className="stock-value">
+											2,500,000
+										</p>
+									</div>
+									<div className="stock-card">
+										<h3>시가총액</h3>
+										<p className="stock-value">
+											₩378.2조
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
 						{/* 재무제표 섹션 */}
 						<div className="section-container">
 							<div className="section-label">
@@ -713,15 +663,19 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 
 								{/* 재무제표 차트 */}
 								<div className="financial-chart-container">
-									<h3>연도별 재무 성과 (단위 : 10억원)</h3>
-									<Chart
-										data={financialData}
-										series={financialChartSeries}
-										xAxisKey="year"
-										yAxisUnit="원"
-										xAxisUnit="년"
-										yAxisFormatType="billions"
-									/>
+									<div className="chart-header">
+										<h3>연도별 재무 성과 (단위 : 10억원)</h3>
+									</div>
+									<div className="unified-chart-wrapper">
+										<Chart
+											data={financialData}
+											series={financialChartSeries}
+											xAxisKey="year"
+											yAxisUnit="원"
+											xAxisUnit="년"
+											yAxisFormatType="billions"
+										/>
+									</div>
 								</div>
 
 								{/* 재무 비율 분석 */}
@@ -746,10 +700,6 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 							</div>
 						</div>
 
-						<RightNav />
-					</div>
-
-					<div className="dashboard-grid2">
 						{/* 뉴스 섹션 */}
 						<div className="section-container">
 							<div className="section-label">

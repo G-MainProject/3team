@@ -1,0 +1,22 @@
+# 개발 환경용 설정
+spring:
+  profiles:
+    active: dev
+
+# SNS API 설정 (개발용)
+twitter:
+  api:
+    bearer-token: ${TWITTER_BEARER_TOKEN:}  # 환경변수에서 읽어오거나 빈 값
+    base-url: https://api.twitter.com/2
+
+threads:
+  api:
+    access-token: ${THREADS_ACCESS_TOKEN:}  # 환경변수에서 읽어오거나 빈 값
+    base-url: https://graph.threads.net/v1.0
+
+# 로깅 설정 (개발용)
+logging:
+  level:
+    com.team3.backendapi: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.scheduling: DEBUG

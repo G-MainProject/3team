@@ -1,21 +1,21 @@
-.right-nav-container {
+.sns-container {
     grid-area: right-nav;
-    width: 20vw;
+    width: 100%;
     background-color: #fff;
     border-radius: 8px;
     overflow-y: auto;
     height: 100%;
 }
 
-.right-nav-content {
+.sns-content {
     padding: 20px;
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-/* RightNav 헤더 */
-.right-nav-header {
+/* SNS 헤더 */
+.sns-header {
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid #e9ecef;
@@ -24,18 +24,18 @@
     align-items: center;
 }
 
-.right-nav-header h3 {
+.sns-header h3 {
     margin: 0;
     color: #495057;
     font-size: 16px;
     font-weight: 600;
 }
 
-.right-nav-header h3 span {
+.sns-header h3 span {
     color: #007BFF;
 }
 
-.right-nav-header ul {
+.sns-header ul {
     display: flex;
     list-style: none;
     margin: 0;
@@ -43,7 +43,7 @@
     gap: 8px;
 }
 
-.right-nav-header li {
+.sns-header li {
     margin: 0;
 }
 
@@ -179,4 +179,40 @@
     height: 200px;
     color: #6c757d;
     font-size: 14px;
+}
+
+/* 에러 메시지 */
+.error-message {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #856404;
+    font-size: 13px;
+}
+
+.error-message i {
+    color: #f39c12;
+    font-size: 14px;
+}
+
+/* 마지막 업데이트 시간 */
+.last-updated {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6c757d;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.last-updated i {
+    font-size: 10px;
 }

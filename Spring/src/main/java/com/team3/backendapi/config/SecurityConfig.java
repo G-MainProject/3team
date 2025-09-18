@@ -19,6 +19,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/auth/**").permitAll() // 인증 관련 엔드포인트 허용
                 .requestMatchers("/api/stock/**").permitAll() // 주식 API 허용
+                .requestMatchers("/api/sns/**").permitAll() // SNS API 허용
                 .requestMatchers("/api/health").permitAll() // 헬스 체크 허용
                 .requestMatchers("/api/users/**").permitAll() // 사용자 관리 API 허용
                 .requestMatchers("/api/data/**").permitAll() // 데이터 분석 API 허용

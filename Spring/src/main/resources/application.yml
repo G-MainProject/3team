@@ -38,3 +38,16 @@ api:
     api-key: bb28844c9bd9012b53fa40a6c725beb8d1390fa8
   google:
     api-key: AIzaSyClTgMhl7MpKD0Bfm3hEqQ4u9E5Fdy7NAU
+
+# SNS API 설정
+twitter:
+  api:
+    bearer-token: "AAAAAAAAAAAAAAAAAAAAANcG4QEAAAAANbFad655gIEW%2BBcr8jGgbAZkGUk%3DIu6j4iP09hw59ggrvjhZO1RFRNlvQUBF2dIcOvXlwwwFuuUzas"  # Twitter API Bearer Token
+    base-url: https://api.twitter.com/2
+
+reddit:
+  api:
+    client-id: "JIq0Fy3dFM8srHgo_UJadg"  # Reddit API Client ID
+    client-secret: "u08v6NPMr-13DMZWKQqxny4i4iYYMg"  # Reddit API Client Secret
+    base-url: https://oauth.reddit.com
+    user-agent: StockAnalysisBot/1.0

@@ -31,12 +31,11 @@
 	padding-bottom: 1em; /*gap으로 인한 조정*/
 	display: grid;
 	grid-template-columns: 1fr 20vw;
-	grid-template-rows: 100px auto auto;
+	grid-template-rows: 100px auto;
 	gap: 2em;
 	grid-template-areas:
 		'top-nav top-nav'
 		'stock-info right-nav'
-		'financial right-nav';
 }
 
 .dashboard-grid2 {
@@ -45,9 +44,11 @@
 	padding-top: 1em; /*gap으로 인한 조정*/
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-template-rows: auto auto;
+	grid-template-rows: auto auto auto auto;
 	gap: 2em;
 	grid-template-areas:
+		'financial financial'
+		'report-analysis report-analysis'
 		'news sentiment'
 		'wordcloud ai-analysis';
 }
@@ -63,23 +64,27 @@
 	grid-area: stock-info;
 }
 
-.dashboard-grid .section-container:nth-child(3) {
+.dashboard-grid2 .section-container:nth-child(1) {
 	grid-area: financial;
 }
 
-.dashboard-grid2 .section-container:nth-child(1) {
-	grid-area: news;
-}
-
 .dashboard-grid2 .section-container:nth-child(2) {
-	grid-area: sentiment;
+	grid-area: report-analysis;
 }
 
 .dashboard-grid2 .section-container:nth-child(3) {
-	grid-area: wordcloud;
+	grid-area: news;
 }
 
 .dashboard-grid2 .section-container:nth-child(4) {
+	grid-area: sentiment;
+}
+
+.dashboard-grid2 .section-container:nth-child(5) {
+	grid-area: wordcloud;
+}
+
+.dashboard-grid2 .section-container:nth-child(6) {
 	grid-area: ai-analysis;
 }
 
@@ -185,6 +190,27 @@
 	gap: 8px;
 }
 
+.analysis-timestamp {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.timestamp-label {
+	font-size: 14px;
+	font-weight: 500;
+	color: #666;
+}
+
+.timestamp-value {
+	font-size: 14px;
+	font-weight: 600;
+	color: #3b82f6;
+	background: #eff6ff;
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+
 .chart-interval-selector label {
 	font-size: 14px;
 	font-weight: 500;
@@ -215,6 +241,13 @@
 .unified-chart-wrapper {
 	height: calc(100% - 40px);
 	width: 100%;
+	border: 1px solid #e9ecef;
+	border-radius: 8px;
+}
+
+/* 재무제표 차트 전용 wrapper 스타일 */
+.financial-chart-container .unified-chart-wrapper {
+	padding: 20px;
 }
 
 .chart-loading,
@@ -403,14 +436,26 @@
 	background: #f8f9fa;
 	border-radius: 8px;
 	padding: 20px;
-	height: 400px; /* 차트 높이 추가 */
+	height: 500px;
 }
 
-.financial-chart-container h3 {
-	margin: 0 0 15px 0;
+.financial-chart-container .chart-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.financial-chart-container .chart-header h3 {
+	margin: 0;
 	color: #495057;
 	font-size: 1.1em;
 	font-weight: 600;
+}
+
+.financial-chart-container .unified-chart-wrapper {
+	height: calc(100% - 40px);
+	width: 100%;
 }
 
 .financial-chart-placeholder {
