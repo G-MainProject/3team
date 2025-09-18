@@ -18,6 +18,16 @@ client_secret = os.getenv("NAVER_CLIENT_SECRET")
 # 스크레이핑 실패 시 반환되는 메시지
 FAIL_MESSAGE = "본문을 찾을 수 없습니다. (선택자 확인 필요)"
 
+def safe_print(text):
+    """
+    콘솔에 출력할 때 발생할 수 있는 UnicodeEncodeError를 방지하기 위한 함수.
+    """
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        # Windows의 cp949 콘솔 등에서 표시할 수 없는 문자는 '?'로 대체하여 출력
+        print(text.encode(sys.stdout.encoding, 'replace').decode(sys.stdout.encoding))
+
 def get_news_content(link, search_word=""):
     """
     뉴스 기사 링크를 받아와 본문 내용을 스크레이핑하고 불필요한 내용을 제거하는 함수.
@@ -31,6 +41,7 @@ def get_news_content(link, search_word=""):
         soup = BeautifulSoup(response.content, 'html.parser')
 
         content_selectors = [
+            '#article-view-content-div',
             '#articleBody',
             '.article_body', '#articleBodyContents', '#dic_area', '.article-veiw-body', 
             '#article_txt', '.article-formatted-body', '.view_left',
@@ -55,7 +66,7 @@ def get_news_content(link, search_word=""):
                     unique_lines.append(line)
                     seen_lines.add(line)
             
-            # --- 필터링 로직 개선 --- #
+            # --- 필터링 로직 --- #
             clean_lines = []
             base_filter_keywords = [
                 '저작권자', '무단전재', '재배포 금지', '기자', 'ⓒ', 'Copyright', '▶', 
@@ -73,7 +84,7 @@ def get_news_content(link, search_word=""):
                 if not any(keyword in line for keyword in dynamic_filter_keywords) and not any(ef in line for ef in email_filters):
                     clean_lines.append(line)
 
-            text_content = '\n'.join(clean_lines)
+            text_content = '\n'.join(clean_lines).strip()
 
             if len(text_content) > 100:
                 return text_content
@@ -89,7 +100,7 @@ def get_news_content(link, search_word=""):
 
 def main():
     """
-    메인 실행 함수: 최근 1주일, 최대 30개의 기사를 모을 때까지 실행
+    메인 실행 함수: 최근 1주일간, 최대 30개의 기사를 모을 때까지 실행
     """
     search_word = "삼성전자"
     encText = urllib.parse.quote(search_word)
@@ -100,12 +111,11 @@ def main():
     successful_articles = []
     seen_links = set()
     start_index = 1
-    display_count = 100  # 한 번에 많은 결과 요청하여 효율 증대
+    display_count = 100
 
     print(f"'{search_word}'에 대한 뉴스 검색 시작 (최근 1주일, 최대 30건 목표)")
 
     while len(successful_articles) < 30 and not found_old_article and start_index <= 1000:
-        # 날짜순으로 정렬하여 요청
         url = f"https://openapi.naver.com/v1/search/news.json?query={encText}&display={display_count}&start={start_index}&sort=date"
         
         request = urllib.request.Request(url)
@@ -128,12 +138,11 @@ def main():
                 break
 
             for item in news_data['items']:
-                # 날짜 확인
                 article_date = datetime.strptime(item['pubDate'], '%a, %d %b %Y %H:%M:%S %z')
                 if article_date < one_week_ago:
                     found_old_article = True
                     print("--- 일주일이 지난 기사에 도달하여 검색을 중단합니다. ---")
-                    break  # 내부 루프 종료
+                    break
 
                 original_link = item.get('originallink', item['link'])
 
@@ -142,7 +151,7 @@ def main():
                 seen_links.add(original_link)
 
                 if 'newsis.com' in original_link:
-                    print(f"- 건너뛰기 (미지원 사이트): {item['title'].replace('<b>','').replace('</b>','')[:30]}...")
+                    safe_print(f"- 건너뛰기 (미지원 사이트): {item['title'].replace('<b>','').replace('</b>','')[:30]}...")
                     continue
                 
                 clean_title = BeautifulSoup(item['title'], "html.parser").get_text()
@@ -152,14 +161,13 @@ def main():
 
                     if content != FAIL_MESSAGE:
                         formatted_date = article_date.strftime('%Y-%m-%d')
-                        
                         successful_articles.append({
                             'title': clean_title,
                             'link': original_link,
                             'date': formatted_date,
                             'content': content
                         })
-                        print(f"- 성공: {len(successful_articles)}/30 건 수집 완료 - '{clean_title[:30]}...'")
+                        safe_print(f"- 성공: 총 {len(successful_articles)}/30 건 수집 완료 - '{clean_title[:30]}...'")
                 
                 if len(successful_articles) >= 30:
                     break
@@ -176,11 +184,11 @@ def main():
 
     for i, article in enumerate(successful_articles):
         print(f"--- {i+1}번째 뉴스 기사 ---")
-        print(f"제목: {article['title']}")
+        safe_print(f"제목: {article['title']}")
         print(f"날짜: {article['date']}")
         print(f"링크: {article['link']}")
         print("\n--- 기사 본문 (스크레이핑) ---")
-        print(article['content'])
+        safe_print(article['content'])
         print("\n" + "="*50 + "\n")
 
 if __name__ == "__main__":
