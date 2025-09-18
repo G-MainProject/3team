@@ -5,7 +5,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 import dotenv
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 # .env 파일에서 환경 변수를 불러옵니다.
 dotenv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
@@ -89,20 +89,24 @@ def get_news_content(link, search_word=""):
 
 def main():
     """
-    메인 실행 함수: 성공한 기사 10개를 모을 때까지 실행
+    메인 실행 함수: 최근 1주일, 최대 30개의 기사를 모을 때까지 실행
     """
     search_word = "삼성전자"
     encText = urllib.parse.quote(search_word)
     
+    one_week_ago = datetime.now(timezone.utc) - timedelta(weeks=1)
+    found_old_article = False
+
     successful_articles = []
     seen_links = set()
     start_index = 1
-    display_count = 20
+    display_count = 100  # 한 번에 많은 결과 요청하여 효율 증대
 
-    print(f"'{search_word}'에 대한 뉴스 검색 시작 (성공 10건 목표)")
+    print(f"'{search_word}'에 대한 뉴스 검색 시작 (최근 1주일, 최대 30건 목표)")
 
-    while len(successful_articles) < 10 and start_index <= 100:
-        url = f"https://openapi.naver.com/v1/search/news.json?query={encText}&display={display_count}&start={start_index}"
+    while len(successful_articles) < 30 and not found_old_article and start_index <= 1000:
+        # 날짜순으로 정렬하여 요청
+        url = f"https://openapi.naver.com/v1/search/news.json?query={encText}&display={display_count}&start={start_index}&sort=date"
         
         request = urllib.request.Request(url)
         request.add_header("X-Naver-Client-Id", client_id)
@@ -124,27 +128,30 @@ def main():
                 break
 
             for item in news_data['items']:
+                # 날짜 확인
+                article_date = datetime.strptime(item['pubDate'], '%a, %d %b %Y %H:%M:%S %z')
+                if article_date < one_week_ago:
+                    found_old_article = True
+                    print("--- 일주일이 지난 기사에 도달하여 검색을 중단합니다. ---")
+                    break  # 내부 루프 종료
+
                 original_link = item.get('originallink', item['link'])
 
                 if original_link in seen_links:
                     continue
                 seen_links.add(original_link)
 
-                # newsis.com 기사는 건너뛰기
                 if 'newsis.com' in original_link:
                     print(f"- 건너뛰기 (미지원 사이트): {item['title'].replace('<b>','').replace('</b>','')[:30]}...")
                     continue
                 
-                # 제목에서 HTML 태그를 제거
                 clean_title = BeautifulSoup(item['title'], "html.parser").get_text()
 
-                # 제목에 검색어가 포함되어 있는지 확인
                 if search_word in clean_title:
                     content = get_news_content(original_link, search_word)
 
                     if content != FAIL_MESSAGE:
-                        pubDate_str = item['pubDate']
-                        formatted_date = datetime.strptime(pubDate_str, '%a, %d %b %Y %H:%M:%S %z').strftime('%Y-%m-%d')
+                        formatted_date = article_date.strftime('%Y-%m-%d')
                         
                         successful_articles.append({
                             'title': clean_title,
@@ -152,9 +159,9 @@ def main():
                             'date': formatted_date,
                             'content': content
                         })
-                        print(f"- 성공: {len(successful_articles)}/10 건 수집 완료 - '{clean_title[:30]}...'")
+                        print(f"- 성공: {len(successful_articles)}/30 건 수집 완료 - '{clean_title[:30]}...'")
                 
-                if len(successful_articles) >= 10:
+                if len(successful_articles) >= 30:
                     break
             
             start_index += display_count
