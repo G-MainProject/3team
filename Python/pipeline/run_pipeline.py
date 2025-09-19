@@ -1,0 +1,255 @@
+﻿"""CLI to execute the entire data-to-inference pipeline."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Iterable
+
+import numpy as np
+
+COLLECT_MODULE = "Python.pipeline.pipelines.s1_collect"
+PREPROCESS_MODULE = "Python.pipeline.pipelines.s2_preprocess"
+MODEL_MODULE = "Python.pipeline.pipelines.s3_model"
+INFER_MODULE = "Python.pipeline.pipelines.s4_infer.predict"
+DISCOVER_MODULE = "Python.pipeline.pipelines.s0_discover.top_movers"
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+
+    project_root = _find_project_root()
+    env = _build_env(project_root)
+
+    tickers = list(args.tickers)
+
+    # 자동 티커 탐색
+    if args.auto_tickers:
+        discovery_output = args.auto_output or (project_root / "data" / "raw" / "top_movers_auto.json")
+        discover_cmd = [
+            "python",
+            "-m",
+            DISCOVER_MODULE,
+            "--date",
+            args.auto_date,
+            "--market",
+            args.auto_market,
+            "--count",
+            str(args.auto_count),
+            "--output",
+            str(discovery_output),
+        ]
+        _run_stage("s0_discover", discover_cmd, env)
+        auto_tickers = _load_tickers(discovery_output)
+        if not auto_tickers:
+            raise RuntimeError("Top movers 탐색 실패: 자동 티커 목록이 비었습니다.")
+        tickers = sorted({*tickers, *auto_tickers}) if tickers else auto_tickers
+
+    if not tickers and not args.skip_s1:
+        raise ValueError("수집에 사용할 티커가 없습니다. --tickers 또는 --auto-tickers를 지정하세요.")
+
+    # Stage 1: 수집
+    if not args.skip_s1:
+        s1_cmd = [
+            "python",
+            "-m",
+            COLLECT_MODULE,
+            "--tickers",
+            *tickers,
+            "--start-date",
+            args.start_date,
+            "--end-date",
+            args.end_date,
+        ]
+        _run_stage("s1_collect", s1_cmd, env)
+
+    # Stage 2: 전처리
+    if not args.skip_s2:
+        s2_cmd = ["python", "-m", PREPROCESS_MODULE]
+        if tickers:
+            s2_cmd += ["--tickers", *tickers]
+        if args.skip_merge:
+            s2_cmd.append("--skip-merge")
+        if args.skip_features:
+            s2_cmd.append("--skip-features")
+        if args.skip_datasets:
+            s2_cmd.append("--skip-datasets")
+        _run_stage("s2_preprocess", s2_cmd, env)
+
+    # Stage 3: 모델 학습
+    if not args.skip_s3:
+        s3_cmd = ["python", "-m", MODEL_MODULE, "--train"]
+        if args.settings:
+            s3_cmd += ["--settings", str(args.settings)]
+        if args.gold_root:
+            s3_cmd += ["--gold-root", str(args.gold_root)]
+        if args.artifacts_root:
+            s3_cmd += ["--artifacts-root", str(args.artifacts_root)]
+        if args.epochs is not None:
+            s3_cmd += ["--epochs", str(args.epochs)]
+        if args.batch_size is not None:
+            s3_cmd += ["--batch-size", str(args.batch_size)]
+        if args.learning_rate is not None:
+            s3_cmd += ["--learning-rate", str(args.learning_rate)]
+        if args.model_device is not None:
+            s3_cmd += ["--device", args.model_device]
+        _run_stage("s3_model", s3_cmd, env)
+
+    infer_input = Path(args.infer_input) if args.infer_input else (project_root / "data" / "gold" / "test" / "X.npy")
+    infer_output = Path(args.infer_output)
+    s5_output = Path(args.s5_output)
+    # Stage 4: 추론
+    if not args.skip_s4:
+        infer_cmd = [
+            "python",
+            "-m",
+            INFER_MODULE,
+            "--model",
+            str(args.infer_model or (project_root / "Python" / "pipeline" / "artifacts" / "models" / "model_best.pth")),
+            "--input",
+            str(infer_input),
+            "--output",
+            str(infer_output),
+            "--close-index",
+            str(args.close_index),
+        ]
+        if args.settings:
+            infer_cmd += ["--settings", str(args.settings)]
+        if args.close_values:
+            infer_cmd += ["--close-values", str(args.close_values)]
+        if args.infer_device is not None:
+            infer_cmd += ["--device", args.infer_device]
+        _run_stage("s4_infer", infer_cmd, env)
+
+    # Stage 5: 추론
+    if not args.skip_s5:
+        if args.skip_s4:
+            raise ValueError('s5_evaluate 단계를 실행하려면 s4_infer 결과가 필요합니다. --skip-s5 옵션을 사용하거나 s4 단계를 실행해주세요.')
+        predictions_path = infer_output
+        actual_returns_path = Path(args.s5_actual_returns) if args.s5_actual_returns else infer_input.with_name("y.npy")
+        if not actual_returns_path.exists():
+            raise FileNotFoundError('평가에 사용할 실제 수익률 파일을 찾을 수 없습니다: {actual_returns_path}')
+        if not predictions_path.exists():
+            raise FileNotFoundError('s4_infer 결과 파일이 존재하지 않습니다: {predictions_path}')
+        if args.close_values:
+            close_values = np.load(args.close_values)
+        else:
+            price_data = np.load(infer_input)
+            if args.close_index < 0 or args.close_index >= price_data.shape[2]:
+                raise ValueError('close_index가 feature 차원 범위를 벗어났습니다.')
+            close_values = price_data[:, -1, args.close_index]
+        close_values = np.asarray(close_values, dtype=float)
+        if close_values.ndim != 1:
+            close_values = close_values.reshape(-1)
+        actual_returns = np.load(actual_returns_path)
+        actual_returns = np.asarray(actual_returns, dtype=float)
+        if actual_returns.ndim == 1:
+            actual_returns = actual_returns[:, None]
+        if close_values.shape[0] != actual_returns.shape[0]:
+            raise ValueError('실제 종가 배열과 실제 수익률 배열의 샘플 수가 일치하지 않습니다.')
+        actual_prices = close_values[:, None] * (1.0 + actual_returns)
+        actual_prices_path = Path(args.s5_actual_prices) if args.s5_actual_prices else (project_root / "outputs" / "actual_prices.npy")
+        actual_prices_path.parent.mkdir(parents=True, exist_ok=True)
+        np.save(actual_prices_path, actual_prices.astype(float))
+        s5_cmd = [
+            "python",
+            "-m",
+            "Python.pipeline.pipelines.s5_evaluate.report",
+            "--predictions",
+            str(predictions_path),
+            "--actual-prices",
+            str(actual_prices_path),
+            "--output",
+            str(s5_output),
+        ]
+        if args.s5_horizons:
+            s5_cmd += ["--horizons", *map(str, args.s5_horizons)]
+        _run_stage("s5_evaluate", s5_cmd, env)
+
+
+    print("Pipeline completed successfully.")
+    return 0
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run full pipeline from s1 to s5.")
+    parser.add_argument("--tickers", nargs="*", default=[], help="수집/전처리에 사용할 티커 목록")
+    parser.add_argument("--start-date", default="2015-09-19", help="수집 시작일 (YYYY-MM-DD)")
+    parser.add_argument("--end-date", default="2025-09-18", help="수집 종료일 (YYYY-MM-DD)")
+
+    # auto ticker discovery
+    parser.add_argument("--auto-tickers", action="store_true", help="pykrx 변동성 상위 종목 자동 선택")
+    parser.add_argument("--auto-date", default=datetime.now().strftime("%Y%m%d"), help="top movers 기준 일자 (YYYYMMDD)")
+    parser.add_argument("--auto-market", default="KOSPI", help="시장 (KOSPI/KOSDAQ/ALL)")
+    parser.add_argument("--auto-count", type=int, default=5, help="선정 종목 수")
+    parser.add_argument("--auto-output", type=Path, help="탐색 결과 저장 경로")
+
+    # Stage control
+    parser.add_argument("--skip-s1", action="store_true")
+    parser.add_argument("--skip-s2", action="store_true")
+    parser.add_argument("--skip-s3", action="store_true")
+    parser.add_argument("--skip-s4", action="store_true")
+    parser.add_argument("--skip-s5", action="store_true")
+
+    parser.add_argument("--skip-merge", action="store_true")
+    parser.add_argument("--skip-features", action="store_true")
+    parser.add_argument("--skip-datasets", action="store_true")
+
+    parser.add_argument("--epochs", type=int, help="학습 epoch 수")
+    parser.add_argument("--batch-size", type=int, help="학습 배치 크기")
+    parser.add_argument("--learning-rate", type=float, help="학습률")
+    parser.add_argument("--model-device", help="학습 디바이스")
+    parser.add_argument("--settings", type=Path, help="공통 settings.yaml 경로")
+    parser.add_argument("--gold-root", type=Path, help="gold 데이터 루트 경로")
+    parser.add_argument("--artifacts-root", type=Path, help="artifacts 루트 경로")
+
+    parser.add_argument("--infer-input", type=Path, help="추론 입력 numpy 파일 (기본: data/gold/test/X.npy)")
+    parser.add_argument("--infer-output", type=Path, default=Path("outputs/preds.json"))
+    parser.add_argument("--infer-model", type=Path, help="추론에 사용할 모델 가중치")
+    parser.add_argument("--infer-device", help="추론 디바이스")
+    parser.add_argument("--close-index", type=int, default=3, help="추론 시 종가가 위치한 feature 인덱스")
+    parser.add_argument("--close-values", type=Path, help="추론용 기준 종가 numpy 파일")
+    parser.add_argument("--s5-actual-prices", type=Path, help="s5 평가에 사용할 실제 가격 numpy 파일 경로")
+    parser.add_argument("--s5-actual-returns", type=Path, help="s5 평가에 사용할 실제 수익률 numpy 파일 경로 (기본: infer-input 경로의 y.npy)")
+    parser.add_argument("--s5-output", type=Path, default=Path("outputs/eval.json"), help="s5 평가 보고서 출력 경로")
+    parser.add_argument("--s5-horizons", nargs="*", type=int, help="s5 평가 시 사용할 예측 지평 목록")
+    return parser
+
+
+def _run_stage(name: str, cmd: list[str], env: dict[str, str]) -> None:
+    print(f"[Pipeline] Running {name}: {' '.join(cmd)}")
+    completed = subprocess.run(cmd, env=env)
+    if completed.returncode != 0:
+        raise RuntimeError(f"Stage {name} failed with exit code {completed.returncode}")
+
+
+def _build_env(project_root: Path) -> dict[str, str]:
+    env = dict(os.environ)
+    env.setdefault("PYTHONPATH", str(project_root))
+    return env
+
+
+def _load_tickers(path: Path) -> list[str]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return data.get("tickers", [])
+
+
+def _find_project_root() -> Path:
+    current = Path(__file__).resolve()
+    for parent in current.parents:
+        if (parent / ".env").exists():
+            return parent
+    for parent in current.parents:
+        if (parent / "data").exists():
+            return parent
+    return current.parents[4]
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

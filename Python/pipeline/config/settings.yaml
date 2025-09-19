@@ -1,0 +1,30 @@
+﻿# Default pipeline configuration
+
+paths:
+  data_root: ../../data
+  raw: ../../data/raw
+  bronze: ../../data/bronze
+  silver: ../../data/silver
+  gold: ../../data/gold
+  artifacts: ../artifacts
+
+training:
+  batch_size: 64
+  learning_rate: 0.001
+  epochs: 50
+
+features:
+  price_windows: [5, 10, 20]
+  indicators: ["rsi", "macd", "bollinger", "stochastic"]
+
+inference:
+  threshold: 0.5
+
+dataset:
+  label_threshold: 0.0035
+  sequence_length: 30
+  horizons: [1, 5, 20, 120, 250]
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15
