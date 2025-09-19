@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SnsSchedulerService {
 
-    private final TwitterApiService twitterApiService;
     private final RedditApiService redditApiService;
     
     // 인기 주식 심볼들
@@ -31,30 +30,24 @@ public class SnsSchedulerService {
     );
 
     /**
-     * 10분마다 인기 주식들의 SNS 데이터를 미리 캐시에 로드
+     * 1분마다 인기 주식들의 SNS 데이터를 실시간 업데이트
      */
-    @Scheduled(fixedRate = 600000) // 10분 = 600,000ms
+    @Scheduled(fixedRate = 60000) // 1분 = 60,000ms
     public void preloadSnsData() {
-        log.info("SNS 데이터 사전 로딩 시작...");
+        log.info("실시간 SNS 데이터 업데이트 시작...");
         
         for (String symbol : POPULAR_SYMBOLS) {
             String stockName = STOCK_NAMES.get(symbol);
             if (stockName != null) {
-                // Twitter 데이터 사전 로딩
-                twitterApiService.getTweetsBySymbol(symbol, stockName)
-                    .doOnSuccess(tweets -> log.info("Twitter 데이터 사전 로딩 완료: {} - {}개", stockName, tweets.size()))
-                    .doOnError(error -> log.error("Twitter 데이터 사전 로딩 실패: {} - {}", stockName, error.getMessage()))
-                    .subscribe();
-                
-                // Reddit 데이터 사전 로딩
+                // Reddit 데이터 실시간 업데이트 (캐시 무시)
                 redditApiService.getRedditPostsBySymbol(symbol, stockName)
-                    .doOnSuccess(redditPosts -> log.info("Reddit 데이터 사전 로딩 완료: {} - {}개", stockName, redditPosts.size()))
-                    .doOnError(error -> log.error("Reddit 데이터 사전 로딩 실패: {} - {}", stockName, error.getMessage()))
+                    .doOnSuccess(redditPosts -> log.info("실시간 Reddit 데이터 업데이트 완료: {} - {}개", stockName, redditPosts.size()))
+                    .doOnError(error -> log.error("실시간 Reddit 데이터 업데이트 실패: {} - {}", stockName, error.getMessage()))
                     .subscribe();
             }
         }
         
-        log.info("SNS 데이터 사전 로딩 완료");
+        log.info("실시간 SNS 데이터 업데이트 완료");
     }
 
     /**
@@ -63,7 +56,7 @@ public class SnsSchedulerService {
     @Scheduled(fixedRate = 3600000) // 1시간 = 3,600,000ms
     public void cleanupCache() {
         log.info("SNS 캐시 정리 시작...");
-        // TwitterApiService와 RedditApiService의 캐시 정리 로직이 필요
+        // RedditApiService의 캐시 정리 로직이 필요
         log.info("SNS 캐시 정리 완료");
     }
 }

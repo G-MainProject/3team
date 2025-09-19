@@ -15,5 +15,6 @@ public class SnsPostDto {
     private int likes;
     private int retweets;
     private int replies;
-    private String platform; // "twitter" or "threads"
+    private String platform; // "twitter" or "reddit"
+    private String url; // 게시물 링크
 }

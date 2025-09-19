@@ -4,7 +4,7 @@
     background-color: #fff;
     border-radius: 8px;
     overflow-y: auto;
-    height: 100%;
+    /* 높이는 JavaScript로 동적 조정 */
 }
 
 .sns-content {
@@ -98,7 +98,28 @@
 /* 소셜미디어 피드 */
 .social-feed {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: auto; /* 자동으로 스크롤 활성화 */
+    /* 스크롤바 스타일링 */
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.social-feed::-webkit-scrollbar {
+    width: 6px;
+}
+
+.social-feed::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 3px;
+}
+
+.social-feed::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.social-feed::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
 }
 
 .social-item {
@@ -106,7 +127,7 @@
     border-bottom: 1px solid #f1f3f4;
     transition: all 0.2s ease;
     border-radius: 8px;
-    cursor: pointer;
+    cursor: pointer !important;
 }
 
 .social-item:hover {
@@ -140,6 +161,13 @@
     font-size: 14px;
     line-height: 1.4;
     margin-bottom: 10px;
+    /* 2줄 이상일 때 텍스트 축약 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
 }
 
 .social-stats {
@@ -170,6 +198,7 @@
 .social-engagement i {
     font-size: 12px;
 }
+
 
 /* 데이터 없음 상태 */
 .no-data {

@@ -62,6 +62,16 @@ class ApiService {
   async getHealth() {
     return this.get('/health');
   }
+
+  // SNS 데이터 조회 API
+  async getSnsData(symbol) {
+    return this.get(`/sns/${symbol}`);
+  }
+
+  // SNS 헬스체크 API
+  async getSnsHealth() {
+    return this.get('/sns/health');
+  }
 }
 
 // 싱글톤 인스턴스 생성

@@ -24,18 +24,30 @@ public class RedditApiService {
     // 캐시 저장소 (심볼 -> 캐시 데이터)
     private final ConcurrentHashMap<String, CacheData> cache = new ConcurrentHashMap<>();
     
-    // 캐시 유효 시간 (10분)
-    private static final int CACHE_DURATION_MINUTES = 10;
+    // 캐시 유효 시간 (1분) - 테스트용
+    private static final int CACHE_DURATION_MINUTES = 1;
+    
+    // 환경 변수 직접 읽기
+    private String clientId;
+    private String clientSecret;
     
     public RedditApiService(@Qualifier("redditWebClient") WebClient webClient) {
         this.webClient = webClient;
+        // 캐시 초기화
+        cache.clear();
+        
+        // 하드코딩된 Reddit API 키 사용 (테스트용)
+        clientId = "JIq0Fy3dFM8srHgo_UJadg";
+        clientSecret = "u08v6NPMr-13DMZWKQqxny4i4iYYMg";
+        log.info("Reddit API 키 하드코딩 사용: Client ID={}, Secret={}", 
+            clientId.substring(0, 10) + "...", 
+            clientSecret.substring(0, 10) + "...");
+        
+        log.info("Reddit API 서비스 초기화 - 캐시 클리어됨");
+        log.info("Reddit API 초기화 - Client ID: '{}', Client Secret: '{}'", 
+            clientId != null ? clientId.substring(0, Math.min(clientId.length(), 10)) + "..." : "null",
+            clientSecret != null ? clientSecret.substring(0, Math.min(clientSecret.length(), 10)) + "..." : "null");
     }
-    
-    @Value("${reddit.api.client-id:}")
-    private String clientId;
-    
-    @Value("${reddit.api.client-secret:}")
-    private String clientSecret;
     
     @Value("${reddit.api.user-agent:StockAnalysisBot/1.0}")
     private String userAgent;
@@ -60,19 +72,18 @@ public class RedditApiService {
     }
 
     public Mono<List<SnsPostDto>> getRedditPostsBySymbol(String symbol, String stockName) {
-        // 캐시 확인
-        CacheData cachedData = cache.get(symbol);
-        if (cachedData != null && !cachedData.isExpired()) {
-            log.info("캐시에서 Reddit 데이터를 반환합니다. (심볼: {})", symbol);
-            return Mono.just(cachedData.getPosts());
-        }
+        // 캐시 비활성화 (테스트용)
+        log.info("Reddit API 호출 시작 - 캐시 무시");
 
         if (clientId == null || clientId.isEmpty() || clientSecret == null || clientSecret.isEmpty()) {
             log.warn("Reddit API 자격 증명이 설정되지 않았습니다. 더미 데이터를 반환합니다.");
+            log.warn("Client ID: '{}', Client Secret: '{}'", clientId, clientSecret);
             List<SnsPostDto> dummyPosts = getDummyRedditPosts(symbol, stockName);
             cache.put(symbol, new CacheData(dummyPosts));
             return Mono.just(dummyPosts);
         }
+        
+        log.info("Reddit API 자격 증명 확인됨. 실제 API 호출을 시작합니다.");
 
         // Reddit API 호출
         String query = buildQuery(symbol, stockName);
@@ -85,8 +96,8 @@ public class RedditApiService {
                                     .path("/search.json")
                                     .queryParam("q", query)
                                     .queryParam("sort", "new")
-                                    .queryParam("limit", 5)
-                                    .queryParam("t", "day")
+                                    .queryParam("limit", 20)
+                                    .queryParam("t", "week")
                                     .build())
                             .header("Authorization", "Bearer " + accessToken)
                             .header("User-Agent", userAgent)
@@ -136,8 +147,34 @@ public class RedditApiService {
     }
 
     private String buildQuery(String symbol, String stockName) {
-        return String.format("(%s OR %s) subreddit:stocks OR subreddit:investing OR subreddit:SecurityAnalysis", symbol, stockName);
+        // 종목별 최적화된 검색 키워드
+        String searchTerms;
+        switch (symbol) {
+            case "005930":
+                searchTerms = "(005930 OR Samsung OR 삼성전자 OR Samsung Electronics)";
+                break;
+            case "000660":
+                searchTerms = "(000660 OR SK Hynix OR SK하이닉스 OR SKHynix)";
+                break;
+            case "035420":
+                searchTerms = "(035420 OR Naver OR 네이버 OR NAVER)";
+                break;
+            case "207940":
+                searchTerms = "(207940 OR Samsung Biologics OR 삼성바이오로직스 OR SamsungBio)";
+                break;
+            case "006400":
+                searchTerms = "(006400 OR Samsung SDI OR 삼성SDI OR SamsungSDI)";
+                break;
+            default:
+                searchTerms = String.format("(%s OR %s)", symbol, stockName);
+        }
+        
+        // 관련 서브레딧들
+        String subreddits = "subreddit:stocks OR subreddit:investing OR subreddit:SecurityAnalysis OR subreddit:ValueInvesting OR subreddit:StockMarket OR subreddit:korea OR subreddit:KoreanInvesting";
+        
+        return String.format("%s (%s)", searchTerms, subreddits);
     }
+
 
     private List<SnsPostDto> parseRedditResponse(String response) {
         try {
@@ -157,9 +194,14 @@ public class RedditApiService {
                         String title = data.get("title").asText();
                         String selftext = data.has("selftext") ? data.get("selftext").asText() : "";
                         String content = title + (selftext.isEmpty() ? "" : "\n\n" + selftext);
+                        
                         String author = "u/" + data.get("author").asText();
                         String subreddit = "r/" + data.get("subreddit").asText();
                         String authorWithSub = author + " (" + subreddit + ")";
+                        
+                        // Reddit 링크 생성
+                        String permalink = data.has("permalink") ? data.get("permalink").asText() : "";
+                        String redditUrl = "https://www.reddit.com" + permalink;
                         
                         // 점수 (upvotes - downvotes)
                         int score = data.has("score") ? data.get("score").asInt() : 0;
@@ -169,7 +211,7 @@ public class RedditApiService {
                         double createdUtc = data.has("created_utc") ? data.get("created_utc").asDouble() : 0;
                         String timeAgo = formatTimeAgo(createdUtc);
                         
-                        posts.add(new SnsPostDto(postId, authorWithSub, content, timeAgo, score, 0, numComments, "reddit"));
+                        posts.add(new SnsPostDto(postId, authorWithSub, content, timeAgo, score, 0, numComments, "reddit", redditUrl));
                     }
                 }
             }
@@ -209,25 +251,25 @@ public class RedditApiService {
             case "005930":
                 posts.add(new SnsPostDto("1", "u/StockAnalyst (r/stocks)", 
                     "삼성전자 주가 분석: AI 반도체 수요 증가로 긍정적 전망\n\n최근 삼성전자의 AI 반도체 사업이 주목받고 있습니다...", 
-                    "2시간 전", 45, 0, 12, "reddit"));
+                    "2시간 전", 45, 0, 12, "reddit", "https://www.reddit.com/r/stocks/"));
                 posts.add(new SnsPostDto("2", "u/Investor123 (r/investing)", 
                     "삼성전자 투자 의견: 현재 시점에서의 매수/매도 전략", 
-                    "4시간 전", 23, 0, 8, "reddit"));
+                    "4시간 전", 23, 0, 8, "reddit", "https://www.reddit.com/r/investing/"));
                 break;
             case "000660":
                 posts.add(new SnsPostDto("1", "u/MemoryExpert (r/SecurityAnalysis)", 
                     "SK하이닉스 HBM 기술력 분석: 삼성전자와의 경쟁 구도", 
-                    "1시간 전", 67, 0, 15, "reddit"));
+                    "1시간 전", 67, 0, 15, "reddit", "https://www.reddit.com/r/SecurityAnalysis/"));
                 break;
             case "035420":
                 posts.add(new SnsPostDto("1", "u/TechInvestor (r/stocks)", 
                     "네이버 AI 기술 투자 전망: 검색 시장에서의 경쟁력", 
-                    "3시간 전", 34, 0, 6, "reddit"));
+                    "3시간 전", 34, 0, 6, "reddit", "https://www.reddit.com/r/stocks/"));
                 break;
             default:
                 posts.add(new SnsPostDto("1", "u/StockNews (r/investing)", 
                     stockName + " 관련 최신 분석 및 투자 의견", 
-                    "1시간 전", 15, 0, 3, "reddit"));
+                    "1시간 전", 15, 0, 3, "reddit", "https://www.reddit.com/r/investing/"));
         }
         
         return posts;
