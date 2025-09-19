@@ -24,7 +24,7 @@ if %errorlevel% equ 0 (
 
 echo [2/4] Starting Spring backend server...
 cd Spring
-start "Spring Backend" cmd /k "mvn spring-boot:run"
+start "Spring Backend" cmd /k ".\mvnw.cmd spring-boot:run"
 echo ✓ Spring backend starting on http://localhost:8080
 cd..
 
