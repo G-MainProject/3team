@@ -1,4 +1,4 @@
-<Process id="23ec8941-a34e-4ad5-9c85-2685840f35d5" process_id="2a2a7546-f201-4668-8bcb-50289e350b84" task_id="23ec8941-a34e-4ad5-9c85-2685840f35d5" type="task" workType="foreground" name="T_1_2_네이버증권_데이터추출" version="1.0" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="25" Orientation="horizontal">
+<Process id="23ec8941-a34e-4ad5-9c85-2685840f35d5" process_id="2a2a7546-f201-4668-8bcb-50289e350b84" task_id="23ec8941-a34e-4ad5-9c85-2685840f35d5" type="task" workType="foreground" name="T_1_2_네이버증권_데이터추출" version="1.0" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="27" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,13 +10,14 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 11:40:59" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-16 15:50:47" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-17 10:07:07" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
   <Variables>
+    <Variable name="Data_total" scope="Normal" valueType="Any" formatType="Any" initValue="[]" desc="" colorValue="#FF9E4784" showMarker="False" />
     <Variable name="i" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFEBB02D" showMarker="False" />
     <Variable name="index" scope="Normal" valueType="Any" formatType="Any" initValue="0" desc="" colorValue="#FFAA77FF" showMarker="False" />
     <Variable name="Data_content" scope="Normal" valueType="Any" formatType="Any" initValue="[]" desc="부제목 내용" colorValue="#FF38E54D" showMarker="False" />
@@ -347,6 +348,88 @@ for(var k = 0; k < RESULT.length; k++) {
 }
 ]]></Script>
     </Step>
+    <Step id="S586f27cf7c224c43b526822b8e274d28" ver="311241220" createVer="311241220" type="Chrome" name="ChromeGetListData" dpName="ChromeGetListData" dpValue="RESULT" dpValue2="씨피시스템 종목분석 - 하반기부터 점차 실적 회복 기대 : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="521c49e1-3155-4296-b0a9-2cc1b190ed71" type="Chrome">
+        <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
+        <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://finance.naver.com/research/company_read.naver'" />
+        <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
+        <Property type="Chrome" key="CHROME_FullPageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="https://finance.naver.com/research/company_read.naver?nid=83955&amp;page=1&amp;searchType=itemCode&amp;itemCode=413630" />
+        <Property type="Chrome" key="CHROME_IframeSrc" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="CHROME_IframeIndexes" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="CHROME_ElementPath" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="'html/body/div[3]/div[2]/div[2]/div[1]/div/table/tbody/tr/td/div/div'" />
+        <Property type="Chrome" key="CHROME_ExecuteQuery" controlType="PropertyItemChromeQueryEditView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'//td/div/div'" />
+        <Property type="Chrome" key="CHROME_QueryType" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" toggle="XPath;Selector" />
+        <Property type="Chrome" key="CHROME_FullHTML" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="H4sIAAAAAAAEAO19bVsbR7bgZ/gVFc1NgAlI3a13MGQwfoEEsINfknh2lqeRGqmNpNZILTCZ8fPYDs46seeG3DExTsCX7DqxM+s8Q2yckLvOfrg/B7X+w55TVd1d3WoJYSt77+69jmN1vZ06dc6pU6dOvR3Lm8UCKail3GhoyQiRrGqqQ7WqVlFzWskcDc0YH+qFghqJhyXS/55eyhorVTJ7nshSWBohEJGIjZAridgAGS+XC9p72sI7uhmJR5PhaIL0vzN5fmZ6kBT0JY2c1jJLxgCZyFeMohaRo6mwhP+Rc+qiWtF5kdBYL/45tmBkV4lRKhhqdjSU08zTs8f7B0bs1GqmopdNYq6WtdGQqV0xI5fVZZXF8jzwZ1mtkFI1Mxpa1EtqKaOFK1pVUyuZfGiEp2Yy1cryaCiTCZfUZa0SzhhFmtaD/2GGXGlhHmixrGe00T4Opm8EUll5TC4YOaNmjmaNTK0IFAtfmJseIZEIIGzdW7fWtkj9662Dn/atjTXrq49I46s1UtGyekXLmKS+vkMge69bE2K3YFwZ7TMWF/sQTP3v+/Xbt8jB02vWR59Yu79Y22tAFtLY2LEeXSOQi3+GSVZbVGsFs/7pXYx2YeaNilnSM0sCzNuf1NceWg/WSP3RuvVwDb76Zcl6sD7AoB8KPCw0nxKuqM0X1FWtMm+UtdJ8Ri0UFtTMEhkli7VSxtSNUv/An3p7CCGUJVhiGrOf0z/UIBOAmcW4GY3GhoHdTjIwvbcHmEG5YVdThUIOvSH3yYKGn8dXp7L9ISdTiBZ1guEVPWvmR721s0hvvrym5/KmPyOLHbk60qrpmYJR1Vq2HZvw0m1oakRICvniOdKYACgei7C+gF3hWFZfJjr0otp8dUkvQ/foOaaSfEVbHA39BqqshYipLkDH1q6MhuTQ2LFqWS2N1b+7a23vE/ipf7IHEkzqu3dRkHevHezvAnjMcyyijvG+IoCsmmrFFGEqDsxn+/Un+9bWi3bwoGsdiwDKHtTzmprVKhR1jMoU1GrVjp1XK5qKSUFpeqnEynlTsc+65SAtL9tJvLfzBLddedMsV4cjkZWVFVdZREIeiAW9tBSCDpQpYH8L0Z9Mpd/M69VB0nfu/Dgr2QcB/r+2DDyneq2HVVddzhHOY0UJEZut+L2sayuoG0ISkYiiEIxbBN08GioZJS1ErhQLpSpDlOO5Eg0blVxEkSQpAoCdWnqOlVUzT4CwMwBHlifw32hYTsYTRJHD0XgsTeR4OCopUaJIYTmWgPRkWJbl6IScCqejyTjBX0Wi8YqcjmO+aFSSsZwiYVgOywklOYFw0ywMPwqOG+lUMgXYQ7moTFLhVDwG5SA9mUolJhLhJIBVKB6JmEJi4WRCUmQKX04kSDSsKHIqivUnkyllQg4nUtFYnOIRTaeIFE5E4ykpThFJ0ggF8E6kaAtjiYkhjIhKCWiiHJZkqAoGISmWTCiQGbDBb4hKRZNRJUkAnbQUS2E1iXQqjeikJCBPNCwl00n6m1DiUYhPpVJJQAuaE01FoRmJdDJB0YnF5WgSISuxmAysk+EfJEtaTsYwCFXIcSwpx1Npp2F2Qyeg4akYlIHmpGJQAyAMI2dKSaAEALBLM7IC2ALycfi5KCPdJGUa2JMCDGjkJEtJhAFeajINFSXjF2WkVHIaEJEk5CekJifpv5CXluJwL9li9huQI+jLERQeR2BRsFzphW5s94gF6A3Z0BiONNt79adrvJPzbkW7emAHK2krQ8VwWV19hW4GpTvsZNFkm04GbOtKJ4vGwrGonEYWyulYbDoKPErLwGoFJDKZmlaS4XRcTtnpkwr2vaQyHZUoN4gM0hWVk9NKCsIShNPQ1+KpSUhPRlMAL4lFo1F52lfTpRklGk7ISdot05BhErulFE1eBJDpqJJC6ZJT6RimJ6PQ3QC0JEspKg6JFO1WyTRKJ4QBxQkoBx1CtsPYhFgU+gGIUSKtuEEpHE8mQFvwcDIcS0jxJLYkmQKxB2sSpC7tgOfhCVZ9DLpTOhVlyieFrYnJCSjNkYdOqQAd5IsOvVgjL/JGQquRwKkkRSOVTk/Y4RRgJQF5oBroHTKgJUUT2HogrALV8vAEtE6Jy0k3HRgQU9ziLGhDt4NKOCGlk0gaJUYzyTEl7cDmYWxiOo2U4+kOrko4nk4QH+qXZlA7pUDDxmMO36GiqJRKYXtBRU9Ew3ElBaoaeZgAVRsDXRWV0oyH6TRVAZLLswlQRdG4nHB5CGSlPOU8tIM2D3nY5iEWT1KuMB7a4G0eQvUyamrgIWaLhmNKKs2YqED7wqAOQQ/6eShNNzf00kwccqdgVLIZA1OEVBLUns0Y0JXpRFp2OGOHbdY4Yc4bu7xNfBu+zRygQCzt8g7GqBgOPnZxJ2zLFQ/b1UNxwNuVKx/6r6ZJG/+4CZr0MDV6ZF1pz2o61Jexdvoy1iWjBJSGJCVQ0oDKqWmZ2ggJkJk0/ElNgMyA7YHhqByHgQ/IK2EY1GYsSsOxOIZjkA4mAPSXpJySEhcVMG0g/ySwF2wL+aKdng6D5SMlJuBXYuUScaiHpEGSWThNB9g09IAUrUdheKHwSijLaRBcCIP2xZ5i4w3jtJJieKMpAkZBKobtAqWHeNAeE6PtjEkI39du7PsUARn7ZPxiOgxzZEQ/ge2TcaiPT9pZLs0kIBmhgbCC0E+ijIJBhpaGQg0zGk01cBohgogrKTcIqlOecEKAIdUHrCQoZSVGOEAenOTVQZdJUWLzXNAlUgkMUhBOiIJ3QqxupyTDzIs/tied4JAkUBBQPagVGdURG4FoNB1x0gpVbvG0EAStlFYmhKBMDT5WFJoJphGHyIOTvD5HuniuGPRthTVBToshhO8EWe1OUYabtwVte78o/VgRDhhRtMQpl6OJSQWEL56IgQxLMMDD2C+jYRzDMSAajTnJrNAkh8FGQjARKPMSMRzu00qMBcHGhGA8lhCDMOjbwUkZ+5EUm5bRMSOhsk2AKQ/dCUzxVCyGo2pccuPRpE/HUxiOJ1C8FegOKRqOxVH8IQy6N2Z3Y0xPxVJItQQ2iYYTCRz8E2jKT8LIGYtJ2OREApsMZpKUTsUuwniH4QkehvJygnYfAJyk8JOs/gT2a6xfwe6M5pOSoPiALmfhOBds6HUTdnEIKjgBAWYqjDZIQLAxQMfTYCwJbYdhDetG7mBalHIMBjc0y6HfJGKUgUk5Ng1kkihVAUIqhVSTkwmWGQwtCCrYaMZm4uUX8A8EmCIVg0bE0IaHJk1GQZNB7EWgUArtH8a3iyzTJC/zaqON9e32wY93gkebY5G8zObUfKbum15XcHzwzK+FRObkElN7ji0alSIpqUXNTg4RlfpOYDxjEfyHzQlCpKiZeYN5BnF0q9YWijqMSBXNrFVKJKuhVyQ7z6LpYDcQIlVztQAVFNVKTi8NSyOkrGazeikHnw4iBXVBKxBABxAxjczSvG5qxWookDbE+u8363/7rv63m//6k/XomnVrEz65p+5YhEKyweqlck10V4aoV8NTA2v9H2taZTVETN1EVNtUEPKRk9YQIuWCmtHyRiGrVVoUtx7crO98g/TNaNXqkrYKICBUA1yMYrmgmVCvsbgYCkI9r2ezWokhP6+VshcqBRtxO7SsFmoQtItzAbPlbKFmmkaJQ2Pc8TeEZWlvsrCsHVoscsK1WPDbY7FQK/gVLRYsPFSpIcMQDyObxTbpZX8c6nam+tAIhp8EDh+JNMyyeJj/Ehqdlu0gKwQKigXT1EpQiF0YNIetU+k3mDFgu+JQjwnoDxBL2WEbqB2267QL2yh5Mb404y/OgtFwWkrChIn9wpBKo53SPDiBmhZMISdZ5k2yi8u+FtthVi5FnPIwJDiw4XvCqRcTOE5OIQ/GrlaEoUWKpVoMxEdhKg4YMTYrgN/YBB0iEnE2rqRofCqeiLlhGBAAXTs/NRsVNj4k43SKnYjjrB/sI5lZKywcC7O5Z4yNB/ATxcwwQ07yTAlaCAZFMQxA43b+aQdXxEGmDJGSKY5ikgjhGLqvfE07jHiHjiq2dvSMKqzL20FhqECt5BkogkeqB+v1z+5b99estR88kHsc/zECOlUBReWMAlm9CrpydZhgpx8RurRQ/UpFLTNlp5qZYrmprK9oU1lQykKqN9moZKtiYs+xWsFOnK9o1VrBPG5c8eSA0Un3hAWne2t9OX7hfLigV81mbUn4aLmoFqrQDqd2tQYIqIV5LOVFwEf/Uq1IfLl/lzGy2u+8XAgq6i9mXjE7KIXjRlONMJ4vacGl3emxyIIALnoav1grFAAu/swzvKiRc2Q4SAqAo5fmOVFeDgyOrwwMfr00GOoIoGDw66XBMGozQA7l/aDA+vFI6rFIreAJN5uDJcMUVl14trLDeLSZvNgePHte/9tj63+8sO5fI42NPev+PjfIrO1rBJLqu3et7ReEeU3A/sFFJ/REf3a/sfFd/fat+u2HYS/SZS/O3lb5wv7ga0NDpLG5Zj14QkR9RA72d+uffoPrqtaNJ9aX3zU2Ng+e7ZCDZ2vW7e8ZFmRoqLUOEfTPVCl3qAo6TAcdooQEkherOR/FX7J53SVyJNIdMiO/AiHskcb9LYho3L/bKWPOsRXPf0PWHNaS+vqmde+W9enzLrPEExID3m+c3tkzRydebC6upnsmhPbADQmO+sFlZLNilHL+8Z9yHEhA6o+uN64/gZGAZhsThlS6UaPK511OwG8LLBRgQgY8g4HWU9DIUbUplGYxuPTeDEUvAV7akANMFWEtmCVWOuRf9tKzwoIXhGiuMM/rrZjPkcY8gyOFnkOLjC2mN6VlK60TTdSvfKPK9r6wHk9VuY8exVUPMTAYSAk6eIz5+QzZcSCDKZgHhBPHgeAmilzFqJWyQ3pRzWnDpFYp9L/xx5phjtg0q1YL4XLVVGHoCJc0M8I+I0DAolGKAGCYs8mxiJ5BK7JirMwvFORwTl9kUAYYcxgb3P1DwyMiXiEv6oKdBREXqnyHSJjGnTdyuQLuWPFZVmPH9GLOgVmuGGBDa/MQB42tZIBeqqkO00ZGALmRBbWqJWKDc1Lh9JkThfz4u+PHx8dPRMYnVsbpHxoenxg/UX09egIR0qBtMN1Hgy+MAPsEgOVSzgaoXzx+Zm5Feud0zkAws+cu5E9eyMHXKQwef3difAbhxj9ceWcRY06/P3fqvcm58wvKJSmrnFq99O7x45dOp/VL546/vfDeqdKli28XPnhvLp7JFApnscCJ2XfPn5o7lTp7YiUOc/s3lyuJNyPLyYRWKr959nIsqUXN+JuLpXRkMZo882E1ffa8lFqeXk1CpkSt8sf04vty/Mz5JUhOl/+4YmQRt3dn3547eeqCNlupyvLJM7nV8ZncmZPvXRg/JacXE6VoZkYrF96eNM5dWqguxybfPDH1njoxW51dyZw+XdRzuXcvvXki8m68otXUaiU1mZ46IU1UJxfHp8vjydjb53MrZ8+dLc29I41nEqcqK2feP3M5Y+SmsoXzS7O1EydyRu703PjFk8dPVN+V01MzH06kkump6fHc6dnc+KX8wszZ6Bx2xStvV+XpnKZGqic+yKxWtMn3L7/3pnH2wuRFPavMvDchv/PmuFT9Y/XEe8mJperpYmFi9pJxykyXpxYvf5D7ILWwMjOjXblwcvbd2hnzjx9MXFmcNM8nx7PZD4zsiUxZyk2dPZlPTx2/YtSqb5aO19TzejU2uxI5c2764krBmH3z7ZPFy6ffnoufWp06MVeeeu+SNm4cX8pcOj0zl1uaOrn0oXQiefry++++Oz4zGzm9vPJOZnz85OnTk2/npWJRZXJ17sLFM3PvxCc+mJoa7Qs5u1AE9wl+qwX4qN+AweXuGiiMxsYatar+vg8mlq2R/KIO/5haBezF6pLTn8Q4Wy2RJr1EjV8HHoZkV4lpRf9egxt71s5G/dkegf/pviKt6NV1jipwoaCSE+ZRQuVasezWjYGxfuvBmvXouvXVemNzq/HR9gBTkTimBai5wmrFqyVXK4HqMGOUTJiRNaeBiuDDYhNhPHSj+uU/Vcl/qpJ/36okJbmqBL+pKglWI02bgjzWEW5PViJqWY/QuLNMzbxVHM3ktczSVPb8alnz9ORMXi3lNF83spfVXQTAkHy0Brrj2sHTXzw2UFAHB5PJ7pxljx2byYDVYgb02WZlpvjNQ9yo294y7KjtY/OId/32pt2KV7VBjZr5FjVqCqM08+vR8deVU/DX3lrtFIM4e5s1fOKaglpaRYcNB/169BQABnWTiqbj8deVRBl0CwRl+GTFsAUQgesiE0ZWg3jnM3oiJkcTUcljEANuv7JFTLduewSi3CyiRVUvCNvIvcpaL8yr2SwQBiZ1v3MyUVjeSYqW1U06OfEb3Xpp0eiwY+S1QjlSXJ2CEm/hBt/RvIEuJGcn3tSJVpZ9VcvUKoKMsvB8AV1HR696FJdaziEI3Vx9Qy2WRyg2VR4DGD3bszZuWYDXzkYrlDJaRZi2YegI6Gjn9FwpsixHkAKRggr9vQnUvMoMh+1969tta23LRQS9Vv5eX1ZhvMae5gJyo3yaoKgVF7RKNa83u46529m1Dtysh7XMzRppmp54qhQsDw943W812XJB6t89hB/rE1B+uivoYEPNkrPqKrOm/MiVDb1kerdreklDM9g9M4gMlPzcT9f47AkwovHpfrP6Ff8NsqGKxVqJSlUTijATzwkEnFk97kR46If5GDL1/bus63usQ2faqdG16XBGXdRa9HhMCo0d7F6zHtxsbGwR6+c9aGAgNB/pvLLmJeWCitvZ28qV43Wg5ON8azZ0DxWtywYODx0gU9JWFvTW6yrH9Gb5uv09sZ5v1e9cI/HXibVzvf6tIHCUv8H2OLAZREmrLKqZ5gq5syFogL+/CeO5rWX8YqUv4rqQz0yfZ7HOQnz951t0vrNzCyYAPrJkmZ3PlsH5lgLH5BEsHvisZipGAZDK4VpziNA6FowKXayXnBaZRnk4GitfGaHbKIaH8JOCG44qEnwzgMNyPAUBj7fRKKsZ6ALD0shQsTrEZljDaqGcV/t50qg0gEMea16gvjXVwpLHvcMi2jl4VE/eqrOE74OKZ0IqOQ1IAT1NxW2JFY2uuuOhIa0CEgM8hwkIVuSVUgpWkNO3FivF0XIGANNRBQyQPMxa6HdGNbWcUVkdDZYFRxYbH3/dauSHOWIpaJLJ0+ZLtaKPOuwUzeEC6UDQVgJSmNnohWybkrbY8p8Op7UB7GXrLB4G21HtWewzdsJYanHVyxQDuQLGjpf3fGmnc+4Hcs7auFP/9kVXeFbUfh2OAdxX45dvWLMZI7oRhDhP/upyhqYR/ACAWqE5namf5ng8K9XkXKciqENbrJ016+kecejPfesCDFOtLs1TZQVQ+BYf0U3qOdyX1XCP0RxUOa1XTb5Kbe/fcZqJUxScM9A2zWexNdb2L7iyx/CAudr31s6Ws3fg0GqreWPlBK16vACGX7+/MrVQEOrC5cPP15sqaWGCIA3xvKo4txNOBoba2i6FVajbY+O6Ma3GVK+ViatBnHm8l+A6mKcJjY1N6/bWwdMdtgR08POdt1xOoo3nQwooUnV5iYjZSKGzalGvFEOHcXi8UAhgMAzGG3SBoVO+5fWs5uPbmPXTY+vjO362cEi+eS49ldkG2SD4aLPASL+9Z30BpuDt/0k9iWifeCt8dZ2IUscMTluqaV+znZc+09dnqbia4N+ptaKk0661Eo0q3bZW6KzasxBFI440jLWfs7ewIfBobJdGIsT41xmLEHKb0ailA4CefvWQ1YnrdLkzaEWtuQ5vp5yB4b+jpbQg02Btq/7zmvXpQ1L/y12783TCnaMPyQ4txDFZjGwqsaguGxXd1Obtjc12KX9C65Lcy9gquVA1VyrlgAx6pWrOL+tVPXhzQgvpvrFZf3TH2t4k1rfrB08fW7v/GzcUfAPK6ce7MKFtbNDVFWtt3/ry7muufzFowsaUb3A1XK36p2PBK/w2Jnj/gMPtVuv8ImECyB3kXAM9GBIb4RcNnoFhy+jQqgf9fwiK+sE6mZIf2qHfyxud92pB/Eir2XugSeU5YdAikW41MEpFo1bVjGUc0tzEMI09A7Hs6MCIm7NmBmSsmXa+Mb5d3tEMaHV7NuiLZwCaN907G/8djWbv9uf76kHBkfqjf6SGsJ0H++bB7lrjH/dx19PTOwRMPevB52jzsU6K6C8amZqHAsAW+J1CrIRWLhRqXlKgL9/051rSVrPGSsmTEeJOQFy/Y8rTbLWyP9OFspOllVCBAUnd7w4ZnYiOtZhtubdU5GWjbLPEcWq5Ue7lFVIw8djPWaN8pjSDMkBGiVmpaU17anlZv9wEFGclmssHS2jn9QfKbcf1BxPcq2+RbkypUkXh75juKEn7AR+tArqkM455wbupxBnVmhS4HasGVMcHQlxE8juWvB7cCMiN66flWjTAZ6qtVD2F6p/s0eGoXaGiWvZW9Oha/bO19mWqZaNiQlX++qAy9JPv77QvngOj2VMOdANMCHx6vRWx25A42Bvu87IDWTxO9JZolo2qKfqgYaoULuXBSsM2Qks/PaR8Vs+YXvLceALzqPaFlrASLzus29v6bPtSK5pq5qGMp5U3dqy7j7tNVO/EJOJOOtrKC54n8zaLH+JrVwpXxbxV/XgNN5Pe2G1fbllfEMXLNLLqKpS+OHX8ZPuCC4YhYAlI/nCz6zKZN8plmLmKq9nVCFsGRZn6eAem9u2xhDJ6xkvMr35u3DqEKMVVMCw8pWY+OH7m/UMUCqh3kdsr2gKNgg9tCahKq7Y+vgNGkI9QbYwgtjwTQJuMWiyrek6U/1IZWMduJTMjdOCjPTBo4kPH7uYdjUWDb+eYZet4g3Q3x1PsvcTa3bfuPQFzpP7dHnEW+PjCz2vCRrO4636IJfneyM63erIGRygy89iieSUqpcPlEt0B0GoXBx6GYKNO+4ueimDOhvGqvECqoB+naTpInTu299SdogY7d/xWKhiOWGXIY0qyGD4mt9oO7S634eGILwMnTH5Zyc2bRjnUBpd81osJhkUjKch7jPmoB1m86su15DkqovHGzqh0zIn2xOWmX6sWtZo18zS5yQ5xDY8xz6FYuvTv7GYuYfkc9cbZ55kLzMHj2csBxe1tBM6JWSKePnbhOMM2O1HsqpFDkOCDVTfwsEE5g90RUbHVcTdwcWC5gv4mEXT6EVGjcpVR0VPw6ri5wFzkrH9Zt60YL2qeXT+2Vu0AWboQ3yVcEZawJsoumHF9ljqIIHqa0eE4q61wz+ERKUyHxG5gzAAJ+o0PrUflOJjTXSEgwnFs/yMiQa2LbmDBADm2yVF5o+HA3QXWIBy0Uet/O7p2oJ72biBBPfa2oXxEJNjesFdHgsIRTegj4oHGMZ6r7AYuDizA53r90S16Nuqo+OCeqG7gwvZWuVNCEQ+f0d/ZIJvtTgfK0u7Dp4xHHdeAuuaCoVa6IjoCNJykIMM+3QeLpv7XraNjRl0HXcGKQRKdDkfFRavoWndwYZDGrNtb9W+fWN/eeklccHNSt7DB9SQHH6N0ZIyMxUW6GPbq+HBIY9bmw8bdFy8zKtFZZ1fGRgpInLYeeXwsmWqmK0aZDWoMp0Mf36l/vX1kbPgm925gY4Pirpn+g/1b1tbzgZcYNMvdGTPLri/yiCgs6V3pRghG8L8dEQlTqxS7olsYII5IffeHg2dHNyJwwO3WwM39Yq88TNKdyN3oRnRHs+0fP2p3VgtaKat2ZTLqwBqz/mWz/u1u/S93X27WZy53bR4FoNx5yfmLAWwL3DRWqJpKwDa9csaz0mF7Sg53fH+x19i4L7q/mxfIOxOapUqXrCsGaOzg+feA3EtaWcDt7iDDAMH4eB2QieAP/H05nPJq6bLaDZwYoLHGxpb1YP0lkblc7hKBGKAxmD+9PLcy3eJWhnPr4eevJD2L3RJlBogeF3zwOVhXL49SVuvW3IUCGqt/dvOVWFapdQkfBmis/s9PcAvCxtrLo7TcLSligMbqT3dwMnXj8cujVO1WL6vyXgYTKnS47b88SmW1rOa64sDhkMYad+7A34NnO50OYTBYCbuPt/cP9ncj1u2dg5+22u7T6tCPXlEXjYLelRY6sMYOftqvb79ofLaHc7bNo89NcMG6KzRHOOIq91GtzS65rBaYy2r3pRwNuPezK34znR4EBDW23Q1POS5Od0V9IBy2pt1lt3iZ3/rQlcmLC4yOT98+wYP099asXzYbN9ebfDZNS8fBJxrMUtMCGY8XzgaIK2dgigp7APXFfog9xbddhtVs9hxbGO0fGPjTIRsErzZvEAxa6rQPEzgnGXynCpq2onp2KDqoZXBGXuh0WyI/fMCXF1vXyGC1qJJuq3Po0VnFe7fc9VP7ESXvVQWHnFPhS70LZjEUxH/f+QJhV/O/6QEDz5kB32kDJZ10jhvEU3HhuAENHPmEgZ8EfM393237PactXr35jnZousTN/XS+7A/nV3xfq8TucyNN73IVqFbzPsqF5Kaqj9flmglCbI948kMmdHJMhM0CkdZXoE7PHg/j3p+gC6O994tece72bty/5T9J2YyG4kGgqle1Q7DALB1hAVMevJPg220wpA/HI+rBY8WoFLKHIELzdIQJu1qzU0xiHkzYBaF0k8gh+LCcnTEIdzd/Yz261vi8A4QShB74cFCy7yY5BB87W0cYoR25tmX9vBl0rsQ5o7LT+Gi7vv74cJSTHhriMnMkqFK+8HwYtJSXI6t0k+Bh3GC5Omr8zAeBODhqpKW+4P/hPwHveb6tLqvn7Pc8e3oivyWFTJVYjz4/eLZGfhvpJfzPSL/4zCIR/uBjixRtvE+GjJKQUcKrZvAgKJhhJVDJ+JYpeYuE3OhhEsIXR0MjHkiXMWf4H06VWtaFfwC/+ayB71WKsVcHwqppqpl8P6tv0MVJyHl1AMuxdrId/97LSX9PcJ74YF0GDFk6tQzxlM7UiUGeqEAiH8AaH+EiK6SRPwB0IBdAjpDxmmlM8PMGxPpoGyDzhzXVzAkDN94imdRM2LeRlL41qS+S/oKRUele3zxMXXCEC9O+fWaxP1Q11RyMZEOhATJGhuQBgm9e9ohwnRzkTac+BHyVaGD0kEPgm1rVbAOcJb8U5Ky2bAMmf/4zaZMTkwoYfYTsbXCmFftR7nVkgvHlQqWAeW2fr5gfPkMRNROigkMXj89RnQX5QWmQUr4UHhdOmPRj/SAF9DDHjFoCoa+4UtDjFMmIGfq57Pd7HqsYGBjkwE6optoOlpDeTxszSEJX8pUQ/ODTHYPkT1cdWBd1baUdrHOIgZDJxc293n1gkDixJfF8DaY099lWf2BCMaNeGSaKJA12XAjvI6elfp8cJAr8/UPnZdU5/iYwkAgACPfxeljPdEi4SejaVyRCabqvK/QqZf8wKGBaNBb0gkYbIJyJ9usSl9+icJIzZWyQB5U/4bXBU9lh+0mYQZIxjCVdY9I/3EwEnj4L38Mhesp7gm4PpoIzD3a0ulDQAAHaYcQeY6to9kax88concLDO8POS76kn3ZjP42wp65otNtA3+Pyx9/z7e8TOk4fvubrL43qyS79xhs2oHBerU7gKAs9j56Aou8vQ88LQsD+Y5fFEbQ/FAqqzZ+1ohWNZY3V1CfUFIjqVW+UELzqDF+Nj583Nr7jgxihjwGTIfwzxgcipFaV0X1Sh5EQcAWq9QU9VvOvPzXub1pbj1nsV+u4RPLgifuKDb7E3eMwB0icq1CRYND7uc7FCum7Oi5zfFwJU9cKEwtkh50d0OojqOW1El7hf2FuCodPmIcBX2mWAcwTkOhr38AAQqbI9NBbFKCKPv6k9xd79GwtbQ+ercVdCvTYXriPsMefe5hzgH4L44MteTXvCCG+k0TXBcWIt6rFUWDJfN5ctd/9e2Mlr1W00ZJ2heZ7Q9dGL5w/lXqDtm8UlU7LxnstHa6b8DqX/hpV9PyiF97fPC4ONtQJzPM92WQsXAZlyBmILAH09ZxqGpUw3uw2jm/TOyNt38y5qZN9lBfOQNvD0alq5nm9iAfgBOON/Imxn5HGruzqIIlKEqM5Nx0YqKDMnBuHtkssS7zNAhXIXk0i1MFnt5TlCbMkJpl2m1okh2kvq76nm/n+Npp3wAaDNXPpY7flMtdS4/5dloxSxZ93AskKqJCJZQ9PocLAElAQQ95UsZyY3PLtc/bWykCYuj/C3PvBH2fiZUVR44h6xK3Hz8Eed7CAeVC7RlHu+bscIxlTCg6vbJXSTAVQqvQdrv7If/0v1d9GBvtAwzhREPMPNGoEYZoVvdgbSMpR+t1CJ4FKcoI+XdNZ5V1USPCPQGneEN6N3W5ylY0Ox4acP76RAliB44PYd8pGuVbuR1Qp7BVqNou874uA/oammVoEr4ovzxd0qBUPpIYvV8t9g31Ux81TOBBiTrh4Im074ZRkijvhFtRKdbRk4Hhl1vCrj6EOtYXpCV7WlKs4fWWTVXz1TvQX2rf9OP58nJK4HkN7c0j97/sEtx3c+74rTkF26wZ6BYmCF6wQ5hcEwxXvXgEKVnUk5TBRF6pGoWZqI+TDIao3h4kcHxGcf718Xu545OgjF3Se7nHg8Wv/qPXk8+HNn8PIiTzmKJw3ysftI2jCwzLMWUlkSXp9hDd7mB6EHyH8YT4ila/wGHqxiJ1JosfrXYIH1zZv5szpuZMTPsohKX2U9ZzxZixz2DV+ItQW4RTew0fwag0wedHFSvQSDKO6OUJYjbQVkAO6lo6zQLWg56BpC4ZpGsURj8/V9cALTpLeXvpCCWgIkisYC2oBKsgUalmNvknS69IcpkfuwxmUG1iuoC2a6Du1XzDxrOGUFgj8r+A//BAD9xrlFTsPXlewrHmOVgqes+ALPfxOMOoOyitNPl0YkGSosskiFZxWi5UWVTM3Ib0Llz7/ZF/i2cqZVQZ7QQl2Y3nWkww83qQQPCyul5QW6y+3txr3v7Pvl//2SeOzJ+I9pc4alO0FC2pgUJsYpTtuTvSozYm2uBXz1hM0p7veHPvG507bEztqe2It2MPmDz+uWWvb3WVPtgaFO29Q/KgNire6wmLXunez+w3SMkbJKHbensRR25MIbg/ewbqz1f32ZLUFQIpeU91hi5JHbVGyBYd+WDv48U7nLfL6xZl+l1JSSpadl6a87+uBpuRGrX2e1a9M2YnZXu70D7znIBteqlyBCQD8sMsVsngrOH0+F33dUyXdPKvmNHp7KgyRpSJM9kbl1hTM5LSwHEBB//2ewqsUrQ5xQwa2HEEfmKjGIzhuzduc5UfYpRg+2cOPl78z9z69JO/B+sGz56CRHSNKVuKed0r8ZA8izqKHOO1bHNQLfrUWJ+YVoc3WR9etB9/Un+JeB4J79UHgqNpu0fh4U+OdJV1BcvDKz9akgWaF1ayxoFEXAkgOXsapVSK/QptVMMsWVFNs8MZa4/qT+tdb9afPSP32Q+vLPQz8tQW3o1LLBovvU7P+5reMensFA5bvonENKvZM3P96zHbReKwpX/55BGxTFEsBxtaLa3il+dqu271FO6yGrxewaSkxC+Y8Mw75Tihukrmr23xhmq5Lq2PkjRzYmoHGmWCI2fmCx8amB9kYhYIRz0dFvAHdliOuZ4EQm2WKC7DN5sFbuPw2KjP94zwAMWq/+UDj7cAof/7hZaSOvnqBtbqChuh/vW1LD1fb+ajIxRt7+Lbc9i+49SaIiwvGlXlctpwvEvcz2vTYuMNQE33QpForQsqq80S3j4ak/my//mSfVR4iGa1Q4DtJ6GQFw1XcwGGHObGxbtmpKaNSl3oLNvEqjkXsbHYpo0Cn0mP4ZXe3WAJJLkTI0bhTT8QtYuItuPBTcZ4ENPM2dvgWxHx14bLw1K59ReaYdfcxnli7vYU7IW9u8Q11nvdc8fqQ3U28ifDHayiY1s66tfuYWKAddq6Txpd36s+e05cP71xz4DvX5FaNWoWeudrasR6tccuXXY2z4M5rYab652ORhTFFUuJhKRGOSkGp1te7UBuRY1FZeDnxWER4BNnX6IqGRyiFdgff2+O93QRihvw2dSQRjSByEnSBebsjpRLRRDouSVK4nF3spGPwm1NK3P8bYVctI4pizxDkBK/UwGiYwcKwsVAt6tlsQQuRYzhhVulb7022mm2y0Y7lkAY+K05HEIQkS0CGkN0werlPPQu9jNKRvYDiUDEo2RV/+ANS3/gcrx0hwt7NolHS8EKdex9b23eooHnE0c4GwGFyj1tH/uwXRCY925sHT5+IgIEfdGdqEORWr2QiQbLBtPERxbU8YdCdl9AgxaIdEdRDpUzJ9NHQ4+eIx4VdZOjzIPSawGEYm/IjBNeVbFfGZZgV6YurIwTvplssGCtDV7gjh6sqdEKVrxCpbJIoOkMWYbAcquofasPpsjkiunbkBPpWAGOjMvwbif4RX+Quj1FfoXV7Z5Dafms7pP7XH+gNpXScqu/fRSltbOLm84PnTwieF7mB7mzMDkoOomEmFSbWrU3rwU3r3jqBwtbXe/0H+9eolXGHAND65+ss4zDeXQRwQBkNoNr5yyZp3L2DW5NBO93+oalWghds/9MtvHTbqZm++RGMnYiT9WAtTNheL4Lzo3++jpFP9/CeUzwSdHsHAmD2QcN/uVu//Q3tkH/9gRz8RA/W3toMk/rH/0Rvg4S2bT+31n6gd38/2wNVRy/2RuLJ7ypxMqch/4epAXlji8gwINDtpFSB9lv3dg+e7qICtR5eG6AvKD96aP24ZW18TeKS9cVz66v1Qea4vIkXY28/J3EWy3eiYqturtU/u49AQQnXfwZq7F6HvyQRTr8+SBKxcPx1iFoHxNldUGClENDmqJGRWhQRSkTQ4l9vNzYeh10k8DXb4CoYPCj/5V3cBoOY/30f+QDycbB3DV3XOxvWD5Tt9bu79W/2sSwnP8oQjDprD1mvRl2BB+6/2ayv0/eDrQd0z2194w6wjDJLJEH9m51WeIH9ijdxYkO3f0H0Dp5+RNn0YA1oBk38xLoHogBj0O41fMAaKsOzyX/dZroFwi/qn1G6NP7bnvXoOi9gy/02HSyRXPukcWcdyARNxW3fP69hGxhcUt/9DImJjyA/+AYMQloLEAMPmgHnf3qM9TH2AR0Rk4+QYR4gjS98FHCkSkGpOlvhYlW//bN14wneEQw1EMWWrs1bOHvpQMbkQBlLdCpjybAMMiZHw0pnMsYQozLmWhaUDtfsUraQECYbwLonB7tblAUcnQDbAyG6FJLaUAjSoDGdU0iRg0mkBPVDH3WkcAqoo0ShIzrU2aEiyQu51OCcs62sr3epugVBqt+9i/oPFCG9Gn8QIjdBRPH+LSTJvXUkGmoh9iJ7fXcLvqgccUuNidNGQL+CntnWvKNPWVMqQ7fk7AH6JaChtE8xPqDuAzFf2+dkaNzftFvJlcodoXoYo11GsRfFGb6oeoOYw7nSf/LsOZJUgOAD5OzJOSInw7H6LsrOoK3I0cq88YQpcpsRSPLPvodmgsbYx9e4vwCF/8Nu/QF05oef2/0q0GDgk9Cv1nFGQI0xvKrp0xd0OtLK8KLGlzC6nz/5/vmh8emp07PDRJipcnPU/zKLY9KU6P14zmzm4sm581MT49M2JLw07te2Zb3mqEiGzm4I9Ni5RkXHBw2pnWtPZQRPghzjc8HOSTIzPnd6apYtWkWpuXOFJHDpZ+LM9Jm5YfKbRTmZlLMj5NSZ2fND56YunRwmMl2poxHvnZw6PXkeF4YKkIdy6cTJiTNz4+enzgDUWimrVdBUGvm/THonnU245y8bpVy1VgqX1crSvBJNpzEbksonsm3lkfkXWkgyh/OKhnE62DBuUci28qnPZV4OKBvhU9oInbczT5J37sGmTtSzYHcq2th8rNXM2+tK5hNL/v6x804nSiu77vEl/Sb27YjilYiAk01fqlNgBNlZi6CHbfsOu/wNrEOBG8ecoyA93h9xhzliFMVzAh1P0IWd6j0+vjdBjgX4jtzHRN8q6dnRZDqWUI7mPmoy4VvMHAgzAXzb6/3UEI7M2E60Q2kbeLbGccEFep0wTUpJSUmm4ywYEUEOqVxNz2roXWWPSthuX9fXiwIBduDaFlqSdk3XuJWDxuTtx9TG3N3HbDeeNDa+R1p9tzuIPiO7BJtEUQOVmc5Pwc58QY3sO+yNCHvHQz+MqwNoElgPPse97MzxAoBxpEWvNo7dP+BUiBpmj64hnayNT9lTRUBArxf/nbmzxGkCfQ8CZkZr3+CBfHowhDTug0H/A/CQbmPZWkNkAE9gLRtwYShmxvHWwe4anlDG9rOKv1rHS/PRMKeo4jh975aDR5h46kYiYV0i+dBOBCORTkQ2nVYx4vlwoK33sALMVJAWWjOWubFJ7Y/9r+HnIUxJRMtze5+as+2oFg70/zeJWqBACae9uM5ucoFjPNtsQuhBr3aucf40GK221/7XPvMBejtXQ00mPBiDeZ1dQLSjs/eKcS8QbgVydnPxjU2kv+/wJ4z10lt0aQt3Fb+BDxn3venZFYYbfDz7e9jZFGeTD9siUtEy6OZxHmp4vnXw0wvuE7T39VCzxN2aRJtPt5pypYXbKdlrhcwGUSTJvQVZksSVDTBOmAtZ2CHE1glYNI0AW0AItd9AJGz4Yadv3MGAOijsPWCUoYGObt8bN248u0O4V9xHUsH9nGbBbF7feAkHfoUCwb0SS9rqCrRIXDLyYu+QMy4L1p3sP74E8OgY6z/EB8kmG0uUw9aTK+WlMEcnaFVZeJBIXGLAXTFNSwE+BuA6Dr0Y4GgLABXqAnW9/16oor8/2Ncvy697ff2/9Qaj0uv+tQCIwA7daiGAGl8cw4rjSLbfCzy6HNA3sCRZ4L4ku+a8n+HckDyGhp3DZeyM/KUBt0dKUjwdldqzGk0S5DHLi1+yuCDs+oLRUME9HC9Qm9MFa+4Lz/pIUqrhm7uhsWR6MCZJARnMjD2KH5VU/CdGKVYrCwSrlR2CJV16JZwG1Mr4vgtfA2UoMau4t+dXZarSfaZGY5LSKVNpXvxS2jG1/vk63ZuzXl+7Vf/5Dhr2t3cP4W4iOhj9D8/d6K/QZaVEouMui3nxK9qOu+feQRsQ7K/bnziPurRkazSWGpT+w/M11n2+ykos3ilfaV78irXjKxjMMCdAP+UXuJvEvn1p73Amy4NSTP5PNkvxX0M5K0dQzgpTzvF2bJ4+7XNUH8ZcUMzy/wuc9XuiPBvH7WlagA3fPJ1rNW2zSWlfDtPbdGa/V9x5vmgYJr/Go9d1MYi7uNn9lYyIAY9oDRXDZVV8LbeoIU8i9CbWobIBsrAaoalDzIerq4Wh5sdDfTKzaJhhnqmTLXuoAWAGv/HLwd4125/pzJyPOTPol0W/XNGX1cxqe3R5po52GPJNpdzJQLcBWk83celv9zvr58eeXaeHtCVSqRW06mETHIogbUwn+OFbJbe3GnfWifXlHs6Hv1q3fr5/BMLmtYL4UBqoLrUasW+3UuwjyPbvvNwJ+gizI1lgV78cPNs52N221l401nb9mNuuFHdvUVarck3hvqNx5w514OxbN7eY94uuEm8dPHuOXtJP7xJ26zNh/MOIFq/mOq0y6e1YZ/Fd91O03/X3sf5Ho6Q+QRUiQvPYZGiQff8Xr52tSWGbcNsD89PWd7+iuw34ImeA14+5n7jPzPpoGxfRftil/qlH16x7u/X1HfQf0VU11/u0UDmEKAfPXpBgBKlXj4br61ucSE0ORyJ4HKkTke6ObesRI0w6XaDUB/dkDz2e/D6t3V100m/wBt372C1MmV/28p7tSLKX/egVOdTFjW7Sv+yyLZR8K4fo+ut/Z+79AXvFlIvFd47XjtUBs/2KVq0y4Wv5IBJ0g4xRKbP7f1utWRUMvCOyXQcp5UuBW+KPvJcMCkSwunlHYdP3txxTISE4t2TFfjJs/OLJOXJqanZ8dmJqfDpk6y74cYngG3aY2DtNLFeMZT2LbsLWr3/7H/VkT53i++9n6REyf4/iw7D3WIC3onn+vlWQjFOB9Ym3o539Y24T2CvOwGlfrXlvvXF3zdp4iNs0ttlVjTyJL1LQVXo8Hv9kj0m33QUdGO+cxgMYX2+Jd+YRdr8T2waD+4yE25VICzhMnK3NW42PrkMvBKCg5l2IuAMA/u5tN74EcrwY5Bv2odu2gYkubXYT5kfXhZaxrtW4eaf+6BYv6rNo2lBR2DB4JDYeyroOeec27hc0Sa1fHja1jJFdaFnQTWs99u2C7H4kFnBXPmmw6YLDwwS7A7vW37sVSYERmMJi1Xk6tyL0bfxmC/f0mW/bouX3E7qGJbMd6V/XxAy4DcqzNOBe+FC9iCcwCxoeih/g17vwM/J4Mto+Yj5gX6+IT+T2Eifba7SYeH7fk4SL3VB6FmYqLXJhJqpqBoS7ZTwJ9vl1em4b1VBfAKjmUu7JUloQeJnVSkFFrwrN4SejYQjAixpqppY958eN3r2Bke5Ban92xGKQhEIDHtSO3piXbIiIIdIjU6sgEyhqvR7YfprTyN/3cRz7/tA5lr/vc9Hk5Q5HlCd4ZFCUmN6rvaKkTuT1QvbMYn9xldKXPkqil7TKGSa5PSuQrrFU8too3fgB3U7LsjsbEFWWJoh1GCeE/E6HBZjMLbE7r/zZm6pyrqygL0b3srP5PDuhv7wd/FoGti7mueaix9O6XGmBXuQ6gTqhXxuAOpCNzBwBmFqYf77lfg7DJygftwrE2SVmq9sh+nw3k/YNDOBlCB0WLBmmp1yHxfCwJCvicuM1l6WsRYOkHQwozGkPgfFCQaCXfbHAVUpUJJxenToJZAu888Q0po0VKKpiSfeusWJV10IDr40OyfQOIda1HYTUQmEAiI/8Hub3lDByT52kWLkZ6T1IJ5fpxUX87XB0SYBV6GEy4Ozer8FrA2ONFpzWqzBZwxlK2+KC/ODde3yoomPoVJZfr4fEoDHCzT12Dnb5DA35rgrpo5ci9I30OvqCl8HeEOLrbfSWVr9qpPkm6RjWfJETTRwIsyFOvObPl8+pQV+EGuz8Amhe9KqHBsJw3RUaUMXnJXPzHNKGQ9yqtMJ5Ks7T3irtxvHgP6CMn9NLAK8/9Bu8JMgGNSCQ3QsLtFqphoLoVdueTGy8wBugB3y3tQXQR7g+0ZZFsUSAVAklXBZEIgREl2RVUx3CfqZiP+t1uoT9wSmAFwqNm2ZFB1tG6+/zluobDOiySBGoY57vVZjVVqrTemmJmW+48dXaWsP9H6p9ayPfTdD4ao1U+K1wvc1XUPK7yGyG9IfCTTWoIH6LRuUkXm3mXH6kFaiC7uFXR1VRP4Pg4AQzDLKjgwC/xe7QQe5gjt9Lf3AVDb2PVNiBRa83lFAHB2ed8+UU7uSCQUYtuiJ2jlUm/2EAh5+qdg6IXMrxK2Qwv6FDD2alwuyts3mIeaspZtgTM5V1AKgCABUv5ih4IAhRw94ohIFAkFDOqGZPs0fsFH61kNMc11kYRkqInkJ6qSsHHnm9Cn8Zq4qq2Q/NHERUnXEBtaVzi6gtjmCiZY0i8mEVuSXcSuMY0mBvM48xPpY89n8AvkEmk+jJAAA=" />
+        <Property type="Chrome" key="CHROME_Element" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="CHROME_DataType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Text" valuelist="Text;Element;class" order="1" />
+        <Property type="Chrome" key="CHROME_ExpectedValue" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="목표가 없음&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;|&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;투자의견 없음" valuelist="목표가 없음&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;|&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;투자의견 없음;WebElement;view_info_1" order="2" />
+        <Property type="Chrome" key="CHROME_Scope" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2" />
+        <Property type="Chrome" key="CHROME_Data" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Chrome" key="CHROME_ColumnCnt" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="1" />
+        <Property type="Chrome" key="CHROME_ChromeElements" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="[{&quot;Index&quot;:0,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;view_info_1&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:1,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;view_info&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:2,&quot;Tag&quot;:&quot;TD&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:3,&quot;Tag&quot;:&quot;TR&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;2&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:4,&quot;Tag&quot;:&quot;TBODY&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:5,&quot;Tag&quot;:&quot;TABLE&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;type_1&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:6,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;2&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;box_type_m box_type_m3&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:7,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;1&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;id&quot;,&quot;Value&quot;:&quot;contentarea_left&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:8,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;2&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;id&quot;,&quot;Value&quot;:&quot;contentarea&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:9,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;2&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;id&quot;,&quot;Value&quot;:&quot;newarea&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:10,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;3&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;id&quot;,&quot;Value&quot;:&quot;wrap&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:11,&quot;Tag&quot;:&quot;BODY&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:12,&quot;Tag&quot;:&quot;HTML&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false}]" />
+        <Property type="Chrome" key="CHROME_SingleQueryForMultiple" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'/html/body/div[3]/div[2]/div[2]/div[1]/div[2]/table/tbody/tr[2]/td/div/div'" />
+        <Property type="Chrome" key="CHROME_PagesearchUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="https://finance.naver.com/research/company_read.naver?nid=83955&amp;page=1&amp;searchType=itemCode&amp;itemCode=413630" />
+        <Property type="Chrome" key="CHROME_IframeFullSrc" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="CHROME_IframeSearchSrc" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="" />
+        <Property type="Chrome" key="Target_Capture" controlType="Bitmap" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAYAAADDhn8LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEfSURBVHhe7dUBDQAgEAMx/JsFB48BOAVtMgmXrQG+BAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQ1t57zOw9DwJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBDWOWfM7D0PAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJBIBAEAkEgEAQCQSAQBAJfMxexyxESLbTPTwAAAABJRU5ErkJggg==" />
+        <Property type="Chrome" key="CHROME_IsTextEdit" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="False" />
+        <Property type="Chrome" key="CHROME_HTMLTagName" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Mouse_OffsetPoint" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'0, 0'" order="12" />
+        <Property type="Win" key="Mouse_OriginPoint" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Center" valuelist="LeftTop;RightTop;LeftBottom;RightBottom;Center" order="14" />
+        <Property type="Win" key="Mouse_Point" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'259, 18'" order="13" />
+        <Property type="Win" key="Mouse_AppPoint" controlType="Point" valueType="System.Windows.Point" formatType="Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="889,532" />
+        <Property type="Win" key="Mouse_WinPoint" controlType="Point" valueType="System.Windows.Point" formatType="Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="881,524" />
+        <Property type="Win" key="Target_RemoteAppName" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Target_SupportedPatterns" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="GridItem;TableItem;ScrollItem" />
+        <Property type="Win" key="Target_SizeTolerance" controlType="Size" valueType="System.Windows.Size" formatType="Size" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="1192,15" />
+        <Property type="Win" key="Target_SelectImageIndex" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" order="82" />
+        <Property type="Win" key="Target_ImageIndexMethod" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="JustBest" order="81" valuelist="JustBest;RowFirst;ColumnFirst;ScoreOrderRow;ScoreOrderColumn" />
+        <Property type="Win" key="Target_UseImageMatch" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="NotUse" order="80" valuelist="NotUse;Always;WhenFailed" />
+        <Property type="Win" key="Target_UseSearchAround" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
+        <Property type="Win" key="Target_RuntimeID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="42.1837386.4.5.1.22911" />
+        <Property type="Win" key="Target_FrameworkID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Chrome" />
+        <Property type="Win" key="Target_AutomationID" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Target_ClassName" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Target_LegacyHelp" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Win" key="Target_LegacyDesc" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Win" key="Target_LegacyValue" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Win" key="Target_LegacyName" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'목표가 없음 | 투자의견 없음'" />
+        <Property type="Win" key="Target_Value" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Win" key="Target_Name" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'목표가 없음 | 투자의견 없음'" />
+        <Property type="Win" key="Target_Bounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="630,514,596,27" />
+        <Property type="Win" key="Target_ClassType" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="True" encrypted="False" isChanged="N" value="DataItem" order="3" />
+        <Property type="Win" key="Target_RelativePath" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" order="11" />
+        <Property type="Win" key="Target_ObjectPathEx" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'Window|Chrome_WidgetWin_1||Win32|False||1|씨피시스템 종목분석 - 하반기부터 점차 실적 회복 기대 : 네이버페이 증권 - Chrome/Pane|BrowserRootView||Chrome|False||0|씨피시스템 종목분석 - 하반기부터 점차 실적 회복 기대 : 네이버페이 증권 - Chrome/Pane|NonClientView||Chrome|False||0|/Pane|BrowserFrameViewWin||Chrome|False||0|/Pane|BrowserView||Chrome|False||1|/Pane|View||Chrome|False||1|/Pane|Chrome_RenderWidgetHostHWND|18563056|Win32|False||2|Chrome Legacy Window/Document||RootWebArea|Chrome|False||0|씨피시스템 종목분석 - 하반기부터 점차 실적 회복 기대 : 네이버페이 증권/Group||wrap|Chrome|False||2|/Group||newarea|Chrome|False||1|/Group||contentarea|Chrome|False||4|/Group||contentarea_left|Chrome|False||0|/Table|type_1||Chrome|True||2|종목분석 리포트 본문/DataItem|||Chrome|False||2|/DataItem|||Chrome|False|1,0|0|목표가 없음 __{or}__ 투자의견 없음'" order="10" />
+        <Property type="Win" key="Target_ObjectPath" controlType="String" valueType="System.String" formatType="String" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'Window|Chrome_WidgetWin_1||Win32/Pane|BrowserRootView||Chrome/Pane|NonClientView||Chrome/Pane|BrowserFrameViewWin||Chrome/Pane|BrowserView||Chrome/Pane|View||Chrome/Pane|Chrome_RenderWidgetHostHWND|18563056|Win32/Document||RootWebArea|Chrome/Group||wrap|Chrome/Group||newarea|Chrome/Group||contentarea|Chrome/Group||contentarea_left|Chrome/Table|type_1||Chrome/DataItem|||Chrome/DataItem|||Chrome'" />
+        <Property type="Win" key="Application_ClassName" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Chrome_WidgetWin_1" />
+        <Property type="Win" key="Application_Bounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="-8,-8,1936,1056" />
+        <Property type="Win" key="Application_ClassType" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Window" />
+        <Property type="Win" key="Application_Title" controlType="PropertyItemTextFieldWithLikeSearchView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'씨피시스템 종목분석 - 하반기부터 점차 실적 회복 기대 : 네이버페이 증권 - Chrome'" />
+        <Property type="Win" key="Application_ProcessName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="True" encrypted="False" isChanged="N" value="chrome" order="2" />
+        <Property type="Win" key="Application_PID" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="15524" />
+        <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_14);]]></Script>
+    </Step>
+    <Step id="S47bb5bfb2695418f9b57e4687a29f8f8" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="731ce37c-1096-4c30-be9a-1154f477a5a3" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="데이터저장" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Data_total[this.index] = []&#xD;&#xA;&#xD;&#xA;for(var k = 0; k &lt; RESULT.length; k++) {&#xD;&#xA;    this.Data_total[this.index][k] = RESULT[k]&#xD;&#xA;}&#xD;&#xA;" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.Data_total[this.index] = []
+
+for(var k = 0; k < RESULT.length; k++) {
+    this.Data_total[this.index][k] = RESULT[k]
+}
+]]></Script>
+    </Step>
     <Step id="S669eab79b52c470b87f9f666fc07768f" ver="311241220" createVer="311241220" type="Chrome" name="ChromeGetListData" dpName="ChromeGetListData" dpValue="RESULT" dpValue2="플럼라인생명과학 종목분석 - 반려견에게 선물하는 가치 있는 생의 연장 : 네이버페이 증권 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="c2559b22-1e05-4a40-88e9-25f605f70ce4" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -412,7 +495,7 @@ for(var k = 0; k < RESULT.length; k++) {
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_14);]]></Script>
+      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_16);]]></Script>
     </Step>
     <Step id="S83aecd4672334d0b888b936095662a22" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="731ce37c-1096-4c30-be9a-1154f477a5a3" type="Flow">
@@ -439,7 +522,7 @@ this.index++]]></Script>
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_16);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_18);]]></Script>
     </Step>
     <Step id="S4dbb92b1057b4599a675a955a762c877" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="4a641b77-df7e-435b-8cb7-f5393c09841d" type="Flow">
@@ -464,17 +547,24 @@ this.index++]]></Script>
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="데이터정제" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="for(let i = 0; i &lt; this.Data_header.length; i++) {&#xD;&#xA;    let parts = this.Data_header[i][0].split('\n\n') &#xD;&#xA;    let body = parts[0].trim()&#xD;&#xA;  &#xD;&#xA;    let firstSpaceIndex = body.indexOf(' ')&#xD;&#xA;    // 제목만 저장하도록&#xD;&#xA;    body = body.substring(firstSpaceIndex + 1)&#xD;&#xA;&#xD;&#xA;    // 증권사, 날짜, 조회수&#xD;&#xA;    let metaParts = []&#xD;&#xA;    let temp = parts[1].split('|')&#xD;&#xA;  &#xD;&#xA;    for(let j = 0; j &lt; temp.length; j++) { &#xD;&#xA;        metaParts.push(temp[j].trim())&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    Global.Naver_Data[i] = [body, ...metaParts]&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;for(let i = 0; i &lt; this.Data_content.length; i++) {&#xD;&#xA;    let content = this.Data_content[i][0].replace(/\r\n/g, '\n')&#xD;&#xA;    Global.Naver_Data[i].push(content)&#xD;&#xA;}" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="for(let i = 0; i &lt; this.Data_header.length; i++) {&#xD;&#xA;    // 제목&#xD;&#xA;    let parts = this.Data_header[i][0].split('\n\n') &#xD;&#xA;    let body = parts[0].trim()&#xD;&#xA;    let firstSpaceIndex = body.indexOf(' ')&#xD;&#xA;    body = body.substring(firstSpaceIndex + 1)&#xD;&#xA;&#xD;&#xA;    // 목표가, 투자의견&#xD;&#xA;    let total_array = this.Data_total[i][0].split('|')&#xD;&#xA;    let total = total_array[0].trim()&#xD;&#xA;    total = total.replace('목표가 ', '')&#xD;&#xA;    let buy = total_array[1].trim()&#xD;&#xA;    buy = buy.replace('투자의견 ', '')&#xD;&#xA;    &#xD;&#xA;    &#xD;&#xA;    // 증권사, 날짜, 조회수&#xD;&#xA;    let metaParts = []&#xD;&#xA;    let temp = parts[1].split('|')&#xD;&#xA;  &#xD;&#xA;    for(let j = 0; j &lt; temp.length; j++) { &#xD;&#xA;        metaParts.push(temp[j].trim())&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    Global.Naver_Data[i] = [body, total, buy, ...metaParts]&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;for(let i = 0; i &lt; this.Data_content.length; i++) {&#xD;&#xA;    let content = this.Data_content[i][0].replace(/\r\n/g, '\n')&#xD;&#xA;    Global.Naver_Data[i].push(content)&#xD;&#xA;}" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[for(let i = 0; i < this.Data_header.length; i++) {
+    // 제목
     let parts = this.Data_header[i][0].split('\n\n') 
     let body = parts[0].trim()
-  
     let firstSpaceIndex = body.indexOf(' ')
-    // 제목만 저장하도록
     body = body.substring(firstSpaceIndex + 1)
 
+    // 목표가, 투자의견
+    let total_array = this.Data_total[i][0].split('|')
+    let total = total_array[0].trim()
+    total = total.replace('목표가 ', '')
+    let buy = total_array[1].trim()
+    buy = buy.replace('투자의견 ', '')
+    
+    
     // 증권사, 날짜, 조회수
     let metaParts = []
     let temp = parts[1].split('|')
@@ -483,7 +573,7 @@ this.index++]]></Script>
         metaParts.push(temp[j].trim())
     }
 
-    Global.Naver_Data[i] = [body, ...metaParts]
+    Global.Naver_Data[i] = [body, total, buy, ...metaParts]
 }
 
 for(let i = 0; i < this.Data_content.length; i++) {
@@ -507,7 +597,7 @@ for(let i = 0; i < this.Data_content.length; i++) {
         <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_21);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_23);]]></Script>
     </Step>
     <Step id="Sabb60e408170467093a8f1cf2adac87e" ver="311241220" createVer="311241220" type="Desktop" name="DeleteDirectory" dpName="DeleteDirectory" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="eaad045e-9046-4903-b8f1-a90f808a9dca" type="Desktop">
@@ -516,7 +606,7 @@ for(let i = 0; i < this.Data_content.length; i++) {
         <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l]" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_22);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_24);]]></Script>
     </Step>
     <Step id="S084d274c646d4b878b63111b899cb0f6" ver="311241220" createVer="311241220" type="Flow" name="TerminateFlow" dpName="TerminateFlow" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Jump" enabled="True" mainSet="0">
       <Properties id="383f4c30-ca8a-4376-bc08-92d2bd6711d8" type="Flow">
@@ -542,11 +632,12 @@ for(let i = 0; i < this.Data_content.length; i++) {
         <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_25);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_27);]]></Script>
     </Step>
   </Steps>
   <JScript><![CDATA[function T_1_2_네이버증권_데이터추출() {
 
+    this.Data_total = [];
     this.i;
     this.index = 0;
     this.Data_content = [];
@@ -555,9 +646,9 @@ for(let i = 0; i < this.Data_content.length; i++) {
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {4:[20,24],5:[18],6:[17],7:[9]};
-    this.GotoReverseBlockMap = {20:4,24:4,18:5,17:6,9:7};
-    this.GotoStepBlockTypeMap = {4:'Decision',20:'Else',24:'EndDecision',5:'Loop',18:'EndLoop',6:'Loop',17:'EndLoop',7:'DecisionThen',9:'EndDecisionThen'};
+    this.GotoBlockMap = {4:[22,26],5:[20],6:[19],7:[9]};
+    this.GotoReverseBlockMap = {22:4,26:4,20:5,19:6,9:7};
+    this.GotoStepBlockTypeMap = {4:'Decision',22:'Else',26:'EndDecision',5:'Loop',20:'EndLoop',6:'Loop',19:'EndLoop',7:'DecisionThen',9:'EndDecisionThen'};
 
 
     this.run = function() {
@@ -635,11 +726,24 @@ for(let i = 0; i < this.Data_content.length; i++) {
 
 
                     //------------------------------------------------
-                    STEP('S669eab79b52c470b87f9f666fc07768f', '[14] ChromeGetListData');
+                    STEP('S586f27cf7c224c43b526822b8e274d28', '[14] ChromeGetListData');
                     RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_14);
 
                     //------------------------------------------------
-                    STEP('S83aecd4672334d0b888b936095662a22', '[15] ExecuteScript');
+                    STEP('S47bb5bfb2695418f9b57e4687a29f8f8', '[15] ExecuteScript');
+                    this.Data_total[this.index] = []
+
+                    for(var k = 0; k < RESULT.length; k++) {
+                        this.Data_total[this.index][k] = RESULT[k]
+                    }
+
+
+                    //------------------------------------------------
+                    STEP('S669eab79b52c470b87f9f666fc07768f', '[16] ChromeGetListData');
+                    RESULT = StepPlayer.Run('Chrome.ChromeGetListData', this.chromegetlistdata_info_16);
+
+                    //------------------------------------------------
+                    STEP('S83aecd4672334d0b888b936095662a22', '[17] ExecuteScript');
                     RESULT = ToJson(RESULT)
 
                     this.Data_content[this.index] = []
@@ -647,27 +751,34 @@ for(let i = 0; i < this.Data_content.length; i++) {
                     this.index++
 
                     //------------------------------------------------
-                    STEP('S12b5b144c97b4d1ea07a702e8050eddd', '[16] KeyInput');
-                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_16);
+                    STEP('S12b5b144c97b4d1ea07a702e8050eddd', '[18] KeyInput');
+                    StepPlayer.Run('Win.KeyInput', this.keyinput_info_18);
 
                 //------------------------------------------------
                 }
-                STEP('S4dbb92b1057b4599a675a955a762c877', '[17] End-For');
+                STEP('S4dbb92b1057b4599a675a955a762c877', '[19] End-For');
 
             //------------------------------------------------
             }
-            STEP('S733a90ae015b46a4a6f0229dbbf34ac9', '[18] End-For');
+            STEP('S733a90ae015b46a4a6f0229dbbf34ac9', '[20] End-For');
 
             //------------------------------------------------
-            STEP('S7aa4d68872a5473ea5abe50a8d401319', '[19] ExecuteScript');
+            STEP('S7aa4d68872a5473ea5abe50a8d401319', '[21] ExecuteScript');
             for(let i = 0; i < this.Data_header.length; i++) {
+                // 제목
                 let parts = this.Data_header[i][0].split('\n\n') 
                 let body = parts[0].trim()
-              
                 let firstSpaceIndex = body.indexOf(' ')
-                // 제목만 저장하도록
                 body = body.substring(firstSpaceIndex + 1)
 
+                // 목표가, 투자의견
+                let total_array = this.Data_total[i][0].split('|')
+                let total = total_array[0].trim()
+                total = total.replace('목표가 ', '')
+                let buy = total_array[1].trim()
+                buy = buy.replace('투자의견 ', '')
+                
+                
                 // 증권사, 날짜, 조회수
                 let metaParts = []
                 let temp = parts[1].split('|')
@@ -676,7 +787,7 @@ for(let i = 0; i < this.Data_content.length; i++) {
                     metaParts.push(temp[j].trim())
                 }
 
-                Global.Naver_Data[i] = [body, ...metaParts]
+                Global.Naver_Data[i] = [body, total, buy, ...metaParts]
             }
 
             for(let i = 0; i < this.Data_content.length; i++) {
@@ -686,27 +797,27 @@ for(let i = 0; i < this.Data_content.length; i++) {
 
         //------------------------------------------------
         }else{
-            STEP('S7890657ba6744a209cd9197ae216917d', '[20] Else');
+            STEP('S7890657ba6744a209cd9197ae216917d', '[22] Else');
 
             //------------------------------------------------
-            STEP('S8cd0f3ab117b4305a3854fd8118531a4', '[21] ChromeClose');
-            StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_21);
+            STEP('S8cd0f3ab117b4305a3854fd8118531a4', '[23] ChromeClose');
+            StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_23);
 
             //------------------------------------------------
-            STEP('Sabb60e408170467093a8f1cf2adac87e', '[22] DeleteDirectory');
-            StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_22);
+            STEP('Sabb60e408170467093a8f1cf2adac87e', '[24] DeleteDirectory');
+            StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_24);
 
             //------------------------------------------------
-            STEP('S084d274c646d4b878b63111b899cb0f6', '[23] TerminateFlow');
+            STEP('S084d274c646d4b878b63111b899cb0f6', '[25] TerminateFlow');
             return;
 
         //------------------------------------------------
         }
-        STEP('S1deea2e5bae841209bf0bb18e9148e03', '[24] End-IfElse');
+        STEP('S1deea2e5bae841209bf0bb18e9148e03', '[26] End-IfElse');
 
         //------------------------------------------------
-        STEP('S8964dcfa8261442ba654ae01417d6a9d', '[25] ChromeClose');
-        StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_25);
+        STEP('S8964dcfa8261442ba654ae01417d6a9d', '[27] ChromeClose');
+        StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_27);
 
 
     }
@@ -732,8 +843,10 @@ for(let i = 0; i < this.Data_content.length; i++) {
       <StepNode step_id="Sb968547279d14c66af6e8a9ba8f7fb2e" group_name="" folded="False" color="" />
       <StepNode step_id="S7990c0a8cccc4f0ba067eefe8cc794b9" group_name="bcb048d1-c532-4a50-b1c1-3e52846290d9_리서치 선택" folded="False" color="" />
       <StepNode step_id="S1ce2c6a525ba471caa2edb12602013b6" group_name="" folded="False" color="" />
-      <StepNode step_id="S13e9074c4fc14ebebaa56a2d804ca9bf" group_name="de075137-19da-4a43-a8a9-41689583a181_제목, 증권사, 날짜 가져오기" folded="False" color="" />
-      <StepNode step_id="S5ae4f295bc934211953a4cf53e9263c3" group_name="de075137-19da-4a43-a8a9-41689583a181_제목, 증권사, 날짜 가져오기" folded="False" color="" />
+      <StepNode step_id="S13e9074c4fc14ebebaa56a2d804ca9bf" group_name="0e6dc1ef-3a1a-4c3d-aeb0-8619993e15a2_제목 가져오기" folded="False" color="" />
+      <StepNode step_id="S5ae4f295bc934211953a4cf53e9263c3" group_name="0e6dc1ef-3a1a-4c3d-aeb0-8619993e15a2_제목 가져오기" folded="False" color="" />
+      <StepNode step_id="S586f27cf7c224c43b526822b8e274d28" group_name="6c5de226-6d3d-4093-88a9-c25701afef4c_목표값 가져오기" folded="False" color="" />
+      <StepNode step_id="S47bb5bfb2695418f9b57e4687a29f8f8" group_name="6c5de226-6d3d-4093-88a9-c25701afef4c_목표값 가져오기" folded="False" color="" />
       <StepNode step_id="S669eab79b52c470b87f9f666fc07768f" group_name="a8e95bfa-c8c3-42a3-b1e2-8913077d0bcc_부제목, 내용 가져오기" folded="False" color="" />
       <StepNode step_id="S83aecd4672334d0b888b936095662a22" group_name="a8e95bfa-c8c3-42a3-b1e2-8913077d0bcc_부제목, 내용 가져오기" folded="False" color="" />
       <StepNode step_id="S12b5b144c97b4d1ea07a702e8050eddd" group_name="dd5c5f31-7aba-4930-9181-32851b88bbbc_뒤로가기" folded="False" color="" />
