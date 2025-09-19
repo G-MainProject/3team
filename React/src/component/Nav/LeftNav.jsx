@@ -12,7 +12,8 @@ export default function Nav() {
     const handleLogout = () => {
         logout();
         alert('로그아웃 되었습니다.');
-        navigate('/');
+        // Dashboard에서 로그아웃 시 홈페이지로 이동
+        window.location.href = '/';
     };
     return (
         <div className='left-nav-container'>

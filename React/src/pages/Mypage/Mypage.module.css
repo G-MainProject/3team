@@ -501,13 +501,12 @@ input, textarea, select {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    transition: color 0.2s ease, text-decoration 0.2s ease;
-    text-decoration: underline;
 }
 
 .deleteAccountButton:hover {
     color: #a71e2c;
     text-decoration: none;
+    text-decoration: underline;
 }
 
 .deleteButton {

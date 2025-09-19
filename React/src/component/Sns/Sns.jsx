@@ -6,6 +6,7 @@ const Sns = ({ selectedSymbol = '005930' }) => {
   const [tweets, setTweets] = useState([])
   const [redditPosts, setRedditPosts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState(null)
   const [activePlatform, setActivePlatform] = useState('x')
   const [lastUpdated, setLastUpdated] = useState(null)
@@ -91,24 +92,30 @@ const Sns = ({ selectedSymbol = '005930' }) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // 5분마다 자동 새로고침
+  // 1분마다 자동 새로고침
   useEffect(() => {
     const interval = setInterval(() => {
       if (!loading) {
         const fetchSnsData = async () => {
           try {
+            console.log('🔄 SNS 데이터 갱신 시작:', selectedSymbol);
+            setRefreshing(true)
             const data = await apiService.getSnsData(selectedSymbol)
+            console.log('📡 SNS API 응답 받음:', data);
             setTweets(data.tweets || [])
             setRedditPosts(data.redditPosts || [])
             setLastUpdated(new Date())
+            console.log('✅ SNS 데이터 업데이트 완료');
             setError(null)
           } catch (error) {
             console.error('SNS 자동 새로고침 오류:', error)
+          } finally {
+            setRefreshing(false)
           }
         }
         fetchSnsData()
       }
-    }, 300000) // 5분 = 300,000ms
+    }, 10000) // 10초 = 10,000ms (테스트용)
 
     return () => clearInterval(interval)
   }, [selectedSymbol, loading])
@@ -134,24 +141,26 @@ const Sns = ({ selectedSymbol = '005930' }) => {
       <div className='sns-content'>
         <div className='sns-header'>
           <h3><span>{getStockName(selectedSymbol)}</span> SNS 실시간 여론</h3>
-          <ul>
-            <li>
-              <button 
-                className={`social-btn ${activePlatform === 'x' ? 'active' : ''}`}
-                onClick={() => setActivePlatform('x')}
-              >
-                X
-              </button>
-            </li>
-            <li>
-              <button 
-                className={`social-btn ${activePlatform === 'reddit' ? 'active' : ''}`}
-                onClick={() => setActivePlatform('reddit')}
-              >
-                Reddit
-              </button>
-            </li>
-          </ul>
+          <div className='sns-header-right'>
+            <ul>
+              <li>
+                <button 
+                  className={`social-btn ${activePlatform === 'x' ? 'active' : ''}`}
+                  onClick={() => setActivePlatform('x')}
+                >
+                  X
+                </button>
+              </li>
+              <li>
+                <button 
+                  className={`social-btn ${activePlatform === 'reddit' ? 'active' : ''}`}
+                  onClick={() => setActivePlatform('reddit')}
+                >
+                  Reddit
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className='social-feed'>
@@ -199,18 +208,24 @@ const Sns = ({ selectedSymbol = '005930' }) => {
             ))
           ) : (
             <div className='no-data'>
-              <i className="fa-solid fa-comment-slash"></i>
               <p>{activePlatform === 'x' ? 'x.com' : 'reddit.com'} 데이터가 없습니다.</p>
             </div>
           )}
         </div>
 
-        {lastUpdated && (
-          <div className='last-updated'>
-            <i className="fa-solid fa-clock"></i>
-            <span>마지막 업데이트: {lastUpdated.toLocaleTimeString()}</span>
-          </div>
-        )}
+        <div className='sns-status'>
+          {refreshing ? (
+            <div className='refresh-indicator'>
+              <div className='refresh-spinner'></div>
+              <span>갱신 중...</span>
+            </div>
+          ) : lastUpdated ? (
+            <div className='last-updated'>
+              <i className="fa-solid fa-clock"></i>
+              <span>마지막 업데이트: {lastUpdated.toLocaleTimeString()}</span>
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   )

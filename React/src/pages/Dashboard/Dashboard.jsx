@@ -79,7 +79,7 @@ const financialChartSeries = [
 	{ key: 'netProfit', name: '순이익', color: '#ef4444' },
 ];
 
-export default function Dashboard({ selectedSymbol = '005930', onSymbolChange }) {
+export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 	const [showFooterButton, setShowFooterButton] = useState(false);
 	const [showFooter, setShowFooter] = useState(false);
 	const [buttonAnimation, setButtonAnimation] = useState('');
@@ -123,7 +123,10 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 		marketCap: 0,
 	});
 	const [loading, setLoading] = useState(true);
+	const [refreshing, setRefreshing] = useState(false);
+	const refreshingRef = useRef(false);
 	const [error, setError] = useState(null);
+	const [lastUpdated, setLastUpdated] = useState(null);
 	
 	// TopNav용 주식 데이터 상태
 	const [topNavStocks, setTopNavStocks] = useState([]);
@@ -140,6 +143,137 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 		{ symbol: '207940', name: '삼성바이오로직스' },
 		{ symbol: '006400', name: '삼성SDI' }
 	];
+
+	// 갱신 함수 - 모든 주식 데이터를 한 번에 가져와서 동기화
+	const refreshStockData = async () => {
+		try {
+			console.log('🔄 전체 주식 데이터 갱신 시작 - API 호출 예정');
+			refreshingRef.current = true;
+			setRefreshing(true);
+			
+			// 모든 주식의 데이터를 병렬로 가져오기
+			console.log('📡 모든 주식 API 호출 중...');
+			const stockDataPromises = stockSymbols.map(async (stock) => {
+				try {
+					const summary = await getStockSummary(stock.symbol);
+					if (summary) {
+						return {
+							...stock,
+							currentPrice: summary.currentPrice,
+							change: summary.change,
+							changePercent: summary.changePercent,
+							volume: summary.volume,
+							marketCap: summary.marketCap
+						};
+					} else {
+						return {
+							...stock,
+							currentPrice: 50000,
+							change: 0,
+							changePercent: 0,
+							volume: 0,
+							marketCap: 0
+						};
+					}
+				} catch (error) {
+					console.error(`${stock.name} 데이터 가져오기 실패:`, error);
+					return {
+						...stock,
+						currentPrice: 50000,
+						change: 0,
+						changePercent: 0,
+						volume: 0,
+						marketCap: 0
+					};
+				}
+			});
+
+			const allStockData = await Promise.all(stockDataPromises);
+			console.log('📡 모든 주식 API 응답 받음:', allStockData);
+			
+			// 변동폭 순으로 정렬 (절댓값 기준)
+			const sortedStocks = allStockData.sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent));
+			
+			// TopNav 데이터 업데이트
+			setTopNavStocks(sortedStocks);
+			
+			// 선택된 주식의 데이터 찾기
+			const selectedStockData = sortedStocks.find(stock => stock.symbol === selectedSymbol);
+			
+			if (selectedStockData) {
+				// API 데이터를 차트용 데이터로 변환
+				const now = new Date();
+				const stockData = [];
+				const volumeData = [];
+				
+				// 차트 간격에 따른 데이터 포인트 수와 간격 설정
+				const intervalSettings = {
+					'1m': { count: 15, intervalMs: 60000, label: '분' },
+					'5m': { count: 12, intervalMs: 300000, label: '분' },
+					'15m': { count: 16, intervalMs: 900000, label: '분' },
+					'30m': { count: 12, intervalMs: 1800000, label: '분' },
+					'1h': { count: 12, intervalMs: 3600000, label: '시간' }
+				};
+				
+				const settings = intervalSettings[chartInterval] || intervalSettings['1m'];
+				
+				// 설정된 간격으로 데이터 포인트 생성
+				for (let i = settings.count - 1; i >= 0; i--) {
+					const time = new Date(now.getTime() - i * settings.intervalMs);
+					const basePrice = selectedStockData.currentPrice;
+					const priceVariation = (Math.random() - 0.5) * (basePrice * 0.01); // ±1% 변동
+					const price = basePrice + priceVariation;
+					const volume = Math.floor(Math.random() * 1000000) + 500000;
+					
+					// 시간을 시:분 형식으로 변환
+					const timeString = time.toLocaleTimeString('ko-KR', { 
+						hour: '2-digit', 
+						minute: '2-digit',
+						hour12: false 
+					});
+					
+					stockData.push({
+						time: timeString,
+						price: Math.round(price),
+						open: Math.round(basePrice),
+						high: Math.round(Math.max(basePrice, price)),
+						low: Math.round(Math.min(basePrice, price)),
+						close: Math.round(price)
+					});
+					
+					volumeData.push({
+						time: timeString,
+						volume: volume
+					});
+				}
+				
+				setStockData(stockData);
+				setVolumeData(volumeData);
+				
+				// stock-card 상세 데이터도 함께 업데이트 (동일한 데이터 사용)
+				setStockSummary({
+					currentPrice: selectedStockData.currentPrice,
+					change: selectedStockData.change,
+					changePercent: selectedStockData.changePercent,
+					volume: selectedStockData.volume,
+					marketCap: selectedStockData.marketCap,
+				});
+				
+				console.log('✅ 모든 데이터 동기화 완료 - TopNav, 차트, 상세데이터 모두 동일한 API 응답 사용');
+				setLastUpdated(new Date());
+				setError(null);
+			}
+		} catch (err) {
+			console.error('주식 데이터 갱신 실패:', err);
+		} finally {
+			// 갱신 중 표시를 더 오래 보이도록 지연
+			setTimeout(() => {
+				console.log('🔄 갱신 완료 - 로딩 상태 해제');
+				refreshingRef.current = false;
+				setRefreshing(false);
+			}, 1000); // 1초 지연
+		}
+	};
 
 	// 실시간 주식 데이터 로드 (차트용) - TopNav 데이터 사용
 	useEffect(() => {
@@ -224,11 +358,13 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 
 		loadStockData();
 
-		// 10초마다 데이터 새로고침
-		const interval = setInterval(loadStockData, 10000);
+		// 10초마다 데이터 새로고침 (테스트용)
+		const interval = setInterval(() => {
+			refreshStockData();
+		}, 10000);
 
 		return () => clearInterval(interval);
-	}, [chartInterval, selectedSymbol, topNavStocks]); // topNavStocks도 의존성에 추가
+	}, [chartInterval, selectedSymbol, topNavStocks]); // 원래 의존성으로 복원
 
 	// 선택된 주식의 요약 정보를 TopNav 데이터와 동기화 (우선순위)
 	useEffect(() => {
@@ -303,6 +439,13 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 				const sortedStocks = allStockData.sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent));
 				
 				setTopNavStocks(sortedStocks);
+				
+				// 초기 로드 시 변동폭 순위 1위로 selectedSymbol 설정
+				const topStock = sortedStocks[0];
+				if (topStock && onSymbolChange) {
+					onSymbolChange(topStock.symbol);
+				}
+				
 				setTopNavLoading(false);
 			} catch (error) {
 				console.error('TopNav 주식 데이터 로드 실패:', error);
@@ -313,8 +456,8 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 		// 초기 로드
 		loadTopNavData();
 		
-		// 10초마다 업데이트
-		const interval = setInterval(loadTopNavData, 10000);
+		// 1분마다 업데이트
+		const interval = setInterval(loadTopNavData, 60000);
 		return () => clearInterval(interval);
 	}, []);
 
@@ -447,6 +590,7 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 							onSymbolChange={onSymbolChange}
 							topNavStocks={topNavStocks}
 							topNavLoading={topNavLoading}
+							onStockSelect={onSymbolChange}
 						/>
 
 						{/* 주식 정보 섹션 */}
@@ -456,10 +600,19 @@ export default function Dashboard({ selectedSymbol = '005930', onSymbolChange })
 									<h2>{getStockName(selectedSymbol)}/{selectedSymbol}/{getMarketType(selectedSymbol)}</h2>
 									<p>실시간 주가 및 주요 지표</p>
 								</div>
-								{/* <button className="detail-button">
-									상세보기
-									<i className="fas fa-chevron-right"></i>
-								</button> */}
+								<div className="section-action">
+									{refreshing ? (
+										<div className="refresh-indicator">
+											<div className="refresh-spinner"></div>
+											<span>갱신 중...</span>
+										</div>
+									) : lastUpdated ? (
+										<div className="last-updated">
+											<i className="fas fa-clock"></i>
+											<span>마지막 업데이트: {lastUpdated.toLocaleTimeString()}</span>
+										</div>
+									) : null}
+								</div>
 							</div>
 							<div className="stock-info-section">
 								{/* 통합 주식 차트 */}

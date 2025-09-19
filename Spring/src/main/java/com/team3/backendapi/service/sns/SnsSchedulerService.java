@@ -30,9 +30,9 @@ public class SnsSchedulerService {
     );
 
     /**
-     * 1분마다 인기 주식들의 SNS 데이터를 실시간 업데이트
+     * 10초마다 인기 주식들의 SNS 데이터를 실시간 업데이트 (테스트용)
      */
-    @Scheduled(fixedRate = 60000) // 1분 = 60,000ms
+    @Scheduled(fixedRate = 10000) // 10초 = 10,000ms (테스트용)
     public void preloadSnsData() {
         log.info("실시간 SNS 데이터 업데이트 시작...");
         

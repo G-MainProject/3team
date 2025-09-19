@@ -107,8 +107,8 @@ export const useStockSummary = (symbol = '005930') => {
 
     fetchSummary();
     
-    // 30초마다 업데이트
-    const interval = setInterval(fetchSummary, 30000);
+    // 1분마다 업데이트
+    const interval = setInterval(fetchSummary, 60000);
     return () => clearInterval(interval);
   }, [symbol]);
 

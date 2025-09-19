@@ -49,6 +49,10 @@ export const PrivateRoute = ({ children }) => {
   }
 
   if (!isAuthenticated()) {
+    // 홈페이지(/)는 로그인 없이도 접근 가능하도록 허용
+    if (location.pathname === '/') {
+      return children;
+    }
     // 로그인하지 않았다면 로그인 페이지로 리다이렉트
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
