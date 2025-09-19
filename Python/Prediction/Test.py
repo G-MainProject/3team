@@ -15,6 +15,11 @@ dotenv.load_dotenv(dotenv_path=dotenv_path)
 client_id = os.getenv("NAVER_CLIENT_ID")
 client_secret = os.getenv("NAVER_CLIENT_SECRET")
 
+if not client_id or not client_secret:
+    print("오류: NAVER_CLIENT_ID 또는 NAVER_CLIENT_SECRET 환경 변수가 설정되지 않았습니다.")
+    print(".env 파일을 확인해주세요.")
+    sys.exit(1)
+
 # 스크레이핑 실패 시 반환되는 메시지
 FAIL_MESSAGE = "본문을 찾을 수 없습니다. (선택자 확인 필요)"
 
@@ -138,23 +143,33 @@ def main():
                 break
 
             for item in news_data['items']:
-                article_date = datetime.strptime(item['pubDate'], '%a, %d %b %Y %H:%M:%S %z')
+                pub_date_str = item.get('pubDate')
+                if not pub_date_str:
+                    continue
+                article_date = datetime.strptime(pub_date_str, '%a, %d %b %Y %H:%M:%S %z')
+
                 if article_date < one_week_ago:
                     found_old_article = True
                     print("--- 일주일이 지난 기사에 도달하여 검색을 중단합니다. ---")
                     break
 
-                original_link = item.get('originallink', item['link'])
+                original_link = item.get('originallink') or item.get('link')
+                if not original_link:
+                    continue
 
                 if original_link in seen_links:
                     continue
                 seen_links.add(original_link)
 
+                title = item.get('title')
+                if not title:
+                    continue
+
                 if 'newsis.com' in original_link:
-                    safe_print(f"- 건너뛰기 (미지원 사이트): {item['title'].replace('<b>','').replace('</b>','')[:30]}...")
+                    safe_print(f"- 건너뛰기 (미지원 사이트): {title.replace('<b>','').replace('</b>','')[:30]}...")
                     continue
                 
-                clean_title = BeautifulSoup(item['title'], "html.parser").get_text()
+                clean_title = BeautifulSoup(title, "html.parser").get_text()
 
                 if search_word in clean_title:
                     content = get_news_content(original_link, search_word)
