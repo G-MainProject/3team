@@ -32,7 +32,7 @@ echo.
 
 echo [4/4] Building Spring backend...
 cd Spring
-call mvn clean package -DskipTests
+call .\mvnw.cmd clean package -DskipTests
 if %errorlevel% neq 0 (
     echo ❌ Spring build failed!
     pause
