@@ -18,23 +18,15 @@ export default function Nav() {
     return (
         <div className='left-nav-container'>
             <div className='left-nav-wrapper'>
-                <a href="/" className='left-nav-logo'><img src={logo} alt="logoWOC" /></a>
+                <a href="/dashboard" className='left-nav-logo'><img src={logo} alt="logoWOC" /></a>
                 <div className='left-nav-menu'>
-                    <button className='left-nav-item'>
+                    <button className='left-nav-item' onClick={() => navigate('/stock-analysis')}>
                         <i className="fas fa-chart-line"></i>
-                        주식 정보
+                        주식 분석
                     </button>
-                    <button className='left-nav-item'>
-                        <i className="fas fa-file-invoice-dollar"></i>
-                        재무제표
-                    </button>
-                    <button className='left-nav-item'>
-                        <i className="fas fa-newspaper"></i>
-                        뉴스 분석
-                    </button>
-                    <button className='left-nav-item'>
-                        <i className="fas fa-robot"></i>
-                        AI 분석
+                    <button className='left-nav-item' onClick={() => navigate('/ai-insights')}>
+                        <i className="fas fa-search"></i>
+                        AI 인사이트
                     </button>
                 </div>
                 <div className='left-nav-bottom'>

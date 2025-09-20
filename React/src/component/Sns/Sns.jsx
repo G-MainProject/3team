@@ -9,6 +9,8 @@ import {
   orderBy,
   onSnapshot,
   addDoc,
+  deleteDoc,
+  doc,
   serverTimestamp,
 } from 'firebase/firestore';
 
@@ -27,6 +29,12 @@ const Sns = ({ selectedSymbol = '005930' }) => {
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
   const { user: currentUser } = useAuth();
+  
+  // 사용자 정보 디버깅
+  console.log('SNS 컴포넌트 - 현재 사용자 정보:', currentUser);
+  
+  // 관리자 여부 확인
+  const isAdmin = currentUser && currentUser.role === 'ADMIN';
 
   // 높이 조정
   const adjustHeightToMatchSection = () => {
@@ -58,34 +66,35 @@ const Sns = ({ selectedSymbol = '005930' }) => {
     setLoading(true);
     setError(null);
 
-    // 실시간 반응 (Firebase)
+    // 실시간 반응 (Firebase 활성화)
     if (activePlatform === 'x') {
-      if (!selectedSymbol) return;
+      setLoading(true);
+      setError(null);
 
-      const messagesCol = collection(
-        firestore,
-        'stocks',
-        selectedSymbol,
-        'messages'
-      );
-      const q = query(messagesCol, orderBy('timestamp', 'asc'));
+      // Firebase가 초기화되지 않은 경우 처리
+      if (!firestore) {
+        console.error('Firebase가 초기화되지 않았습니다.');
+        setError('Firebase 연결에 실패했습니다.');
+        setLoading(false);
+        return;
+      }
 
-      const unsubscribe = onSnapshot(
-        q,
-        (querySnapshot) => {
-          const msgs = [];
-          querySnapshot.forEach((doc) => {
-            msgs.push({ id: doc.id, ...doc.data() });
-          });
-          setMessages(msgs);
-          setLoading(false);
-        },
-        (err) => {
-          console.error('메시지 수신 오류:', err);
-          setError('메시지를 불러오는 중 오류가 발생했습니다.');
-          setLoading(false);
-        }
-      );
+      // Firebase 실시간 메시지 구독
+      const messagesRef = collection(firestore, 'messages');
+      const q = query(messagesRef, orderBy('timestamp', 'desc'));
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const messagesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setMessages(messagesData);
+        setLoading(false);
+      }, (error) => {
+        console.error('메시지 로드 실패:', error);
+        setError('메시지를 불러올 수 없습니다.');
+        setLoading(false);
+      });
 
       return () => unsubscribe();
     }
@@ -147,42 +156,83 @@ const Sns = ({ selectedSymbol = '005930' }) => {
     };
   }, [loading]);
 
-  // 메시지 자동 스크롤
+  // 메시지 자동 스크롤 (비활성화) **문제많음**
   useEffect(() => {
     if (activePlatform === 'x') {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      // messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); // 비활성화
     }
   }, [messages, activePlatform]);
 
+
+  // 메시지 삭제 핸들러
+  const handleDeleteMessage = async (messageId) => {
+    if (!isAdmin) {
+      alert('관리자만 메시지를 삭제할 수 있습니다.');
+      return;
+    }
+
+    if (!firestore) {
+      alert('Firebase 연결에 실패했습니다.');
+      return;
+    }
+
+    if (!window.confirm('정말로 이 메시지를 삭제하시겠습니까?')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(firestore, 'messages', messageId));
+      console.log('메시지가 삭제되었습니다.');
+    } catch (error) {
+      console.error('메시지 삭제 실패:', error);
+      alert('메시지 삭제에 실패했습니다.');
+    }
+  };
 
   // 메시지 전송 핸들러
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
+    
+    // 사용자 정보 확인
     if (!currentUser) {
-      alert('로그인이 필요합니다.');
+      alert('로그인이 필요합니다. 먼저 로그인해주세요.');
+      return;
+    }
+    
+    if (!currentUser.id && !currentUser.uid) {
+      console.error('사용자 ID가 없습니다:', currentUser);
+      alert('사용자 정보가 올바르지 않습니다. 다시 로그인해주세요.');
       return;
     }
 
-    const messagesCol = collection(firestore, 'stocks', selectedSymbol, 'messages');
+    // Firebase가 초기화되지 않은 경우 처리
+    if (!firestore) {
+      alert('Firebase 연결에 실패했습니다.');
+      return;
+    }
+
     try {
-      await addDoc(messagesCol, {
-        text: newMessage,
+      await addDoc(collection(firestore, 'messages'), {
+        text: newMessage.trim(),
+        uid: currentUser.id || currentUser.uid, // Spring 백엔드는 id, Firebase는 uid
+        displayName: currentUser.name || currentUser.displayName || currentUser.email || '익명',
         timestamp: serverTimestamp(),
-        uid: currentUser.username, // username을 uid로 사용
-        displayName: currentUser.name || currentUser.username || '익명', // name 또는 username을 표시 이름으로 사용
+        selectedSymbol: selectedSymbol
       });
       setNewMessage('');
-    } catch (err) {
-      console.error('메시지 전송 오류:', err);
-      setError('메시지 전송에 실패했습니다.');
+    } catch (error) {
+      console.error('메시지 전송 실패:', error);
+      console.error('현재 사용자 정보:', currentUser);
+      alert('메시지 전송에 실패했습니다.');
     }
   };
 
   // 타임스탬프 포맷
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return '';
-    const date = timestamp.toDate();
+    // Firebase Timestamp인지 일반 Date인지 확인
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     return date.toLocaleString('ko-KR', { timeStyle: 'short' });
   };
 
@@ -216,9 +266,20 @@ const Sns = ({ selectedSymbol = '005930' }) => {
                   className={`social-item message-item ${currentUser && msg.uid === currentUser.username ? 'my-message' : ''}`}>
                   <div className='social-header'>
                     <span className='social-author'>{msg.displayName}</span>
-                    <span className='social-time'>
-                      {formatTimestamp(msg.timestamp)}
-                    </span>
+                    <div className='message-header-right'>
+                      <span className='social-time'>
+                        {formatTimestamp(msg.timestamp)}
+                      </span>
+                      {isAdmin && (
+                        <button 
+                          className='message-delete-btn'
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          title='메시지 삭제'
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className='social-content'>{msg.text}</div>
                 </div>
@@ -240,6 +301,7 @@ const Sns = ({ selectedSymbol = '005930' }) => {
                 disabled={!currentUser}
               />
               <button type='submit' disabled={!currentUser || newMessage.trim() === ''}>
+                <i className="fas fa-paper-plane"></i>
                 전송
               </button>
             </form>
@@ -297,14 +359,14 @@ const Sns = ({ selectedSymbol = '005930' }) => {
     <div className='sns-container' ref={snsContainerRef}>
       <div className='sns-content'>
         <div className='sns-header'>
-          <h3><span>{getStockName(selectedSymbol)}</span> 실시간 여론</h3>
+          <h3><span>{getStockName(selectedSymbol)}</span> 실시간 SNS 여론</h3>
           <div className='sns-header-right'>
             <ul>
               <li>
                 <button 
                   className={`social-btn ${activePlatform === 'x' ? 'active' : ''}`}
                   onClick={() => setActivePlatform('x')}>
-                  실시간 반응
+                  SIGNAL
                 </button>
               </li>
               <li>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import './Dashboard.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
@@ -88,6 +88,14 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
 
+	// URL state에서 전달받은 심볼 처리
+	useEffect(() => {
+		if (location.state?.selectedSymbol && onSymbolChange) {
+			onSymbolChange(location.state.selectedSymbol);
+		}
+	}, [onSymbolChange]);
+
+
 	// 심볼에 따른 주식 이름 매핑
 	const getStockName = (symbol) => {
 		const stockNames = {
@@ -136,16 +144,16 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 	const [chartInterval, setChartInterval] = useState('1m'); // 1m, 5m, 15m, 30m, 1h
 	
 	// 주요 주식 심볼 목록
-	const stockSymbols = [
+	const stockSymbols = useMemo(() => [
 		{ symbol: '005930', name: '삼성전자' },
 		{ symbol: '000660', name: 'SK하이닉스' },
 		{ symbol: '035420', name: 'NAVER' },
 		{ symbol: '207940', name: '삼성바이오로직스' },
 		{ symbol: '006400', name: '삼성SDI' }
-	];
+	], []);
 
 	// 갱신 함수 - 모든 주식 데이터를 한 번에 가져와서 동기화
-	const refreshStockData = async () => {
+	const refreshStockData = useCallback(async () => {
 		try {
 			console.log('🔄 전체 주식 데이터 갱신 시작 - API 호출 예정');
 			refreshingRef.current = true;
@@ -273,7 +281,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 				setRefreshing(false);
 			}, 1000); // 1초 지연
 		}
-	};
+	}, [stockSymbols, chartInterval, selectedSymbol]);
 
 	// 실시간 주식 데이터 로드 (차트용) - TopNav 데이터 사용
 	useEffect(() => {
@@ -364,7 +372,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 		}, 10000);
 
 		return () => clearInterval(interval);
-	}, [chartInterval, selectedSymbol, topNavStocks]); // 원래 의존성으로 복원
+	}, [chartInterval, selectedSymbol, topNavStocks, refreshStockData]); // 원래 의존성으로 복원
 
 	// 선택된 주식의 요약 정보를 TopNav 데이터와 동기화 (우선순위)
 	useEffect(() => {
@@ -459,7 +467,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 		// 1분마다 업데이트
 		const interval = setInterval(loadTopNavData, 60000);
 		return () => clearInterval(interval);
-	}, []);
+	}, [stockSymbols, onSymbolChange]);
 
 	// const handleLogout = () => {
 	// 	logout();

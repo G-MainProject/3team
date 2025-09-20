@@ -142,9 +142,8 @@ const TopNav = ({ onStepClick, selectedSymbol, onSymbolChange, topNavStocks, top
     if (onSymbolChange) {
       onSymbolChange(stock.symbol)
     }
-    if (onStepClick) {
-      onStepClick('Dashboard')
-    }
+    // Dashboard로 이동하면서 해당 주식 선택
+    navigate('/dashboard', { state: { selectedSymbol: stock.symbol } })
   }
 
   // 벨 버튼 클릭 핸들러

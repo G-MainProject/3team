@@ -46,6 +46,15 @@ const tooltipFormatter = (value, name) => {
 };
 
 export default function CircleGraph({ data, colors }) {
+	// data가 없거나 빈 배열인 경우 처리
+	if (!data || !Array.isArray(data) || data.length === 0) {
+		return (
+			<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+				<p>데이터가 없습니다.</p>
+			</div>
+		);
+	}
+
 	return (
 		<ResponsiveContainer width="100%" height="100%">
 			<PieChart>
@@ -62,7 +71,7 @@ export default function CircleGraph({ data, colors }) {
 					stroke="none"
 				>
 					{data.map((entry, index) => (
-						<Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+						<Cell key={`cell-${index}`} fill={colors ? colors[index % colors.length] : '#8884d8'} />
 					))}
 				</Pie>
 				<Pie

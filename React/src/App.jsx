@@ -9,6 +9,8 @@ import Login from './pages/Login/Login.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Signup from './pages/Signup/Signup.jsx';
 import Mypage from './pages/Mypage/Mypage.jsx';
+import StockAnalysis from './pages/StockAnalysis/StockAnalysis.jsx';
+import AIInsights from './pages/AIInsights/AIInsights.jsx';
 
 function App() {
 	const [selectedSymbol, setSelectedSymbol] = useState('005930'); // 기본값: 삼성전자
@@ -38,6 +40,22 @@ function App() {
 					<Route path="/mypage" element={
 						<PrivateRoute>
 							<Mypage />
+						</PrivateRoute>
+					} />
+					<Route path="/stock-analysis" element={
+						<PrivateRoute>
+							<StockAnalysis 
+								selectedSymbol={selectedSymbol}
+								onSymbolChange={setSelectedSymbol}
+							/>
+						</PrivateRoute>
+					} />
+					<Route path="/ai-insights" element={
+						<PrivateRoute>
+							<AIInsights 
+								selectedSymbol={selectedSymbol}
+								onSymbolChange={setSelectedSymbol}
+							/>
 						</PrivateRoute>
 					} />
 				</Routes>
