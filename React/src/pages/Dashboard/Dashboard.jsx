@@ -11,11 +11,32 @@ import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { getStockSummary } from '../../services/yahooFinanceApi';
 
-const CircleGraphData = [
-	{ name: '긍정', value: 45 },
-	{ name: '부정', value: 30 },
-	{ name: '중립', value: 25 },
+// 뉴스 감성 분석 데이터 (각 뉴스는 하나의 감성만 가짐)
+const newsSentimentData = [
+	'positive', 'positive', 'negative', 'positive', 'neutral', 'negative',
+	'positive', 'negative', 'positive', 'neutral', 'positive', 'negative',
+	'positive', 'neutral', 'neutral', 'positive', 'neutral', 'positive',
+	'negative', 'positive', 'neutral', 'positive', 'negative', 'positive',
+	'neutral', 'positive', 'negative', 'positive', 'neutral', 'positive',
+	'negative', 'positive', 'neutral', 'positive', 'negative', 'positive',
+	'neutral', 'positive', 'negative', 'positive'
 ];
+
+// 뉴스 감성 분포 계산
+const calculateSentimentRatio = (sentimentData) => {
+	const total = sentimentData.length;
+	const positiveCount = sentimentData.filter(sentiment => sentiment === 'positive').length;
+	const negativeCount = sentimentData.filter(sentiment => sentiment === 'negative').length;
+	const neutralCount = sentimentData.filter(sentiment => sentiment === 'neutral').length;
+	
+	return [
+		{ name: '긍정', value: Math.round((positiveCount / total) * 100) },
+		{ name: '부정', value: Math.round((negativeCount / total) * 100) },
+		{ name: '중립', value: Math.round((neutralCount / total) * 100) },
+	];
+};
+
+const CircleGraphData = calculateSentimentRatio(newsSentimentData);
 
 const wordCloudData = [
 	{ text: 'AI', value: 64 },
@@ -884,15 +905,6 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 										<div className={styles['sentiment-legend']}>
 											<div className={styles['sentiment-item']}>
 												<span className={styles['sentiment-label']}>긍정</span>
-												<span className={styles['sentiment-percent']}>65%</span>
-											</div>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-												<span className={styles['sentiment-percent']}>25%</span>
-											</div>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-												<span className={styles['sentiment-percent']}>10%</span>
 											</div>
 										</div>
 									</div>
@@ -905,15 +917,6 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 										<div className={styles['sentiment-legend']}>
 											<div className={styles['sentiment-item']}>
 												<span className={styles['sentiment-label']}>긍정</span>
-												<span className={styles['sentiment-percent']}>72%</span>
-											</div>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-												<span className={styles['sentiment-percent']}>18%</span>
-											</div>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-												<span className={styles['sentiment-percent']}>10%</span>
 											</div>
 										</div>
 									</div>
@@ -925,16 +928,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 										</div>
 										<div className={styles['sentiment-legend']}>
 											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-												<span className={styles['sentiment-percent']}>15%</span>
-											</div>
-											<div className={styles['sentiment-item']}>
 												<span className={styles['sentiment-label']}>부정</span>
-												<span className={styles['sentiment-percent']}>70%</span>
-											</div>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-												<span className={styles['sentiment-percent']}>15%</span>
 											</div>
 										</div>
 									</div>

@@ -668,14 +668,19 @@
 
 .sentiment-item {
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
 	gap: 8px;
 	min-width: 80px;
+	padding: 8px 16px;
+	background-color: #fff;
+	border-radius: 20px;
 }
 
 .sentiment-label {
-	font-weight: 500;
+	font-weight: 600;
+	font-size: 0.9em;
+	letter-spacing: 0.5px;
 }
 
 .sentiment-percent {
