@@ -451,3 +451,13 @@
 .message-delete-btn i {
     font-size: 10px;
 }
+
+/* 30분 이상 지난 오래된 메시지 */
+.message-item.old-message {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.message-item.old-message:hover {
+  background-color: #dee2e6;
+}

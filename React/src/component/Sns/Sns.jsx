@@ -246,6 +246,15 @@ const Sns = ({ selectedSymbol = '005930' }) => {
     return date.toLocaleString('ko-KR', { timeStyle: 'short' });
   };
 
+  // 30분 이상 지난 메시지인지 확인
+  const isOldMessage = (timestamp) => {
+    if (!timestamp) return false;
+    const messageDate = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = (now.getTime() - messageDate.getTime()) / (1000 * 60);
+    return diffInMinutes > 30;
+  };
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -273,7 +282,7 @@ const Sns = ({ selectedSymbol = '005930' }) => {
               messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`social-item message-item ${currentUser && (msg.uid === currentUser.uid || msg.uid === currentUser.id) ? 'my-message' : ''}`}>
+                  className={`social-item message-item ${currentUser && (msg.uid === currentUser.uid || msg.uid === currentUser.id) ? 'my-message' : ''} ${isOldMessage(msg.timestamp) ? 'old-message' : ''}`}>
                   <div className='social-header'>
                     <span className='social-author'>{msg.displayName}</span>
                     <div className='message-header-right'>
