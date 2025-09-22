@@ -241,9 +241,25 @@ const Sns = ({ selectedSymbol = '005930' }) => {
   // 타임스탬프 포맷
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return '';
-    // Firebase Timestamp인지 일반 Date인지 확인
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleString('ko-KR', { timeStyle: 'short' });
+    const messageDate = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const now = new Date();
+
+    const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfMessageDate = new Date(messageDate.getFullYear(), messageDate.getMonth(), messageDate.getDate());
+    
+    const diffInMs = startOfNow.getTime() - startOfMessageDate.getTime();
+    const diffInDays = Math.round(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) {
+      // 오늘
+      return messageDate.toLocaleString('ko-KR', { timeStyle: 'short' });
+    } else if (diffInDays > 0 && diffInDays <= 7) {
+      // 1-7일 전
+      return `${diffInDays}일 전`;
+    } else {
+      // 7일 이상 전 또는 미래의 날짜 (오차 방지)
+      return messageDate.toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' });
+    }
   };
 
   // 30분 이상 지난 메시지인지 확인
