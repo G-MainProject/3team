@@ -12,6 +12,7 @@ import {
   deleteDoc,
   doc,
   serverTimestamp,
+  where,
 } from 'firebase/firestore';
 
 const Sns = ({ selectedSymbol = '005930' }) => {
@@ -79,9 +80,13 @@ const Sns = ({ selectedSymbol = '005930' }) => {
         return;
       }
 
-      // Firebase 실시간 메시지 구독
+      // 종목별 메시지 필터링을 위한 쿼리 수정
       const messagesRef = collection(firestore, 'messages');
-      const q = query(messagesRef, orderBy('timestamp', 'desc'));
+      const q = query(
+        messagesRef,
+        where('selectedSymbol', '==', selectedSymbol),
+        orderBy('timestamp', 'asc') // 시간 오름차순으로 변경하여 채팅처럼 보이게 함
+      );
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const messagesData = snapshot.docs.map(doc => ({
@@ -92,7 +97,12 @@ const Sns = ({ selectedSymbol = '005930' }) => {
         setLoading(false);
       }, (error) => {
         console.error('메시지 로드 실패:', error);
-        setError('메시지를 불러올 수 없습니다.');
+        // 이전 에러 메시지 "Missing or insufficient permissions"를 고려하여 규칙 확인을 유도
+        if (error.code === 'permission-denied') {
+          setError('메시지를 불러올 권한이 없습니다. Firebase 규칙을 확인하세요.');
+        } else {
+          setError('메시지를 불러올 수 없습니다.');
+        }
         setLoading(false);
       });
 
@@ -263,7 +273,7 @@ const Sns = ({ selectedSymbol = '005930' }) => {
               messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`social-item message-item ${currentUser && msg.uid === currentUser.username ? 'my-message' : ''}`}>
+                  className={`social-item message-item ${currentUser && (msg.uid === currentUser.uid || msg.uid === currentUser.id) ? 'my-message' : ''}`}>
                   <div className='social-header'>
                     <span className='social-author'>{msg.displayName}</span>
                     <div className='message-header-right'>
