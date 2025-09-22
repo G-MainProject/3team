@@ -64,6 +64,7 @@ export default function CircleGraph({ data, colors }) {
 					cy="50%"
 					labelLine={false}
 					outerRadius="80%"
+					innerRadius="35%"
 					fill="#8884d8"
 					dataKey="value"
 					// label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
@@ -74,15 +75,6 @@ export default function CircleGraph({ data, colors }) {
 						<Cell key={`cell-${index}`} fill={colors ? colors[index % colors.length] : '#8884d8'} />
 					))}
 				</Pie>
-				<Pie
-					data={[{ value: 1 }]}
-					cx="40%"
-					cy="50%"
-					outerRadius={60}
-					fill="white"
-					stroke="none"
-					legendType="none"
-				/>
 				<Tooltip formatter={tooltipFormatter} />
 				<Legend
 					content={<CustomLegend />}

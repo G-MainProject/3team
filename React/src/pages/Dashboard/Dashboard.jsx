@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import './Dashboard.css';
+import styles from './Dashboard.module.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
 import Sns from '../../component/Sns/Sns';
@@ -155,12 +155,12 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 	// 갱신 함수 - 모든 주식 데이터를 한 번에 가져와서 동기화
 	const refreshStockData = useCallback(async () => {
 		try {
-			console.log('🔄 전체 주식 데이터 갱신 시작 - API 호출 예정');
+			// console.log('🔄 전체 주식 데이터 갱신 시작 - API 호출 예정');
 			refreshingRef.current = true;
 			setRefreshing(true);
 			
 			// 모든 주식의 데이터를 병렬로 가져오기
-			console.log('📡 모든 주식 API 호출 중...');
+			// console.log('📡 모든 주식 API 호출 중...');
 			const stockDataPromises = stockSymbols.map(async (stock) => {
 				try {
 					const summary = await getStockSummary(stock.symbol);
@@ -197,7 +197,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 			});
 
 			const allStockData = await Promise.all(stockDataPromises);
-			console.log('📡 모든 주식 API 응답 받음:', allStockData);
+			// console.log('📡 모든 주식 API 응답 받음:', allStockData);
 			
 			// 변동폭 순으로 정렬 (절댓값 기준)
 			const sortedStocks = allStockData.sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent));
@@ -267,7 +267,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 					marketCap: selectedStockData.marketCap,
 				});
 				
-				console.log('✅ 모든 데이터 동기화 완료 - TopNav, 차트, 상세데이터 모두 동일한 API 응답 사용');
+				// console.log('✅ 모든 데이터 동기화 완료 - TopNav, 차트, 상세데이터 모두 동일한 API 응답 사용');
 				setLastUpdated(new Date());
 				setError(null);
 			}
@@ -276,7 +276,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 		} finally {
 			// 갱신 중 표시를 더 오래 보이도록 지연
 			setTimeout(() => {
-				console.log('🔄 갱신 완료 - 로딩 상태 해제');
+				// console.log('🔄 갱신 완료 - 로딩 상태 해제');
 				refreshingRef.current = false;
 				setRefreshing(false);
 			}, 1000); // 1초 지연
@@ -475,7 +475,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 	// };
 
 	useEffect(() => {
-		const dashboardMain = document.querySelector('.dashboard-main');
+		const dashboardMain = document.querySelector(`.${styles['dashboard-main']}`);
 
 		const handleScroll = () => {
 			if (!dashboardMain) return;
@@ -525,7 +525,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 	// 전체 페이지 스크롤 제한
 	useEffect(() => {
 		const handlePageScroll = (e) => {
-			const dashboardMain = document.querySelector('.dashboard-main');
+			const dashboardMain = document.querySelector(`.${styles['dashboard-main']}`);
 			if (!dashboardMain) return;
 
 			const scrollTop = dashboardMain.scrollTop;
@@ -565,7 +565,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 				setAllowScrollToFooter(false);
 				setIsInFooter(false);
 
-				const dashboardMain = document.querySelector('.dashboard-main');
+				const dashboardMain = document.querySelector(`.${styles['dashboard-main']}`);
 				if (dashboardMain) {
 					dashboardMain.scrollTo({
 						top: 0,
@@ -588,11 +588,11 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 	};
 
 	return (
-		<div className="dashboard-container">
-			<div className="dashboard-content">
+		<div className={styles['dashboard-container']}>
+			<div className={styles['dashboard-content']}>
 				<LeftNav />
-				<div className="dashboard-main">
-					<div className="dashboard-grid">
+				<div className={styles['dashboard-main']}>
+					<div className={styles['dashboard-grid']}>
 						<TopNav 
 							selectedSymbol={selectedSymbol}
 							onSymbolChange={onSymbolChange}
@@ -602,38 +602,38 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 						/>
 
 						{/* 주식 정보 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>{getStockName(selectedSymbol)}/{selectedSymbol}/{getMarketType(selectedSymbol)}</h2>
 									<p>실시간 주가 및 주요 지표</p>
 								</div>
-								<div className="section-action">
+								<div className={styles['section-action']}>
 									{refreshing ? (
-										<div className="refresh-indicator">
-											<div className="refresh-spinner"></div>
+										<div className={styles['refresh-indicator']}>
+											<div className={styles['refresh-spinner']}></div>
 											<span>갱신 중...</span>
 										</div>
 									) : lastUpdated ? (
-										<div className="last-updated">
+										<div className={styles['last-updated']}>
 											<i className="fas fa-clock"></i>
 											<span>마지막 업데이트: {lastUpdated.toLocaleTimeString()}</span>
 										</div>
 									) : null}
 								</div>
 							</div>
-							<div className="stock-info-section">
+							<div className={styles['stock-info-section']}>
 								{/* 통합 주식 차트 */}
-								<div className="unified-chart-container">
-									<div className="chart-header">
+								<div className={styles['unified-chart-container']}>
+									<div className={styles['chart-header']}>
 										<h3>실시간 주가 및 거래량</h3>
-										<div className="chart-interval-selector">
+										<div className={styles['chart-interval-selector']}>
 											<label htmlFor="interval-select">차트 간격:</label>
 											<select 
 												id="interval-select"
 												value={chartInterval} 
 												onChange={(e) => setChartInterval(e.target.value)}
-												className="interval-select"
+												className={styles['interval-select']}
 											>
 												<option value="1m">1분</option>
 												<option value="5m">5분</option>
@@ -644,21 +644,21 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 										</div>
 									</div>
 									{loading ? (
-										<div className="chart-loading">데이터를 불러오는 중...</div>
+										<div className={styles['chart-loading']}>데이터를 불러오는 중...</div>
 									) : error ? (
-										<div className="chart-error">
+										<div className={styles['chart-error']}>
 											<i className="fas fa-exclamation-triangle"></i>
 											<p>차트 데이터를 불러올 수 없습니다</p>
-											<p className="error-detail">{error}</p>
+											<p className={styles['error-detail']}>{error}</p>
 										</div>
 									) : stockData.length === 0 ? (
-										<div className="chart-error">
+										<div className={styles['chart-error']}>
 											<i className="fas fa-chart-line"></i>
 											<p>차트 데이터가 없습니다</p>
-											<p className="error-detail">주식 데이터를 가져올 수 없습니다</p>
+											<p className={styles['error-detail']}>주식 데이터를 가져올 수 없습니다</p>
 									</div>
 									) : (
-										<div className="unified-chart-wrapper">
+										<div className={styles['unified-chart-wrapper']}>
 											<UnifiedStockChart
 												stockData={stockData}
 												volumeData={volumeData}
@@ -669,28 +669,28 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 								</div>
 
 								{/* 주식 정보 카드들 */}
-								<div className="stock-cards">
-									<div className="stock-card">
+								<div className={styles['stock-cards']}>
+									<div className={styles['stock-card']}>
 										<h3>현재가</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											₩{stockSummary?.currentPrice?.toLocaleString() || '50,000'}
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>전일 대비</h3>
-										<p className={`stock-value ${(stockSummary?.change || 0) >= 0 ? 'positive' : 'negative'}`}>
+										<p className={`${styles['stock-value']} ${(stockSummary?.change || 0) >= 0 ? styles['positive'] : styles['negative']}`}>
 											{(stockSummary?.change || 0) >= 0 ? '+' : ''}{(stockSummary?.changePercent || 0).toFixed(2)}%
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>거래량</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											{(stockSummary?.volume || 0).toLocaleString()}
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>시가총액</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											₩{((stockSummary?.marketCap || 0) / 1000000000000).toFixed(1)}조
 										</p>
 									</div>
@@ -702,30 +702,30 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 						<Sns selectedSymbol={selectedSymbol} />
 					</div>
 
-					<div className="dashboard-grid2">
+					<div className={styles['dashboard-grid2']}>
 						{/* 리포트 기준 주가 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>리포트 기준 주가</h2>
 									<p>2024년 1월 15일 14:30 기준 주가 및 지표</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="stock-info-section">
+							<div className={styles['stock-info-section']}>
 								{/* 정적 차트 컨테이너 */}
-								<div className="unified-chart-container">
-									<div className="chart-header">
+								<div className={styles['unified-chart-container']}>
+									<div className={styles['chart-header']}>
 										<h3>기준 시점 주가 및 거래량</h3>
-										<div className="analysis-timestamp">
-											<span className="timestamp-label">분석 시점:</span>
-											<span className="timestamp-value">2024-01-15 14:30</span>
+										<div className={styles['analysis-timestamp']}>
+											<span className={styles['timestamp-label']}>분석 시점:</span>
+											<span className={styles['timestamp-value']}>2024-01-15 14:30</span>
 										</div>
 									</div>
-									<div className="unified-chart-wrapper">
+									<div className={styles['unified-chart-wrapper']}>
 										<UnifiedStockChart
 											stockData={[
 												{ time: '09:00', price: 49800, open: 50000, high: 50200, low: 49700, close: 49800 },
@@ -761,28 +761,28 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 								</div>
 
 								{/* 분석 기준 시점 정보 카드들 */}
-								<div className="stock-cards">
-									<div className="stock-card">
+								<div className={styles['stock-cards']}>
+									<div className={styles['stock-card']}>
 										<h3>기준가</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											₩50,600
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>전일 대비</h3>
-										<p className="stock-value positive">
+										<p className={`${styles['stock-value']} ${styles['positive']}`}>
 											+1.2%
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>거래량</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											2,500,000
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>시가총액</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											₩378.2조
 										</p>
 									</div>
@@ -791,43 +791,43 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 						</div>
 
 						{/* 재무제표 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>재무제표 분석</h2>
 									<p>DART API 기반 종합 재무 분석</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="financial-section">
+							<div className={styles['financial-section']}>
 								{/* 주요 재무 지표 카드들 */}
-								<div className="financial-cards">
-									<div className="financial-card">
+								<div className={styles['financial-cards']}>
+									<div className={styles['financial-card']}>
 										<h3>매출액</h3>
-										<p className="financial-value">₩1,000억</p>
-										<span className="financial-change positive">+12.5%</span>
+										<p className={styles['financial-value']}>₩1,000억</p>
+										<span className={`${styles['financial-change']} ${styles['positive']}`}>+12.5%</span>
 									</div>
-									<div className="financial-card">
+									<div className={styles['financial-card']}>
 										<h3>영업이익</h3>
-										<p className="financial-value">₩200억</p>
-										<span className="financial-change positive">+8.3%</span>
+										<p className={styles['financial-value']}>₩200억</p>
+										<span className={`${styles['financial-change']} ${styles['positive']}`}>+8.3%</span>
 									</div>
-									<div className="financial-card">
+									<div className={styles['financial-card']}>
 										<h3>당기순이익</h3>
-										<p className="financial-value">₩150억</p>
-										<span className="financial-change positive">+15.2%</span>
+										<p className={styles['financial-value']}>₩150억</p>
+										<span className={`${styles['financial-change']} ${styles['positive']}`}>+15.2%</span>
 									</div>
 								</div>
 
 								{/* 재무제표 차트 */}
-								<div className="financial-chart-container">
-									<div className="chart-header">
+								<div className={styles['financial-chart-container']}>
+									<div className={styles['chart-header']}>
 										<h3>연도별 재무 성과 (단위 : 10억원)</h3>
 									</div>
-									<div className="unified-chart-wrapper">
+									<div className={styles['unified-chart-wrapper']}>
 										<Chart
 											data={financialData}
 											series={financialChartSeries}
@@ -840,73 +840,121 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 								</div>
 
 								{/* 재무 비율 분석 */}
-								<div className="financial-ratios">
-									<div className="ratio-item">
-										<span className="ratio-label">ROE</span>
-										<span className="ratio-value positive">15.2%</span>
+								<div className={styles['financial-ratios']}>
+									<div className={styles['ratio-item']}>
+										<span className={styles['ratio-label']}>ROE</span>
+										<span className={`${styles['ratio-value']} ${styles['positive']}`}>15.2%</span>
 									</div>
-									<div className="ratio-item">
-										<span className="ratio-label">ROA</span>
-										<span className="ratio-value positive">8.7%</span>
+									<div className={styles['ratio-item']}>
+										<span className={styles['ratio-label']}>ROA</span>
+										<span className={`${styles['ratio-value']} ${styles['positive']}`}>8.7%</span>
 									</div>
-									<div className="ratio-item">
-										<span className="ratio-label">부채비율</span>
-										<span className="ratio-value neutral">45.3%</span>
+									<div className={styles['ratio-item']}>
+										<span className={styles['ratio-label']}>부채비율</span>
+										<span className={`${styles['ratio-value']} ${styles['neutral']}`}>45.3%</span>
 									</div>
-									<div className="ratio-item">
-										<span className="ratio-label">유동비율</span>
-										<span className="ratio-value positive">1.8</span>
+									<div className={styles['ratio-item']}>
+										<span className={styles['ratio-label']}>유동비율</span>
+										<span className={`${styles['ratio-value']} ${styles['positive']}`}>1.8</span>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						{/* 뉴스 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>뉴스 기사</h2>
 									<p>최신 관련 뉴스 및 시장 동향</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="news-section">
-								<div className="news-list">
-									<div className="news-item">
-										<h4>삼성전자, 3분기 실적 발표</h4>
-										<p>삼성전자가 3분기 실적을 발표하며...</p>
-										<span className="news-date">2024-01-15</span>
+							<div className={styles['news-section']}>
+								<div className={styles['news-list']}>
+									<div className={`${styles['news-item']} ${styles['positive']}`}>
+										<div className={styles['news-content']}>
+											<h4>삼성전자, 3분기 실적 발표</h4>
+											<p>삼성전자가 3분기 실적을 발표하며...</p>
+											<span className={styles['news-date']}>2024-01-15</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>65%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>25%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>10%</span>
+											</div>
+										</div>
 									</div>
-									<div className="news-item">
-										<h4>반도체 업계 전망 긍정적</h4>
-										<p>AI 반도체 수요 증가로 업계 전망이...</p>
-										<span className="news-date">2024-01-14</span>
+									<div className={`${styles['news-item']} ${styles['positive']}`}>
+										<div className={styles['news-content']}>
+											<h4>반도체 업계 전망 긍정적</h4>
+											<p>AI 반도체 수요 증가로 업계 전망이...</p>
+											<span className={styles['news-date']}>2024-01-14</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>72%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>18%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>10%</span>
+											</div>
+										</div>
 									</div>
-									<div className="news-item">
-										<h4>글로벌 경제 불확실성 지속</h4>
-										<p>글로벌 경제 불확실성이 지속되며...</p>
-										<span className="news-date">2024-01-13</span>
+									<div className={`${styles['news-item']} ${styles['negative']}`}>
+										<div className={styles['news-content']}>
+											<h4>글로벌 경제 불확실성 지속</h4>
+											<p>글로벌 경제 불확실성이 지속되며...</p>
+											<span className={styles['news-date']}>2024-01-13</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>15%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>70%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>15%</span>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						{/* 감성 분석 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>뉴스 감성 분석</h2>
 									<p>뉴스 기사의 감정 분석 결과</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="sentiment-section">
+							<div className={styles['sentiment-section']}>
 								<CircleGraph
 									data={CircleGraphData}
 									colors={['#34a853', '#ea4335', '#fbbc04']}
@@ -915,20 +963,20 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 						</div>
 
 						{/* 워드 클라우드 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>핵심 키워드</h2>
 									<p>뉴스에서 자주 언급되는 주요 키워드</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="wordcloud-section">
-								<div className="wordcloud-container">
-									<div className="wordcloud-placeholder">
+							<div className={styles['wordcloud-section']}>
+								<div className={styles['wordcloud-container']}>
+									<div className={styles['wordcloud-placeholder']}>
 										<MyWordCloud data={wordCloudData} />
 									</div>
 								</div>
@@ -936,20 +984,20 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 						</div>
 
 						{/* AI 분석 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>AI 분석 및 예측</h2>
 									<p>Gemini AI 기반 종합 분석 및 투자 권고</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="ai-analysis-section">
-								<div className="ai-analysis-container">
-									<div className="ai-analysis-content">
+							<div className={styles['ai-analysis-section']}>
+								<div className={styles['ai-analysis-container']}>
+									<div className={styles['ai-analysis-content']}>
 										<h3>종합 분석</h3>
 										<p>
 											현재 시장 상황을 종합적으로 분석한 결과, 삼성전자는 AI
@@ -959,21 +1007,21 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 											수익성 개선에 기여할 것으로 예상됩니다.
 										</p>
 									</div>
-									<div className="ai-prediction">
+									<div className={styles['ai-prediction']}>
 										<h3>투자 권고사항</h3>
-										<div className="prediction-item">
-											<span className="prediction-label">단기 (1-3개월):</span>
-											<span className="prediction-value positive">매수</span>
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>단기 (1-3개월):</span>
+											<span className={`${styles['prediction-value']} ${styles['positive']}`}>매수</span>
 										</div>
-										<div className="prediction-item">
-											<span className="prediction-label">중기 (3-6개월):</span>
-											<span className="prediction-value positive">
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>중기 (3-6개월):</span>
+											<span className={`${styles['prediction-value']} ${styles['positive']}`}>
 												강력 매수
 											</span>
 										</div>
-										<div className="prediction-item">
-											<span className="prediction-label">장기 (6개월+):</span>
-											<span className="prediction-value negative">매도</span>
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>장기 (6개월+):</span>
+											<span className={`${styles['prediction-value']} ${styles['negative']}`}>매도</span>
 										</div>
 									</div>
 								</div>

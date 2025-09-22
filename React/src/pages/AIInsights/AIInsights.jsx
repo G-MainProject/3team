@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import './AIInsights.css';
+import styles from './AIInsights.module.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
 import Footer from '../../component/Footer/Footer';
@@ -127,7 +127,7 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 	}, [onSymbolChange, stockSymbols]);
 
 	useEffect(() => {
-		const dashboardMain = document.querySelector('.ai-insights-main');
+		const dashboardMain = document.querySelector(`.${styles['ai-insights-main']}`);
 
 		const handleScroll = () => {
 			if (!dashboardMain) return;
@@ -177,7 +177,7 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 	// 전체 페이지 스크롤 제한
 	useEffect(() => {
 		const handlePageScroll = (e) => {
-			const dashboardMain = document.querySelector('.ai-insights-main');
+			const dashboardMain = document.querySelector(`.${styles['ai-insights-main']}`);
 			if (!dashboardMain) return;
 
 			const scrollTop = dashboardMain.scrollTop;
@@ -217,7 +217,7 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 				setAllowScrollToFooter(false);
 				setIsInFooter(false);
 
-				const dashboardMain = document.querySelector('.ai-insights-main');
+				const dashboardMain = document.querySelector(`.${styles['ai-insights-main']}`);
 				if (dashboardMain) {
 					dashboardMain.scrollTo({
 						top: 0,
@@ -240,11 +240,11 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 	};
 
 	return (
-		<div className="ai-insights-container">
-			<div className="ai-insights-content">
+		<div className={styles['ai-insights-container']}>
+			<div className={styles['ai-insights-content']}>
 				<LeftNav />
-				<div className="ai-insights-main">
-					<div className="ai-insights-grid">
+				<div className={styles['ai-insights-main']}>
+					<div className={styles['ai-insights-grid']}>
 						<TopNav 
 							selectedSymbol={selectedSymbol}
 							onSymbolChange={onSymbolChange}
@@ -255,53 +255,248 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 
 					</div>
 
-					<div className="ai-insights-grid2">
+					<div className={styles['ai-insights-grid2']}>
 						{/* 뉴스 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>뉴스 기사</h2>
 									<p>최신 관련 뉴스 및 시장 동향</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="news-section">
-								<div className="news-list">
-									<div className="news-item">
-										<h4>삼성전자, 3분기 실적 발표</h4>
-										<p>삼성전자가 3분기 실적을 발표하며...</p>
-										<span className="news-date">2024-01-15</span>
+							<div className={styles['news-section']}>
+								<div className={styles['news-list']}>
+									<div className={`${styles['news-item']} ${styles['positive']}`}>
+										<div className={styles['news-content']}>
+											<h4>삼성전자, 3분기 실적 발표</h4>
+											<p>삼성전자가 3분기 실적을 발표하며...</p>
+											<span className={styles['news-date']}>2024-01-15</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>65%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>25%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>10%</span>
+											</div>
+										</div>
 									</div>
-									<div className="news-item">
-										<h4>반도체 업계 전망 긍정적</h4>
-										<p>AI 반도체 수요 증가로 업계 전망이...</p>
-										<span className="news-date">2024-01-14</span>
+									<div className={`${styles['news-item']} ${styles['positive']}`}>
+										<div className={styles['news-content']}>
+											<h4>반도체 업계 전망 긍정적</h4>
+											<p>AI 반도체 수요 증가로 업계 전망이...</p>
+											<span className={styles['news-date']}>2024-01-14</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>72%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>18%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>10%</span>
+											</div>
+										</div>
 									</div>
-									<div className="news-item">
-										<h4>글로벌 경제 불확실성 지속</h4>
-										<p>글로벌 경제 불확실성이 지속되며...</p>
-										<span className="news-date">2024-01-13</span>
+									<div className={`${styles['news-item']} ${styles['negative']}`}>
+										<div className={styles['news-content']}>
+											<h4>글로벌 경제 불확실성 지속</h4>
+											<p>글로벌 경제 불확실성이 지속되며...</p>
+											<span className={styles['news-date']}>2024-01-13</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>15%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>70%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>15%</span>
+											</div>
+										</div>
+									</div>
+									<div className={`${styles['news-item']} ${styles['positive']}`}>
+										<div className={styles['news-content']}>
+											<h4>삼성전자 메모리 반도체 수요 급증</h4>
+											<p>AI 서버 수요 증가로 메모리 반도체 시장이...</p>
+											<span className={styles['news-date']}>2024-01-12</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>78%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>12%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>10%</span>
+											</div>
+										</div>
+									</div>
+									<div className={`${styles['news-item']} ${styles['neutral']}`}>
+										<div className={styles['news-content']}>
+											<h4>반도체 공급망 안정화 논의</h4>
+											<p>정부와 업계가 반도체 공급망 안정화를 논의...</p>
+											<span className={styles['news-date']}>2024-01-11</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>35%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>25%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>40%</span>
+											</div>
+										</div>
+									</div>
+									<div className={`${styles['news-item']} ${styles['negative']}`}>
+										<div className={styles['news-content']}>
+											<h4>경기 둔화 우려 확산</h4>
+											<p>글로벌 경기 둔화 우려가 반도체 업계에...</p>
+											<span className={styles['news-date']}>2024-01-10</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>20%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>65%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>15%</span>
+											</div>
+										</div>
+									</div>
+									<div className={`${styles['news-item']} ${styles['positive']}`}>
+										<div className={styles['news-content']}>
+											<h4>삼성전자 HBM3 기술 선도</h4>
+											<p>삼성전자가 HBM3 기술에서 경쟁 우위를...</p>
+											<span className={styles['news-date']}>2024-01-09</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>82%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>8%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>10%</span>
+											</div>
+										</div>
+									</div>
+									<div className={`${styles['news-item']} ${styles['negative']}`}>
+										<div className={styles['news-content']}>
+											<h4>반도체 장비 수출 제한 우려</h4>
+											<p>미국의 반도체 장비 수출 제한이 업계에...</p>
+											<span className={styles['news-date']}>2024-01-08</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>12%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>73%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>15%</span>
+											</div>
+										</div>
+									</div>
+									<div className={`${styles['news-item']} ${styles['positive']}`}>
+										<div className={styles['news-content']}>
+											<h4>AI 반도체 투자 확대</h4>
+											<p>삼성전자가 AI 반도체 분야 투자를 대폭...</p>
+											<span className={styles['news-date']}>2024-01-07</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>68%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>22%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>10%</span>
+											</div>
+										</div>
+									</div>
+									<div className={`${styles['news-item']} ${styles['neutral']}`}>
+										<div className={styles['news-content']}>
+											<h4>반도체 시장 전망 보고서 발표</h4>
+											<p>업계 단체가 2024년 반도체 시장 전망을...</p>
+											<span className={styles['news-date']}>2024-01-06</span>
+										</div>
+										<div className={styles['sentiment-legend']}>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>긍정</span>
+												<span className={styles['sentiment-percent']}>42%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>부정</span>
+												<span className={styles['sentiment-percent']}>28%</span>
+											</div>
+											<div className={styles['sentiment-item']}>
+												<span className={styles['sentiment-label']}>중립</span>
+												<span className={styles['sentiment-percent']}>30%</span>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						{/* 감성 분석 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>뉴스 감성 분석</h2>
 									<p>뉴스 기사의 감정 분석 결과</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="sentiment-section">
+							<div className={styles['sentiment-section']}>
 								<CircleGraph
 									data={CircleGraphData}
 									colors={['#34a853', '#ea4335', '#fbbc04']}
@@ -310,20 +505,20 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 						</div>
 
 						{/* 워드 클라우드 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>핵심 키워드</h2>
 									<p>뉴스에서 자주 언급되는 주요 키워드</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="wordcloud-section">
-								<div className="wordcloud-container">
-									<div className="wordcloud-placeholder">
+							<div className={styles['wordcloud-section']}>
+								<div className={styles['wordcloud-container']}>
+									<div className={styles['wordcloud-placeholder']}>
 										<MyWordCloud data={wordCloudData} />
 									</div>
 								</div>
@@ -331,20 +526,20 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 						</div>
 
 						{/* AI 분석 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>AI 분석 및 예측</h2>
 									<p>Gemini AI 기반 종합 분석 및 투자 권고</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="ai-analysis-section">
-								<div className="ai-analysis-container">
-									<div className="ai-analysis-content">
+							<div className={styles['ai-analysis-section']}>
+								<div className={styles['ai-analysis-container']}>
+									<div className={styles['ai-analysis-content']}>
 										<h3>종합 분석</h3>
 										<p>
 											현재 시장 상황을 종합적으로 분석한 결과, 삼성전자는 AI
@@ -354,21 +549,21 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 											수익성 개선에 기여할 것으로 예상됩니다.
 										</p>
 									</div>
-									<div className="ai-prediction">
+									<div className={styles['ai-prediction']}>
 										<h3>투자 권고사항</h3>
-										<div className="prediction-item">
-											<span className="prediction-label">단기 (1-3개월):</span>
-											<span className="prediction-value positive">매수</span>
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>단기 (1-3개월):</span>
+											<span className={`${styles['prediction-value']} ${styles['positive']}`}>매수</span>
 										</div>
-										<div className="prediction-item">
-											<span className="prediction-label">중기 (3-6개월):</span>
-											<span className="prediction-value positive">
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>중기 (3-6개월):</span>
+											<span className={`${styles['prediction-value']} ${styles['positive']}`}>
 												강력 매수
 											</span>
 										</div>
-										<div className="prediction-item">
-											<span className="prediction-label">장기 (6개월+):</span>
-											<span className="prediction-value negative">매도</span>
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>장기 (6개월+):</span>
+											<span className={`${styles['prediction-value']} ${styles['negative']}`}>매도</span>
 										</div>
 									</div>
 								</div>

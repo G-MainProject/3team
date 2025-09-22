@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import './StockAnalysis.css';
+import styles from './StockAnalysis.module.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
 import Footer from '../../component/Footer/Footer';
@@ -161,7 +161,7 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 	}, [onSymbolChange, stockSymbols]);
 
 	useEffect(() => {
-		const dashboardMain = document.querySelector('.stock-analysis-main');
+		const dashboardMain = document.querySelector(`.${styles['stock-analysis-main']}`);
 
 		const handleScroll = () => {
 			if (!dashboardMain) return;
@@ -211,7 +211,7 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 	// 전체 페이지 스크롤 제한
 	useEffect(() => {
 		const handlePageScroll = (e) => {
-			const dashboardMain = document.querySelector('.stock-analysis-main');
+			const dashboardMain = document.querySelector(`.${styles['stock-analysis-main']}`);
 			if (!dashboardMain) return;
 
 			const scrollTop = dashboardMain.scrollTop;
@@ -251,7 +251,7 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 				setAllowScrollToFooter(false);
 				setIsInFooter(false);
 
-				const dashboardMain = document.querySelector('.stock-analysis-main');
+				const dashboardMain = document.querySelector(`.${styles['stock-analysis-main']}`);
 				if (dashboardMain) {
 					dashboardMain.scrollTo({
 						top: 0,
@@ -274,11 +274,11 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 	};
 
 	return (
-		<div className="stock-analysis-container">
-			<div className="stock-analysis-content">
+		<div className={styles['stock-analysis-container']}>
+			<div className={styles['stock-analysis-content']}>
 				<LeftNav />
-				<div className="stock-analysis-main">
-					<div className="stock-analysis-grid">
+				<div className={styles['stock-analysis-main']}>
+					<div className={styles['stock-analysis-grid']}>
 						<TopNav 
 							selectedSymbol={selectedSymbol}
 							onSymbolChange={onSymbolChange}
@@ -288,30 +288,30 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 						/>
 					</div>
 
-					<div className="stock-analysis-grid2">
+					<div className={styles['stock-analysis-grid2']}>
 						{/* 리포트 기준 주가 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>리포트 기준 주가</h2>
 									<p>2024년 1월 15일 14:30 기준 주가 및 지표</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="stock-info-section">
+							<div className={styles['stock-info-section']}>
 								{/* 정적 차트 컨테이너 */}
-								<div className="unified-chart-container">
-									<div className="chart-header">
+								<div className={styles['unified-chart-container']}>
+									<div className={styles['chart-header']}>
 										<h3>기준 시점 주가 및 거래량</h3>
-										<div className="analysis-timestamp">
-											<span className="timestamp-label">분석 시점:</span>
-											<span className="timestamp-value">2024-01-15 14:30</span>
+										<div className={styles['analysis-timestamp']}>
+											<span className={styles['timestamp-label']}>분석 시점:</span>
+											<span className={styles['timestamp-value']}>2024-01-15 14:30</span>
 										</div>
 									</div>
-									<div className="unified-chart-wrapper">
+									<div className={styles['unified-chart-wrapper']}>
 										<UnifiedStockChart
 											stockData={[
 												{ time: '09:00', price: 49800, open: 50000, high: 50200, low: 49700, close: 49800 },
@@ -347,28 +347,28 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 								</div>
 
 								{/* 분석 기준 시점 정보 카드들 */}
-								<div className="stock-cards">
-									<div className="stock-card">
+								<div className={styles['stock-cards']}>
+									<div className={styles['stock-card']}>
 										<h3>기준가</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											₩50,600
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>전일 대비</h3>
-										<p className="stock-value positive">
+										<p className={`${styles['stock-value']} ${styles['positive']}`}>
 											+1.2%
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>거래량</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											2,500,000
 										</p>
 									</div>
-									<div className="stock-card">
+									<div className={styles['stock-card']}>
 										<h3>시가총액</h3>
-										<p className="stock-value">
+										<p className={styles['stock-value']}>
 											₩378.2조
 										</p>
 									</div>
@@ -377,43 +377,43 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 						</div>
 
 						{/* 재무제표 섹션 */}
-						<div className="section-container">
-							<div className="section-label">
-								<div className="section-title">
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
 									<h2>재무제표 분석</h2>
 									<p>DART API 기반 종합 재무 분석</p>
 								</div>
-								<button className="detail-button">
+								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
 							</div>
-							<div className="financial-section">
+							<div className={styles['financial-section']}>
 								{/* 주요 재무 지표 카드들 */}
-								<div className="financial-cards">
-									<div className="financial-card">
+								<div className={styles['financial-cards']}>
+									<div className={styles['financial-card']}>
 										<h3>매출액</h3>
-										<p className="financial-value">₩1,000억</p>
-										<span className="financial-change positive">+12.5%</span>
+										<p className={styles['financial-value']}>₩1,000억</p>
+										<span className={`${styles['financial-change']} ${styles['positive']}`}>+12.5%</span>
 									</div>
-									<div className="financial-card">
+									<div className={styles['financial-card']}>
 										<h3>영업이익</h3>
-										<p className="financial-value">₩200억</p>
-										<span className="financial-change positive">+8.3%</span>
+										<p className={styles['financial-value']}>₩200억</p>
+										<span className={`${styles['financial-change']} ${styles['positive']}`}>+8.3%</span>
 									</div>
-									<div className="financial-card">
+									<div className={styles['financial-card']}>
 										<h3>당기순이익</h3>
-										<p className="financial-value">₩150억</p>
-										<span className="financial-change positive">+15.2%</span>
+										<p className={styles['financial-value']}>₩150억</p>
+										<span className={`${styles['financial-change']} ${styles['positive']}`}>+15.2%</span>
 									</div>
 								</div>
 
 								{/* 재무제표 차트 */}
-								<div className="financial-chart-container">
-									<div className="chart-header">
+								<div className={styles['financial-chart-container']}>
+									<div className={styles['chart-header']}>
 										<h3>연도별 재무 성과 (단위 : 10억원)</h3>
 									</div>
-									<div className="unified-chart-wrapper">
+									<div className={styles['unified-chart-wrapper']}>
 										<Chart
 											data={financialData}
 											series={financialChartSeries}
@@ -426,33 +426,33 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 								</div>
 
 								{/* 재무 비율 분석 */}
-								<div className="financial-ratios">
-									<div className="ratio-item">
+								<div className={styles['financial-ratios']}>
+									<div className={styles['ratio-item']}>
 										<h4>부채비율</h4>
-										<div className="ratio-value">
-											<span className="ratio-number">25.2%</span>
-											<span className="ratio-change positive">+1.2%p</span>
+										<div className={styles['ratio-value']}>
+											<span className={styles['ratio-number']}>25.2%</span>
+											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+1.2%p</span>
 										</div>
 									</div>
-									<div className="ratio-item">
+									<div className={styles['ratio-item']}>
 										<h4>유동비율</h4>
-										<div className="ratio-value">
-											<span className="ratio-number">1.8</span>
-											<span className="ratio-change positive">+0.1</span>
+										<div className={styles['ratio-value']}>
+											<span className={styles['ratio-number']}>1.8</span>
+											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.1</span>
 										</div>
 									</div>
-									<div className="ratio-item">
+									<div className={styles['ratio-item']}>
 										<h4>당좌비율</h4>
-										<div className="ratio-value">
-											<span className="ratio-number">1.2</span>
-											<span className="ratio-change negative">-0.1</span>
+										<div className={styles['ratio-value']}>
+											<span className={styles['ratio-number']}>1.2</span>
+											<span className={`${styles['ratio-change']} ${styles['negative']}`}>-0.1</span>
 										</div>
 									</div>
-									<div className="ratio-item">
+									<div className={styles['ratio-item']}>
 										<h4>자기자본비율</h4>
-										<div className="ratio-value">
-											<span className="ratio-number">79.8%</span>
-											<span className="ratio-change positive">+0.3%p</span>
+										<div className={styles['ratio-value']}>
+											<span className={styles['ratio-number']}>79.8%</span>
+											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.3%p</span>
 										</div>
 									</div>
 								</div>
@@ -470,8 +470,12 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 					}`}
 					onClick={handleButtonClick}
 				>
-					<i className="fas fa-arrow-up"></i>
-					{isInFooter ? 'Dashboard로 이동' : 'Footer 보기'}
+					<i
+						className={`fa-solid ${
+							isInFooter ? 'fa-arrow-up' : 'fa-arrow-down'
+						}`}
+					></i>
+					<span>{isInFooter ? 'Dashboard로 이동' : 'Footer로 이동'}</span>
 				</button>
 			)}
 

@@ -417,6 +417,22 @@
 	background: #e2e3e5;
 }
 
+/* 단독 조건부 클래스들 */
+.positive {
+	color: #28a745;
+	background: #d4edda;
+}
+
+.negative {
+	color: #dc3545;
+	background: #f8d7da;
+}
+
+.neutral {
+	color: #6c757d;
+	background: #e2e3e5;
+}
+
 /* 재무제표 차트 컨테이너 */
 .financial-chart-container {
 	background: #f8f9fa;
@@ -437,6 +453,13 @@
 	color: #495057;
 	font-size: 1.1em;
 	font-weight: 600;
+}
+
+.unified-chart-wrapper {
+	height: calc(100% - 40px);
+	width: 100%;
+	border: 1px solid #e9ecef;
+	border-radius: 8px;
 }
 
 .financial-chart-container .unified-chart-wrapper {
@@ -707,7 +730,7 @@
 }
 
 /* Footer 스크롤 버튼 */
-.footer-scroll-button {
+:global(.footer-scroll-button) {
 	position: fixed;
 	bottom: 30px;
 	left: 50%;
@@ -730,35 +753,35 @@
 }
 
 /* 버튼이 사라질 때 애니메이션 */
-.footer-scroll-button.hiding {
+:global(.footer-scroll-button.hiding) {
 	animation: bounceOut 0.3s ease-in forwards;
 }
 
 /* Footer로 이동할 때 hover 효과 (아래로 5px) */
-.footer-scroll-button:not(.in-footer):hover {
+:global(.footer-scroll-button:hover) {
 	transform: translateX(-50%) translateY(5px);
 }
 
 /* Dashboard로 이동할 때 hover 효과 (위로 5px) */
-.footer-scroll-button.in-footer:hover {
+:global(.footer-scroll-button.in-footer:hover) {
 	transform: translateX(-50%) translateY(calc(-100vh + 120px - 5px));
 }
 
 /* Dashboard로 이동할 때 버튼 위치 (화면 윗쪽) */
-.footer-scroll-button.in-footer {
+:global(.footer-scroll-button.in-footer) {
 	transform: translateX(-50%) translateY(calc(-100vh + 120px));
 }
 
 /* Dashboard로 이동할 때 fade out 효과 */
-.footer-scroll-button.fade-out {
+:global(.footer-scroll-button.fade-out) {
 	animation: fadeOut 0.3s ease-out forwards;
 }
 
-.footer-scroll-button:active {
+:global(.footer-scroll-button:active) {
 	transform: translateX(-50%) translateY(-1px);
 }
 
-.footer-scroll-button i {
+:global(.footer-scroll-button i) {
 	font-size: 18px;
 	animation: bounce 2s infinite;
 }

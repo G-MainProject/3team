@@ -5,7 +5,7 @@ import maleAvatar from '../../assets/images/male.jpg'
 import femaleAvatar from '../../assets/images/female.jpg'
 import { useAuth } from '../../contexts/AuthContext'
 
-const TopNav = ({ onStepClick, selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, onStockSelect }) => {
+const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, onStockSelect }) => {
   const { user, logout } = useAuth()
   const [topStocks, setTopStocks] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -41,7 +41,7 @@ const TopNav = ({ onStepClick, selectedSymbol, onSymbolChange, topNavStocks, top
   // Dashboard에서 전달받은 데이터만 사용 (완전 동기화)
   useEffect(() => {
     if (topNavStocks && topNavStocks.length > 0) {
-      console.log('📡 TopNav props 데이터 받음:', topNavStocks);
+      // console.log('📡 TopNav props 데이터 받음:', topNavStocks);
       
       // Dashboard의 데이터가 있으면 사용
       setIsLoading(topNavLoading)
@@ -88,7 +88,7 @@ const TopNav = ({ onStepClick, selectedSymbol, onSymbolChange, topNavStocks, top
         setTopStocks(newTopStocks)
         setPreviousTopStock(newTopStocks[0]) // 현재 1위 저장
         setIsLoading(false)
-        console.log('✅ TopNav 데이터 동기화 완료 - Dashboard와 동일한 데이터 사용');
+        // console.log('✅ TopNav 데이터 동기화 완료 - Dashboard와 동일한 데이터 사용');
         
         // 애니메이션 종료
         setTimeout(() => {

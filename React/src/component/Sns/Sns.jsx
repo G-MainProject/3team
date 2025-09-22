@@ -31,8 +31,6 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 	const feedContainerRef = useRef(null);
 	const { user: currentUser } = useAuth();
 
-	// 사용자 정보 디버깅
-	console.log('SNS 컴포넌트 - 현재 사용자 정보:', currentUser);
 
 	// 관리자 여부 확인
 	const isAdmin = currentUser && currentUser.role === 'ADMIN';
@@ -40,12 +38,26 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 	// 높이 조정
 	const adjustHeightToMatchSection = () => {
 		if (snsContainerRef.current) {
-			const sectionContainer = document.querySelector(
-				'.dashboard-grid .section-container:nth-child(2)'
-			);
+			// Dashboard에서 SNS는 dashboard-grid의 두 번째 섹션 (주식 정보 섹션)과 높이를 맞춤
+			const selectors = [
+				'.dashboard-grid .section-container:nth-child(2)', // 일반 CSS - 주식 정보 섹션
+				'[class*="dashboard-grid"] [class*="section-container"]:nth-child(2)', // CSS Module - 주식 정보 섹션
+			];
+			
+			let sectionContainer = null;
+			for (const selector of selectors) {
+				sectionContainer = document.querySelector(selector);
+				if (sectionContainer) {
+					break;
+				}
+			}
+			
 			if (sectionContainer) {
 				const sectionHeight = sectionContainer.offsetHeight;
 				snsContainerRef.current.style.height = `${sectionHeight}px`;
+			} else {
+				// 폴백: 기본 높이 설정
+				snsContainerRef.current.style.height = '400px';
 			}
 		}
 	};
