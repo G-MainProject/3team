@@ -360,7 +360,7 @@ button.top-nav-user {
     border: none;
     color: #6c757d;
     cursor: pointer;
-    padding: 4px;
+    /* padding: 4px; */
     border-radius: 4px;
     transition: background-color 0.2s;
 }

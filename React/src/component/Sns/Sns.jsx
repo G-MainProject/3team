@@ -117,9 +117,11 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 		else if (activePlatform === 'reddit') {
 			const fetchRedditData = async () => {
 				try {
+					console.log('🔄 Reddit 데이터 요청 중 - 심볼:', selectedSymbol);
 					const data = await apiService.getSnsData(selectedSymbol);
 					setRedditPosts(data.redditPosts || []);
 					setLastUpdated(new Date());
+					console.log('✅ Reddit 데이터 로드 완료:', data.redditPosts?.length || 0, '개');
 				} catch (err) {
 					console.error('Reddit 데이터 요청 오류:', err);
 					setError('Reddit 데이터를 가져올 수 없습니다.');
@@ -131,7 +133,7 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 
 			fetchRedditData();
 		}
-	}, [activePlatform]);
+	}, [activePlatform, selectedSymbol]); // selectedSymbol 의존성 추가
 
 	// 자동 새로고침 (Reddit 전용)
 	useEffect(() => {
@@ -142,10 +144,12 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 				const fetchRedditData = async () => {
 					try {
 						setRefreshing(true);
+						console.log('🔄 Reddit 자동 새로고침 - 심볼:', selectedSymbol);
 						const data = await apiService.getSnsData(selectedSymbol);
 						setRedditPosts(data.redditPosts || []);
 						setLastUpdated(new Date());
 						setError(null);
+						console.log('✅ Reddit 자동 새로고침 완료:', data.redditPosts?.length || 0, '개');
 					} catch (error) {
 						console.error('Reddit 자동 새로고침 오류:', error);
 					} finally {
@@ -283,15 +287,15 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 		}
 	};
 
-	// 30분 이상 지난 메시지인지 확인
+	// 24시간 이상 지난 메시지인지 확인
 	const isOldMessage = (timestamp) => {
 		if (!timestamp) return false;
 		const messageDate = timestamp.toDate
 			? timestamp.toDate()
 			: new Date(timestamp);
 		const now = new Date();
-		const diffInMinutes = (now.getTime() - messageDate.getTime()) / (1000 * 60);
-		return diffInMinutes > 30;
+		const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
+		return diffInHours > 24;
 	};
 
 	const renderContent = () => {
@@ -312,42 +316,69 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 			);
 		}
 
-		// 실시간 반응 탭
+		// 실시간 반응 탭 (카카오톡 스타일)
 		if (activePlatform === 'x') {
 			return (
 				<>
-					<div className="social-feed" ref={feedContainerRef}>
+					<div className="social-feed signal-feed" ref={feedContainerRef}>
 						{messages.length > 0 ? (
-							messages.map((msg) => (
-								<div
-									key={msg.id}
-									className={`social-item message-item ${
-										currentUser &&
-										(msg.uid === currentUser.uid || msg.uid === currentUser.id)
-											? 'my-message'
-											: ''
-									} ${isOldMessage(msg.timestamp) ? 'old-message' : ''}`}
-								>
-									<div className="social-header">
-										<span className="social-author">{msg.displayName}</span>
-										<div className="message-header-right">
-											<span className="social-time">
-												{formatTimestamp(msg.timestamp)}
-											</span>
-											{isAdmin && (
-												<button
-													className="message-delete-btn"
-													onClick={() => handleDeleteMessage(msg.id)}
-													title="메시지 삭제"
-												>
-													<i className="fas fa-trash"></i>
-												</button>
+							messages.map((msg, index) => {
+								const isMyMessage = currentUser && 
+									(msg.uid === currentUser.uid || msg.uid === currentUser.id);
+								const isLastMessage = index === messages.length - 1;
+								
+								return (
+									<div
+										key={msg.id}
+										className={`message-item ${
+											isMyMessage ? 'my-message' : ''
+										} ${isOldMessage(msg.timestamp) ? 'old-message' : ''} ${
+											isLastMessage ? 'last-message' : ''
+										}`}
+									>
+										<div className="message-bubble">
+											{!isMyMessage && (
+												<div className="message-header">
+													<span className="message-author">{msg.displayName}</span>
+													<div className="message-header-right">
+														<span className="message-time">
+															{formatTimestamp(msg.timestamp)}
+														</span>
+														{isAdmin && (
+															<button
+																className="message-delete-btn"
+																onClick={() => handleDeleteMessage(msg.id)}
+																title="메시지 삭제"
+															>
+																<i className="fas fa-trash"></i>
+															</button>
+														)}
+													</div>
+												</div>
+											)}
+											<div className="message-text">{msg.text}</div>
+											{isMyMessage && (
+												<div className="message-header">
+													<div className="message-header-right">
+														<span className="message-time">
+															{formatTimestamp(msg.timestamp)}
+														</span>
+														{isAdmin && (
+															<button
+																className="message-delete-btn"
+																onClick={() => handleDeleteMessage(msg.id)}
+																title="메시지 삭제"
+															>
+																<i className="fas fa-trash"></i>
+															</button>
+														)}
+													</div>
+												</div>
 											)}
 										</div>
 									</div>
-									<div className="social-content">{msg.text}</div>
-								</div>
-							))
+								);
+							})
 						) : (
 							<div className="no-data">
 								<p>아직 메시지가 없습니다. 첫 메시지를 남겨보세요!</p>
@@ -381,7 +412,7 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 			);
 		}
 
-		// Reddit 탭
+		// Reddit 탭 (기존 카드 스타일 유지)
 		if (activePlatform === 'reddit') {
 			return (
 				<>
@@ -390,7 +421,7 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 							redditPosts.map((item) => (
 								<div
 									key={item.id}
-									className="social-item"
+									className="social-item reddit-item"
 									onClick={() =>
 										window.open(item.url, '_blank', 'noopener,noreferrer')
 									}
@@ -447,7 +478,15 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 			<div className="sns-content">
 				<div className="sns-header">
 					<h3>
-						<span>{getStockName(selectedSymbol)}</span> 실시간 SNS 여론
+						{activePlatform === 'x' ? (
+							<>
+								<span>SIGNAL</span> 실시간 반응
+							</>
+						) : (
+							<>
+								<span>{getStockName(selectedSymbol)}</span> 실시간 SNS 반응
+							</>
+						)}
 					</h3>
 					<div className="sns-header-right">
 						<ul>
