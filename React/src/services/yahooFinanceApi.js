@@ -1,5 +1,5 @@
 // Spring 백엔드 API 서비스
-const SPRING_BASE_URL = 'http://localhost:8080/api';
+const SPRING_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 
 // Spring 백엔드 API 호출
