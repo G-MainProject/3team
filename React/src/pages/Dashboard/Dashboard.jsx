@@ -544,6 +544,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 		}
 	}, [allowScrollToFooter]);
 
+
 	// 전체 페이지 스크롤 제한
 	useEffect(() => {
 		const handlePageScroll = (e) => {
