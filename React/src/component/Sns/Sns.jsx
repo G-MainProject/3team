@@ -38,10 +38,12 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 	// 높이 조정
 	const adjustHeightToMatchSection = () => {
 		if (snsContainerRef.current) {
-			// Dashboard에서 SNS는 dashboard-grid의 두 번째 섹션 (주식 정보 섹션)과 높이를 맞춤
+			// Dashboard에서 SNS는 dashboard-grid의 첫 번째 section-container (주식 정보 섹션)과 높이를 맞춤
 			const selectors = [
-				'.dashboard-grid .section-container:nth-child(2)', // 일반 CSS - 주식 정보 섹션
-				'[class*="dashboard-grid"] [class*="section-container"]:nth-child(2)', // CSS Module - 주식 정보 섹션
+				'.dashboard-grid .section-container:first-child', // 일반 CSS - 주식 정보 섹션
+				'[class*="dashboard-grid"] [class*="section-container"]:first-child', // CSS Module - 주식 정보 섹션
+				'.dashboard-grid .section-container:nth-child(2)', // 백업 셀렉터
+				'[class*="dashboard-grid"] [class*="section-container"]:nth-child(2)', // 백업 셀렉터
 			];
 			
 			let sectionContainer = null;
@@ -175,7 +177,7 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 		return () => clearInterval(interval);
 	}, [selectedSymbol, loading, activePlatform]);
 
-	// 높이 조정 관련 useEffect
+	// 높이 조정 관련 useEffect (로딩 상태 변경 시)
 	useEffect(() => {
 		const timer = setTimeout(() => adjustHeightToMatchSection(), 100);
 		const handleResize = () => adjustHeightToMatchSection();
@@ -185,6 +187,38 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 			window.removeEventListener('resize', handleResize);
 		};
 	}, [loading]);
+
+	// 컴포넌트 마운트 시 높이 조정 (페이지 이동 시)
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			adjustHeightToMatchSection();
+		}, 200);
+		return () => clearTimeout(timer);
+	}, []); // 빈 의존성 배열로 마운트 시에만 실행
+
+	// Intersection Observer를 사용한 높이 조정 (컴포넌트가 보일 때)
+	useEffect(() => {
+		const currentRef = snsContainerRef.current;
+		if (!currentRef) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						// 컴포넌트가 화면에 보일 때 높이 조정
+						setTimeout(() => adjustHeightToMatchSection(), 100);
+					}
+				});
+			},
+			{ threshold: 0.1 }
+		);
+
+		observer.observe(currentRef);
+
+		return () => {
+			observer.unobserve(currentRef);
+		};
+	}, []);
 
 	// 메시지 자동 스크롤 (활성화)
 	useEffect(() => {
