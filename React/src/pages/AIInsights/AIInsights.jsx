@@ -7,21 +7,17 @@ import Footer from '../../component/Footer/Footer';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { getStockSummary } from '../../services/yahooFinanceApi';
+import newsData from '../../data/newsData.json';
 
-// 뉴스 감성 분석 데이터 (각 뉴스는 하나의 감성만 가짐)
-const newsSentimentData = [
-	'positive', 'positive', 'negative', 'positive', 'neutral', 'negative',
-	'positive', 'negative', 'positive', 'neutral', 'positive', 'negative',
-	'positive', 'neutral', 'neutral', 'positive', 'neutral', 'positive',
-	'negative', 'positive', 'neutral', 'positive', 'negative', 'positive',
-	'neutral', 'positive', 'negative', 'positive', 'neutral', 'positive',
-	'negative', 'positive', 'neutral', 'positive', 'negative', 'positive',
-	'neutral', 'positive', 'negative', 'positive'
-];
-
-// 뉴스 감성 분포 계산
+// 뉴스 감성 분포 계산 함수
 const calculateSentimentRatio = (sentimentData) => {
 	const total = sentimentData.length;
+	if (total === 0) return [
+		{ name: '긍정', value: 0 },
+		{ name: '부정', value: 0 },
+		{ name: '중립', value: 0 },
+	];
+	
 	const positiveCount = sentimentData.filter(sentiment => sentiment === 'positive').length;
 	const negativeCount = sentimentData.filter(sentiment => sentiment === 'negative').length;
 	const neutralCount = sentimentData.filter(sentiment => sentiment === 'neutral').length;
@@ -32,8 +28,6 @@ const calculateSentimentRatio = (sentimentData) => {
 		{ name: '중립', value: Math.round((neutralCount / total) * 100) },
 	];
 };
-
-const CircleGraphData = calculateSentimentRatio(newsSentimentData);
 
 const wordCloudData = [
 	{ text: 'AI', value: 64 },
@@ -53,6 +47,8 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 	const [buttonAnimation, setButtonAnimation] = useState('');
 	const [allowScrollToFooter, setAllowScrollToFooter] = useState(false);
 	const [isInFooter, setIsInFooter] = useState(false);
+	const [newsFilter, setNewsFilter] = useState('all'); // 뉴스 필터 상태 추가
+	const [selectedNews, setSelectedNews] = useState(null); // 선택된 뉴스 상태 추가
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
 
@@ -75,6 +71,20 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 		{ symbol: '207940', name: '삼성바이오로직스' },
 		{ symbol: '006400', name: '삼성SDI' }
 	], []);
+
+	// 필터링된 뉴스 데이터
+	const filteredNewsData = useMemo(() => {
+		if (newsFilter === 'all') {
+			return newsData;
+		}
+		return newsData.filter(news => news.sentiment === newsFilter);
+	}, [newsFilter]);
+
+	// 전체 뉴스 데이터를 기반으로 한 감성 분석 데이터 (항상 전체 비율 표시)
+	const CircleGraphData = useMemo(() => {
+		const sentimentData = newsData.map(news => news.sentiment);
+		return calculateSentimentRatio(sentimentData);
+	}, []);
 
 
 	// TopNav용 주식 데이터 로드
@@ -284,454 +294,86 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 									<h2>뉴스 기사</h2>
 									<p>최신 관련 뉴스 및 시장 동향</p>
 								</div>
+								<div className={styles['news-filter']}>
+									<button 
+										className={`${styles['filter-button']} ${newsFilter === 'all' ? styles['active'] : ''}`}
+										onClick={() => setNewsFilter('all')}
+									>
+										전체
+									</button>
+									<button 
+										className={`${styles['filter-button']} ${newsFilter === 'positive' ? styles['active'] : ''}`}
+										onClick={() => setNewsFilter('positive')}
+									>
+										긍정
+									</button>
+									<button 
+										className={`${styles['filter-button']} ${newsFilter === 'negative' ? styles['active'] : ''}`}
+										onClick={() => setNewsFilter('negative')}
+									>
+										부정
+									</button>
+									<button 
+										className={`${styles['filter-button']} ${newsFilter === 'neutral' ? styles['active'] : ''}`}
+										onClick={() => setNewsFilter('neutral')}
+									>
+										중립
+									</button>
+								</div>
 							</div>
 							<div className={styles['news-section']}>
-								<div className={styles['news-list']}>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>삼성전자, 3분기 실적 발표</h4>
-											<p>삼성전자가 3분기 실적을 발표하며...</p>
-											<span className={styles['news-date']}>2024-01-15</span>
+								{selectedNews ? (
+									// 선택된 뉴스 상세 뷰
+									<div className={styles['news-detail']}>
+										<div className={styles['news-detail-header']}>
+											<button 
+												className={styles['back-button']}
+												onClick={() => setSelectedNews(null)}
+											>
+												<i className="fa-solid fa-arrow-left"></i>
+												뉴스 목록으로 돌아가기
+											</button>
 										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
+										<div className={styles['news-detail-content']}>
+											<div className={styles['news-detail-meta']}>
+												<span className={styles['news-detail-date']}>{selectedNews.date}</span>
+												<span className={`${styles['news-detail-sentiment']} ${styles[selectedNews.sentiment]}`}>
+													{selectedNews.sentiment === 'positive' ? '긍정' : 
+													 selectedNews.sentiment === 'negative' ? '부정' : '중립'}
+												</span>
+											</div>
+											<h2 className={styles['news-detail-title']}>{selectedNews.title}</h2>
+											<div className={styles['news-detail-body']}>
+												<p>{selectedNews.content}</p>
 											</div>
 										</div>
 									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 업계 전망 긍정적</h4>
-											<p>AI 반도체 수요 증가로 업계 전망이...</p>
-											<span className={styles['news-date']}>2024-01-14</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
+								) : (
+									// 뉴스 목록 뷰
+									<div className={styles['news-list']}>
+										{filteredNewsData.map((news, index) => (
+											<div 
+												key={index} 
+												className={`${styles['news-item']} ${styles[news.sentiment]}`}
+												onClick={() => setSelectedNews(news)}
+											>
+												<div className={styles['news-content']}>
+													<h4>{news.title}</h4>
+													<p>{news.content}</p>
+													<span className={styles['news-date']}>{news.date}</span>
+												</div>
+												<div className={styles['sentiment-legend']}>
+													<div className={styles['sentiment-item']}>
+														<span className={styles['sentiment-label']}>
+															{news.sentiment === 'positive' ? '긍정' : 
+															 news.sentiment === 'negative' ? '부정' : '중립'}
+														</span>
+													</div>
+												</div>
 											</div>
-										</div>
+										))}
 									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>글로벌 경제 불확실성 지속</h4>
-											<p>글로벌 경제 불확실성이 지속되며...</p>
-											<span className={styles['news-date']}>2024-01-13</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>삼성전자 메모리 반도체 수요 급증</h4>
-											<p>AI 서버 수요 증가로 메모리 반도체 시장이...</p>
-											<span className={styles['news-date']}>2024-01-12</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 공급망 안정화 논의</h4>
-											<p>정부와 업계가 반도체 공급망 안정화를 논의...</p>
-											<span className={styles['news-date']}>2024-01-11</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>경기 둔화 우려 확산</h4>
-											<p>글로벌 경기 둔화 우려가 반도체 업계에...</p>
-											<span className={styles['news-date']}>2024-01-10</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>삼성전자 HBM3 기술 선도</h4>
-											<p>삼성전자가 HBM3 기술에서 경쟁 우위를...</p>
-											<span className={styles['news-date']}>2024-01-09</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 장비 수출 제한 우려</h4>
-											<p>미국의 반도체 장비 수출 제한이 업계에...</p>
-											<span className={styles['news-date']}>2024-01-08</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>AI 반도체 투자 확대</h4>
-											<p>삼성전자가 AI 반도체 분야 투자를 대폭...</p>
-											<span className={styles['news-date']}>2024-01-07</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 시장 전망 보고서 발표</h4>
-											<p>업계 단체가 2024년 반도체 시장 전망을...</p>
-											<span className={styles['news-date']}>2024-01-06</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>삼성전자 5G 기술 혁신</h4>
-											<p>삼성전자가 5G 기술에서 새로운 돌파구를...</p>
-											<span className={styles['news-date']}>2024-01-05</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 원자재 가격 상승</h4>
-											<p>반도체 제조에 필요한 원자재 가격이 급등...</p>
-											<span className={styles['news-date']}>2024-01-04</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>AI 칩셋 수주 증가</h4>
-											<p>삼성전자가 AI 칩셋 분야에서 대규모 수주를...</p>
-											<span className={styles['news-date']}>2024-01-03</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 업계 컨퍼런스 개최</h4>
-											<p>글로벌 반도체 업계 컨퍼런스가 서울에서...</p>
-											<span className={styles['news-date']}>2024-01-02</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>경쟁사 기술 추격</h4>
-											<p>경쟁사들이 삼성전자 기술을 빠르게 따라잡고...</p>
-											<span className={styles['news-date']}>2024-01-01</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>메모리 반도체 가격 상승</h4>
-											<p>DDR5 메모리 반도체 가격이 급등하며...</p>
-											<span className={styles['news-date']}>2023-12-31</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 설비 투자 계획</h4>
-											<p>삼성전자가 내년 반도체 설비 투자 계획을...</p>
-											<span className={styles['news-date']}>2023-12-30</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>자율주행 반도체 개발</h4>
-											<p>삼성전자가 자율주행용 반도체 개발에 성공...</p>
-											<span className={styles['news-date']}>2023-12-29</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>글로벌 경기 둔화 우려</h4>
-											<p>글로벌 경기 둔화로 반도체 수요 감소 우려...</p>
-											<span className={styles['news-date']}>2023-12-28</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>양자컴퓨팅 반도체 연구</h4>
-											<p>삼성전자가 양자컴퓨팅 반도체 연구에 투자...</p>
-											<span className={styles['news-date']}>2023-12-27</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 공급망 재편</h4>
-											<p>글로벌 반도체 공급망이 재편되며...</p>
-											<span className={styles['news-date']}>2023-12-26</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>차세대 메모리 기술</h4>
-											<p>삼성전자가 차세대 메모리 기술 개발에 성공...</p>
-											<span className={styles['news-date']}>2023-12-25</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>환경 규제 강화</h4>
-											<p>반도체 업계에 환경 규제가 강화되며...</p>
-											<span className={styles['news-date']}>2023-12-24</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>AI 서버용 반도체 수요 급증</h4>
-											<p>AI 서버 수요 증가로 전용 반도체 수요가...</p>
-											<span className={styles['news-date']}>2023-12-23</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 인력 부족</h4>
-											<p>반도체 업계에서 고급 인력 부족 현상이...</p>
-											<span className={styles['news-date']}>2023-12-22</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>삼성전자 R&D 투자 확대</h4>
-											<p>삼성전자가 R&D 투자를 대폭 확대한다고...</p>
-											<span className={styles['news-date']}>2023-12-21</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>글로벌 경쟁 심화</h4>
-											<p>중국 반도체 업체들의 급성장으로 경쟁이...</p>
-											<span className={styles['news-date']}>2023-12-20</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>메모리 반도체 수출 증가</h4>
-											<p>삼성전자 메모리 반도체 수출이 전년 대비...</p>
-											<span className={styles['news-date']}>2023-12-19</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 공정 기술 발전</h4>
-											<p>반도체 공정 기술이 지속적으로 발전하며...</p>
-											<span className={styles['news-date']}>2023-12-18</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>삼성전자 파트너십 확대</h4>
-											<p>삼성전자가 글로벌 기업들과 파트너십을...</p>
-											<span className={styles['news-date']}>2023-12-17</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 장비 수급 불안</h4>
-											<p>반도체 제조 장비 수급이 불안정해지며...</p>
-											<span className={styles['news-date']}>2023-12-16</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>AI 칩 설계 기술 혁신</h4>
-											<p>삼성전자가 AI 칩 설계 기술에서 혁신을...</p>
-											<span className={styles['news-date']}>2023-12-15</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 시장 규모 변화</h4>
-											<p>글로벌 반도체 시장 규모가 예상과 다르게...</p>
-											<span className={styles['news-date']}>2023-12-14</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>삼성전자 특허 출원 증가</h4>
-											<p>삼성전자의 반도체 관련 특허 출원이 급증...</p>
-											<span className={styles['news-date']}>2023-12-13</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>글로벌 공급망 불안정</h4>
-											<p>글로벌 공급망 불안정으로 반도체 생산에...</p>
-											<span className={styles['news-date']}>2023-12-12</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>메모리 반도체 기술 선도</h4>
-											<p>삼성전자가 메모리 반도체 기술에서 세계 선도...</p>
-											<span className={styles['news-date']}>2023-12-11</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['neutral']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 업계 동향 분석</h4>
-											<p>전문가들이 반도체 업계 동향을 분석한 결과...</p>
-											<span className={styles['news-date']}>2023-12-10</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>중립</span>
-											</div>
-										</div>
-									</div>
-								</div>
+								)}
 							</div>
 						</div>
 
@@ -747,6 +389,21 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 								<CircleGraph
 									data={CircleGraphData}
 									colors={['#34a853', '#ea4335', '#fbbc04']}
+									selectedFilter={newsFilter}
+									onSegmentClick={(data) => {
+										if (data && data.name) {
+											// 감성 이름을 영어로 변환
+											const sentimentMap = {
+												'긍정': 'positive',
+												'부정': 'negative',
+												'중립': 'neutral'
+											};
+											const sentiment = sentimentMap[data.name];
+											if (sentiment) {
+												setNewsFilter(sentiment);
+											}
+										}
+									}}
 								/>
 							</div>
 						</div>

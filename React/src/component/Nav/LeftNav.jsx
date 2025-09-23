@@ -18,7 +18,7 @@ export default function Nav() {
     return (
         <div className='left-nav-container'>
             <div className='left-nav-wrapper'>
-                <a href="/dashboard" className='left-nav-logo'><img src={logo} alt="logoWOC" /></a>
+                <button className='left-nav-logo' onClick={() => navigate('/dashboard')}><img src={logo} alt="logoWOC" /></button>
                 <div className='left-nav-menu'>
                     <button className='left-nav-item' onClick={() => navigate('/stock-analysis')}>
                         <i className="fas fa-chart-line"></i>

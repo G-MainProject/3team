@@ -10,6 +10,7 @@ import UnifiedStockChart from '../../component/UnifiedStockChart/UnifiedStockCha
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { getStockSummary } from '../../services/yahooFinanceApi';
+import newsData from '../../data/newsData.json';
 
 // 뉴스 감성 분석 데이터 (각 뉴스는 하나의 감성만 가짐)
 const newsSentimentData = [
@@ -387,10 +388,10 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 
 		loadStockData();
 
-		// 10초마다 데이터 새로고침 (테스트용)
+		// 1분마다 데이터 새로고침
 		const interval = setInterval(() => {
 			refreshStockData();
-		}, 10000);
+		}, 60000);
 
 		return () => clearInterval(interval);
 	}, [chartInterval, selectedSymbol, topNavStocks, refreshStockData]); // 원래 의존성으로 복원
@@ -896,42 +897,26 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 							</div>
 							<div className={styles['news-section']}>
 								<div className={styles['news-list']}>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>삼성전자, 3분기 실적 발표</h4>
-											<p>삼성전자가 3분기 실적을 발표하며...</p>
-											<span className={styles['news-date']}>2024-01-15</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
+									{newsData.slice(0, 3).map((news, index) => (
+										<div
+											key={index}
+											className={`${styles['news-item']} ${styles[news.sentiment]}`}
+										>
+											<div className={styles['news-content']}>
+												<h4>{news.title}</h4>
+												<p>{news.content}</p>
+												<span className={styles['news-date']}>{news.date}</span>
+											</div>
+											<div className={styles['sentiment-legend']}>
+												<div className={styles['sentiment-item']}>
+													<span className={styles['sentiment-label']}>
+														{news.sentiment === 'positive' ? '긍정' :
+														 news.sentiment === 'negative' ? '부정' : '중립'}
+													</span>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['positive']}`}>
-										<div className={styles['news-content']}>
-											<h4>반도체 업계 전망 긍정적</h4>
-											<p>AI 반도체 수요 증가로 업계 전망이...</p>
-											<span className={styles['news-date']}>2024-01-14</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>긍정</span>
-											</div>
-										</div>
-									</div>
-									<div className={`${styles['news-item']} ${styles['negative']}`}>
-										<div className={styles['news-content']}>
-											<h4>글로벌 경제 불확실성 지속</h4>
-											<p>글로벌 경제 불확실성이 지속되며...</p>
-											<span className={styles['news-date']}>2024-01-13</span>
-										</div>
-										<div className={styles['sentiment-legend']}>
-											<div className={styles['sentiment-item']}>
-												<span className={styles['sentiment-label']}>부정</span>
-											</div>
-										</div>
-									</div>
+									))}
 								</div>
 							</div>
 						</div>

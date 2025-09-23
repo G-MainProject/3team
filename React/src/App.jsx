@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { PublicRoute, PrivateRoute } from './pages/Login/ProtectedRoute';
 
 import Home from './pages/Home/Home.jsx';
@@ -17,7 +18,8 @@ function App() {
 	return (
 		<BrowserRouter>
 			<AuthProvider>
-				<Routes>
+				<NotificationProvider>
+					<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="/login" element={
 						<PublicRoute>
@@ -59,6 +61,7 @@ function App() {
 						</PrivateRoute>
 					} />
 				</Routes>
+				</NotificationProvider>
 			</AuthProvider>
 		</BrowserRouter>
 	);
