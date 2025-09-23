@@ -1,5 +1,6 @@
 # --- Stage 1: React Frontend 빌드 ---
-FROM node:18-alpine AS frontend-builder
+# Node.js 버전을 18에서 20으로 업그레이드하여 경고를 해결합니다.
+FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app/React
 
@@ -7,12 +8,17 @@ WORKDIR /app/React
 COPY React/package.json React/package-lock.json ./
 RUN npm install
 
-# 나머지 React 소스 코드 복사 및 빌드
+# 나머지 React 소스 코드 복사
 COPY React/src ./src
 COPY React/public ./public
 COPY React/index.html ./
 COPY React/vite.config.js ./
 COPY React/eslint.config.js ./
+
+# 빌드에 필요한 data 폴더를 복사합니다.
+COPY data ./data
+
+# React 앱 빌드
 RUN npm run build
 
 # --- Stage 2: Spring Backend 빌드 ---

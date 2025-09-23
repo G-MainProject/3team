@@ -1,6 +1,5 @@
 # flyctl launch added from .gitignore
 **/.env
-**/data
 
 # flyctl launch added from Python/Gemini_Api/.gitignore
 # Python cache files
