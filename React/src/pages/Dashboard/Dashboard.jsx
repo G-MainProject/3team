@@ -10,7 +10,7 @@ import UnifiedStockChart from '../../component/UnifiedStockChart/UnifiedStockCha
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { getStockSummary } from '../../services/yahooFinanceApi';
-import newsData from '../../data/newsData.json';
+import newsData from '../../../../data/newsData.json';
 
 // 뉴스 감성 분석 데이터 (각 뉴스는 하나의 감성만 가짐)
 const newsSentimentData = [

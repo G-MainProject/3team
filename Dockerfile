@@ -16,7 +16,7 @@ COPY React/vite.config.js ./
 COPY React/eslint.config.js ./
 
 # 빌드에 필요한 data 폴더를 복사합니다.
-COPY data ./src/data
+COPY data ./data 
 
 # React 앱 빌드
 RUN npm run build

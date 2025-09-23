@@ -7,21 +7,28 @@ import Footer from '../../component/Footer/Footer';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { getStockSummary } from '../../services/yahooFinanceApi';
-import newsData from '../../data/newsData.json';
+import newsData from '../../../../data/newsData.json';
 
 // 뉴스 감성 분포 계산 함수
 const calculateSentimentRatio = (sentimentData) => {
 	const total = sentimentData.length;
-	if (total === 0) return [
-		{ name: '긍정', value: 0 },
-		{ name: '부정', value: 0 },
-		{ name: '중립', value: 0 },
-	];
-	
-	const positiveCount = sentimentData.filter(sentiment => sentiment === 'positive').length;
-	const negativeCount = sentimentData.filter(sentiment => sentiment === 'negative').length;
-	const neutralCount = sentimentData.filter(sentiment => sentiment === 'neutral').length;
-	
+	if (total === 0)
+		return [
+			{ name: '긍정', value: 0 },
+			{ name: '부정', value: 0 },
+			{ name: '중립', value: 0 },
+		];
+
+	const positiveCount = sentimentData.filter(
+		(sentiment) => sentiment === 'positive'
+	).length;
+	const negativeCount = sentimentData.filter(
+		(sentiment) => sentiment === 'negative'
+	).length;
+	const neutralCount = sentimentData.filter(
+		(sentiment) => sentiment === 'neutral'
+	).length;
+
 	return [
 		{ name: '긍정', value: Math.round((positiveCount / total) * 100) },
 		{ name: '부정', value: Math.round((negativeCount / total) * 100) },
@@ -62,37 +69,39 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 	// TopNav용 주식 데이터 상태
 	const [topNavStocks, setTopNavStocks] = useState([]);
 	const [topNavLoading, setTopNavLoading] = useState(true);
-	
+
 	// 주요 주식 심볼 목록
-	const stockSymbols = useMemo(() => [
-		{ symbol: '005930', name: '삼성전자' },
-		{ symbol: '000660', name: 'SK하이닉스' },
-		{ symbol: '035420', name: 'NAVER' },
-		{ symbol: '207940', name: '삼성바이오로직스' },
-		{ symbol: '006400', name: '삼성SDI' }
-	], []);
+	const stockSymbols = useMemo(
+		() => [
+			{ symbol: '005930', name: '삼성전자' },
+			{ symbol: '000660', name: 'SK하이닉스' },
+			{ symbol: '035420', name: 'NAVER' },
+			{ symbol: '207940', name: '삼성바이오로직스' },
+			{ symbol: '006400', name: '삼성SDI' },
+		],
+		[]
+	);
 
 	// 필터링된 뉴스 데이터
 	const filteredNewsData = useMemo(() => {
 		if (newsFilter === 'all') {
 			return newsData;
 		}
-		return newsData.filter(news => news.sentiment === newsFilter);
+		return newsData.filter((news) => news.sentiment === newsFilter);
 	}, [newsFilter]);
 
 	// 전체 뉴스 데이터를 기반으로 한 감성 분석 데이터 (항상 전체 비율 표시)
 	const CircleGraphData = useMemo(() => {
-		const sentimentData = newsData.map(news => news.sentiment);
+		const sentimentData = newsData.map((news) => news.sentiment);
 		return calculateSentimentRatio(sentimentData);
 	}, []);
-
 
 	// TopNav용 주식 데이터 로드
 	useEffect(() => {
 		const loadTopNavData = async () => {
 			try {
 				setTopNavLoading(true);
-				
+
 				// 모든 주식의 요약 정보를 병렬로 가져오기
 				const stockDataPromises = stockSymbols.map(async (stock) => {
 					try {
@@ -104,7 +113,7 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 								change: summary.change,
 								changePercent: summary.changePercent,
 								volume: summary.volume,
-								marketCap: summary.marketCap
+								marketCap: summary.marketCap,
 							};
 						} else {
 							return {
@@ -113,7 +122,7 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 								change: 0,
 								changePercent: 0,
 								volume: 0,
-								marketCap: 0
+								marketCap: 0,
 							};
 						}
 					} catch (error) {
@@ -124,24 +133,26 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 							change: 0,
 							changePercent: 0,
 							volume: 0,
-							marketCap: 0
+							marketCap: 0,
 						};
 					}
 				});
 
 				const allStockData = await Promise.all(stockDataPromises);
-				
+
 				// 변동폭 순으로 정렬 (절댓값 기준)
-				const sortedStocks = allStockData.sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent));
-				
+				const sortedStocks = allStockData.sort(
+					(a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent)
+				);
+
 				setTopNavStocks(sortedStocks);
-				
+
 				// 초기 로드 시 변동폭 순위 1위로 selectedSymbol 설정
 				const topStock = sortedStocks[0];
 				if (topStock && onSymbolChange) {
 					onSymbolChange(topStock.symbol);
 				}
-				
+
 				setTopNavLoading(false);
 			} catch (error) {
 				console.error('TopNav 주식 데이터 로드 실패:', error);
@@ -151,14 +162,16 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 
 		// 초기 로드
 		loadTopNavData();
-		
+
 		// 1분마다 업데이트
 		const interval = setInterval(loadTopNavData, 60000);
 		return () => clearInterval(interval);
 	}, [onSymbolChange, stockSymbols]);
 
 	useEffect(() => {
-		const dashboardMain = document.querySelector(`.${styles['ai-insights-main']}`);
+		const dashboardMain = document.querySelector(
+			`.${styles['ai-insights-main']}`
+		);
 
 		const handleScroll = () => {
 			if (!dashboardMain) return;
@@ -208,7 +221,9 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 	// 전체 페이지 스크롤 제한
 	useEffect(() => {
 		const handlePageScroll = (e) => {
-			const dashboardMain = document.querySelector(`.${styles['ai-insights-main']}`);
+			const dashboardMain = document.querySelector(
+				`.${styles['ai-insights-main']}`
+			);
 			if (!dashboardMain) return;
 
 			const scrollTop = dashboardMain.scrollTop;
@@ -248,7 +263,9 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 				setAllowScrollToFooter(false);
 				setIsInFooter(false);
 
-				const dashboardMain = document.querySelector(`.${styles['ai-insights-main']}`);
+				const dashboardMain = document.querySelector(
+					`.${styles['ai-insights-main']}`
+				);
 				if (dashboardMain) {
 					dashboardMain.scrollTo({
 						top: 0,
@@ -276,14 +293,13 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 				<LeftNav />
 				<div className={styles['ai-insights-main']}>
 					<div className={styles['ai-insights-grid']}>
-						<TopNav 
+						<TopNav
 							selectedSymbol={selectedSymbol}
 							onSymbolChange={onSymbolChange}
 							topNavStocks={topNavStocks}
 							topNavLoading={topNavLoading}
 							onStockSelect={onSymbolChange}
 						/>
-
 					</div>
 
 					<div className={styles['ai-insights-grid2']}>
@@ -295,26 +311,34 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 									<p>최신 관련 뉴스 및 시장 동향</p>
 								</div>
 								<div className={styles['news-filter']}>
-									<button 
-										className={`${styles['filter-button']} ${newsFilter === 'all' ? styles['active'] : ''}`}
+									<button
+										className={`${styles['filter-button']} ${
+											newsFilter === 'all' ? styles['active'] : ''
+										}`}
 										onClick={() => setNewsFilter('all')}
 									>
 										전체
 									</button>
-									<button 
-										className={`${styles['filter-button']} ${newsFilter === 'positive' ? styles['active'] : ''}`}
+									<button
+										className={`${styles['filter-button']} ${
+											newsFilter === 'positive' ? styles['active'] : ''
+										}`}
 										onClick={() => setNewsFilter('positive')}
 									>
 										긍정
 									</button>
-									<button 
-										className={`${styles['filter-button']} ${newsFilter === 'negative' ? styles['active'] : ''}`}
+									<button
+										className={`${styles['filter-button']} ${
+											newsFilter === 'negative' ? styles['active'] : ''
+										}`}
 										onClick={() => setNewsFilter('negative')}
 									>
 										부정
 									</button>
-									<button 
-										className={`${styles['filter-button']} ${newsFilter === 'neutral' ? styles['active'] : ''}`}
+									<button
+										className={`${styles['filter-button']} ${
+											newsFilter === 'neutral' ? styles['active'] : ''
+										}`}
 										onClick={() => setNewsFilter('neutral')}
 									>
 										중립
@@ -326,7 +350,7 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 									// 선택된 뉴스 상세 뷰
 									<div className={styles['news-detail']}>
 										<div className={styles['news-detail-header']}>
-											<button 
+											<button
 												className={styles['back-button']}
 												onClick={() => setSelectedNews(null)}
 											>
@@ -336,13 +360,24 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 										</div>
 										<div className={styles['news-detail-content']}>
 											<div className={styles['news-detail-meta']}>
-												<span className={styles['news-detail-date']}>{selectedNews.date}</span>
-												<span className={`${styles['news-detail-sentiment']} ${styles[selectedNews.sentiment]}`}>
-													{selectedNews.sentiment === 'positive' ? '긍정' : 
-													 selectedNews.sentiment === 'negative' ? '부정' : '중립'}
+												<span className={styles['news-detail-date']}>
+													{selectedNews.date}
+												</span>
+												<span
+													className={`${styles['news-detail-sentiment']} ${
+														styles[selectedNews.sentiment]
+													}`}
+												>
+													{selectedNews.sentiment === 'positive'
+														? '긍정'
+														: selectedNews.sentiment === 'negative'
+														? '부정'
+														: '중립'}
 												</span>
 											</div>
-											<h2 className={styles['news-detail-title']}>{selectedNews.title}</h2>
+											<h2 className={styles['news-detail-title']}>
+												{selectedNews.title}
+											</h2>
 											<div className={styles['news-detail-body']}>
 												<p>{selectedNews.content}</p>
 											</div>
@@ -352,21 +387,28 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 									// 뉴스 목록 뷰
 									<div className={styles['news-list']}>
 										{filteredNewsData.map((news, index) => (
-											<div 
-												key={index} 
-												className={`${styles['news-item']} ${styles[news.sentiment]}`}
+											<div
+												key={index}
+												className={`${styles['news-item']} ${
+													styles[news.sentiment]
+												}`}
 												onClick={() => setSelectedNews(news)}
 											>
 												<div className={styles['news-content']}>
 													<h4>{news.title}</h4>
 													<p>{news.content}</p>
-													<span className={styles['news-date']}>{news.date}</span>
+													<span className={styles['news-date']}>
+														{news.date}
+													</span>
 												</div>
 												<div className={styles['sentiment-legend']}>
 													<div className={styles['sentiment-item']}>
 														<span className={styles['sentiment-label']}>
-															{news.sentiment === 'positive' ? '긍정' : 
-															 news.sentiment === 'negative' ? '부정' : '중립'}
+															{news.sentiment === 'positive'
+																? '긍정'
+																: news.sentiment === 'negative'
+																? '부정'
+																: '중립'}
 														</span>
 													</div>
 												</div>
@@ -394,9 +436,9 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 										if (data && data.name) {
 											// 감성 이름을 영어로 변환
 											const sentimentMap = {
-												'긍정': 'positive',
-												'부정': 'negative',
-												'중립': 'neutral'
+												긍정: 'positive',
+												부정: 'negative',
+												중립: 'neutral',
 											};
 											const sentiment = sentimentMap[data.name];
 											if (sentiment) {
@@ -448,18 +490,34 @@ export default function AIInsights({ selectedSymbol, onSymbolChange }) {
 									<div className={styles['ai-prediction']}>
 										<h3>투자 권고사항</h3>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>단기 (1-3개월):</span>
-											<span className={`${styles['prediction-value']} ${styles['positive']}`}>매수</span>
+											<span className={styles['prediction-label']}>
+												단기 (1-3개월):
+											</span>
+											<span
+												className={`${styles['prediction-value']} ${styles['positive']}`}
+											>
+												매수
+											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>중기 (3-6개월):</span>
-											<span className={`${styles['prediction-value']} ${styles['positive']}`}>
+											<span className={styles['prediction-label']}>
+												중기 (3-6개월):
+											</span>
+											<span
+												className={`${styles['prediction-value']} ${styles['positive']}`}
+											>
 												강력 매수
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>장기 (6개월+):</span>
-											<span className={`${styles['prediction-value']} ${styles['negative']}`}>매도</span>
+											<span className={styles['prediction-label']}>
+												장기 (6개월+):
+											</span>
+											<span
+												className={`${styles['prediction-value']} ${styles['negative']}`}
+											>
+												매도
+											</span>
 										</div>
 									</div>
 								</div>
