@@ -2,9 +2,16 @@
 
 app = '3team'
 primary_region = 'icn'
+[build]
+  [build.args]
+    VITE_FIREBASE_API_KEY = "dummy"
+    VITE_FIREBASE_APP_ID = "dummy"
+    VITE_FIREBASE_AUTH_DOMAIN = "dummy"
+    VITE_FIREBASE_MESSAGING_SENDER_ID = "dummy"
+    VITE_FIREBASE_PROJECT_ID = "dummy"
+    VITE_FIREBASE_STORAGE_BUCKET = "dummy"
+    VITE_API_URL = "dummy"
 
-# 이 [env] 블록을 추가하거나 수정해야 합니다.
-# 값은 "dummy"로 넣어도 괜찮습니다. 실제 값은 Fly.io Secrets에서 가져옵니다.
 [env]
   DART_API_KEY = "dummy"
   GOOGLE_API_KEY = "dummy"
@@ -24,7 +31,6 @@ primary_region = 'icn'
   VITE_FIREBASE_PROJECT_ID = "dummy"
   VITE_FIREBASE_STORAGE_BUCKET = "dummy"
   VITE_API_URL = "dummy"
-
 
 [http_service]
   internal_port = 8080
