@@ -23,11 +23,51 @@ from sentiment_analyzer import SentimentAnalyzer
 from keyword_extractor import KeywordExtractor
 
 FAIL_MESSAGE = "본문을 찾을 수 없습니다. (검수 필요)"
-DEFAULT_SEARCH_WORD = "롯데"
+DEFAULT_SEARCH_WORD_FALLBACK = "한화"
 MAX_ARTICLES_DEFAULT = 30
 WINDOW_DAYS_DEFAULT = 7
-SENTIMENT_POS_THRESHOLD = 0.02
-SENTIMENT_NEG_THRESHOLD = -0.02
+SENTIMENT_POS_THRESHOLD = 0.03
+SENTIMENT_NEG_THRESHOLD = -0.03
+
+
+def _load_default_search_words() -> list[str]:
+    script_dir = Path(__file__).resolve().parent
+    repo_root = script_dir.parent.parent
+    data_path = repo_root / "data" / "row" / "top_movers_auto.json"
+
+    try:
+        with data_path.open("r", encoding="utf-8") as fp:
+            payload = json.load(fp)
+    except FileNotFoundError:
+        return []
+    except (json.JSONDecodeError, OSError):
+        return []
+
+    names: list[str] = []
+    seen: set[str] = set()
+
+    details = payload.get("details")
+    if isinstance(details, list):
+        for entry in details:
+            if not isinstance(entry, dict):
+                continue
+            raw_name = entry.get("name")
+            if not isinstance(raw_name, str):
+                continue
+            candidate = raw_name.strip()
+            if not candidate:
+                continue
+            if candidate in seen:
+                continue
+            seen.add(candidate)
+            names.append(candidate)
+    return names
+
+
+DEFAULT_SEARCH_WORDS = _load_default_search_words()
+if not DEFAULT_SEARCH_WORDS:
+    DEFAULT_SEARCH_WORDS = [DEFAULT_SEARCH_WORD_FALLBACK]
+DEFAULT_SEARCH_WORD = DEFAULT_SEARCH_WORDS[0]
 
 
 def filter_keywords(keywords: Iterable[str], *, min_core_length: int = 2) -> list[str]:
@@ -338,8 +378,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--search-word",
-        default=DEFAULT_SEARCH_WORD,
-        help="네이버 뉴스 검색어 (기본: 삼성전자)",
+        default=None,
+        help=f"네이버 뉴스 검색어 (미입력 시 top_movers_auto.json 이름 순회, 기본 첫 종목: {DEFAULT_SEARCH_WORD})",
     )
     parser.add_argument(
         "--max-articles",
@@ -376,35 +416,60 @@ def main() -> None:
     client_id = os.getenv("NAVER_CLIENT_ID")
     client_secret = os.getenv("NAVER_CLIENT_SECRET")
     if not client_id or not client_secret:
-        print("NAVER_CLIENT_ID 또는 NAVER_CLIENT_SECRET 환경 변수가 설정되지 않았습니다.")
-        print(".env 파일을 확인해 주세요.")
+        print("NAVER_CLIENT_ID 또는 NAVER_CLIENT_SECRET 환경 변수가 설정되어 있지 않습니다.")
+        print(".env 파일을 확인해주세요.")
         return
 
-    news_data = fetch_recent_news(
-        args.search_word,
-        client_id=client_id,
-        client_secret=client_secret,
-        max_articles=args.max_articles,
-        window_days=args.window_days,
-    )
-    if not news_data:
-        print("수집된 뉴스가 없어서 리포트를 생성할 수 없습니다.")
-        return
+    if args.search_word:
+        search_words = [args.search_word.strip()]
+    else:
+        search_words = [word.strip() for word in DEFAULT_SEARCH_WORDS]
 
-    report = generate_comprehensive_report(
-        args.search_word,
-        news_data,
-        resources_dir=str(script_dir),
-    )
+    search_words = [word for word in search_words if word]
+    if not search_words:
+        search_words = [DEFAULT_SEARCH_WORD_FALLBACK]
 
-    output_path = args.output or (data_dir / "final_report.json")
-    try:
-        with output_path.open("w", encoding="utf-8") as fp:
-            json.dump(report, fp, ensure_ascii=False, indent=4)
-        print(f"\n리포트를 '{output_path}'에 저장했습니다.")
-    except Exception as exc:
-        print(f"리포트 저장 중 오류가 발생했습니다: {exc}")
+    base_output = args.output or (data_dir / "final_report.json")
 
+    aggregated_reports: list[dict] = []
+    failed_targets: list[str] = []
+
+    for idx, search_word in enumerate(search_words, start=1):
+        print(f"\n=== [{idx}/{len(search_words)}] '{search_word}' 분석 시작 ===")
+        news_data = fetch_recent_news(
+            search_word,
+            client_id=client_id,
+            client_secret=client_secret,
+            max_articles=args.max_articles,
+            window_days=args.window_days,
+        )
+        if not news_data:
+            print("뉴스를 충분히 가져오지 못해 보고서를 생성하지 않습니다.")
+            failed_targets.append(search_word)
+            continue
+
+        report = generate_comprehensive_report(
+            search_word,
+            news_data,
+            resources_dir=str(script_dir),
+        )
+
+        aggregated_reports.append(report)
+        print("\n보고서를 메모리에 누적했습니다.")
+
+    if aggregated_reports:
+        try:
+            final_payload = aggregated_reports if len(aggregated_reports) > 1 else aggregated_reports[0]
+            with base_output.open("w", encoding="utf-8") as fp:
+                json.dump(final_payload, fp, ensure_ascii=False, indent=4)
+            print(f"\n보고서를 '{base_output}'에 저장했습니다.")
+        except Exception as exc:
+            print(f"보고서 저장 중 오류가 발생했습니다: {exc}")
+
+    if failed_targets:
+        print("\n생성에 실패한 검색어:")
+        for word in failed_targets:
+            print(f" - {word}")
 
 if __name__ == "__main__":
     main()
