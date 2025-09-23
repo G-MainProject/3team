@@ -138,11 +138,15 @@ const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, o
   // 주식 클릭 핸들러
   const handleStockClick = (stock) => {
     setSelectedStock(stock.symbol)
-    if (onSymbolChange) {
+    if (onStockSelect) { // onStockSelect가 제공되면 우선적으로 호출
+      onStockSelect(stock.symbol)
+    } else if (onSymbolChange) { // onStockSelect가 없으면 onSymbolChange 호출
       onSymbolChange(stock.symbol)
     }
-    // Dashboard로 이동하면서 해당 주식 선택
-    navigate('/dashboard', { state: { selectedSymbol: stock.symbol } })
+    // onStockSelect가 제공되지 않는 경우에만 Dashboard로 이동
+    if (!onStockSelect) {
+      navigate('/dashboard', { state: { selectedSymbol: stock.symbol } })
+    }
   }
 
   // 벨 버튼 클릭 핸들러
