@@ -63,6 +63,7 @@ const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, o
           
           // 알림 히스토리에 추가
           const newNotification = {
+            id: Date.now(), // 고유 ID 추가
             previousStock: {
               name: previousTopStock.name,
               rank: previousRank,
