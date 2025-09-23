@@ -4,17 +4,17 @@ import './TopNav.css'
 import maleAvatar from '../../assets/images/male.jpg'
 import femaleAvatar from '../../assets/images/female.jpg'
 import { useAuth } from '../../contexts/AuthContext'
+import { useNotification } from '../../contexts/NotificationContext'
 
 const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, onStockSelect }) => {
   const { user, logout } = useAuth()
+  const { notificationCount, notificationHistory, clearNotifications, setNotificationCount, setNotificationHistory } = useNotification()
   const [topStocks, setTopStocks] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedStock, setSelectedStock] = useState(selectedSymbol || '005930') // props에서 받은 값 사용
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
-  const [notificationCount, setNotificationCount] = useState(0)
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
-  const [notificationHistory, setNotificationHistory] = useState([])
   const [previousTopStock, setPreviousTopStock] = useState(null)
   // refreshing은 props로 받아서 사용
   const dropdownRef = useRef(null)
@@ -63,7 +63,6 @@ const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, o
           
           // 알림 히스토리에 추가
           const newNotification = {
-            id: Date.now(),
             previousStock: {
               name: previousTopStock.name,
               rank: previousRank,
@@ -74,7 +73,6 @@ const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, o
               rank: currentRank,
               changePercent: newTopStocks[0].changePercent
             },
-            time: new Date().toLocaleTimeString(),
             type: 'rank_change'
           }
           setNotificationHistory(prev => [newNotification, ...prev.slice(0, 9)]) // 최대 10개 유지
@@ -150,7 +148,7 @@ const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, o
   const handleBellClick = () => {
     setShowNotificationDropdown(!showNotificationDropdown)
     if (notificationCount > 0) {
-      setNotificationCount(0) // 알림 확인 시 카운트 리셋
+      clearNotifications() // 알림 확인 시 카운트 리셋
     }
   }
 
