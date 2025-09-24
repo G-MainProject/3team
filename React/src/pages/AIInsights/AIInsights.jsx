@@ -29,6 +29,7 @@ export default function AIInsights({ selectedSymbol: globalSelectedSymbol }) {
     const footerRef = useRef(null);
     const showFooterButtonRef = useRef(false);
     const newsSectionRef = useRef(null); // 뉴스 섹션 스크롤을 위한 ref 추가
+    const scrollPositionRef = useRef(0); // 스크롤 위치 저장을 위한 ref 추가
 
     // Initialize localSelectedSymbol from globalSelectedSymbol or URL state
     useEffect(() => {
@@ -217,6 +218,9 @@ export default function AIInsights({ selectedSymbol: globalSelectedSymbol }) {
     useEffect(() => {
         if (selectedNews && newsSectionRef.current) {
             newsSectionRef.current.scrollTop = 0;
+        } else if (selectedNews === null && newsSectionRef.current) {
+            // 뉴스 목록으로 돌아올 때 스크롤 위치 복원
+            newsSectionRef.current.scrollTop = scrollPositionRef.current;
         }
     }, [selectedNews]);
 
@@ -443,7 +447,12 @@ export default function AIInsights({ selectedSymbol: globalSelectedSymbol }) {
                                                 className={`${styles['news-item']} ${
                                                     styles[news.sentiment]
                                                 }`}
-                                                onClick={() => setSelectedNews(news)}
+                                                onClick={() => {
+                                                    if (newsSectionRef.current) {
+                                                        scrollPositionRef.current = newsSectionRef.current.scrollTop;
+                                                    }
+                                                    setSelectedNews(news);
+                                                }}
                                             >
                                                 <div className={styles['news-content']}>
                                                     <h4>{news.title}</h4>
