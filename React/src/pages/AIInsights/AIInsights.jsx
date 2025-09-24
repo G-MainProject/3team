@@ -147,6 +147,7 @@ export default function AIInsights({ selectedSymbol: globalSelectedSymbol }) {
     // TopNav용 주식 데이터 로드
     useEffect(() => {
         const loadTopNavData = async () => {
+            if (stockSymbols.length === 0) return; // 심볼이 준비될 때까지 기다림
             try {
                 setTopNavLoading(true);
 
@@ -155,7 +156,7 @@ export default function AIInsights({ selectedSymbol: globalSelectedSymbol }) {
                     try {
                         const summary = await getStockSummary(stock.symbol);
                         if (summary) {
-                            return { 
+                            return {
                                 ...stock,
                                 currentPrice: summary.currentPrice,
                                 change: summary.change,
@@ -164,24 +165,17 @@ export default function AIInsights({ selectedSymbol: globalSelectedSymbol }) {
                                 marketCap: summary.marketCap,
                             };
                         } else {
+                            // 요약 정보 가져오기 실패 시 기본값 설정
                             return {
                                 ...stock,
-                                currentPrice: 50000,
-                                change: 0,
-                                changePercent: 0,
-                                volume: 0,
-                                marketCap: 0,
+                                currentPrice: 50000, change: 0, changePercent: 0, volume: 0, marketCap: 0,
                             };
                         }
                     } catch (error) {
                         console.error(`${stock.name} 데이터 가져오기 실패:`, error);
                         return {
                             ...stock,
-                            currentPrice: 50000,
-                            change: 0,
-                            changePercent: 0,
-                            volume: 0,
-                            marketCap: 0,
+                            currentPrice: 50000, change: 0, changePercent: 0, volume: 0, marketCap: 0,
                         };
                     }
                 });
@@ -194,13 +188,6 @@ export default function AIInsights({ selectedSymbol: globalSelectedSymbol }) {
                 );
 
                 setTopNavStocks(sortedStocks);
-
-                // 초기 로드 시 변동폭 순위 1위로 localSelectedSymbol 설정
-                const topStock = sortedStocks[0];
-                if (topStock && !localSelectedSymbol) { // Only set default if no local symbol is selected
-                    setLocalSelectedSymbol(topStock.symbol);
-                }
-
                 setTopNavLoading(false);
             } catch (error) {
                 console.error('TopNav 주식 데이터 로드 실패:', error);
@@ -214,7 +201,18 @@ export default function AIInsights({ selectedSymbol: globalSelectedSymbol }) {
         // 1분마다 업데이트
         const interval = setInterval(loadTopNavData, 60000);
         return () => clearInterval(interval);
-    }, [localSelectedSymbol, stockSymbols]);
+    }, [stockSymbols]); // stockSymbols가 변경될 때만 실행
+
+    // 초기 선택 심볼 설정
+    useEffect(() => {
+        // URL 상태나 전역 심볼이 없고, 로컬 심볼도 아직 설정되지 않았으며, TopNav 데이터가 로드되었을 때
+        if (!location.state?.selectedSymbol && !globalSelectedSymbol && !localSelectedSymbol && topNavStocks.length > 0) {
+            const topStock = topNavStocks[0];
+            if (topStock) {
+                setLocalSelectedSymbol(topStock.symbol);
+            }
+        }
+    }, [topNavStocks, localSelectedSymbol, globalSelectedSymbol, location.state?.selectedSymbol]);
 
     useEffect(() => {
         if (selectedNews && newsSectionRef.current) {
