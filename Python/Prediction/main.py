@@ -30,7 +30,8 @@ SENTIMENT_POS_THRESHOLD = 0.03
 SENTIMENT_NEG_THRESHOLD = -0.03
 
 
-def _load_default_search_words() -> list[str]:
+# top_movers_auto.json에서 추출한 기본 검색어 목록을 읽어온다.
+def _load_default_search_targets() -> tuple[list[str], dict[str, str]]:
     script_dir = Path(__file__).resolve().parent
     repo_root = script_dir.parent.parent
     data_path = repo_root / "data" / "row" / "top_movers_auto.json"
@@ -39,11 +40,12 @@ def _load_default_search_words() -> list[str]:
         with data_path.open("r", encoding="utf-8") as fp:
             payload = json.load(fp)
     except FileNotFoundError:
-        return []
+        return [], {}
     except (json.JSONDecodeError, OSError):
-        return []
+        return [], {}
 
     names: list[str] = []
+    name_to_stock_code: dict[str, str] = {}
     seen: set[str] = set()
 
     details = payload.get("details")
@@ -61,15 +63,23 @@ def _load_default_search_words() -> list[str]:
                 continue
             seen.add(candidate)
             names.append(candidate)
-    return names
+
+            raw_stock_code = entry.get("ticker")
+            if isinstance(raw_stock_code, str):
+                stock_code_candidate = raw_stock_code.strip()
+                if stock_code_candidate:
+                    name_to_stock_code[candidate] = stock_code_candidate
+    return names, name_to_stock_code
 
 
-DEFAULT_SEARCH_WORDS = _load_default_search_words()
+DEFAULT_SEARCH_WORDS, DEFAULT_STOCK_CODE_MAP = _load_default_search_targets()
 if not DEFAULT_SEARCH_WORDS:
     DEFAULT_SEARCH_WORDS = [DEFAULT_SEARCH_WORD_FALLBACK]
+    DEFAULT_STOCK_CODE_MAP = {}
 DEFAULT_SEARCH_WORD = DEFAULT_SEARCH_WORDS[0]
 
 
+# 추출된 키워드를 정규화하고 노이즈를 제거한다.
 def filter_keywords(keywords: Iterable[str], *, min_core_length: int = 2) -> list[str]:
     cleaned: list[str] = []
     for kw in keywords:
@@ -87,6 +97,7 @@ def filter_keywords(keywords: Iterable[str], *, min_core_length: int = 2) -> lis
     return cleaned
 
 
+# 콘솔 인코딩 문제 없이 안전하게 문자열을 출력한다.
 def safe_print(text: str) -> None:
     """인코딩 오류 없이 문자열을 출력한다."""
     try:
@@ -96,6 +107,7 @@ def safe_print(text: str) -> None:
         print(text.encode(encoding, "replace").decode(encoding))
 
 
+# 뉴스 링크에서 본문을 가져와 정제한다.
 def get_news_content(link: str, search_word: str = "") -> str:
     """뉴스 원문 페이지에서 본문 텍스트를 추출한다."""
     selectors = [
@@ -165,6 +177,7 @@ def get_news_content(link: str, search_word: str = "") -> str:
     return text_content if len(text_content) > 100 else FAIL_MESSAGE
 
 
+# 네이버 뉴스 검색 API를 호출해 최신 기사를 모은다.
 def fetch_recent_news(
     search_word: str,
     *,
@@ -181,7 +194,7 @@ def fetch_recent_news(
     seen_links: set[str] = set()
     start_index = 1
     display_count = 100
-    found_old_article = False
+    old_article_notice_printed = False
 
     safe_print(
         f"'{search_word}' 검색 결과를 수집합니다 ({window_days}일 이내, 최대 {max_articles}건)"
@@ -189,7 +202,6 @@ def fetch_recent_news(
 
     while (
         len(successful_articles) < max_articles
-        and not found_old_article
         and start_index <= 1000
     ):
         url = (
@@ -228,10 +240,12 @@ def fetch_recent_news(
             except ValueError:
                 continue
 
-            if article_date < earliest_allowed:
-                found_old_article = True
-                print("--- 지정 기간 이전 기사 발견. 수집을 종료합니다. ---")
-                break
+            threshold_local_date = earliest_allowed.astimezone(article_date.tzinfo).date()
+            if article_date.date() < threshold_local_date:
+                if not old_article_notice_printed:
+                    print("--- 지정 기간 이전 기사 발견. 이후 기사는 건너뜁니다. ---")
+                    old_article_notice_printed = True
+                continue
 
             original_link = item.get("originallink") or item.get("link")
             if not original_link or original_link in seen_links:
@@ -278,10 +292,12 @@ def fetch_recent_news(
     return successful_articles
 
 
+# 주식 분석 결과를 감성·키워드·뉴스 보고서로 구성한다.
 def generate_comprehensive_report(
     stock_name: str,
     news_list: list[dict[str, str]],
     resources_dir: str,
+    stock_code: str | None = None,
 ) -> dict:
     """감성/키워드 분석 결과를 포함한 리포트를 생성한다."""
     print(f"[Start] Analysis for '{stock_name}'")
@@ -350,6 +366,7 @@ def generate_comprehensive_report(
     print("3) Building report..")
     report = {
         "stockName": stock_name,
+        "stockCode": stock_code,
         "analysisDate": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "sentimentAnalysis": {
             "averageScore": round(avg_sentiment_score, 4),
@@ -372,6 +389,7 @@ def generate_comprehensive_report(
     return report
 
 
+# 분석에 사용할 명령줄 인자를 설정한다.
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="네이버 뉴스 수집 및 감성 리포트 생성"
@@ -401,6 +419,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+# 뉴스 수집부터 보고서 저장까지 전체 흐름을 실행한다.
 def main() -> None:
     args = parse_args()
 
@@ -448,10 +467,12 @@ def main() -> None:
             failed_targets.append(search_word)
             continue
 
+        stock_code = DEFAULT_STOCK_CODE_MAP.get(search_word)
         report = generate_comprehensive_report(
             search_word,
             news_data,
             resources_dir=str(script_dir),
+            stock_code=stock_code,
         )
 
         aggregated_reports.append(report)
