@@ -826,6 +826,24 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 								</button>
 							</div>
 							<div className={styles['financial-section']}>
+								
+
+								{/* 재무제표 차트 */}
+								<div className={styles['financial-chart-container']}>
+									<div className={styles['chart-header']}>
+										<h3>연도별 재무 성과 (단위 : 10억원)</h3>
+									</div>
+									<div className={styles['unified-chart-wrapper']}>
+										<Chart
+											data={financialData}
+											series={financialChartSeries}
+											xAxisKey="year"
+											yAxisUnit="원"
+											xAxisUnit="년"
+											yAxisFormatType="billions"
+										/>
+									</div>
+								</div>
 								{/* 주요 재무 지표 카드들 */}
 								<div className={styles['financial-cards']}>
 									<div className={styles['financial-card']}>
@@ -844,43 +862,7 @@ export default function Dashboard({ selectedSymbol, onSymbolChange }) {
 										<span className={`${styles['financial-change']} ${styles['positive']}`}>+15.2%</span>
 									</div>
 								</div>
-
-								{/* 재무제표 차트 */}
-								<div className={styles['financial-chart-container']}>
-									<div className={styles['chart-header']}>
-										<h3>연도별 재무 성과 (단위 : 10억원)</h3>
-									</div>
-									<div className={styles['unified-chart-wrapper']}>
-										<Chart
-											data={financialData}
-											series={financialChartSeries}
-											xAxisKey="year"
-											yAxisUnit="원"
-											xAxisUnit="년"
-											yAxisFormatType="billions"
-										/>
-									</div>
-								</div>
-
-								{/* 재무 비율 분석 */}
-								<div className={styles['financial-ratios']}>
-									<div className={styles['ratio-item']}>
-										<span className={styles['ratio-label']}>ROE</span>
-										<span className={`${styles['ratio-value']} ${styles['positive']}`}>15.2%</span>
-									</div>
-									<div className={styles['ratio-item']}>
-										<span className={styles['ratio-label']}>ROA</span>
-										<span className={`${styles['ratio-value']} ${styles['positive']}`}>8.7%</span>
-									</div>
-									<div className={styles['ratio-item']}>
-										<span className={styles['ratio-label']}>부채비율</span>
-										<span className={`${styles['ratio-value']} ${styles['neutral']}`}>45.3%</span>
-									</div>
-									<div className={styles['ratio-item']}>
-										<span className={styles['ratio-label']}>유동비율</span>
-										<span className={`${styles['ratio-value']} ${styles['positive']}`}>1.8</span>
-									</div>
-								</div>
+								
 							</div>
 						</div>
 

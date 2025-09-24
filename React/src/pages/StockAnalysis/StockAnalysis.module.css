@@ -37,13 +37,12 @@
 	padding-top: 1em; /*gap으로 인한 조정*/
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-template-rows: auto auto auto auto;
+	grid-template-rows: auto auto auto;
 	gap: 2em;
 	grid-template-areas:
+		'stock-info stock-info'
 		'financial financial'
-		'report-analysis report-analysis'
-		'news sentiment'
-		'wordcloud ai-analysis';
+		'technical technical';
 }
 
 /* 섹션 컨테이너 */
@@ -55,27 +54,15 @@
 
 
 .stock-analysis-grid2 .section-container:nth-child(1) {
-	grid-area: financial;
+	grid-area: stock-info;
 }
 
 .stock-analysis-grid2 .section-container:nth-child(2) {
-	grid-area: report-analysis;
+	grid-area: financial;
 }
 
 .stock-analysis-grid2 .section-container:nth-child(3) {
-	grid-area: news;
-}
-
-.stock-analysis-grid2 .section-container:nth-child(4) {
-	grid-area: sentiment;
-}
-
-.stock-analysis-grid2 .section-container:nth-child(5) {
-	grid-area: wordcloud;
-}
-
-.stock-analysis-grid2 .section-container:nth-child(6) {
-	grid-area: ai-analysis;
+	grid-area: technical;
 }
 
 .section-label {
@@ -194,6 +181,21 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
+}
+
+.timestamp-label {
+	font-size: 14px;
+	font-weight: 500;
+	color: #666;
+}
+
+.timestamp-value {
+	font-size: 14px;
+	font-weight: 600;
+	color: #3b82f6;
+	background: #eff6ff;
+	padding: 4px 8px;
+	border-radius: 4px;
 }
 
 /* 갱신 중 표시 */
@@ -373,6 +375,17 @@
 	gap: 20px;
 }
 
+/* 기술적지표 섹션 */
+.technical-section {
+	background: white;
+	border-radius: 8px;
+	padding: 20px;
+	min-height: 400px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
 .financial-cards {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -479,6 +492,109 @@
 	font-size: 0.9em;
 }
 
+/* 기술적지표 카드들 */
+.technical-cards {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	gap: 15px;
+}
+
+.technical-card {
+	background: #f8f9fa;
+	padding: 15px;
+	border-radius: 6px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.technical-value-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin: 8px 0;
+}
+
+.technical-value {
+	font-size: 1.3em;
+	font-weight: bold;
+	color: #495057;
+	margin: 0;
+}
+
+.technical-signal {
+	font-size: 0.8em;
+	font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 12px;
+}
+
+.technical-signal.positive {
+	color: #28a745;
+	background: #d4edda;
+}
+
+.technical-signal.negative {
+	color: #dc3545;
+	background: #f8d7da;
+}
+
+.technical-signal.neutral {
+	color: #6c757d;
+	background: #e2e3e5;
+}
+
+.technical-description {
+	font-size: 0.8em;
+	color: #6c757d;
+	margin: 0;
+}
+
+/* 기술적지표 차트들 */
+.technical-charts {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+}
+
+.technical-chart-container {
+	background: #f8f9fa;
+	border-radius: 8px;
+	padding: 20px;
+	height: 350px;
+}
+
+.technical-chart-container .chart-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.technical-chart-container .chart-header h3 {
+	margin: 0;
+	color: #495057;
+	font-size: 1.1em;
+	font-weight: 600;
+}
+
+.chart-period {
+	font-size: 0.8em;
+	color: #6c757d;
+	background: #e9ecef;
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+
+.technical-chart-container .unified-chart-wrapper {
+	height: calc(100% - 40px);
+	width: 100%;
+	border: 1px solid #e9ecef;
+	border-radius: 8px;
+}
+
 /* 재무 비율 분석 */
 .financial-ratios {
 	display: grid;
@@ -508,6 +624,7 @@
 	font-weight: bold;
 	padding: 4px 8px;
 	border-radius: 12px;
+	margin-left: 8px;
 }
 
 .ratio-value.positive {
@@ -523,6 +640,20 @@
 .ratio-value.neutral {
 	color: #6c757d;
 	background: #e2e3e5;
+}
+
+.ratio-description {
+	font-size: 0.8em;
+	color: #6c757d;
+	margin: 5px 0 0 0;
+}
+
+.ratio-change {
+	font-size: 0.9em;
+	font-weight: 600;
+	padding: 2px 8px;
+	border-radius: 12px;
+	margin-left: 8px;
 }
 
 /* 뉴스 섹션 */

@@ -9,6 +9,7 @@ import Chart from '../../component/Chart/Chart';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import { getStockSummary } from '../../services/yahooFinanceApi';
 
+// 더 현실적인 재무 데이터
 const financialData = [
 	{
 		year: '2017',
@@ -54,6 +55,44 @@ const financialData = [
 	},
 ];
 
+// 정적 리포트 주가 데이터 (고정)
+const generateRealisticStockData = () => {
+	const times = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30'];
+	const volumes = [1200000, 1500000, 1800000, 1600000, 1400000, 1700000, 1900000, 1300000, 2100000, 1800000, 2000000, 2500000];
+	
+	// 고정된 가격 패턴 (약간의 상승 트렌드)
+	const pricePattern = [49800, 50100, 50000, 50200, 50150, 50300, 50250, 50400, 50350, 50500, 50450, 50600];
+	
+	return times.map((time, index) => {
+		const price = pricePattern[index];
+		const open = index === 0 ? price : pricePattern[index - 1];
+		const high = Math.round(price + 200 + (index * 10));
+		const low = Math.round(price - 150 - (index * 5));
+		const close = price;
+		
+		return {
+			time,
+			price,
+			open,
+			high,
+			low,
+			close,
+			volume: volumes[index]
+		};
+	});
+};
+
+// 정적 리포트 기술적지표 데이터 (고정)
+const generateTechnicalIndicators = () => {
+	// 고정된 기술적지표 값들
+	return {
+		rsi: 65.2,
+		macd: { macd: 150, signal: 140, histogram: 10 },
+		bollinger: { upper: 51200, middle: 50000, lower: 48800 },
+		obv: [1200000, 1350000, 1530000, 1690000, 1830000, 2000000, 2190000, 2320000, 2530000, 2710000, 2910000, 3160000]
+	};
+};
+
 const financialChartSeries = [
 	{ key: 'revenue', name: '매출액', color: '#3b82f6' },
 	{ key: 'operatingProfit', name: '영업이익', color: '#10b981' },
@@ -69,6 +108,34 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 	const [isInFooter, setIsInFooter] = useState(false);
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
+
+	// 정적 리포트 데이터 (고정)
+	const stockData = generateRealisticStockData();
+	const technicalIndicators = generateTechnicalIndicators();
+
+	// 심볼에 따른 주식 이름 매핑
+	const getStockName = (symbol) => {
+		const stockNames = {
+			'005930': '삼성전자',
+			'000660': 'SK하이닉스',
+			'035420': 'NAVER',
+			'207940': '삼성바이오로직스',
+			'006400': '삼성SDI'
+		};
+		return stockNames[symbol] || '알 수 없는 주식';
+	};
+
+	// 심볼에 따른 시장 구분 매핑
+	const getMarketType = (symbol) => {
+		const marketTypes = {
+			'005930': 'KOSPI',
+			'000660': 'KOSPI',
+			'035420': 'KOSPI',
+			'207940': 'KOSPI',
+			'006400': 'KOSPI'
+		};
+		return marketTypes[symbol] || 'KOSPI';
+	};
 
 	// URL state에서 전달받은 심볼 처리
 	useEffect(() => {
@@ -293,13 +360,9 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 						<div className={styles['section-container']}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
-									<h2>리포트 기준 주가</h2>
+									<h2>{getStockName(selectedSymbol)}/{selectedSymbol}/{getMarketType(selectedSymbol)}</h2>
 									<p>2024년 1월 15일 14:30 기준 주가 및 지표</p>
 								</div>
-								<button className={styles['detail-button']}>
-									상세보기
-									<i className="fas fa-chevron-right"></i>
-								</button>
 							</div>
 							<div className={styles['stock-info-section']}>
 								{/* 정적 차트 컨테이너 */}
@@ -313,34 +376,8 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 									</div>
 									<div className={styles['unified-chart-wrapper']}>
 										<UnifiedStockChart
-											stockData={[
-												{ time: '09:00', price: 49800, open: 50000, high: 50200, low: 49700, close: 49800 },
-												{ time: '09:30', price: 50100, open: 49800, high: 50300, low: 49600, close: 50100 },
-												{ time: '10:00', price: 50000, open: 50100, high: 50400, low: 49900, close: 50000 },
-												{ time: '10:30', price: 50200, open: 50000, high: 50500, low: 49800, close: 50200 },
-												{ time: '11:00', price: 50150, open: 50200, high: 50400, low: 50000, close: 50150 },
-												{ time: '11:30', price: 50300, open: 50150, high: 50500, low: 50000, close: 50300 },
-												{ time: '12:00', price: 50250, open: 50300, high: 50400, low: 50100, close: 50250 },
-												{ time: '12:30', price: 50400, open: 50250, high: 50600, low: 50100, close: 50400 },
-												{ time: '13:00', price: 50350, open: 50400, high: 50500, low: 50200, close: 50350 },
-												{ time: '13:30', price: 50500, open: 50350, high: 50700, low: 50200, close: 50500 },
-												{ time: '14:00', price: 50450, open: 50500, high: 50600, low: 50300, close: 50450 },
-												{ time: '14:30', price: 50600, open: 50450, high: 50800, low: 50300, close: 50600 }
-											]}
-											volumeData={[
-												{ time: '09:00', volume: 1200000 },
-												{ time: '09:30', volume: 1500000 },
-												{ time: '10:00', volume: 1800000 },
-												{ time: '10:30', volume: 1600000 },
-												{ time: '11:00', volume: 1400000 },
-												{ time: '11:30', volume: 1700000 },
-												{ time: '12:00', volume: 1900000 },
-												{ time: '12:30', volume: 1300000 },
-												{ time: '13:00', volume: 2100000 },
-												{ time: '13:30', volume: 1800000 },
-												{ time: '14:00', volume: 2000000 },
-												{ time: '14:30', volume: 2500000 }
-											]}
+											stockData={stockData}
+											volumeData={stockData.map(d => ({ time: d.time, volume: d.volume }))}
 											simpleMode={false}
 										/>
 									</div>
@@ -351,25 +388,28 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 									<div className={styles['stock-card']}>
 										<h3>기준가</h3>
 										<p className={styles['stock-value']}>
-											₩50,600
+											₩{stockData[stockData.length - 1]?.price?.toLocaleString() || '50,600'}
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>전일 대비</h3>
 										<p className={`${styles['stock-value']} ${styles['positive']}`}>
-											+1.2%
+											{stockData.length > 1 ? 
+												`${((stockData[stockData.length - 1].price - stockData[0].price) / stockData[0].price * 100).toFixed(1)}%` : 
+												'+1.2%'
+											}
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>거래량</h3>
 										<p className={styles['stock-value']}>
-											2,500,000
+											{stockData[stockData.length - 1]?.volume?.toLocaleString() || '2,500,000'}
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>시가총액</h3>
 										<p className={styles['stock-value']}>
-											₩378.2조
+											₩{((stockData[stockData.length - 1]?.price || 50600) * 74700000000 / 1000000000000).toFixed(1)}조
 										</p>
 									</div>
 								</div>
@@ -383,10 +423,6 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 									<h2>재무제표 분석</h2>
 									<p>DART API 기반 종합 재무 분석</p>
 								</div>
-								<button className={styles['detail-button']}>
-									상세보기
-									<i className="fas fa-chevron-right"></i>
-								</button>
 							</div>
 							<div className={styles['financial-section']}>
 								{/* 주요 재무 지표 카드들 */}
@@ -425,7 +461,43 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 									</div>
 								</div>
 
-								{/* 재무 비율 분석 */}
+								{/* 주요 재무 지표 (PER, PBR, ROE, ROA) */}
+								<div className={styles['financial-ratios']}>
+									<div className={styles['ratio-item']}>
+										<h4>PER</h4>
+										<div className={styles['ratio-value']}>
+											<span className={styles['ratio-number']}>12.5</span>
+											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.8</span>
+										</div>
+										<p className={styles['ratio-description']}>주가수익비율</p>
+									</div>
+									<div className={styles['ratio-item']}>
+										<h4>PBR</h4>
+										<div className={styles['ratio-value']}>
+											<span className={styles['ratio-number']}>1.2</span>
+											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.1</span>
+										</div>
+										<p className={styles['ratio-description']}>주가순자산비율</p>
+									</div>
+									<div className={styles['ratio-item']}>
+										<h4>ROE</h4>
+										<div className={styles['ratio-value']}>
+											<span className={styles['ratio-number']}>15.8%</span>
+											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+2.1%p</span>
+										</div>
+										<p className={styles['ratio-description']}>자기자본이익률</p>
+									</div>
+									<div className={styles['ratio-item']}>
+										<h4>ROA</h4>
+										<div className={styles['ratio-value']}>
+											<span className={styles['ratio-number']}>8.4%</span>
+											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+1.2%p</span>
+										</div>
+										<p className={styles['ratio-description']}>총자산이익률</p>
+									</div>
+								</div>
+
+								{/* 기존 재무 비율 분석 */}
 								<div className={styles['financial-ratios']}>
 									<div className={styles['ratio-item']}>
 										<h4>부채비율</h4>
@@ -453,6 +525,201 @@ export default function StockAnalysis({ selectedSymbol, onSymbolChange }) {
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>79.8%</span>
 											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.3%p</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* 기술적지표 섹션 */}
+						<div className={styles['section-container']}>
+							<div className={styles['section-label']}>
+								<div className={styles['section-title']}>
+									<h2>기술적지표 분석</h2>
+									<p>RSI, OBV, MACD, 볼린저밴드 기반 기술적 분석</p>
+								</div>
+							</div>
+							<div className={styles['technical-section']}>
+								{/* 기술적지표 카드들 */}
+								<div className={styles['technical-cards']}>
+									<div className={styles['technical-card']}>
+										<h3>RSI</h3>
+										<div className={styles['technical-value-container']}>
+											<p className={styles['technical-value']}>{technicalIndicators.rsi}</p>
+											<span className={`${styles['technical-signal']} ${
+												technicalIndicators.rsi > 70 ? styles['negative'] : 
+												technicalIndicators.rsi < 30 ? styles['positive'] : 
+												styles['neutral']
+											}`}>
+												{technicalIndicators.rsi > 70 ? '과매수' : 
+												 technicalIndicators.rsi < 30 ? '과매도' : '중립'}
+											</span>
+										</div>
+										<p className={styles['technical-description']}>상대강도지수</p>
+									</div>
+									<div className={styles['technical-card']}>
+										<h3>OBV</h3>
+										<div className={styles['technical-value-container']}>
+											<p className={styles['technical-value']}>
+												{technicalIndicators.obv[technicalIndicators.obv.length - 1] > 0 ? '+' : ''}
+												{(technicalIndicators.obv[technicalIndicators.obv.length - 1] / 1000000).toFixed(1)}M
+											</p>
+											<span className={`${styles['technical-signal']} ${
+												technicalIndicators.obv[technicalIndicators.obv.length - 1] > 
+												technicalIndicators.obv[technicalIndicators.obv.length - 2] ? 
+												styles['positive'] : styles['negative']
+											}`}>
+												{technicalIndicators.obv[technicalIndicators.obv.length - 1] > 
+												 technicalIndicators.obv[technicalIndicators.obv.length - 2] ? '상승' : '하락'}
+											</span>
+										</div>
+										<p className={styles['technical-description']}>거래량누적지표</p>
+									</div>
+									<div className={styles['technical-card']}>
+										<h3>MACD</h3>
+										<div className={styles['technical-value-container']}>
+											<p className={styles['technical-value']}>
+												{technicalIndicators.macd.macd > 0 ? '+' : ''}{technicalIndicators.macd.macd}
+											</p>
+											<span className={`${styles['technical-signal']} ${
+												technicalIndicators.macd.macd > technicalIndicators.macd.signal ? 
+												styles['positive'] : styles['negative']
+											}`}>
+												{technicalIndicators.macd.macd > technicalIndicators.macd.signal ? '매수' : '매도'}
+											</span>
+										</div>
+										<p className={styles['technical-description']}>이동평균수렴확산</p>
+									</div>
+									<div className={styles['technical-card']}>
+										<h3>BB</h3>
+										<div className={styles['technical-value-container']}>
+											<p className={styles['technical-value']}>
+												{stockData[stockData.length - 1]?.price > technicalIndicators.bollinger.upper ? '상단' :
+												 stockData[stockData.length - 1]?.price < technicalIndicators.bollinger.lower ? '하단' : '중간'}
+											</p>
+											<span className={`${styles['technical-signal']} ${
+												stockData[stockData.length - 1]?.price > technicalIndicators.bollinger.upper ? styles['negative'] :
+												stockData[stockData.length - 1]?.price < technicalIndicators.bollinger.lower ? styles['positive'] :
+												styles['neutral']
+											}`}>
+												{stockData[stockData.length - 1]?.price > technicalIndicators.bollinger.upper ? '과매수' :
+												 stockData[stockData.length - 1]?.price < technicalIndicators.bollinger.lower ? '과매도' : '중립'}
+											</span>
+										</div>
+										<p className={styles['technical-description']}>볼린저밴드</p>
+									</div>
+								</div>
+
+								{/* 기술적지표 차트들 - 첫 번째 행: RSI | OBV */}
+								<div className={styles['technical-charts']}>
+									{/* RSI 차트 */}
+									<div className={styles['technical-chart-container']}>
+										<div className={styles['chart-header']}>
+											<h3>RSI (상대강도지수)</h3>
+											<div className={styles['chart-period']}>14일</div>
+										</div>
+										<div className={styles['unified-chart-wrapper']}>
+											<Chart
+												data={stockData.map((d, index) => ({
+													time: d.time,
+													rsi: Math.max(0, Math.min(100, technicalIndicators.rsi + (index * 0.5) - 3))
+												}))}
+												series={[
+													{ key: 'rsi', name: 'RSI', color: '#ff6b6b' }
+												]}
+												xAxisKey="time"
+												yAxisUnit=""
+												xAxisUnit=""
+												yAxisFormatType="thousands"
+											/>
+										</div>
+									</div>
+
+									{/* OBV 차트 */}
+									<div className={styles['technical-chart-container']}>
+										<div className={styles['chart-header']}>
+											<h3>OBV (거래량누적지표)</h3>
+											<div className={styles['chart-period']}>누적</div>
+										</div>
+										<div className={styles['unified-chart-wrapper']}>
+											<Chart
+												data={stockData.map((d, index) => ({
+													time: d.time,
+													obv: technicalIndicators.obv[index] || 0
+												}))}
+												series={[
+													{ key: 'obv', name: 'OBV', color: '#e91e63' }
+												]}
+												xAxisKey="time"
+												yAxisUnit="주"
+												xAxisUnit=""
+												yAxisFormatType="thousands"
+											/>
+										</div>
+									</div>
+								</div>
+
+								{/* 기술적지표 차트들 - 두 번째 행: MACD | 볼린저밴드 */}
+								<div className={styles['technical-charts']}>
+									{/* MACD 차트 */}
+									<div className={styles['technical-chart-container']}>
+										<div className={styles['chart-header']}>
+											<h3>MACD (이동평균수렴확산)</h3>
+											<div className={styles['chart-period']}>12,26,9</div>
+										</div>
+										<div className={styles['unified-chart-wrapper']}>
+											<Chart
+												data={stockData.map((d, index) => {
+													const baseMacd = technicalIndicators.macd.macd;
+													const baseSignal = technicalIndicators.macd.signal;
+													const baseHistogram = technicalIndicators.macd.histogram;
+													
+													return {
+														time: d.time,
+														macd: Math.round(baseMacd + (index * 2) - 6),
+														signal: Math.round(baseSignal + (index * 1.5) - 4.5),
+														histogram: Math.round(baseHistogram + (index * 0.5) - 1.5)
+													};
+												})}
+												series={[
+													{ key: 'macd', name: 'MACD', color: '#4ecdc4' },
+													{ key: 'signal', name: 'Signal', color: '#ff6b6b' },
+													{ key: 'histogram', name: 'Histogram', color: '#45b7d1' }
+												]}
+												xAxisKey="time"
+												yAxisUnit=""
+												xAxisUnit=""
+												yAxisFormatType="thousands"
+											/>
+										</div>
+									</div>
+
+									{/* 볼린저밴드 차트 */}
+									<div className={styles['technical-chart-container']}>
+										<div className={styles['chart-header']}>
+											<h3>볼린저밴드</h3>
+											<div className={styles['chart-period']}>20일, 2σ</div>
+										</div>
+										<div className={styles['unified-chart-wrapper']}>
+											<Chart
+												data={stockData.map((d, index) => ({
+													time: d.time,
+													price: d.price,
+													upper: technicalIndicators.bollinger.upper + (index * 10),
+													middle: technicalIndicators.bollinger.middle + (index * 5),
+													lower: technicalIndicators.bollinger.lower + (index * 10)
+												}))}
+												series={[
+													{ key: 'price', name: '주가', color: '#1976d2' },
+													{ key: 'upper', name: '상단밴드', color: '#ff9800' },
+													{ key: 'middle', name: '중간선', color: '#9c27b0' },
+													{ key: 'lower', name: '하단밴드', color: '#4caf50' }
+												]}
+												xAxisKey="time"
+												yAxisUnit="원"
+												xAxisUnit=""
+												yAxisFormatType="thousands"
+											/>
 										</div>
 									</div>
 								</div>
