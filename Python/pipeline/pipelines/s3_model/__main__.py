@@ -34,7 +34,26 @@ def main(argv: Sequence[str] | None = None) -> int:
     dataset_cfg = build_datasets._load_config(None, args.gold_root, args.artifacts_root, args.settings)
     horizon_labels = _format_horizon_labels(dataset_cfg.horizons)
 
-    price_branch = create_price_branch(input_shape=(args.seq_len, args.price_dim))
+    seq_len = args.seq_len
+    price_dim = args.price_dim
+
+    inferred = _infer_price_shape(dataset_cfg.gold_root)
+    if inferred is not None:
+        data_seq_len, data_feat_dim = inferred
+        if seq_len != data_seq_len:
+            print(f"[s3_model] seq-len {seq_len} -> 데이터셋 길이 {data_seq_len} 로 조정합니다.")
+            seq_len = data_seq_len
+        if price_dim is None:
+            price_dim = data_feat_dim
+        elif price_dim != data_feat_dim:
+            print(f"[s3_model] price-dim {price_dim} != 데이터 feature {data_feat_dim}; 데이터 값으로 조정합니다.")
+            price_dim = data_feat_dim
+    elif price_dim is None:
+        raise RuntimeError("가격 feature 차원을 추정할 수 없습니다. --price-dim 값을 지정하세요.")
+
+
+
+    price_branch = create_price_branch(input_shape=(seq_len, price_dim))
     text_branch = None
     if args.text_dim is not None:
         text_branch = create_text_branch(input_dim=args.text_dim, hidden_dim=args.text_hidden)
@@ -47,7 +66,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         output_dim=len(dataset_cfg.horizons),
     )
 
-    summary = _summarize_model(model, args.seq_len, args.price_dim, args.text_dim, len(dataset_cfg.horizons))
+    summary = _summarize_model(model, seq_len, price_dim, args.text_dim, len(dataset_cfg.horizons))
 
     if not args.train:
         print(json.dumps(summary, ensure_ascii=False, indent=2))
@@ -87,7 +106,7 @@ def _build_parser() -> argparse.ArgumentParser:
         description="Stage-03 model assembly / training (multi-target regression)",
     )
     parser.add_argument("--seq-len", type=int, default=30, help="입력 시퀀스 길이")
-    parser.add_argument("--price-dim", type=int, default=64, help="가격 브랜치 입력 차원")
+    parser.add_argument("--price-dim", type=int, default=None, help="가격 feature 차원 (미지정 시 gold 데이터에서 자동 추정)")
     parser.add_argument("--text-dim", type=int, help="텍스트 브랜치 입력 임베딩 차원 (미지정 시 비활성)")
     parser.add_argument("--text-hidden", type=int, default=128, help="텍스트 브랜치 투사 차원")
     parser.add_argument("--hidden-dim", type=int, default=128, help="분류 헤드 은닉 차원")
@@ -258,6 +277,20 @@ def _create_loader(root: Path, split: str, batch_size: int) -> Optional[DataLoad
 # ---------------------------------------------------------------------------
 # Utilities
 # ---------------------------------------------------------------------------
+
+
+def _infer_price_shape(gold_root: Path) -> Optional[tuple[int, int]]:
+    for split in ("train", "val", "test"):
+        x_path = gold_root / split / "X.npy"
+        if not x_path.exists():
+            continue
+        try:
+            array = np.load(x_path, mmap_mode="r")
+            return int(array.shape[1]), int(array.shape[2])
+        except Exception as exc:  # pragma: no cover - defensive
+            print(f"[s3_model] gold/{split}/X.npy 읽기 실패: {exc}")
+            continue
+    return None
 
 
 def _summarize_model(model: torch.nn.Module, seq_len: int, price_dim: int, text_dim: Optional[int], output_dim: int) -> dict:

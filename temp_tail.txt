@@ -1,0 +1,40 @@
+    c_open = pick("open", "시가")
+    c_high = pick("high", "고가")
+    c_low = pick("low", "저가")
+    c_ticker = "ticker" if "ticker" in frame.columns else None
+
+    if not all([c_open, c_high, c_low]) or c_ticker is None:
+        cols = ", ".join(map(str, frame.columns))
+        raise RuntimeError(f"pykrx 컬럼 구조를 해석할 수 없습니다. 현재 컬럼: {cols}")
+
+    denom = frame[c_open].replace(0, float("nan"))
+    frame["volatility"] = (frame[c_high] - frame[c_low]).abs() / denom
+    frame = frame.dropna(subset=["volatility"]).sort_values("volatility", ascending=False)
+    top = frame.head(count)
+    return [{"ticker": str(row[c_ticker]), "volatility": float(row["volatility"])} for _, row in top.iterrows()]def _default_output(date: str) -> Path:
+    project_root = _find_project_root()
+    return project_root / "data" / "raw" / f"top_movers_{date}.json"
+
+
+def _find_project_root() -> Path:
+    current = Path(__file__).resolve()
+    for parent in current.parents:
+        if (parent / ".env").exists() or (parent / "Python").exists():
+            return parent
+    for parent in current.parents:
+        if (parent / "data").exists():
+            return parent
+    return current.parents[4] # Fallback
+
+
+if __name__ == "__main__":
+    try:
+        # main 함수를 직접 호출하여 실행하고, 성공 시 0을, 실패 시 1을 반환하도록 합니다.
+        exit_code = main()
+        raise SystemExit(exit_code)
+    except Exception:
+        # 예상치 못한 모든 예외를 포착하여 상세한 트레이스백을 출력합니다.
+        print("An unexpected error occurred in top_movers.py:", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        raise SystemExit(1)
+

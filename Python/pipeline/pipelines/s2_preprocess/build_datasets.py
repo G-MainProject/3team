@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import pickle
 from dataclasses import dataclass
@@ -10,6 +11,7 @@ from typing import Iterable, Mapping
 
 import numpy as np
 import pandas as pd
+
 
 try:  # Optional dependency for YAML configs
     import yaml  # type: ignore
@@ -71,7 +73,7 @@ def run(
         (cfg.gold_root / split).mkdir(parents=True, exist_ok=True)
     (cfg.artifacts_root / "models").mkdir(parents=True, exist_ok=True)
 
-    X, y = _assemble_sequences(cfg, tickers)
+    X, y, labels, closes = _assemble_sequences(cfg, tickers)
     if X.size == 0:
         raise RuntimeError("No samples collected from silver datasets.")
 
@@ -98,6 +100,12 @@ def run(
         y_path = split_dir / "y.npy"
         np.save(x_path, scaled)
         np.save(y_path, y_split)
+        close_split = np.asarray([closes[int(i)] for i in idx.tolist()], dtype=float)
+        close_path = split_dir / "close.npy"
+        np.save(close_path, close_split)
+        label_items = [labels[int(i)] for i in idx.tolist()]
+        label_path = split_dir / "labels.json"
+        label_path.write_text(json.dumps(label_items, ensure_ascii=False, indent=2), encoding="utf-8")
         datasets[split_name] = x_path
         LOGGER.info("Saved %s split: %s (%d samples)", split_name, x_path, y_split.shape[0])
 
@@ -107,14 +115,16 @@ def run(
     return datasets
 
 
-def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tuple[np.ndarray, np.ndarray]:
-    files = sorted(cfg.silver_root.glob("*.parquet")) + sorted(cfg.silver_root.glob("*.pkl"))
+def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tuple[np.ndarray, np.ndarray, list[dict[str, object]]]:
+    files = sorted(cfg.silver_root.glob("*.parquet"))
     if tickers:
         tickers = {ticker for ticker in tickers}
         files = [file for file in files if file.stem in tickers]
 
     X_list: list[np.ndarray] = []
     y_list: list[np.ndarray] = []
+    labels: list[dict[str, object]] = []
+    closes_list: list[float] = []
     seq_len = cfg.sequence_length
     horizons = cfg.horizons
     max_horizon = max(horizons)
@@ -152,19 +162,36 @@ def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tu
         if feature_array.shape[0] < seq_len:
             continue
 
+        valid_indices = np.flatnonzero(valid_mask)
+
         for idx in range(seq_len - 1, feature_array.shape[0]):
             window = feature_array[idx - seq_len + 1 : idx + 1]
             if window.shape[0] != seq_len:
                 continue
             X_list.append(window)
             y_list.append(target_array[idx])
+            if valid_indices.size > idx:
+                orig_idx = int(valid_indices[idx])
+            else:
+                orig_idx = idx
+            close_value = float(close[orig_idx])
+            label_entry = {"ticker": file.stem}
+            if "date" in df.columns:
+                date_value = df.iloc[orig_idx].get("date")
+                if hasattr(date_value, "isoformat"):
+                    date_value = date_value.isoformat()
+                if date_value is not None:
+                    label_entry["date"] = str(date_value)
+            labels.append(label_entry)
+            closes_list.append(close_value)
 
     if not X_list:
-        return np.empty((0, seq_len, 0)), np.empty((0, len(horizons)))
+        return np.empty((0, seq_len, 0)), np.empty((0, len(horizons))), [], np.empty(0)
 
     X = np.stack(X_list)
     y = np.stack(y_list)
-    return X, y
+    closes_array = np.asarray(closes_list, dtype=float) if closes_list else np.empty(0)
+    return X, y, labels, closes_array
 
 
 def _split_indices(sample_count: int, split: Mapping[str, float]) -> dict[str, np.ndarray]:

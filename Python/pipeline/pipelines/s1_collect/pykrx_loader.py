@@ -231,4 +231,3 @@ _COLUMN_MAP: Mapping[str, str] = {
     "BPS": "bps",
     "DIV": "dividend",
 }
-

@@ -443,4 +443,3 @@ def _write_table(df: pd.DataFrame, path: Path) -> Path:
         df.to_pickle(fallback)
         LOGGER.warning('pyarrow/fastparquet 미설치로 pickle로 저장합니다: %s', fallback)
         return fallback
-

@@ -1,0 +1,20 @@
+"""CLI to execute the entire data-to-inference pipeline."""
+    # s0_discover Kiwoom 설정 전달 옵션(선택)
+    parser.add_argument("--auto-kiwoom-base", help="Kiwoom REST base URL (예: https://gw.example)")
+    parser.add_argument("--auto-kiwoom-appkey", help="Kiwoom appkey")
+    parser.add_argument("--auto-kiwoom-secret", help="Kiwoom secretkey")
+    parser.add_argument("--auto-kiwoom-rank-path", help="Kiwoom rank API path (ka10027 매핑 경로)")
+    parser.add_argument("--auto-kiwoom-rank-trid", help="Kiwoom rank TR ID (기본 ka10027)")
+    parser.add_argument("--auto-kiwoom-api-id", help="요청 헤더 api-id 강제 지정")
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Iterable
+

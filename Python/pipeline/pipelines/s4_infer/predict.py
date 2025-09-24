@@ -73,6 +73,28 @@ def main(args: Optional[list[str]] = None) -> int:
         "returns": preds.tolist(),
         "current_close": close_values.tolist(),
         "prices": predicted_prices.tolist(),
+        "meta": {
+            "description": "Multi-horizon inference outputs produced by s4_infer.",
+            "description_ko": "s4_infer 단계에서 생성된 다중 수평선 예측 결과 요약",
+            "fields": {
+                "model": "Path to the trained model state_dict (.pth).",
+                "input": "Path to the preprocessed input numpy array (N, seq, feat).",
+                "count": "Number of samples included in this prediction batch.",
+                "horizons": "List of horizon labels (e.g., 1d, 1w).",
+                "returns": "Predicted returns for each sample and horizon (shape: N x H).",
+                "current_close": "Close price per sample used as the prediction base (length N).",
+                "prices": "Predicted future close prices per sample and horizon (shape: N x H)."
+            },
+            "fields_ko": {
+                "model": "학습된 PyTorch state_dict(.pth) 파일 경로",
+                "input": "전처리된 입력 numpy 배열 경로 (형태: N x seq x feat)",
+                "count": "이번 추론에 포함된 샘플 개수",
+                "horizons": "예측을 수행한 기간 레이블 목록 (예: 1d, 1w)",
+                "returns": "샘플·수평선별 예측 수익률 (배열 크기: N x H)",
+                "current_close": "각 샘플의 기준 종가 배열 (길이 N)",
+                "prices": "각 샘플과 수평선에 대한 예측 종가 (배열 크기: N x H)"
+            }
+        }
     }
 
     opts.output.parent.mkdir(parents=True, exist_ok=True)
@@ -147,4 +169,3 @@ def _find_project_root() -> Path:
 
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(main())
-

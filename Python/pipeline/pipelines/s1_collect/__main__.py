@@ -24,10 +24,12 @@ if __package__ in (None, ""):
             return import_module(f"python.pipeline.pipelines.s1_collect.{name}")
 
     dart_client = _stage_import("dart_client")
-    kiwoom_client = _stage_import("kiwoom_client")
     pykrx_loader = _stage_import("pykrx_loader")
+    # 공통 유틸리티 임포트
+    kiwoom_api = _stage_import("kiwoom_client")
 else:
-    from . import dart_client, kiwoom_client, pykrx_loader
+    from . import dart_client, pykrx_loader
+    from . import kiwoom_client as kiwoom_api
 
 
 # CLI 진입점 ---------------------------------------------------------------
@@ -73,7 +75,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         kiwoom_tickers = args.kiwoom_tickers or pykrx_ticks
         if not kiwoom_tickers:
             parser.error("Kiwoom 호출에 사용할 티커가 없습니다. --tickers 또는 --kiwoom-tickers 를 확인하세요.")
-        summaries["kiwoom"] = kiwoom_client.fetch_quotes(
+        summaries["kiwoom"] = kiwoom_api.fetch_quotes(
             tickers=kiwoom_tickers,
             start_date=args.start_date,
             end_date=args.end_date,
@@ -155,3 +157,4 @@ def _print_summary(summary: Mapping[str, Mapping[str, Sequence[Path]]]) -> None:
 
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(main())
+

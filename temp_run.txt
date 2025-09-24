@@ -1,4 +1,4 @@
-ï»¿"""CLI to execute the entire data-to-inference pipeline."""
+"""CLI to execute the entire data-to-inference pipeline."""
 from __future__ import annotations
 
 import argparse
@@ -35,7 +35,7 @@ def main(argv: list[str] | None = None) -> int:
     stage_durations: dict[str, float] = {}
     total_start = time.time()
 
-    # ìë™ í‹°ì»¤ íƒìƒ‰
+    # ÀÚµ¿ Æ¼Ä¿ Å½»ö
     if args.auto_tickers:
         discovery_output = args.auto_output or (project_root / "data" / "raw" / "top_movers_auto.json")
         discover_cmd = [
@@ -53,9 +53,10 @@ def main(argv: list[str] | None = None) -> int:
         ]
         if args.auto_source in ("pykrx", "auto"):
             discover_cmd += ["--date", args.auto_date]
-        # mock í”Œë˜ê·¸ëŠ” ì—†ì„ ìˆ˜ë„ ìˆìœ¼ë¯€ë¡œ getattrë¡œ ì•ˆì „ ì ‘ê·¼
-        # mock í”Œë˜ê·¸ëŠ” ì—†ì„ ìˆ˜ë„ ìˆìœ¼ë¯€ë¡œ getattrë¡œ ì•ˆì „ ì ‘ê·¼
+        # mock ÇÃ·¡±×´Â ¾øÀ» ¼öµµ ÀÖÀ¸¹Ç·Î getattr·Î ¾ÈÀü Á¢±Ù
+        # mock ÇÃ·¡±×´Â ¾øÀ» ¼öµµ ÀÖÀ¸¹Ç·Î getattr·Î ¾ÈÀü Á¢±Ù
         if args.auto_source == "kiwoom" and getattr(args, "auto_use_mock", False):
+            discover_cmd.append("--kiwoom-use-mock")
         # Pass-through Kiwoom REST config to s0_discover when using kiwoom
         if args.auto_source == "kiwoom":
             if getattr(args, "auto_kiwoom_base", None):
@@ -70,19 +71,20 @@ def main(argv: list[str] | None = None) -> int:
                 discover_cmd += ["--kiwoom-rank-trid", args.auto_kiwoom_rank_trid]
             if getattr(args, "auto_kiwoom_api_id", None):
                 discover_cmd += ["--kiwoom-api-id", args.auto_kiwoom_api_id]
+            discover_cmd.append("--kiwoom-use-mock")
         stage_start_times["s0_discover"] = time.time()
         _run_stage("s0_discover", discover_cmd, env)
         stage_durations["s0_discover"] = time.time() - stage_start_times["s0_discover"]
         auto_tickers = _load_tickers(discovery_output)
-        # ê¸°ë³¸ ì •ì±…: kiwoom ê²°ê³¼ê°€ ë¹„ë©´ ì‹¤íŒ¨(ëª…ì‹œì ìœ¼ë¡œ pykrxë¥¼ ì›í•˜ë©´ --auto-source pykrx ì‚¬ìš©)
+        # ±âº» Á¤Ã¥: kiwoom °á°ú°¡ ºñ¸é ½ÇÆĞ(¸í½ÃÀûÀ¸·Î pykrx¸¦ ¿øÇÏ¸é --auto-source pykrx »ç¿ë)
         if not auto_tickers:
-            raise RuntimeError("Top movers íƒìƒ‰ ì‹¤íŒ¨: ìë™ í‹°ì»¤ ëª©ë¡ì´ ë¹„ì—ˆìŠµë‹ˆë‹¤.")
+            raise RuntimeError("Top movers Å½»ö ½ÇÆĞ: ÀÚµ¿ Æ¼Ä¿ ¸ñ·ÏÀÌ ºñ¾ú½À´Ï´Ù.")
         tickers = sorted({*tickers, *auto_tickers}) if tickers else auto_tickers
 
     if not tickers and not args.skip_s1:
-        raise ValueError("ìˆ˜ì§‘ì— ì‚¬ìš©í•  í‹°ì»¤ê°€ ì—†ìŠµë‹ˆë‹¤. --tickers ë˜ëŠ” --auto-tickersë¥¼ ì§€ì •í•˜ì„¸ìš”.")
+        raise ValueError("¼öÁı¿¡ »ç¿ëÇÒ Æ¼Ä¿°¡ ¾ø½À´Ï´Ù. --tickers ¶Ç´Â --auto-tickers¸¦ ÁöÁ¤ÇÏ¼¼¿ä.")
 
-    # Stage 1: ìˆ˜ì§‘
+    # Stage 1: ¼öÁı
     if not args.skip_s1:
         s1_cmd = [
             "python",
@@ -99,7 +101,7 @@ def main(argv: list[str] | None = None) -> int:
         _run_stage("s1_collect", s1_cmd, env)
         stage_durations["s1_collect"] = time.time() - stage_start_times["s1_collect"]
 
-    # Stage 2: ì „ì²˜ë¦¬
+    # Stage 2: ÀüÃ³¸®
     if not args.skip_s2:
         s2_cmd = ["python", "-m", PREPROCESS_MODULE]
         if tickers:
@@ -114,7 +116,7 @@ def main(argv: list[str] | None = None) -> int:
         _run_stage("s2_preprocess", s2_cmd, env)
         stage_durations["s2_preprocess"] = time.time() - stage_start_times["s2_preprocess"]
 
-    # Stage 3: ëª¨ë¸ í•™ìŠµ
+    # Stage 3: ¸ğµ¨ ÇĞ½À
     if not args.skip_s3:
         s3_cmd = ["python", "-m", MODEL_MODULE, "--train"]
         if args.settings:
@@ -145,7 +147,7 @@ def main(argv: list[str] | None = None) -> int:
     infer_input = Path(args.infer_input) if args.infer_input else (project_root / "data" / "gold" / "test" / "X.npy")
     infer_output = Path(args.infer_output)
     s5_output = Path(args.s5_output)
-    # Stage 4: ì¶”ë¡ 
+    # Stage 4: Ãß·Ğ
     if not args.skip_s4:
         infer_cmd = [
             "python",
@@ -173,23 +175,23 @@ def main(argv: list[str] | None = None) -> int:
         _run_stage("s4_infer", infer_cmd, env)
         stage_durations["s4_infer"] = time.time() - stage_start_times["s4_infer"]
 
-    # Stage 5: ì¶”ë¡ 
+    # Stage 5: Ãß·Ğ
     if not args.skip_s5:
         if args.skip_s4:
-            raise ValueError('s5_evaluate ë‹¨ê³„ë¥¼ ì‹¤í–‰í•˜ë ¤ë©´ s4_infer ê²°ê³¼ê°€ í•„ìš”í•©ë‹ˆë‹¤. --skip-s5 ì˜µì…˜ì„ ì‚¬ìš©í•˜ê±°ë‚˜ s4 ë‹¨ê³„ë¥¼ ì‹¤í–‰í•´ì£¼ì„¸ìš”.')
+            raise ValueError('s5_evaluate ´Ü°è¸¦ ½ÇÇàÇÏ·Á¸é s4_infer °á°ú°¡ ÇÊ¿äÇÕ´Ï´Ù. --skip-s5 ¿É¼ÇÀ» »ç¿ëÇÏ°Å³ª s4 ´Ü°è¸¦ ½ÇÇàÇØÁÖ¼¼¿ä.')
         predictions_path = infer_output
         actual_returns_path = Path(args.s5_actual_returns) if args.s5_actual_returns else infer_input.with_name("y.npy")
         if not actual_returns_path.exists():
-            raise FileNotFoundError('í‰ê°€ì— ì‚¬ìš©í•  ì‹¤ì œ ìˆ˜ìµë¥  íŒŒì¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: {actual_returns_path}')
+            raise FileNotFoundError('Æò°¡¿¡ »ç¿ëÇÒ ½ÇÁ¦ ¼öÀÍ·ü ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù: {actual_returns_path}')
         if not predictions_path.exists():
-            raise FileNotFoundError('s4_infer ê²°ê³¼ íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤: {predictions_path}')
+            raise FileNotFoundError('s4_infer °á°ú ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù: {predictions_path}')
         close_path = _resolve_close_path(project_root, args)
         if close_path.exists():
             close_values = np.load(close_path)
         else:
             price_data = np.load(infer_input)
             if args.close_index < 0 or args.close_index >= price_data.shape[2]:
-                raise ValueError('close_indexê°€ feature ì°¨ì› ë²”ìœ„ë¥¼ ë²—ì–´ë‚©ë‹ˆë‹¤.')
+                raise ValueError('close_index°¡ feature Â÷¿ø ¹üÀ§¸¦ ¹ş¾î³³´Ï´Ù.')
             close_values = price_data[:, -1, args.close_index]
         close_values = np.asarray(close_values, dtype=float)
         if close_values.ndim != 1:
@@ -199,7 +201,7 @@ def main(argv: list[str] | None = None) -> int:
         if actual_returns.ndim == 1:
             actual_returns = actual_returns[:, None]
         if close_values.shape[0] != actual_returns.shape[0]:
-            raise ValueError('ì‹¤ì œ ì¢…ê°€ ë°°ì—´ê³¼ ì‹¤ì œ ìˆ˜ìµë¥  ë°°ì—´ì˜ ìƒ˜í”Œ ìˆ˜ê°€ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.')
+            raise ValueError('½ÇÁ¦ Á¾°¡ ¹è¿­°ú ½ÇÁ¦ ¼öÀÍ·ü ¹è¿­ÀÇ »ùÇÃ ¼ö°¡ ÀÏÄ¡ÇÏÁö ¾Ê½À´Ï´Ù.')
         actual_prices = close_values[:, None] * (1.0 + actual_returns)
         actual_prices_path = Path(args.s5_actual_prices) if args.s5_actual_prices else (project_root / "outputs" / "actual_prices.npy")
         actual_prices_path.parent.mkdir(parents=True, exist_ok=True)
@@ -395,25 +397,25 @@ def _resolve_close_path(project_root: Path, args: argparse.Namespace) -> Path:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run full pipeline from s1 to s5.")
-    parser.add_argument("--tickers", nargs="*", default=[], help="ìˆ˜ì§‘/ì „ì²˜ë¦¬ì— ì‚¬ìš©í•  í‹°ì»¤ ëª©ë¡")
-    # ê¸°ë³¸ ìˆ˜ì§‘ êµ¬ê°„: ì˜¤ëŠ˜ ê¸°ì¤€ ê³¼ê±° 10ë…„ ~ ì˜¤ëŠ˜
-    # ì‚¬ìš©ìê°€ ëª…ì‹œí•˜ë©´ í•´ë‹¹ ê°’ìœ¼ë¡œ ë®ì–´ì”ë‹ˆë‹¤.
+    parser.add_argument("--tickers", nargs="*", default=[], help="¼öÁı/ÀüÃ³¸®¿¡ »ç¿ëÇÒ Æ¼Ä¿ ¸ñ·Ï")
+    # ±âº» ¼öÁı ±¸°£: ¿À´Ã ±âÁØ °ú°Å 10³â ~ ¿À´Ã
+    # »ç¿ëÀÚ°¡ ¸í½ÃÇÏ¸é ÇØ´ç °ªÀ¸·Î µ¤¾î¾¹´Ï´Ù.
     _default_end = datetime.now().strftime("%Y-%m-%d")
     _default_start = (datetime.now() - timedelta(days=365 * 10)).strftime("%Y-%m-%d")
-    parser.add_argument("--start-date", default=_default_start, help="ìˆ˜ì§‘ ì‹œì‘ì¼ (YYYY-MM-DD)")
-    parser.add_argument("--end-date", default=_default_end, help="ìˆ˜ì§‘ ì¢…ë£Œì¼ (YYYY-MM-DD)")
+    parser.add_argument("--start-date", default=_default_start, help="¼öÁı ½ÃÀÛÀÏ (YYYY-MM-DD)")
+    parser.add_argument("--end-date", default=_default_end, help="¼öÁı Á¾·áÀÏ (YYYY-MM-DD)")
 
     # auto ticker discovery
-    parser.add_argument("--auto-tickers", action="store_true", help="pykrx ë³€ë™ì„± ìƒìœ„ ì¢…ëª© ìë™ ì„ íƒ")
-    parser.add_argument("--auto-date", default=datetime.now().strftime("%Y%m%d"), help="top movers ê¸°ì¤€ ì¼ì (YYYYMMDD)")
-    parser.add_argument("--auto-market", default="KOSPI", help="ì‹œì¥ (KOSPI/KOSDAQ/ALL)")
-    parser.add_argument("--auto-count", type=int, default=5, help="ì„ ì • ì¢…ëª© ìˆ˜")
-    # ê¸°ë³¸: kiwoom ì‚¬ìš©(ka10027ì€ ì¥ ë§ˆê° í›„ì—ë„ ì‚¬ìš© ê°€ëŠ¥). í•„ìš” ì‹œ pykrx/autoë¡œ ë³€ê²½.
+    parser.add_argument("--auto-tickers", action="store_true", help="pykrx º¯µ¿¼º »óÀ§ Á¾¸ñ ÀÚµ¿ ¼±ÅÃ")
+    parser.add_argument("--auto-date", default=datetime.now().strftime("%Y%m%d"), help="top movers ±âÁØ ÀÏÀÚ (YYYYMMDD)")
+    parser.add_argument("--auto-market", default="KOSPI", help="½ÃÀå (KOSPI/KOSDAQ/ALL)")
+    parser.add_argument("--auto-count", type=int, default=5, help="¼±Á¤ Á¾¸ñ ¼ö")
+    # ±âº»: kiwoom »ç¿ë(ka10027Àº Àå ¸¶°¨ ÈÄ¿¡µµ »ç¿ë °¡´É). ÇÊ¿ä ½Ã pykrx/auto·Î º¯°æ.
     parser.add_argument("--auto-source", choices=["pykrx", "kiwoom", "auto"], default="kiwoom", help="Top mover discovery source")
-    parser.add_argument("--close-use-mock", action="store_true", help="í˜„ì¬ê°€ ì¡°íšŒ ì‹œ Kiwoom mock ì„œë²„ ì‚¬ìš©")
-    # s0_discover(íƒìƒ‰) ë‹¨ê³„ì—ì„œ í‚¤ì›€ mock ì‚¬ìš© ì—¬ë¶€
-    parser.add_argument("--auto-use-mock", action="store_true", help="ìë™ íƒìƒ‰(s0)ì—ì„œ Kiwoom mock ì„œë²„ ì‚¬ìš©")
-    parser.add_argument("--auto-output", type=Path, help="íƒìƒ‰ ê²°ê³¼ ì €ì¥ ê²½ë¡œ")
+    parser.add_argument("--close-use-mock", action="store_true", help="ÇöÀç°¡ Á¶È¸ ½Ã Kiwoom mock ¼­¹ö »ç¿ë")
+    # s0_discover(Å½»ö) ´Ü°è¿¡¼­ Å°¿ò mock »ç¿ë ¿©ºÎ
+    parser.add_argument("--auto-use-mock", action="store_true", help="ÀÚµ¿ Å½»ö(s0)¿¡¼­ Kiwoom mock ¼­¹ö »ç¿ë")
+    parser.add_argument("--auto-output", type=Path, help="Å½»ö °á°ú ÀúÀå °æ·Î")
 
     # Stage control
     parser.add_argument("--skip-s1", action="store_true")
@@ -426,30 +428,30 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--skip-features", action="store_true")
     parser.add_argument("--skip-datasets", action="store_true")
 
-    parser.add_argument("--epochs", type=int, help="í•™ìŠµ epoch ìˆ˜")
-    parser.add_argument("--batch-size", type=int, help="í•™ìŠµ ë°°ì¹˜ í¬ê¸°")
-    parser.add_argument("--learning-rate", type=float, help="í•™ìŠµë¥ ")
-    parser.add_argument("--model-device", help="í•™ìŠµ ë””ë°”ì´ìŠ¤")
-    parser.add_argument("--settings", type=Path, help="ê³µí†µ settings.yaml ê²½ë¡œ")
-    parser.add_argument("--gold-root", type=Path, help="gold ë°ì´í„° ë£¨íŠ¸ ê²½ë¡œ")
-    parser.add_argument("--artifacts-root", type=Path, help="artifacts ë£¨íŠ¸ ê²½ë¡œ")
+    parser.add_argument("--epochs", type=int, help="ÇĞ½À epoch ¼ö")
+    parser.add_argument("--batch-size", type=int, help="ÇĞ½À ¹èÄ¡ Å©±â")
+    parser.add_argument("--learning-rate", type=float, help="ÇĞ½À·ü")
+    parser.add_argument("--model-device", help="ÇĞ½À µğ¹ÙÀÌ½º")
+    parser.add_argument("--settings", type=Path, help="°øÅë settings.yaml °æ·Î")
+    parser.add_argument("--gold-root", type=Path, help="gold µ¥ÀÌÅÍ ·çÆ® °æ·Î")
+    parser.add_argument("--artifacts-root", type=Path, help="artifacts ·çÆ® °æ·Î")
 
-    parser.add_argument("--infer-input", type=Path, help="ì¶”ë¡  ì…ë ¥ numpy íŒŒì¼ (ê¸°ë³¸: data/gold/test/X.npy)")
+    parser.add_argument("--infer-input", type=Path, help="Ãß·Ğ ÀÔ·Â numpy ÆÄÀÏ (±âº»: data/gold/test/X.npy)")
     parser.add_argument("--infer-output", type=Path, default=Path("outputs/preds.json"))
-    parser.add_argument("--infer-model", type=Path, help="ì¶”ë¡ ì— ì‚¬ìš©í•  ëª¨ë¸ ê°€ì¤‘ì¹˜")
-    parser.add_argument("--infer-device", help="ì¶”ë¡  ë””ë°”ì´ìŠ¤")
-    parser.add_argument("--close-index", type=int, default=3, help="ì¶”ë¡  ì‹œ ì¢…ê°€ê°€ ìœ„ì¹˜í•œ feature ì¸ë±ìŠ¤")
-    parser.add_argument("--s5-actual-prices", type=Path, help="s5 í‰ê°€ì— ì‚¬ìš©í•  ì‹¤ì œ ê°€ê²© numpy íŒŒì¼ ê²½ë¡œ")
-    parser.add_argument("--s5-actual-returns", type=Path, help="s5 í‰ê°€ì— ì‚¬ìš©í•  ì‹¤ì œ ìˆ˜ìµë¥  numpy íŒŒì¼ ê²½ë¡œ (ê¸°ë³¸: infer-input ê²½ë¡œì˜ y.npy)")
-    parser.add_argument("--s5-output", type=Path, default=Path("outputs/eval.json"), help="s5 í‰ê°€ ë³´ê³ ì„œ ì¶œë ¥ ê²½ë¡œ")
-    parser.add_argument("--s5-horizons", nargs="*", type=int, help="s5 í‰ê°€ ì‹œ ì‚¬ìš©í•  ì˜ˆì¸¡ ì§€í‰ ëª©ë¡")
-    # s0_discoverì— Kiwoom REST ì„¤ì •ì„ ì „ë‹¬í•˜ê¸° ìœ„í•œ ì„ íƒì  ì¸ìë“¤
-    parser.add_argument("--auto-kiwoom-base", help="Kiwoom REST base URL (ì˜ˆ: https://gw.example)")
+    parser.add_argument("--infer-model", type=Path, help="Ãß·Ğ¿¡ »ç¿ëÇÒ ¸ğµ¨ °¡ÁßÄ¡")
+    parser.add_argument("--infer-device", help="Ãß·Ğ µğ¹ÙÀÌ½º")
+    parser.add_argument("--close-index", type=int, default=3, help="Ãß·Ğ ½Ã Á¾°¡°¡ À§Ä¡ÇÑ feature ÀÎµ¦½º")
+    parser.add_argument("--s5-actual-prices", type=Path, help="s5 Æò°¡¿¡ »ç¿ëÇÒ ½ÇÁ¦ °¡°İ numpy ÆÄÀÏ °æ·Î")
+    parser.add_argument("--s5-actual-returns", type=Path, help="s5 Æò°¡¿¡ »ç¿ëÇÒ ½ÇÁ¦ ¼öÀÍ·ü numpy ÆÄÀÏ °æ·Î (±âº»: infer-input °æ·ÎÀÇ y.npy)")
+    parser.add_argument("--s5-output", type=Path, default=Path("outputs/eval.json"), help="s5 Æò°¡ º¸°í¼­ Ãâ·Â °æ·Î")
+    parser.add_argument("--s5-horizons", nargs="*", type=int, help="s5 Æò°¡ ½Ã »ç¿ëÇÒ ¿¹Ãø ÁöÆò ¸ñ·Ï")
+    # s0_discover¿¡ Kiwoom REST ¼³Á¤À» Àü´ŞÇÏ±â À§ÇÑ ¼±ÅÃÀû ÀÎÀÚµé
+    parser.add_argument("--auto-kiwoom-base", help="Kiwoom REST base URL (¿¹: https://gw.example)")
     parser.add_argument("--auto-kiwoom-appkey", help="Kiwoom appkey")
     parser.add_argument("--auto-kiwoom-secret", help="Kiwoom secretkey")
-    parser.add_argument("--auto-kiwoom-rank-path", help="Kiwoom rank API path (ka10027 ë§¤í•‘ ê²½ë¡œ)")
-    parser.add_argument("--auto-kiwoom-rank-trid", help="Kiwoom rank TR ID (ê¸°ë³¸ ka10027)")
-    parser.add_argument("--auto-kiwoom-api-id", help="ìš”ì²­ í—¤ë” api-id ê°•ì œ ì§€ì •")
+    parser.add_argument("--auto-kiwoom-rank-path", help="Kiwoom rank API path (ka10027 ¸ÅÇÎ °æ·Î)")
+    parser.add_argument("--auto-kiwoom-rank-trid", help="Kiwoom rank TR ID (±âº» ka10027)")
+    parser.add_argument("--auto-kiwoom-api-id", help="¿äÃ» Çì´õ api-id °­Á¦ ÁöÁ¤")
     return parser
 
 

@@ -1,0 +1,22 @@
+﻿{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Pipeline (Auto Kiwoom)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/Python/pipeline/run_pipeline.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "args": [
+        "--auto-tickers",
+        "--auto-source", "kiwoom",
+        "--auto-market", "KOSPI",
+        "--auto-count", "5",
+        "--start-date", "2014-09-19",
+        "--end-date", "2024-09-18"
+      ]
+    }
+  ]
+}

@@ -48,7 +48,7 @@ class PriceBranch(nn.Module):
         # 입력 형태: (batch, seq_len, feature_dim)
         x = x.transpose(1, 2)  # Conv1d 입력을 위해 (batch, feature_dim, seq_len)
         x = self.conv(x)
-        x = x.transpose(1, 2)  # LSTM 입력을 위해 (batch, seq_len, channels)
+        x = x.transpose(1, 2)  # LSTM 입력 형태 (batch, seq_len, channels)
         lstm_out, _ = self.lstm(x)
         pooled = self.global_pool(lstm_out.transpose(1, 2)).squeeze(-1)
         return self.projection(pooled)
