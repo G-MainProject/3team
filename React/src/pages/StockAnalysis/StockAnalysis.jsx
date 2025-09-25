@@ -6,90 +6,7 @@ import Footer from '../../component/Footer/Footer';
 import UnifiedStockChart from '../../component/UnifiedStockChart/UnifiedStockChart';
 import Chart from '../../component/Chart/Chart';
 import { useStock } from '../../hooks/useStock';
-
-// 더 현실적인 재무 데이터
-const financialData = [
-	{
-		year: '2017',
-		revenue: 2395800000000,
-		operatingProfit: 536000000000,
-		netProfit: 421900000000,
-	},
-	{
-		year: '2018',
-		revenue: 2437700000000,
-		operatingProfit: 589000000000,
-		netProfit: 443000000000,
-	},
-	{
-		year: '2019',
-		revenue: 2304000000000,
-		operatingProfit: 277700000000,
-		netProfit: 217400000000,
-	},
-	{
-		year: '2020',
-		revenue: 2368000000000,
-		operatingProfit: 359900000000,
-		netProfit: 264100000000,
-	},
-	{
-		year: '2021',
-		revenue: 2796000000000,
-		operatingProfit: 512800000000,
-		netProfit: 399100000000,
-	},
-	{
-		year: '2022',
-		revenue: 3022300000000,
-		operatingProfit: 433800000000,
-		netProfit: 556500000000,
-	},
-	{
-		year: '2023',
-		revenue: 2589400000000,
-		operatingProfit: 65700000000,
-		netProfit: 154900000000,
-	},
-];
-
-// 정적 리포트 주가 데이터 (고정)
-const generateRealisticStockData = () => {
-	const times = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30'];
-	const volumes = [1200000, 1500000, 1800000, 1600000, 1400000, 1700000, 1900000, 1300000, 2100000, 1800000, 2000000, 2500000];
-	
-	// 고정된 가격 패턴 (약간의 상승 트렌드)
-	const pricePattern = [49800, 50100, 50000, 50200, 50150, 50300, 50250, 50400, 50350, 50500, 50450, 50600];
-	
-	return times.map((time, index) => {
-		const price = pricePattern[index];
-		const open = index === 0 ? price : pricePattern[index - 1];
-		const high = Math.round(price + 200 + (index * 10));
-		const low = Math.round(price - 150 - (index * 5));
-		const close = price;
-		
-		return {
-			time,
-			price,
-			open,
-			high,
-			low,
-			close,
-			volume: volumes[index]
-		};
-	});
-};
-
-// 정적 리포트 기술적지표 데이터 (고정)
-const generateTechnicalIndicators = () => {
-	// 고정된 기술적지표 값들
-	return {
-		rsi: 65.2,
-		macd: { macd: 150, signal: 140, histogram: 10 },
-		bollinger: { upper: 51200, middle: 50000, lower: 48800 },
-		obv: [1200000, 1350000, 1530000, 1690000, 1830000, 2000000, 2190000, 2320000, 2530000, 2710000, 2910000, 3160000]
-	};
-};
+import stockAnalysisData from '../../../../data/outputs/top_mover_forecast.json';
 
 const financialChartSeries = [
 	{ key: 'revenue', name: '매출액', color: '#3b82f6' },
@@ -107,9 +24,12 @@ export default function StockAnalysis() {
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
 
-	// 정적 리포트 데이터 (고정)
-	const stockData = generateRealisticStockData();
-	const technicalIndicators = generateTechnicalIndicators();
+	const stockInfo = useMemo(() => {
+		if (!selectedStock) return null;
+		return stockAnalysisData.entries.find(
+			(stock) => stock.ticker === selectedStock.stockCode
+		);
+	}, [selectedStock]);
 
 	useEffect(() => {
 		const dashboardMain = document.querySelector(`.${styles['stock-analysis-main']}`);
@@ -224,7 +144,7 @@ export default function StockAnalysis() {
 		}
 	};
 
-    if (stockLoading || !selectedStock) {
+    if (stockLoading || !stockInfo) {
         return <div>Loading...</div>; // or a spinner component
     }
 
@@ -242,8 +162,8 @@ export default function StockAnalysis() {
 						<div className={styles['section-container']}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
-									<h2>{selectedStock.stockName}/{selectedStock.stockCode}/KOSPI</h2>
-									<p>{selectedStock.analysisDate} 기준 주가 및 지표</p>
+									<h2>{stockInfo.name}/{stockInfo.ticker}/KOSPI</h2>
+									<p>{stockAnalysisData.date} 기준 주가 및 지표</p>
 								</div>
 							</div>
 							<div className={styles['stock-info-section']}>
@@ -253,13 +173,13 @@ export default function StockAnalysis() {
 										<h3>기준 시점 주가 및 거래량</h3>
 										<div className={styles['analysis-timestamp']}>
 											<span className={styles['timestamp-label']}>분석 시점:</span>
-											<span className={styles['timestamp-value']}>{selectedStock.analysisDate}</span>
+											<span className={styles['timestamp-value']}>{stockAnalysisData.date}</span>
 										</div>
 									</div>
 									<div className={styles['unified-chart-wrapper']}>
 										<UnifiedStockChart
-											stockData={stockData}
-											volumeData={stockData.map(d => ({ time: d.time, volume: d.volume }))}
+											stockData={stockInfo.time_series.price_history}
+											volumeData={stockInfo.time_series.price_history.map(d => ({ time: d.time, volume: d.volume }))}
 											simpleMode={false}
 										/>
 									</div>
@@ -270,28 +190,25 @@ export default function StockAnalysis() {
 									<div className={styles['stock-card']}>
 										<h3>기준가</h3>
 										<p className={styles['stock-value']}>
-											₩{stockData[stockData.length - 1]?.price?.toLocaleString() || '0'}
+											₩{stockInfo.current_price?.toLocaleString() || '0'}
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>전일 대비</h3>
 										<p className={`${styles['stock-value']} ${styles['positive']}`}>
-											{stockData.length > 1 ? 
-												`${((stockData[stockData.length - 1].price - stockData[0].price) / stockData[0].price * 100).toFixed(1)}%` : 
-												'+0.0%'
-											}
+											{stockInfo.change_pct?.toFixed(1) || '0.0'}%
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>거래량</h3>
 										<p className={styles['stock-value']}>
-											{stockData[stockData.length - 1]?.volume?.toLocaleString() || '0'}
+											{stockInfo.time_series.price_history[stockInfo.time_series.price_history.length - 1]?.volume?.toLocaleString() || '0'}
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>시가총액</h3>
 										<p className={styles['stock-value']}>
-											₩{((stockData[stockData.length - 1]?.price || 0) * 74700000000 / 1000000000000).toFixed(1)}조
+											₩{(stockInfo.fundamentals.market_cap / 1000000000000).toFixed(1)}조
 										</p>
 									</div>
 								</div>
@@ -311,18 +228,18 @@ export default function StockAnalysis() {
 								<div className={styles['financial-cards']}>
 									<div className={styles['financial-card']}>
 										<h3>매출액</h3>
-										<p className={styles['financial-value']}>₩1,000억</p>
-										<span className={`${styles['financial-change']} ${styles['positive']}`}>+12.5%</span>
+										<p className={styles['financial-value']}>₩{(stockInfo.financials.summary.revenue.value / 100000000).toFixed(0)}억</p>
+										<span className={`${styles['financial-change']} ${stockInfo.financials.summary.revenue.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.summary.revenue.change > 0 ? '+' : ''}{stockInfo.financials.summary.revenue.change}%</span>
 									</div>
 									<div className={styles['financial-card']}>
 										<h3>영업이익</h3>
-										<p className={styles['financial-value']}>₩200억</p>
-										<span className={`${styles['financial-change']} ${styles['positive']}`}>+8.3%</span>
+										<p className={styles['financial-value']}>₩{(stockInfo.financials.summary.operating_profit.value / 100000000).toFixed(0)}억</p>
+										<span className={`${styles['financial-change']} ${stockInfo.financials.summary.operating_profit.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.summary.operating_profit.change > 0 ? '+' : ''}{stockInfo.financials.summary.operating_profit.change}%</span>
 									</div>
 									<div className={styles['financial-card']}>
 										<h3>당기순이익</h3>
-										<p className={styles['financial-value']}>₩150억</p>
-										<span className={`${styles['financial-change']} ${styles['positive']}`}>+15.2%</span>
+										<p className={styles['financial-value']}>₩{(stockInfo.financials.summary.net_profit.value / 100000000).toFixed(0)}억</p>
+										<span className={`${styles['financial-change']} ${stockInfo.financials.summary.net_profit.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.summary.net_profit.change > 0 ? '+' : ''}{stockInfo.financials.summary.net_profit.change}%</span>
 									</div>
 								</div>
 
@@ -333,7 +250,7 @@ export default function StockAnalysis() {
 									</div>
 									<div className={styles['unified-chart-wrapper']}>
 										<Chart
-											data={financialData}
+											data={stockInfo.financials.yearly}
 											series={financialChartSeries}
 											xAxisKey="year"
 											yAxisUnit="원"
@@ -348,32 +265,28 @@ export default function StockAnalysis() {
 									<div className={styles['ratio-item']}>
 										<h4>PER</h4>
 										<div className={styles['ratio-value']}>
-											<span className={styles['ratio-number']}>12.5</span>
-											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.8</span>
+											<span className={styles['ratio-number']}>{stockInfo.fundamentals.per.toFixed(1)}</span>
 										</div>
 										<p className={styles['ratio-description']}>주가수익비율</p>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>PBR</h4>
 										<div className={styles['ratio-value']}>
-											<span className={styles['ratio-number']}>1.2</span>
-											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.1</span>
+											<span className={styles['ratio-number']}>{stockInfo.fundamentals.pbr.toFixed(1)}</span>
 										</div>
 										<p className={styles['ratio-description']}>주가순자산비율</p>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>ROE</h4>
 										<div className={styles['ratio-value']}>
-											<span className={styles['ratio-number']}>15.8%</span>
-											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+2.1%p</span>
+											<span className={styles['ratio-number']}>{(stockInfo.fundamentals.roe * 100).toFixed(1)}%</span>
 										</div>
 										<p className={styles['ratio-description']}>자기자본이익률</p>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>ROA</h4>
 										<div className={styles['ratio-value']}>
-											<span className={styles['ratio-number']}>8.4%</span>
-											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+1.2%p</span>
+											<span className={styles['ratio-number']}>{stockInfo.fundamentals.roa.toFixed(1)}%</span>
 										</div>
 										<p className={styles['ratio-description']}>총자산이익률</p>
 									</div>
@@ -384,29 +297,29 @@ export default function StockAnalysis() {
 									<div className={styles['ratio-item']}>
 										<h4>부채비율</h4>
 										<div className={styles['ratio-value']}>
-											<span className={styles['ratio-number']}>25.2%</span>
-											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+1.2%p</span>
+											<span className={styles['ratio-number']}>{stockInfo.financials.ratios.debt_ratio.value}%</span>
+											<span className={`${styles['ratio-change']} ${stockInfo.financials.ratios.debt_ratio.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.ratios.debt_ratio.change > 0 ? '+' : ''}{stockInfo.financials.ratios.debt_ratio.change}%p</span>
 										</div>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>유동비율</h4>
 										<div className={styles['ratio-value']}>
-											<span className={styles['ratio-number']}>1.8</span>
-											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.1</span>
+											<span className={styles['ratio-number']}>{stockInfo.financials.ratios.current_ratio.value}</span>
+											<span className={`${styles['ratio-change']} ${stockInfo.financials.ratios.current_ratio.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.ratios.current_ratio.change > 0 ? '+' : ''}{stockInfo.financials.ratios.current_ratio.change}</span>
 										</div>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>당좌비율</h4>
 										<div className={styles['ratio-value']}>
-											<span className={styles['ratio-number']}>1.2</span>
-											<span className={`${styles['ratio-change']} ${styles['negative']}`}>-0.1</span>
+											<span className={styles['ratio-number']}>{stockInfo.financials.ratios.quick_ratio.value}</span>
+											<span className={`${styles['ratio-change']} ${stockInfo.financials.ratios.quick_ratio.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.ratios.quick_ratio.change > 0 ? '+' : ''}{stockInfo.financials.ratios.quick_ratio.change}</span>
 										</div>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>자기자본비율</h4>
 										<div className={styles['ratio-value']}>
-											<span className={styles['ratio-number']}>79.8%</span>
-											<span className={`${styles['ratio-change']} ${styles['positive']}`}>+0.3%p</span>
+											<span className={styles['ratio-number']}>{stockInfo.financials.ratios.equity_ratio.value}%</span>
+											<span className={`${styles['ratio-change']} ${stockInfo.financials.ratios.equity_ratio.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.ratios.equity_ratio.change > 0 ? '+' : ''}{stockInfo.financials.ratios.equity_ratio.change}%p</span>
 										</div>
 									</div>
 								</div>
@@ -427,14 +340,14 @@ export default function StockAnalysis() {
 									<div className={styles['technical-card']}>
 										<h3>RSI</h3>
 										<div className={styles['technical-value-container']}>
-											<p className={styles['technical-value']}>{technicalIndicators.rsi}</p>
+											<p className={styles['technical-value']}>{stockInfo.indicators.rsi.toFixed(1)}</p>
 											<span className={`${styles['technical-signal']} ${
-												technicalIndicators.rsi > 70 ? styles['negative'] : 
-												technicalIndicators.rsi < 30 ? styles['positive'] : 
+												stockInfo.indicators.rsi > 70 ? styles['negative'] : 
+												stockInfo.indicators.rsi < 30 ? styles['positive'] : 
 												styles['neutral']
 											}`}>
-												{technicalIndicators.rsi > 70 ? '과매수' : 
-												 technicalIndicators.rsi < 30 ? '과매도' : '중립'}
+												{stockInfo.indicators.rsi > 70 ? '과매수' : 
+												 stockInfo.indicators.rsi < 30 ? '과매도' : '중립'}
 											</span>
 										</div>
 										<p className={styles['technical-description']}>상대강도지수</p>
@@ -443,17 +356,9 @@ export default function StockAnalysis() {
 										<h3>OBV</h3>
 										<div className={styles['technical-value-container']}>
 											<p className={styles['technical-value']}>
-												{technicalIndicators.obv[technicalIndicators.obv.length - 1] > 0 ? '+' : ''}
-												{(technicalIndicators.obv[technicalIndicators.obv.length - 1] / 1000000).toFixed(1)}M
+												{stockInfo.indicators.obv > 0 ? '+' : ''}
+												{(stockInfo.indicators.obv / 1000000).toFixed(1)}M
 											</p>
-											<span className={`${styles['technical-signal']} ${
-												technicalIndicators.obv[technicalIndicators.obv.length - 1] > 
-												technicalIndicators.obv[technicalIndicators.obv.length - 2] ? 
-												styles['positive'] : styles['negative']
-											}`}>
-												{technicalIndicators.obv[technicalIndicators.obv.length - 1] > 
-												 technicalIndicators.obv[technicalIndicators.obv.length - 2] ? '상승' : '하락'}
-											</span>
 										</div>
 										<p className={styles['technical-description']}>거래량누적지표</p>
 									</div>
@@ -461,13 +366,13 @@ export default function StockAnalysis() {
 										<h3>MACD</h3>
 										<div className={styles['technical-value-container']}>
 											<p className={styles['technical-value']}>
-												{technicalIndicators.macd.macd > 0 ? '+' : ''}{technicalIndicators.macd.macd}
+												{stockInfo.indicators.macd > 0 ? '+' : ''}{stockInfo.indicators.macd.toFixed(0)}
 											</p>
 											<span className={`${styles['technical-signal']} ${
-												technicalIndicators.macd.macd > technicalIndicators.macd.signal ? 
+												stockInfo.indicators.macd > stockInfo.indicators.macd_signal ? 
 												styles['positive'] : styles['negative']
 											}`}>
-												{technicalIndicators.macd.macd > technicalIndicators.macd.signal ? '매수' : '매도'}
+												{stockInfo.indicators.macd > stockInfo.indicators.macd_signal ? '매수' : '매도'}
 											</span>
 										</div>
 										<p className={styles['technical-description']}>이동평균수렴확산</p>
@@ -476,16 +381,16 @@ export default function StockAnalysis() {
 										<h3>BB</h3>
 										<div className={styles['technical-value-container']}>
 											<p className={styles['technical-value']}>
-												{stockData[stockData.length - 1]?.price > technicalIndicators.bollinger.upper ? '상단' :
-												 stockData[stockData.length - 1]?.price < technicalIndicators.bollinger.lower ? '하단' : '중간'}
+												{stockInfo.current_price > stockInfo.indicators.bb_upper ? '상단' :
+												 stockInfo.current_price < stockInfo.indicators.bb_lower ? '하단' : '중간'}
 											</p>
 											<span className={`${styles['technical-signal']} ${
-												stockData[stockData.length - 1]?.price > technicalIndicators.bollinger.upper ? styles['negative'] :
-												stockData[stockData.length - 1]?.price < technicalIndicators.bollinger.lower ? styles['positive'] :
+												stockInfo.current_price > stockInfo.indicators.bb_upper ? styles['negative'] :
+												stockInfo.current_price < stockInfo.indicators.bb_lower ? styles['positive'] :
 												styles['neutral']
 											}`}>
-												{stockData[stockData.length - 1]?.price > technicalIndicators.bollinger.upper ? '과매수' :
-												 stockData[stockData.length - 1]?.price < technicalIndicators.bollinger.lower ? '과매도' : '중립'}
+												{stockInfo.current_price > stockInfo.indicators.bb_upper ? '과매수' :
+												 stockInfo.current_price < stockInfo.indicators.bb_lower ? '과매도' : '중립'}
 											</span>
 										</div>
 										<p className={styles['technical-description']}>볼린저밴드</p>
@@ -502,9 +407,9 @@ export default function StockAnalysis() {
 										</div>
 										<div className={styles['unified-chart-wrapper']}>
 											<Chart
-												data={stockData.map((d, index) => ({
+												data={stockInfo.time_series.price_history.map((d, index) => ({
 													time: d.time,
-													rsi: Math.max(0, Math.min(100, technicalIndicators.rsi + (index * 0.5) - 3))
+													rsi: stockInfo.time_series.indicators_history.rsi[index]
 												}))}
 												series={[
 													{ key: 'rsi', name: 'RSI', color: '#ff6b6b' }
@@ -525,9 +430,9 @@ export default function StockAnalysis() {
 										</div>
 										<div className={styles['unified-chart-wrapper']}>
 											<Chart
-												data={stockData.map((d, index) => ({
+												data={stockInfo.time_series.price_history.map((d, index) => ({
 													time: d.time,
-													obv: technicalIndicators.obv[index] || 0
+													obv: stockInfo.time_series.indicators_history.obv[index]
 												}))}
 												series={[
 													{ key: 'obv', name: 'OBV', color: '#e91e63' }
@@ -551,18 +456,12 @@ export default function StockAnalysis() {
 										</div>
 										<div className={styles['unified-chart-wrapper']}>
 											<Chart
-												data={stockData.map((d, index) => {
-													const baseMacd = technicalIndicators.macd.macd;
-													const baseSignal = technicalIndicators.macd.signal;
-													const baseHistogram = technicalIndicators.macd.histogram;
-													
-													return {
-														time: d.time,
-														macd: Math.round(baseMacd + (index * 2) - 6),
-														signal: Math.round(baseSignal + (index * 1.5) - 4.5),
-														histogram: Math.round(baseHistogram + (index * 0.5) - 1.5)
-													};
-												})}
+												data={stockInfo.time_series.price_history.map((d, index) => ({
+													time: d.time,
+													macd: stockInfo.time_series.indicators_history.macd[index],
+													signal: stockInfo.time_series.indicators_history.signal[index],
+													histogram: stockInfo.time_series.indicators_history.histogram[index]
+												}))}
 												series={[
 													{ key: 'macd', name: 'MACD', color: '#4ecdc4' },
 													{ key: 'signal', name: 'Signal', color: '#ff6b6b' },
@@ -584,12 +483,12 @@ export default function StockAnalysis() {
 										</div>
 										<div className={styles['unified-chart-wrapper']}>
 											<Chart
-												data={stockData.map((d, index) => ({
+												data={stockInfo.time_series.price_history.map((d, index) => ({
 													time: d.time,
 													price: d.price,
-													upper: technicalIndicators.bollinger.upper + (index * 10),
-													middle: technicalIndicators.bollinger.middle + (index * 5),
-													lower: technicalIndicators.bollinger.lower + (index * 10)
+													upper: stockInfo.time_series.indicators_history.bollinger_upper[index],
+													middle: stockInfo.time_series.indicators_history.bollinger_middle[index],
+													lower: stockInfo.time_series.indicators_history.bollinger_lower[index]
 												}))}
 												series={[
 													{ key: 'price', name: '주가', color: '#1976d2' },
@@ -627,7 +526,6 @@ export default function StockAnalysis() {
 					<span>{isInFooter ? 'Dashboard로 이동' : 'Footer로 이동'}</span>
 				</button>
 			)}
-
 			{/* Footer */}
 			{showFooter && (
 				<div ref={footerRef}>

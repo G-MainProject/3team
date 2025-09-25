@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import finalReportData from '../../../data/sentiment_report.json';
+import finalReportData from '../../../data/raws/sentiment_report.json';
 import { getStockSummary } from '../services/yahooFinanceApi';
 
 export const StockContext = createContext();
@@ -12,7 +12,10 @@ export const StockProvider = ({ children }) => {
     useEffect(() => {
         const initializeStocks = async () => {
             setLoading(true);
-            const initialStocks = finalReportData.map(stock => ({ ...stock }));
+            const uniqueStocks = Array.from(
+                new Map(finalReportData.map(stock => [stock.stockCode, stock])).values()
+            );
+            const initialStocks = uniqueStocks.map(stock => ({ ...stock }));
 
             if (initialStocks.length > 0 && !selectedStock) {
                 setSelectedStock(initialStocks[0]);
