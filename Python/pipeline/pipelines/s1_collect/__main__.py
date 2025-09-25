@@ -6,6 +6,7 @@ import argparse
 import json
 import sys
 from datetime import datetime
+import csv
 from importlib import import_module
 from pathlib import Path
 from typing import Dict, Mapping, Sequence
@@ -58,10 +59,14 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     # DART 재무제표 수집 옵션
     if args.with_dart:
-        if not args.corp_codes:
-            parser.error("--with-dart 사용 시 --corp-codes 를 지정해야 합니다.")
+        corp_codes = list(args.corp_codes or [])
+        if not corp_codes:
+            # Try auto-resolve from data/dart_corpcode.csv using provided tickers
+            corp_codes = _auto_resolve_corp_codes(args.tickers)
+        if not corp_codes:
+            parser.error("--with-dart 사용 시 corp-codes를 지정하거나 data/dart_corpcode.csv에 매핑을 준비해 주세요.")
         summaries["dart"] = dart_client.fetch_filings(
-            corp_codes=args.corp_codes,
+            corp_codes=corp_codes,
             year=args.dart_year or datetime.now().year,
             raw_dir=args.raw_dir,
             reprt_codes=args.reprt_codes,
@@ -155,6 +160,43 @@ def _print_summary(summary: Mapping[str, Mapping[str, Sequence[Path]]]) -> None:
     print(json.dumps(output, ensure_ascii=False, indent=2))
 
 
+def _auto_resolve_corp_codes(tickers: Sequence[str] | None) -> list[str]:
+    """data/dart_corpcode.csv에서 ticker(=stock_code)로 corp_code를 찾는다.
+
+    가능한 헤더명: ticker, code, stock_code, symbol, corp_code, corpcode 등.
+    제공된 tickers에 해당하는 corp_code 리스트를 반환하며, 매칭 실패는 건너뛴다.
+    """
+    try:
+        start = Path(__file__).resolve()
+        project_root = next((p for p in start.parents if (p / "data").exists()), start.parents[4])
+        path = project_root / "data" / "dart_corpcode.csv"
+        if not path.exists() or not tickers:
+            return []
+        want = [str(t).zfill(6) for t in tickers]
+        mapping: dict[str, str] = {}
+        with path.open("r", encoding="utf-8") as fp:
+            reader = csv.DictReader(fp)
+            headers = {h.lower(): h for h in (reader.fieldnames or [])}
+            t_col = headers.get("ticker") or headers.get("stock_code") or headers.get("code") or headers.get("symbol")
+            c_col = headers.get("corp_code") or headers.get("corpcode") or headers.get("corpcode_id") or headers.get("corp")
+            if not t_col or not c_col:
+                for row in reader:
+                    vals = list(row.values())
+                    if len(vals) >= 2:
+                        t = str(vals[0]).strip().zfill(6)
+                        c = str(vals[1]).strip()
+                        if t and c:
+                            mapping[t] = c
+            else:
+                for row in reader:
+                    t = str(row.get(t_col, "")).strip().zfill(6)
+                    c = str(row.get(c_col, "")).strip()
+                    if t and c:
+                        mapping[t] = c
+        return [mapping[t] for t in want if t in mapping]
+    except Exception:
+        return []
+
+
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(main())
-

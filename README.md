@@ -157,7 +157,6 @@ python -m Python.Sentiment.Apps.price_to_json --name 삼성전자
 **환경 변수(.env)**
 
 - `KIWOOM_BASE`: 운영 도메인. 예 `https://api.kiwoom.com`
-- `KIWOOM_MOCK_BASE`: 모의 도메인. 예 `https://mockapi.kiwoom.com`
 - `KIWOOM_APPKEY`, `KIWOOM_SECRETKEY`: 인증키
 - `KIWOOM_KA10019_PATH`(선택): 문서 경로와 다를 경우 지정. 기본 `/api/dostk/stkinfo`
 

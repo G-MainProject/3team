@@ -1,4 +1,5 @@
 ﻿"""CLI to execute the entire data-to-inference pipeline."""
+
 from __future__ import annotations
 
 import argparse
@@ -6,34 +7,34 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable
+import csv
 
 import numpy as np
-import time
-
 
 COLLECT_MODULE = "Python.pipeline.pipelines.s1_collect"
 PREPROCESS_MODULE = "Python.pipeline.pipelines.s2_preprocess"
 MODEL_MODULE = "Python.pipeline.pipelines.s3_model"
 INFER_MODULE = "Python.pipeline.pipelines.s4_infer.predict"
 DISCOVER_MODULE = "Python.pipeline.pipelines.s0_discover.top_movers"
-TOP_REPORT_MODULE = "Python.pipeline.pipelines.s5_evaluate.top_mover_report"
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
+    # 하위 호환을 위해 기본 출력 경로를 data/outputs로 정규화
+    try:
+        if str(getattr(args, "s5_output", "")).replace("\\", "/") == "outputs/eval.json":
+            args.s5_output = Path("data/outputs/eval.json")
+    except Exception:
+        pass
 
     project_root = _find_project_root()
     env = _build_env(project_root)
 
     tickers = list(args.tickers)
-    discovery_output: Path | None = None
-    stage_start_times: dict[str, float] = {}
-    stage_durations: dict[str, float] = {}
-    total_start = time.time()
 
     # 자동 티커 탐색
     if args.auto_tickers:
@@ -42,39 +43,19 @@ def main(argv: list[str] | None = None) -> int:
             "python",
             "-m",
             DISCOVER_MODULE,
+            "--date",
+            args.auto_date,
             "--market",
             args.auto_market,
             "--count",
             str(args.auto_count),
-            "--source",
-            args.auto_source,
             "--output",
             str(discovery_output),
+            "--source",
+            args.auto_source,
         ]
-        if args.auto_source in ("pykrx", "auto"):
-            discover_cmd += ["--date", args.auto_date]
-        # mock 플래그는 없을 수도 있으므로 getattr로 안전 접근
-        # mock 플래그는 없을 수도 있으므로 getattr로 안전 접근
-        if args.auto_source == "kiwoom" and getattr(args, "auto_use_mock", False):
-        # Pass-through Kiwoom REST config to s0_discover when using kiwoom
-        if args.auto_source == "kiwoom":
-            if getattr(args, "auto_kiwoom_base", None):
-                discover_cmd += ["--kiwoom-base", args.auto_kiwoom_base]
-            if getattr(args, "auto_kiwoom_appkey", None):
-                discover_cmd += ["--kiwoom-appkey", args.auto_kiwoom_appkey]
-            if getattr(args, "auto_kiwoom_secret", None):
-                discover_cmd += ["--kiwoom-secret", args.auto_kiwoom_secret]
-            if getattr(args, "auto_kiwoom_rank_path", None):
-                discover_cmd += ["--kiwoom-rank-path", args.auto_kiwoom_rank_path]
-            if getattr(args, "auto_kiwoom_rank_trid", None):
-                discover_cmd += ["--kiwoom-rank-trid", args.auto_kiwoom_rank_trid]
-            if getattr(args, "auto_kiwoom_api_id", None):
-                discover_cmd += ["--kiwoom-api-id", args.auto_kiwoom_api_id]
-        stage_start_times["s0_discover"] = time.time()
         _run_stage("s0_discover", discover_cmd, env)
-        stage_durations["s0_discover"] = time.time() - stage_start_times["s0_discover"]
         auto_tickers = _load_tickers(discovery_output)
-        # 기본 정책: kiwoom 결과가 비면 실패(명시적으로 pykrx를 원하면 --auto-source pykrx 사용)
         if not auto_tickers:
             raise RuntimeError("Top movers 탐색 실패: 자동 티커 목록이 비었습니다.")
         tickers = sorted({*tickers, *auto_tickers}) if tickers else auto_tickers
@@ -95,9 +76,26 @@ def main(argv: list[str] | None = None) -> int:
             "--end-date",
             args.end_date,
         ]
-        stage_start_times["s1_collect"] = time.time()
+        # .env에 DART_API_KEY가 있고 data/dart_corpcode.csv가 있으면 DART 수집 자동 활성화
+        try:
+            data_root = next((p for p in [project_root / "data", Path("data")] if p.exists()), project_root / "data")
+            corp_map = data_root / "dart_corpcode.csv"
+            want_dart = bool(os.getenv("DART_API_KEY")) and corp_map.exists()
+        except Exception:
+            want_dart = False
+        if want_dart:
+            s1_cmd.append("--with-dart")
+        # DART 자동 보정: CSV 매핑에서 corp_code 추가 또는 플래그 제거
+        try:
+            corp_codes = _load_corp_codes_from_csv(project_root, tickers)
+        except Exception:
+            corp_codes = []
+        if "--with-dart" in s1_cmd:
+            if corp_codes:
+                s1_cmd += ["--corp-codes", *corp_codes]
+            else:
+                s1_cmd = [x for x in s1_cmd if x != "--with-dart"]
         _run_stage("s1_collect", s1_cmd, env)
-        stage_durations["s1_collect"] = time.time() - stage_start_times["s1_collect"]
 
     # Stage 2: 전처리
     if not args.skip_s2:
@@ -110,9 +108,7 @@ def main(argv: list[str] | None = None) -> int:
             s2_cmd.append("--skip-features")
         if args.skip_datasets:
             s2_cmd.append("--skip-datasets")
-        stage_start_times["s2_preprocess"] = time.time()
         _run_stage("s2_preprocess", s2_cmd, env)
-        stage_durations["s2_preprocess"] = time.time() - stage_start_times["s2_preprocess"]
 
     # Stage 3: 모델 학습
     if not args.skip_s3:
@@ -131,16 +127,7 @@ def main(argv: list[str] | None = None) -> int:
             s3_cmd += ["--learning-rate", str(args.learning_rate)]
         if args.model_device is not None:
             s3_cmd += ["--device", args.model_device]
-        stage_start_times["s3_model"] = time.time()
         _run_stage("s3_model", s3_cmd, env)
-        stage_durations["s3_model"] = time.time() - stage_start_times["s3_model"]
-
-    labels_path = _resolve_labels_path(project_root, args)
-    live_close_path: Path | None = None
-    if not args.skip_s4:
-        live_close_path = _prepare_live_close_values(project_root, args, labels_path)
-        if live_close_path is not None:
-            print(f"[Pipeline] Live close snapshot saved to {live_close_path}")
 
     infer_input = Path(args.infer_input) if args.infer_input else (project_root / "data" / "gold" / "test" / "X.npy")
     infer_output = Path(args.infer_output)
@@ -160,36 +147,30 @@ def main(argv: list[str] | None = None) -> int:
             "--close-index",
             str(args.close_index),
         ]
-        close_path = _resolve_close_path(project_root, args)
-        if close_path.exists():
-            infer_cmd += ["--close-values", str(close_path)]
-        else:
-            print(f"[Pipeline] Warning: close values not found at {close_path}, predicted prices will be scaled values.")
         if args.settings:
             infer_cmd += ["--settings", str(args.settings)]
+        if args.close_values:
+            infer_cmd += ["--close-values", str(args.close_values)]
         if args.infer_device is not None:
             infer_cmd += ["--device", args.infer_device]
-        stage_start_times["s4_infer"] = time.time()
         _run_stage("s4_infer", infer_cmd, env)
-        stage_durations["s4_infer"] = time.time() - stage_start_times["s4_infer"]
 
-    # Stage 5: 추론
+    # Stage 5: 평가
     if not args.skip_s5:
         if args.skip_s4:
-            raise ValueError('s5_evaluate 단계를 실행하려면 s4_infer 결과가 필요합니다. --skip-s5 옵션을 사용하거나 s4 단계를 실행해주세요.')
+            raise ValueError("s5_evaluate 단계를 실행하려면 s4_infer 결과가 필요합니다. --skip-s5 옵션을 사용하거나 s4 단계를 실행해주세요.")
         predictions_path = infer_output
         actual_returns_path = Path(args.s5_actual_returns) if args.s5_actual_returns else infer_input.with_name("y.npy")
         if not actual_returns_path.exists():
-            raise FileNotFoundError('평가에 사용할 실제 수익률 파일을 찾을 수 없습니다: {actual_returns_path}')
+            raise FileNotFoundError(f"평가에 사용할 실제 수익률 파일을 찾을 수 없습니다: {actual_returns_path}")
         if not predictions_path.exists():
-            raise FileNotFoundError('s4_infer 결과 파일이 존재하지 않습니다: {predictions_path}')
-        close_path = _resolve_close_path(project_root, args)
-        if close_path.exists():
-            close_values = np.load(close_path)
+            raise FileNotFoundError(f"s4_infer 결과 파일이 존재하지 않습니다: {predictions_path}")
+        if args.close_values:
+            close_values = np.load(args.close_values)
         else:
             price_data = np.load(infer_input)
             if args.close_index < 0 or args.close_index >= price_data.shape[2]:
-                raise ValueError('close_index가 feature 차원 범위를 벗어납니다.')
+                raise ValueError("close_index가 feature 차원 범위를 벗어났습니다.")
             close_values = price_data[:, -1, args.close_index]
         close_values = np.asarray(close_values, dtype=float)
         if close_values.ndim != 1:
@@ -199,220 +180,60 @@ def main(argv: list[str] | None = None) -> int:
         if actual_returns.ndim == 1:
             actual_returns = actual_returns[:, None]
         if close_values.shape[0] != actual_returns.shape[0]:
-            raise ValueError('실제 종가 배열과 실제 수익률 배열의 샘플 수가 일치하지 않습니다.')
+            raise ValueError("실제 종가 배열과 실제 수익률 배열의 샘플 수가 일치하지 않습니다.")
         actual_prices = close_values[:, None] * (1.0 + actual_returns)
-        actual_prices_path = Path(args.s5_actual_prices) if args.s5_actual_prices else (project_root / "outputs" / "actual_prices.npy")
+        actual_prices_path = Path(args.s5_actual_prices) if args.s5_actual_prices else (project_root / "data" / "outputs" / "actual_prices.npy")
         actual_prices_path.parent.mkdir(parents=True, exist_ok=True)
         np.save(actual_prices_path, actual_prices.astype(float))
-        s5_cmd = [
-            "python",
-            "-m",
-            "Python.pipeline.pipelines.s5_evaluate.report",
-            "--predictions",
-            str(predictions_path),
-            "--actual-prices",
-            str(actual_prices_path),
-            "--output",
-            str(s5_output),
-        ]
-        if args.s5_horizons:
-            s5_cmd += ["--horizons", *map(str, args.s5_horizons)]
-        stage_start_times["s5_evaluate"] = time.time()
+
+        # 자동 티커 탐색 시 top_mover_report.py 사용
+        if args.auto_tickers:
+            s5_cmd = [
+                "python",
+                "-m",
+                "Python.pipeline.pipelines.s5_evaluate.top_mover_report",
+                "--top-movers",
+                str(discovery_output),
+                "--predictions",
+                str(predictions_path),
+                "--actual-prices",
+                str(actual_prices_path),
+                "--output",
+                str(s5_output.with_name("top_mover_forecast.json")),
+            ]
+        else:
+            s5_cmd = [
+                "python",
+                "-m",
+                "Python.pipeline.pipelines.s5_evaluate.report",
+                "--predictions",
+                str(predictions_path),
+                "--actual-prices",
+                str(actual_prices_path),
+                "--output",
+                str(s5_output),
+            ]
+            if args.s5_horizons:
+                s5_cmd += ["--horizons", *map(str, args.s5_horizons)]
         _run_stage("s5_evaluate", s5_cmd, env)
-        stage_durations["s5_evaluate"] = time.time() - stage_start_times["s5_evaluate"]
-
-        if args.auto_tickers and not args.skip_s4:
-            close_path = _resolve_close_path(project_root, args)
-            if discovery_output and Path(discovery_output).exists() and labels_path.exists() and close_path.exists():
-                top_report_output = project_root / "outputs" / "top_mover_forecast.json"
-                report_cmd = [
-                    "python",
-                    "-m",
-                    TOP_REPORT_MODULE,
-                    "--top-movers",
-                    str(discovery_output),
-                    "--predictions",
-                    str(infer_output),
-                    "--actual-prices",
-                    str(actual_prices_path),
-                    "--labels",
-                    str(labels_path),
-                    "--close-values",
-                    str(close_path),
-                    "--output",
-                    str(top_report_output),
-                ]
-                if args.auto_count:
-                    report_cmd += ["--limit", str(args.auto_count)]
-                stage_start_times["top_mover_report"] = time.time()
-                _run_stage("top_mover_report", report_cmd, env)
-                stage_durations["top_mover_report"] = time.time() - stage_start_times["top_mover_report"]
-            else:
-                missing = labels_path if discovery_output and Path(discovery_output).exists() else discovery_output
-                print(f"[Pipeline] Skip top mover report: missing resource {missing}")
 
 
-    total_duration = time.time() - total_start
-    print("[Pipeline] Pipeline completed successfully.")
-    print(f"[Pipeline] Total duration: {total_duration:.2f}s")
-
-    stage_order = [
-        ("s0", "s0_discover"),
-        ("s1", "s1_collect"),
-        ("s2", "s2_preprocess"),
-        ("s3", "s3_model"),
-        ("s4", "s4_infer"),
-        ("s5", "s5_evaluate"),
-    ]
-    print("[Pipeline] Stage durations (seconds):")
-    for label, key in stage_order:
-        duration = stage_durations.get(key)
-        if duration is None:
-            print(f"[Pipeline]   {label}: skipped")
-        else:
-            print(f"[Pipeline]   {label}: {duration:.2f}s")
-    if "top_mover_report" in stage_durations:
-        print(f"[Pipeline] top_mover_report: {stage_durations['top_mover_report']:.2f}s")
+    print("Pipeline completed successfully.")
     return 0
-
-
-def _resolve_gold_close_path(project_root: Path, args: argparse.Namespace) -> Path:
-    gold_root = Path(args.gold_root) if args.gold_root else project_root / "data" / "gold"
-    return gold_root / "test" / "close.npy"
-
-
-
-def _prepare_live_close_values(project_root: Path, args: argparse.Namespace, labels_path: Path) -> Path | None:
-    if not labels_path.exists():
-        return None
-    try:
-        from Python.pipeline.pipelines.s1_collect import kiwoom_client
-    except ImportError as exc:
-        print(f"[Pipeline] Warning: Kiwoom client import failed: {exc}")
-        return None
-
-    try:
-        labels_data = json.loads(labels_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        print(f"[Pipeline] Warning: Failed to parse labels at {labels_path}: {exc}")
-        return None
-    except FileNotFoundError:
-        return None
-
-    if not isinstance(labels_data, list):
-        print(f"[Pipeline] Warning: labels file is not a list: {labels_path}")
-        return None
-
-    ordered_tickers: list[str | None] = []
-    for entry in labels_data:
-        if isinstance(entry, dict):
-            ticker = entry.get("ticker")
-            ordered_tickers.append(str(ticker) if ticker else None)
-        else:
-            ordered_tickers.append(None)
-
-    unique_tickers = [ticker for ticker in dict.fromkeys(ordered_tickers) if ticker]
-    if not unique_tickers:
-        return None
-
-    use_mock = getattr(args, "close_use_mock", False) or getattr(args, "auto_use_mock", False)
-    try:
-        snapshots = kiwoom_client.fetch_current_prices(
-            tickers=unique_tickers,
-            date=datetime.now().strftime("%Y-%m-%d"),
-            use_mock=use_mock,
-        )
-    except Exception as exc:
-        print(f"[Pipeline] Warning: Failed to fetch Kiwoom current prices: {exc}")
-        return None
-
-    if not snapshots:
-        print("[Pipeline] Warning: Kiwoom current price lookup returned no data; using stored close values (return from fetch_current_prices was empty).")
-        return None
-
-    fallback_path = _resolve_gold_close_path(project_root, args)
-    fallback_values: np.ndarray | None = None
-    if fallback_path.exists():
-        try:
-            fallback_values = np.load(fallback_path)
-        except Exception as exc:
-            print(f"[Pipeline] Warning: Failed to load fallback close values from {fallback_path}: {exc}")
-
-    closes: list[float] = []
-    missing_indices: list[int] = []
-    for idx, ticker in enumerate(ordered_tickers):
-        price: float | None = None
-        if ticker and ticker in snapshots:
-            price = float(snapshots[ticker])
-        elif fallback_values is not None and idx < fallback_values.shape[0]:
-            price = float(fallback_values[idx])
-        if price is None:
-            missing_indices.append(idx)
-            closes.append(float("nan"))
-        else:
-            closes.append(price)
-
-    if missing_indices and fallback_values is not None:
-        for idx in missing_indices:
-            if idx < fallback_values.shape[0]:
-                closes[idx] = float(fallback_values[idx])
-
-    close_array = np.asarray(closes, dtype=float)
-    if close_array.size == 0:
-        return None
-
-    if np.isnan(close_array).any():
-        print("[Pipeline] Warning: Some live close values are NaN even after fallback.")
-
-    live_dir = project_root / "data" / "live"
-    live_dir.mkdir(parents=True, exist_ok=True)
-    live_array_path = live_dir / "current_close.npy"
-    np.save(live_array_path, close_array)
-
-    live_json_path = live_dir / "current_close.json"
-    payload = {
-        "generated_at": datetime.utcnow().isoformat(),
-        "source": "kiwoom_live",
-        "tickers": unique_tickers,
-        "prices": snapshots,
-    }
-    live_json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    return live_array_path
-
-
-def _resolve_labels_path(project_root: Path, args: argparse.Namespace) -> Path:
-    gold_root = Path(args.gold_root) if args.gold_root else project_root / "data" / "gold"
-    return gold_root / "test" / "labels.json"
-
-
-def _resolve_close_path(project_root: Path, args: argparse.Namespace) -> Path:
-    live_dir = project_root / "data" / "live"
-    live_path = live_dir / "current_close.npy"
-    if live_path.exists():
-        return live_path
-    return _resolve_gold_close_path(project_root, args)
 
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run full pipeline from s1 to s5.")
     parser.add_argument("--tickers", nargs="*", default=[], help="수집/전처리에 사용할 티커 목록")
-    # 기본 수집 구간: 오늘 기준 과거 10년 ~ 오늘
-    # 사용자가 명시하면 해당 값으로 덮어씁니다.
-    _default_end = datetime.now().strftime("%Y-%m-%d")
-    _default_start = (datetime.now() - timedelta(days=365 * 10)).strftime("%Y-%m-%d")
-    parser.add_argument("--start-date", default=_default_start, help="수집 시작일 (YYYY-MM-DD)")
-    parser.add_argument("--end-date", default=_default_end, help="수집 종료일 (YYYY-MM-DD)")
+    parser.add_argument("--start-date", default="2015-09-19", help="수집 시작일 (YYYY-MM-DD)")
+    parser.add_argument("--end-date", default="2025-09-18", help="수집 종료일 (YYYY-MM-DD)")
 
     # auto ticker discovery
     parser.add_argument("--auto-tickers", action="store_true", help="pykrx 변동성 상위 종목 자동 선택")
     parser.add_argument("--auto-date", default=datetime.now().strftime("%Y%m%d"), help="top movers 기준 일자 (YYYYMMDD)")
     parser.add_argument("--auto-market", default="KOSPI", help="시장 (KOSPI/KOSDAQ/ALL)")
     parser.add_argument("--auto-count", type=int, default=5, help="선정 종목 수")
-    # 기본: kiwoom 사용(ka10027은 장 마감 후에도 사용 가능). 필요 시 pykrx/auto로 변경.
-    parser.add_argument("--auto-source", choices=["pykrx", "kiwoom", "auto"], default="kiwoom", help="Top mover discovery source")
-    parser.add_argument("--close-use-mock", action="store_true", help="현재가 조회 시 Kiwoom mock 서버 사용")
-    # s0_discover(탐색) 단계에서 키움 mock 사용 여부
-    parser.add_argument("--auto-use-mock", action="store_true", help="자동 탐색(s0)에서 Kiwoom mock 서버 사용")
+    parser.add_argument("--auto-source", default="kiwoom", choices=["pykrx", "kiwoom"], help="top movers 탐색 소스")
     parser.add_argument("--auto-output", type=Path, help="탐색 결과 저장 경로")
 
     # Stage control
@@ -435,21 +256,15 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--artifacts-root", type=Path, help="artifacts 루트 경로")
 
     parser.add_argument("--infer-input", type=Path, help="추론 입력 numpy 파일 (기본: data/gold/test/X.npy)")
-    parser.add_argument("--infer-output", type=Path, default=Path("outputs/preds.json"))
+    parser.add_argument("--infer-output", type=Path, default=Path("data/outputs/preds.json"))
     parser.add_argument("--infer-model", type=Path, help="추론에 사용할 모델 가중치")
     parser.add_argument("--infer-device", help="추론 디바이스")
     parser.add_argument("--close-index", type=int, default=3, help="추론 시 종가가 위치한 feature 인덱스")
+    parser.add_argument("--close-values", type=Path, help="추론용 기준 종가 numpy 파일")
     parser.add_argument("--s5-actual-prices", type=Path, help="s5 평가에 사용할 실제 가격 numpy 파일 경로")
     parser.add_argument("--s5-actual-returns", type=Path, help="s5 평가에 사용할 실제 수익률 numpy 파일 경로 (기본: infer-input 경로의 y.npy)")
     parser.add_argument("--s5-output", type=Path, default=Path("outputs/eval.json"), help="s5 평가 보고서 출력 경로")
     parser.add_argument("--s5-horizons", nargs="*", type=int, help="s5 평가 시 사용할 예측 지평 목록")
-    # s0_discover에 Kiwoom REST 설정을 전달하기 위한 선택적 인자들
-    parser.add_argument("--auto-kiwoom-base", help="Kiwoom REST base URL (예: https://gw.example)")
-    parser.add_argument("--auto-kiwoom-appkey", help="Kiwoom appkey")
-    parser.add_argument("--auto-kiwoom-secret", help="Kiwoom secretkey")
-    parser.add_argument("--auto-kiwoom-rank-path", help="Kiwoom rank API path (ka10027 매핑 경로)")
-    parser.add_argument("--auto-kiwoom-rank-trid", help="Kiwoom rank TR ID (기본 ka10027)")
-    parser.add_argument("--auto-kiwoom-api-id", help="요청 헤더 api-id 강제 지정")
     return parser
 
 
@@ -461,8 +276,8 @@ def _run_stage(name: str, cmd: list[str], env: dict[str, str]) -> None:
 
 
 def _build_env(project_root: Path) -> dict[str, str]:
-    env = dict(os.environ)
-    env.setdefault("PYTHONPATH", str(project_root))
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(project_root) + os.pathsep + env.get("PYTHONPATH", "")
     return env
 
 
@@ -480,6 +295,42 @@ def _find_project_root() -> Path:
         if (parent / "data").exists():
             return parent
     return current.parents[4]
+
+
+def _load_corp_codes_from_csv(project_root: Path, tickers: list[str]) -> list[str]:
+    """data/dart_corpcode.csv에서 stock_code(=ticker) -> corp_code 매핑을 읽어 반환한다.
+
+    허용 헤더: ticker, stock_code, code, symbol / corp_code, corpcode, corpcode_id, corp
+    반환: 입력 tickers 순서대로 매핑된 corp_code 목록(없으면 제외)
+    """
+    try:
+        path = project_root / "data" / "dart_corpcode.csv"
+        if not path.exists() or not tickers:
+            return []
+        want = [str(t).zfill(6) for t in tickers]
+        mapping: dict[str, str] = {}
+        with path.open("r", encoding="utf-8") as fp:
+            reader = csv.DictReader(fp)
+            headers = {h.lower(): h for h in (reader.fieldnames or [])}
+            t_col = headers.get("ticker") or headers.get("stock_code") or headers.get("code") or headers.get("symbol")
+            c_col = headers.get("corp_code") or headers.get("corpcode") or headers.get("corpcode_id") or headers.get("corp")
+            if not t_col or not c_col:
+                for row in reader:
+                    vals = list(row.values())
+                    if len(vals) >= 2:
+                        t = str(vals[0]).strip().zfill(6)
+                        c = str(vals[1]).strip()
+                        if t and c:
+                            mapping[t] = c
+            else:
+                for row in reader:
+                    t = str(row.get(t_col, "")).strip().zfill(6)
+                    c = str(row.get(c_col, "")).strip()
+                    if t and c:
+                        mapping[t] = c
+        return [mapping[t] for t in want if t in mapping]
+    except Exception:
+        return []
 
 
 if __name__ == "__main__":

@@ -14,8 +14,20 @@ training:
   epochs: 50
 
 features:
-  price_windows: [5, 10, 20]
-  indicators: ["rsi", "macd", "bollinger", "stochastic"]
+  price_windows: [5, 10, 20, 60]
+  indicators: ["rsi", "macd", "bollinger", "obv"]
+  ta:
+    bollinger:
+      window: 20
+      k: 2
+    macd:
+      fast: 12
+      slow: 26
+      signal: 9
+    rsi:
+      window: 14
+    obv:
+      ema_window: 10
 
 inference:
   threshold: 0.5

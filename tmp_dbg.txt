@@ -1,4 +1,4 @@
-ï»¿"""Utilities for merging raw inputs into bronze-level daily datasets."""
+"""Utilities for merging raw inputs into bronze-level daily datasets."""
 
 from __future__ import annotations
 
@@ -9,14 +9,13 @@ from pathlib import Path
 from typing import Iterable, Optional
 
 import pandas as pd
-import numpy as np
 
 LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
 class MergeConfig:
-    """ë¸Œë¡ ì¦ˆ ë³‘í•© ë‹¨ê³„ì—ì„œ ê³µí†µìœ¼ë¡œ ì“°ì´ëŠ” íŒŒë¼ë¯¸í„° ë¬¶ìŒ."""
+    """ºê·ĞÁî º´ÇÕ ´Ü°è¿¡¼­ °øÅëÀ¸·Î ¾²ÀÌ´Â ÆÄ¶ó¹ÌÅÍ ¹­À½."""
 
     tickers: Iterable[str]
     raw_root: Path
@@ -44,7 +43,7 @@ def run(
     resolved_raw = _resolve_raw_root(raw_root)
     target_tickers = list(tickers) if tickers else _discover_raw_tickers(resolved_raw, price_source)
     if not target_tickers:
-        raise RuntimeError("raw ë°ì´í„°ì—ì„œ ì²˜ë¦¬í•  í‹°ì»¤ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.")
+        raise RuntimeError("raw µ¥ÀÌÅÍ¿¡¼­ Ã³¸®ÇÒ Æ¼Ä¿¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.")
 
     config = MergeConfig(
         tickers=target_tickers,
@@ -90,7 +89,7 @@ def merge_sources(
 # ---------------------------------------------------------------------------
 
 def _build_single_bronze(ticker: str, config: MergeConfig) -> Path:
-    """ê°œë³„ í‹°ì»¤ì— ëŒ€í•œ ê°€ê²©/ì¬ë¬´/ë‰´ìŠ¤ ë°ì´í„°ë¥¼ ë³‘í•©í•œë‹¤."""
+    """°³º° Æ¼Ä¿¿¡ ´ëÇÑ °¡°İ/Àç¹«/´º½º µ¥ÀÌÅÍ¸¦ º´ÇÕÇÑ´Ù."""
 
     price_df = _load_price_frame(ticker, config)
     fundamental_df = _load_fundamentals(ticker, config)
@@ -107,47 +106,6 @@ def _build_single_bronze(ticker: str, config: MergeConfig) -> Path:
         merged = merged.join(frame, how="left")
 
     merged = _fill_calendar_and_missing(merged)
-
-    # DART ì—°ê³„ ì¬ë¬´ê°’ì´ ìˆì„ ê²½ìš° ì¬ë¬´ ë¹„ìœ¨ íŒŒìƒ
-    for col in (
-        "fund_net_income_ttm",
-        "fund_net_income",
-        "fund_equity",
-        "fund_assets",
-        "fund_liabilities",
-        "fund_current_assets",
-        "fund_current_liabilities",
-        "fund_inventories",
-        "market_cap",
-    ):
-        if col in merged.columns:
-            merged[col] = pd.to_numeric(merged[col], errors="coerce")
-
-    if "fund_net_income_ttm" in merged.columns and "fund_equity" in merged.columns:
-        merged["roe"] = (merged["fund_net_income_ttm"] / merged["fund_equity"])\
-            .replace([np.inf, -np.inf], np.nan)
-    if "fund_net_income_ttm" in merged.columns and "fund_assets" in merged.columns:
-        merged["roa"] = (merged["fund_net_income_ttm"] / merged["fund_assets"])\
-            .replace([np.inf, -np.inf], np.nan)
-    if "market_cap" in merged.columns and "fund_net_income_ttm" in merged.columns:
-        merged["per"] = (merged["market_cap"] / merged["fund_net_income_ttm"])\
-            .replace([np.inf, -np.inf], np.nan)
-    if "market_cap" in merged.columns and "fund_equity" in merged.columns:
-        merged["pbr"] = (merged["market_cap"] / merged["fund_equity"])\
-            .replace([np.inf, -np.inf], np.nan)
-    # Additional ratios from DART
-    if "fund_liabilities" in merged.columns and "fund_equity" in merged.columns:
-        merged["debt_ratio"] = (merged["fund_liabilities"] / merged["fund_equity"]) * 100.0
-        merged["debt_ratio"] = merged["debt_ratio"].replace([np.inf, -np.inf], np.nan)
-    if "fund_current_assets" in merged.columns and "fund_current_liabilities" in merged.columns:
-        merged["current_ratio"] = (merged["fund_current_assets"] / merged["fund_current_liabilities"]) * 100.0
-        merged["current_ratio"] = merged["current_ratio"].replace([np.inf, -np.inf], np.nan)
-        if "fund_inventories" in merged.columns:
-            merged["quick_ratio"] = ((merged["fund_current_assets"] - merged["fund_inventories"]) / merged["fund_current_liabilities"]) * 100.0
-            merged["quick_ratio"] = merged["quick_ratio"].replace([np.inf, -np.inf], np.nan)
-    if "fund_equity" in merged.columns and "fund_assets" in merged.columns:
-        merged["equity_ratio"] = (merged["fund_equity"] / merged["fund_assets"]) * 100.0
-        merged["equity_ratio"] = merged["equity_ratio"].replace([np.inf, -np.inf], np.nan)
     merged["ticker"] = ticker
 
     config.bronze_root.mkdir(parents=True, exist_ok=True)
@@ -158,30 +116,21 @@ def _build_single_bronze(ticker: str, config: MergeConfig) -> Path:
 
 
 def _load_price_frame(ticker: str, config: MergeConfig) -> pd.DataFrame:
-    """ì›ì²œ ê°€ê²© ë°ì´í„°(pykrx/kiwoom)ë¥¼ ì½ì–´ íŠ¹ì§•í‘œë¡œ ë³€í™˜.
+    """°¡°İ µ¥ÀÌÅÍ ¼Ò½º(pykrx ¶Ç´Â kiwoom)¸¦ ÀĞ¾î °øÅë ½ºÅ°¸¶·Î º¯È¯ÇÑ´Ù."""
 
-    ìš°ì„ ìˆœìœ„: kiwoom -> pykrx. íŠ¹ì • ì†ŒìŠ¤ê°€ ì—†ê±°ë‚˜ ìµœì‹  íŒŒì¼ì´ ì—†ìœ¼ë©´ ë‹¤ë¥¸ ì†ŒìŠ¤ë¡œ í´ë°±í•œë‹¤.
-    """
-
-    kiwoom_dir = config.raw_root / "kiwoom" / ticker
-    pykrx_dir = config.raw_root / "pykrx" / ticker
-
-    # Try Kiwoom first
-    if kiwoom_dir.exists():
-        try:
-            return _load_kiwoom_price(kiwoom_dir)
-        except FileNotFoundError:
-            pass
-
-    # Fallback to pykrx
-    if pykrx_dir.exists():
-        return _load_pykrx_price(pykrx_dir)
-
-    raise FileNotFoundError(f"Price directory not found: {kiwoom_dir} or {pykrx_dir}")
+# REPLACED
+        directory = config.raw_root / "kiwoom" / ticker
+        loader = _load_kiwoom_price
+    else:
+        directory = config.raw_root / "pykrx" / ticker
+        loader = _load_pykrx_price
+    if not directory.exists():
+        raise FileNotFoundError(f"Price directory not found: {directory}")
+    return loader(directory)
 
 
 def _load_pykrx_price(directory: Path) -> pd.DataFrame:
-    """pykrx JSON êµ¬ì¡°ë¥¼ DataFrameìœ¼ë¡œ ë³€í™˜í•œë‹¤."""
+    """pykrx JSON ±¸Á¶¸¦ DataFrameÀ¸·Î º¯È¯ÇÑ´Ù."""
 
     ohlcv_path = _latest_file(directory, "ohlcv_daily")
     if ohlcv_path is None:
@@ -206,7 +155,7 @@ def _load_pykrx_price(directory: Path) -> pd.DataFrame:
 
 
 def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
-    """í‚¤ì›€ REST ì‘ë‹µ(JSON)ì„ í‘œì¤€ ì¹¼ëŸ¼ìœ¼ë¡œ ì •ë¦¬í•œë‹¤."""
+    """Å°¿ò REST ÀÀ´ä(JSON)À» Ç¥ÁØ Ä®·³À¸·Î Á¤¸®ÇÑ´Ù."""
 
     daily_path = _latest_file(directory, "ka10001")
     if daily_path is None:
@@ -243,7 +192,7 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
 
 
 def _load_fundamentals(ticker: str, config: MergeConfig) -> Optional[pd.DataFrame]:
-    """DART ë‹¤ì¤‘ê³„ì • JSONì„ ì½ì–´ ì¬ë¬´ ì§€í‘œë¥¼ ìƒì„±í•œë‹¤."""
+    """DART ´ÙÁß°èÁ¤ JSONÀ» ÀĞ¾î Àç¹« ÁöÇ¥¸¦ »ı¼ºÇÑ´Ù."""
 
     root = config.fundamentals_dir or config.raw_root / "dart"
     if not root.exists():
@@ -271,7 +220,7 @@ def _load_fundamentals(ticker: str, config: MergeConfig) -> Optional[pd.DataFram
 
 
 def _parse_dart_multi(path: Path, ticker: str) -> Optional[pd.DataFrame]:
-    """fnlttMultiAcnt JSON êµ¬ì¡°ë¥¼ pivotí•˜ì—¬ feature í˜•íƒœë¡œ ë³€í™˜."""
+    """fnlttMultiAcnt JSON ±¸Á¶¸¦ pivotÇÏ¿© feature ÇüÅÂ·Î º¯È¯."""
 
     payload = _read_json(path)
     if not isinstance(payload, list):
@@ -291,66 +240,23 @@ def _parse_dart_multi(path: Path, ticker: str) -> Optional[pd.DataFrame]:
             continue
         df["date"] = _reprt_to_date(df["bsns_year"], df["reprt_code"])
         df = df.dropna(subset=["date"])  # remove invalid rows
-        # ê³„ì •ëª… í‘œì¤€í™”(í•µì‹¬ í•­ëª© ë§¤í•‘) í›„ í”¼ë²—
-        def _norm_account(name: str) -> str:
-            s = str(name)
-            if "ë‹¹ê¸°ìˆœì´ìµ" in s or "ë¶„ê¸°ìˆœì´ìµ" in s or "(ì†ì‹¤)" in s:
-                return "net_income"
-            if "ìë³¸ì´ê³„" in s:
-                return "equity"
-            if "ìì‚°ì´ê³„" in s:
-                return "assets"
-            return _slugify(s)
-
         values = df[["date", "account_nm", "thstrm_amount"]].rename(columns={"thstrm_amount": "value"})
         values["value"] = pd.to_numeric(values["value"].astype(str).str.replace(",", ""), errors="coerce")
-        values["account_key"] = values["account_nm"].map(_norm_account)
-        pivot = values.pivot_table(index="date", columns="account_key", values="value", aggfunc="last")
-        pivot.columns = [f"fund_{col}" for col in pivot.columns]
-        # ì¶”ê°€ ë³´ê°•: í•œêµ­ì–´ ê³„ì •ëª…ì„ ì§ì ‘ ìŠ¤ìº”í•´ í•µì‹¬ í•­ëª©ì„ ì±„ìš´ë‹¤
-        try:
-            df_names = df.copy()
-            df_names["account_nm"] = df_names["account_nm"].astype(str).str.replace(" ", "", regex=False)
-            df_names["value"] = pd.to_numeric(df_names["thstrm_amount"].astype(str).str.replace(",", ""), errors="coerce")
-            enrich_map = {
-                "current_assets": ["ìœ ë™ìì‚°"],
-                "current_liabilities": ["ìœ ë™ë¶€ì±„"],
-                "inventories": ["ì¬ê³ ìì‚°"],
-                "liabilities": ["ë¶€ì±„ì´ê³„", "ì´ë¶€ì±„"],
-                "assets": ["ìì‚°ì´ê³„", "ì´ìì‚°"],
-                "equity": ["ìë³¸ì´ê³„", "ì´ìë³¸", "ì§€ë°°ê¸°ì—…ì˜ì†Œìœ ì£¼ì§€ë¶„"],
-                "net_income": ["ë‹¹ê¸°ìˆœì´ìµ", "ë¶„ê¸°ìˆœì´ìµ", "ì—°ê²°ë‹¹ê¸°ìˆœì´ìµ"],
-            }
-            for key, names in enrich_map.items():
-                mask = df_names["account_nm"].apply(lambda x: any(n in x for n in names))
-                if not mask.any():
-                    continue
-                sel = df_names.loc[mask, ["date", "value"]].dropna()
-                if sel.empty:
-                    continue
-                agg = sel.groupby("date")["value"].last()
-                col = f"fund_{key}"
-                if col not in pivot.columns:
-                    pivot[col] = np.nan
-                for d, v in agg.items():
-                    pivot.loc[d, col] = v
-        except Exception:
-            pass
+        pivot = values.pivot_table(index="date", columns="account_nm", values="value", aggfunc="last")
+        pivot.columns = [f"fund_{_slugify(col)}" for col in pivot.columns]
         frames.append(pivot)
     if not frames:
         return None
 
     merged = pd.concat(frames, axis=0).sort_index()
     merged.index = pd.to_datetime(merged.index)
-    merged = merged.groupby(level=0).last().sort_index()
-    # TTM ìˆœì´ìµ(ìµœê·¼ 4ê°œ ë¶„ê¸° í•©ê³„)
-    if "fund_net_income" in merged.columns:
-        merged["fund_net_income_ttm"] = merged["fund_net_income"].rolling(window=4, min_periods=1).sum()
+    merged = merged.groupby(level=0).last()
+    merged = merged.sort_index()
     return merged
 
 
 def _load_news_features(ticker: str, config: MergeConfig) -> Optional[pd.DataFrame]:
-    """ë‰´ìŠ¤ JSON/CSV/Parquetë¥¼ ì§‘ê³„í•´ ê¸°ì‚¬ ê±´ìˆ˜Â·ê°ì„± í‰ê· ì„ ë§Œë“¤ë‹¤."""
+    """´º½º JSON/CSV/Parquet¸¦ Áı°èÇØ ±â»ç °Ç¼ö¡¤°¨¼º Æò±ÕÀ» ¸¸µé´Ù."""
 
     directory = config.news_dir or config.raw_root / "news" / ticker
     if not directory.exists():
@@ -403,7 +309,7 @@ def _load_news_features(ticker: str, config: MergeConfig) -> Optional[pd.DataFra
 
 
 def _fill_calendar_and_missing(df: pd.DataFrame) -> pd.DataFrame:
-    """ì˜ì—…ì¼ ìº˜ë¦°ë”ë¡œ ì¬ì¸ë±ì‹±í•˜ê³  ê²°ì¸¡ê°’ì„ ë³´ì •í•œë‹¤."""
+    """¿µ¾÷ÀÏ Ä¶¸°´õ·Î ÀçÀÎµ¦½ÌÇÏ°í °áÃø°ªÀ» º¸Á¤ÇÑ´Ù."""
 
     df = df.sort_index()
     calendar = pd.date_range(df.index.min(), df.index.max(), freq="B")
@@ -421,7 +327,7 @@ def _fill_calendar_and_missing(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _reprt_to_date(year_series: pd.Series, code_series: pd.Series) -> pd.Series:
-    """ë³´ê³ ì„œ ì½”ë“œ(11011 ë“±)ë¥¼ ë¶„ê¸° ë§ˆê°ì¼ë¡œ ë³€í™˜í•œë‹¤."""
+    """º¸°í¼­ ÄÚµå(11011 µî)¸¦ ºĞ±â ¸¶°¨ÀÏ·Î º¯È¯ÇÑ´Ù."""
 
     mapping = {
         "11013": (3, 31),  # Q1
@@ -444,7 +350,7 @@ def _reprt_to_date(year_series: pd.Series, code_series: pd.Series) -> pd.Series:
 
 
 def _latest_file(directory: Path, prefix: str) -> Optional[Path]:
-    """ê°€ì¥ ìµœì‹  íŒŒì¼(ì‚¬ì „ ì •ë ¬) ë°˜í™˜."""
+    """°¡Àå ÃÖ½Å ÆÄÀÏ(»çÀü Á¤·Ä) ¹İÈ¯."""
 
     candidates = sorted(directory.glob(f"{prefix}*.json"))
     if not candidates:
@@ -453,7 +359,7 @@ def _latest_file(directory: Path, prefix: str) -> Optional[Path]:
 
 
 def _read_json_table(path: Path) -> pd.DataFrame:
-    """JSON êµ¬ì¡°ì—ì„œ ë¦¬ìŠ¤íŠ¸ ë¶€ë¶„ì„ ì°¾ì•„ DataFrameìœ¼ë¡œ ë³€í™˜."""
+    """JSON ±¸Á¶¿¡¼­ ¸®½ºÆ® ºÎºĞÀ» Ã£¾Æ DataFrameÀ¸·Î º¯È¯."""
 
     payload = _read_json(path)
     data = None
@@ -511,7 +417,7 @@ def _find_project_root() -> Path:
 
 
 def _discover_raw_tickers(raw_root: Path, price_source: str) -> list[str]:
-    """raw ë””ë ‰í„°ë¦¬ êµ¬ì¡°ì—ì„œ ê°€ëŠ¥í•œ í‹°ì»¤ëª…ì„ ìë™ìœ¼ë¡œ ìˆ˜ì§‘í•œë‹¤."""
+    """raw µğ·ºÅÍ¸® ±¸Á¶¿¡¼­ °¡´ÉÇÑ Æ¼Ä¿¸íÀ» ÀÚµ¿À¸·Î ¼öÁıÇÑ´Ù."""
     price_source = price_source.lower()
     candidates: set[str] = set()
     sources: list[Path] = []
@@ -528,12 +434,12 @@ def _discover_raw_tickers(raw_root: Path, price_source: str) -> list[str]:
 
 
 def _write_table(df: pd.DataFrame, path: Path) -> Path:
-    """Parquet ì—”ì§„ì´ ì—†ì„ ê²½ìš° ìë™ìœ¼ë¡œ pickleë¡œ ëŒ€ì²´ ì €ì¥í•œë‹¤."""
+    """Parquet ¿£ÁøÀÌ ¾øÀ» °æ¿ì ÀÚµ¿À¸·Î pickle·Î ´ëÃ¼ ÀúÀåÇÑ´Ù."""
     try:
         df.to_parquet(path, index=False)
         return path
     except (ImportError, ValueError):
         fallback = path.with_suffix('.pkl')
         df.to_pickle(fallback)
-        LOGGER.warning('pyarrow/fastparquet ë¯¸ì„¤ì¹˜ë¡œ pickleë¡œ ì €ì¥í•©ë‹ˆë‹¤: %s', fallback)
+        LOGGER.warning('pyarrow/fastparquet ¹Ì¼³Ä¡·Î pickle·Î ÀúÀåÇÕ´Ï´Ù: %s', fallback)
         return fallback

@@ -1,4 +1,4 @@
-ï»¿"""Feature engineering utilities for the silver layer."""
+"""Feature engineering utilities for the silver layer."""
 
 from __future__ import annotations
 
@@ -11,11 +11,11 @@ import pandas as pd
 
 LOGGER = logging.getLogger(__name__)
 
-# ê¸°ë³¸ ì´ë™ ì°½ ì„¤ì • (ê°€ê²©/ê±°ëž˜ëŸ‰ íŒŒìƒ ê³„ì‚°ì— í™œìš©)
+# ±âº» ÀÌµ¿ Ã¢ ¼³Á¤ (°¡°Ý/°Å·¡·® ÆÄ»ý °è»ê¿¡ È°¿ë)
 DEFAULT_WINDOWS = (5, 10, 20, 60, 120)
 
 
-# ë¸Œë¡ ì¦ˆ ë°ì´í„°ë¥¼ ì½ì–´ ê¸°ìˆ ì  ì§€í‘œë¥¼ ìƒì„±í•˜ê³  ì‹¤ë²„ ê³„ì¸µì— ì €ìž¥
+# ºê·ÐÁî µ¥ÀÌÅÍ¸¦ ÀÐ¾î ±â¼úÀû ÁöÇ¥¸¦ »ý¼ºÇÏ°í ½Ç¹ö °èÃþ¿¡ ÀúÀå
 
 def run(
     *,
@@ -29,13 +29,6 @@ def run(
     bronze_dir = _resolve_bronze_root(bronze_root)
     silver_dir = _resolve_silver_root(silver_root)
     silver_dir.mkdir(parents=True, exist_ok=True)
-    # settings.yamlì— price_windowsê°€ ìžˆìœ¼ë©´ ë®ì–´ì“´ë‹¤
-    try:
-        cfg_windows = _load_price_windows_from_settings()
-        if cfg_windows:
-            windows = tuple(cfg_windows)
-    except Exception:
-        pass
 
     targets = list(tickers) if tickers else _discover_tickers(bronze_dir)
     outputs: list[Path] = []
@@ -57,11 +50,11 @@ def run(
 
 
 # ---------------------------------------------------------------------------
-# ì§€í‘œ ê³„ì‚° í•¨ìˆ˜
+# ÁöÇ¥ °è»ê ÇÔ¼ö
 # ---------------------------------------------------------------------------
 
 def _build_features(df: pd.DataFrame, windows: Iterable[int]) -> pd.DataFrame:
-    """ê°€ê²©/ê±°ëž˜ëŸ‰ ê¸°ë°˜ ì§€í‘œë¥¼ ê³„ì‚°í•˜ê³  ê²°ì¸¡ì„ ë³´ì •í•œë‹¤."""
+    """°¡°Ý/°Å·¡·® ±â¹Ý ÁöÇ¥¸¦ °è»êÇÏ°í °áÃøÀ» º¸Á¤ÇÑ´Ù."""
 
     df = df.copy()
     if "date" in df.columns:
@@ -77,9 +70,6 @@ def _build_features(df: pd.DataFrame, windows: Iterable[int]) -> pd.DataFrame:
     df = _add_price_windows(df, windows)
     df = _add_macd(df)
     df = _add_rsi(df)
-    # ì¶”ê°€ ê¸°ìˆ ì§€í‘œ: Bollinger Bands, OBV (ê¸°ë³¸ê°’ ì ìš©)
-    df = _add_bollinger(df, window=20, k=2.0)
-    df = _add_obv(df, ema_window=10)
     df = _add_dmi(df)
     df = _add_vr(df)
     df = _add_vma(df, windows)
@@ -87,18 +77,14 @@ def _build_features(df: pd.DataFrame, windows: Iterable[int]) -> pd.DataFrame:
     df = _add_atr(df)
     df = _add_envelope(df)
 
-    # ê³„ì‚° ê³¼ì •ì—ì„œ ìƒê¸¸ ìˆ˜ ìžˆëŠ” Â±inf/NaN ì²˜ë¦¬
-    # ê°„ë‹¨ ìž¬ë¬´ íŒŒìƒ: EPS/BPSê°€ ìžˆìœ¼ë©´ ROE(ê·¼ì‚¬) = EPS/BPS
-    if "eps" in df.columns and "bps" in df.columns:
-        with np.errstate(divide="ignore", invalid="ignore"):
-            df["roe"] = (df["eps"].astype(float) / df["bps"].astype(float)).replace([np.inf, -np.inf], np.nan)
+    # °è»ê °úÁ¤¿¡¼­ »ý±æ ¼ö ÀÖ´Â ¡¾inf/NaN Ã³¸®
     numeric_cols = df.select_dtypes(include=["number", "bool"]).columns
     df[numeric_cols] = df[numeric_cols].replace([np.inf, -np.inf], np.nan).fillna(0.0)
     return df
 
 
 def _add_price_windows(df: pd.DataFrame, windows: Iterable[int]) -> pd.DataFrame:
-    """ì´ë™í‰ê· , í‘œì¤€íŽ¸ì°¨, ROC ë“± ê¸°ë³¸ ì¶”ì„¸ ì§€í‘œ."""
+    """ÀÌµ¿Æò±Õ, Ç¥ÁØÆíÂ÷, ROC µî ±âº» Ãß¼¼ ÁöÇ¥."""
 
     close = df["close"]
     for window in windows:
@@ -148,7 +134,7 @@ def _add_dmi(df: pd.DataFrame, period: int = 14) -> pd.DataFrame:
 
 
 def _add_vr(df: pd.DataFrame, period: int = 26) -> pd.DataFrame:
-    """VR(Volume Ratio) ì§€í‘œ."""
+    """VR(Volume Ratio) ÁöÇ¥."""
 
     close = df["close"]
     prev_close = close.shift(1)
@@ -190,55 +176,16 @@ def _add_envelope(df: pd.DataFrame, window: int = 20, pct: float = 0.05) -> pd.D
 
 
 def _true_range(df: pd.DataFrame) -> pd.Series:
-    """ê³ ì €ê°­Â·ì „ì¼ ì¢…ê°€ ëŒ€ë¹„ ë³€ë™ í­ì„ ê³ ë ¤í•œ TR ê³„ì‚°."""
+    """°íÀú°¸¡¤ÀüÀÏ Á¾°¡ ´ëºñ º¯µ¿ ÆøÀ» °í·ÁÇÑ TR °è»ê."""
 
     high_low = df["high"] - df["low"]
     high_close = (df["high"] - df["close"].shift(1)).abs()
     low_close = (df["low"] - df["close"].shift(1)).abs()
     return pd.concat([high_low, high_close, low_close], axis=1).max(axis=1).fillna(0)
 
-def _load_price_windows_from_settings() -> list[int] | None:
-    try:
-        root = _find_project_root()
-        cfg = root / "Python" / "pipeline" / "config" / "settings.yaml"
-        if not cfg.exists() or yaml is None:
-            return None
-        data = yaml.safe_load(cfg.read_text(encoding="utf-8"))
-        if not isinstance(data, dict):
-            return None
-        feats = data.get("features") or {}
-        pws = feats.get("price_windows")
-        if isinstance(pws, list):
-            return [int(x) for x in pws]
-        return None
-    except Exception:
-        return None
-
-
-def _add_bollinger(df: pd.DataFrame, *, window: int = 20, k: float = 2.0) -> pd.DataFrame:
-    ma = df["close"].rolling(window, min_periods=1).mean()
-    sd = df["close"].rolling(window, min_periods=1).std(ddof=0)
-    df["bb_mid"] = ma
-    df["bb_upper"] = ma + k * sd
-    df["bb_lower"] = ma - k * sd
-    denom = (df["bb_upper"] - df["bb_lower"]).replace(0, np.nan)
-    df["bb_bandwidth"] = (df["bb_upper"] - df["bb_lower"]) / (df["bb_mid"].replace(0, np.nan)).abs()
-    df["bb_percent_b"] = (df["close"] - df["bb_lower"]) / denom
-    return df
-
-
-def _add_obv(df: pd.DataFrame, *, ema_window: int = 10) -> pd.DataFrame:
-    close = df["close"].astype(float)
-    volume = df["volume"].fillna(0).astype(float)
-    direction = np.sign(close.diff().fillna(0))
-    obv = (direction * volume).cumsum()
-    df["obv"] = obv
-    df["obv_ema"] = obv.ewm(span=ema_window, adjust=False).mean()
-    return df
-
 
 # ---------------------------------------------------------------------------
-# ê²½ë¡œ/íƒìƒ‰ í—¬í¼
+# °æ·Î/Å½»ö ÇïÆÛ
 # ---------------------------------------------------------------------------
 
 def _discover_tickers(bronze_dir: Path) -> list[str]:
@@ -290,6 +237,8 @@ def _write_table(df: pd.DataFrame, path: Path) -> Path:
     except (ImportError, ValueError):
         fallback = path.with_suffix('.pkl')
         df.to_pickle(fallback)
-        LOGGER.warning('pyarrow/fastparquet ë¯¸ì„¤ì¹˜ë¡œ pickleë¡œ ì €ìž¥í•©ë‹ˆë‹¤: %s', fallback)
+        LOGGER.warning('pyarrow/fastparquet ¹Ì¼³Ä¡·Î pickle·Î ÀúÀåÇÕ´Ï´Ù: %s', fallback)
         return fallback
+
+
 

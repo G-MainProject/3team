@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "0.2.0",
   "configurations": [
     {
@@ -14,8 +14,6 @@
         "--auto-source", "kiwoom",
         "--auto-market", "KOSPI",
         "--auto-count", "5",
-        "--start-date", "2014-09-19",
-        "--end-date", "2024-09-18"
       ]
     }
   ]

@@ -50,7 +50,26 @@ def fetch_filings(
     raw_root = _resolve_raw_dir(raw_dir) / "dart"
     raw_root.mkdir(parents=True, exist_ok=True)
 
-    reprt_codes = tuple(reprt_codes or DEFAULT_REPRT_CODES)
+    # .env 기반 오버라이드: DART_REPRT_CODES, DART_FS_DIV
+    env_codes = os.getenv("DART_REPRT_CODES")
+    parsed_env_codes: tuple[str, ...] | None = None
+    if env_codes:
+        try:
+            parts = [p.strip() for p in env_codes.replace(";", ",").split(",") if p.strip()]
+            parts = [p for p in parts if p.isdigit()]
+            if parts:
+                parsed_env_codes = tuple(parts)
+        except Exception:
+            parsed_env_codes = None
+    env_fs_div = os.getenv("DART_FS_DIV")
+    if env_fs_div:
+        try:
+            fs_div = str(env_fs_div).strip().upper() or fs_div
+        except Exception:
+            pass
+
+    # 최종 reprt_codes 결정: 함수 인자 > .env > 기본값
+    reprt_codes = tuple(reprt_codes or parsed_env_codes or DEFAULT_REPRT_CODES)
     corp_codes = tuple(dict.fromkeys(str(code).strip() for code in corp_codes if str(code).strip()))
     if not corp_codes:
         raise ValueError("corp_codes에 유효한 값이 없습니다.")
@@ -74,6 +93,18 @@ def fetch_filings(
                 }
                 data = _request_json(sess, "fnlttMultiAcnt.json", params=payload)
                 status = data.get("status")
+                try:
+                    rows_cnt = len(data.get("list", []) or [])
+                except Exception:
+                    rows_cnt = 0
+                LOGGER.info(
+                    "DART fnlttMultiAcnt corp:%s reprt:%s status:%s rows:%s%s",
+                    corp_code,
+                    reprt_code,
+                    status,
+                    rows_cnt,
+                    f" message:{data.get('message')}" if data.get("message") else "",
+                )
                 if status != "000":
                     LOGGER.warning(
                         "fnlttMultiAcnt 실패 - corp:%s reprt:%s status:%s message:%s",
@@ -97,6 +128,41 @@ def fetch_filings(
             multi_path = corp_dir / f"fnlttMultiAcnt_{year}.json"
             _write_json(multi_path, multi_records)
             saved.setdefault(corp_code, []).append(multi_path)
+            # 폴백: 올해 데이터가 전혀 없으면 직전 연도 한 번 더 시도
+            try:
+                has_any_rows = any(rec.get("rows") for rec in multi_records)
+            except Exception:
+                has_any_rows = False
+            if not has_any_rows:
+                try:
+                    prev_year = int(year) - 1
+                except Exception:
+                    prev_year = year
+                multi_prev: list[dict] = []
+                for reprt_code in reprt_codes:
+                    payload = {
+                        "crtfc_key": api_key,
+                        "corp_code": corp_code,
+                        "bsns_year": str(prev_year),
+                        "reprt_code": reprt_code,
+                        "fs_div": fs_div,
+                    }
+                    data = _request_json(sess, "fnlttMultiAcnt.json", params=payload)
+                    if data.get("status") == "000":
+                        multi_prev.append(
+                            {
+                                "corp_code": corp_code,
+                                "reprt_code": reprt_code,
+                                "fs_div": fs_div,
+                                "year": prev_year,
+                                "rows": data.get("list", []),
+                            }
+                        )
+                    time.sleep(max(pause, 0))
+                if multi_prev:
+                    multi_prev_path = corp_dir / f"fnlttMultiAcnt_{prev_year}.json"
+                    _write_json(multi_prev_path, multi_prev)
+                    saved.setdefault(corp_code, []).append(multi_prev_path)
 
             if single_accounts:
                 single_payloads = []

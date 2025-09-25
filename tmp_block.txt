@@ -1,0 +1,21 @@
+            _split_gold_by_horizon(project_root)
+
+    # Stage 3: ¸ðµ¨ ÇÐ½À
+    if not args.skip_s3:
+        s3_cmd = ["python", "-m", MODEL_MODULE, "--train"]
+        if args.settings:
+            s3_cmd += ["--settings", str(args.settings)]
+        if args.gold_root:
+            s3_cmd += ["--gold-root", str(args.gold_root)]
+        if args.artifacts_root:
+            s3_cmd += ["--artifacts-root", str(args.artifacts_root)]
+        if args.epochs is not None:
+            s3_cmd += ["--epochs", str(args.epochs)]
+        if args.batch_size is not None:
+            s3_cmd += ["--batch-size", str(args.batch_size)]
+        if args.learning_rate is not None:
+            s3_cmd += ["--learning-rate", str(args.learning_rate)]
+        if args.model_device is not None:
+            s3_cmd += ["--device", args.model_device]
+        stage_start_times["s3_model"] = time.time()
+        _run_stage("s3_model", s3_cmd, env)

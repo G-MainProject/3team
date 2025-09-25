@@ -160,7 +160,7 @@ def fetch_current_prices(
     target_date = _normalize_date_input(date)
     _load_env_cache()
 
-    base_key = "KIWOOM_MOCK_BASE" if use_mock else "KIWOOM_BASE"
+    base_key = "KIWOOM_BASE"
     base_url = os.getenv(base_key)
     if not base_url:
         raise RuntimeError(f"{base_key} 환경변수가 설정되지 않았습니다.")
@@ -241,7 +241,7 @@ def fetch_quotes(
         raise ValueError("start_date가 end_date보다 큽니다.")
 
     _load_env_cache()
-    base_key = "KIWOOM_MOCK_BASE" if use_mock else "KIWOOM_BASE"
+    base_key = "KIWOOM_BASE"
     base_url = os.getenv(base_key)
     if not base_url:
         raise RuntimeError(f"{base_key} 환경변수가 설정되지 않았습니다.")

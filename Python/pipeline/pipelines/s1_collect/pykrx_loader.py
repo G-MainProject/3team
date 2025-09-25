@@ -1,4 +1,4 @@
-﻿"""Utilities to pull market data from pykrx and persist it under the raw data lake."""
+﻿"""pykrx 수집 유틸리티: 원시(raw) 영역에 JSON 파일로 저장"""
 
 from __future__ import annotations
 
@@ -8,20 +8,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, Mapping, MutableMapping, Sequence
 
-# pykrx 모듈은 외부 의존성이므로 사전 설치 여부를 확인한다
 try:
     from pykrx import stock  # type: ignore
-except ImportError as exc:  # pragma: no cover - import guard
+except ImportError as exc:  # pragma: no cover
     raise ImportError(
-        "pykrx가 설치되어 있지 않습니다. `pip install pykrx pandas`로 선 설치해 주세요."
+        "pykrx가 설치되어 있지 않습니다. `pip install pykrx pandas`로 먼저 설치하세요."
     ) from exc
 
-# 데이터 병합을 위해 pandas가 반드시 필요하다
 try:
     import pandas as pd
-except ImportError as exc:  # pragma: no cover - import guard
+except ImportError as exc:  # pragma: no cover
     raise ImportError(
-        "pandas가 설치되어 있지 않습니다. `pip install pandas`로 선 설치해 주세요."
+        "pandas가 설치되어 있지 않습니다. `pip install pandas`로 먼저 설치하세요."
     ) from exc
 
 LOGGER = logging.getLogger(__name__)
@@ -31,8 +29,7 @@ DATE_FMT = "%Y-%m-%d"
 
 
 def _find_project_root() -> Path:
-    """���� ���� ��ġ�� �������� ������Ʈ ��Ʈ�� Ž���Ѵ�."""
-
+    """환경(.env) 또는 data 폴더가 포함된 프로젝트 루트를 찾는다."""
     current = Path(__file__).resolve()
     for parent in current.parents:
         if (parent / ".env").exists():
@@ -40,10 +37,8 @@ def _find_project_root() -> Path:
     for parent in current.parents:
         if (parent / "data").exists():
             return parent
-    # Fallback: assume repository structure .../Python/pipeline/...
     return current.parents[4]
 
-# pykrx API 호출부터 파일 저장까지 한 번에 처리하는 진입점
 
 def run(
     *,
@@ -58,12 +53,12 @@ def run(
     index_codes: Iterable[str] | None = None,
     adjusted: bool = True,
 ) -> Mapping[str, list[Path]]:
-    """Collect daily/auxiliary datasets from pykrx and persist them to ``data/raw``."""
+    """pykrx에서 일별/보조 데이터 수집 후 data/raw에 저장"""
 
     start = _parse_date(start_date)
     end = _parse_date(end_date)
     if start > end:
-        raise ValueError("start_date가 end_date보다 늦습니다.")
+        raise ValueError("start_date가 end_date보다 빠릅니다.")
 
     raw_root = _resolve_raw_dir(raw_dir)
     pykrx_root = raw_root / "pykrx"
@@ -72,7 +67,6 @@ def run(
     investors = tuple(investors or DEFAULT_INVESTORS)
     index_codes = tuple(index_codes or DEFAULT_INDEX_CODES)
 
-    # 수집된 데이터 종류별로 생성된 파일 경로를 정리한다
     results: MutableMapping[str, list[Path]] = {
         "daily_ohlcv": [],
         "minute_ohlcv": [],
@@ -82,33 +76,33 @@ def run(
         "index_ohlcv": [],
     }
 
-    # 티커 단위로 pykrx API 호출 및 파일 저장 수행
+    # 티커별 수집
     for ticker in tickers:
         ticker_dir = pykrx_root / ticker
         ticker_dir.mkdir(parents=True, exist_ok=True)
 
+        # 일별 OHLCV
         daily_path = ticker_dir / _filename("ohlcv_daily", ticker, start, end)
         df_daily = stock.get_market_ohlcv_by_date(start_date, end_date, ticker, adjusted=adjusted)
         results["daily_ohlcv"].append(_save_dataframe(df_daily, daily_path, index_name="date"))
 
+        # 분봉(옵션)
         if include_minute:
             minute_path = ticker_dir / _filename(f"ohlcv_{minute_freq}", ticker, start, end)
-            df_minute = stock.get_market_ohlcv_by_date(
-                start_date,
-                end_date,
-                ticker,
-                freq=minute_freq,
-            )
+            df_minute = stock.get_market_ohlcv_by_date(start_date, end_date, ticker, freq=minute_freq)
             results["minute_ohlcv"].append(_save_dataframe(df_minute, minute_path, index_name="datetime"))
 
+        # 시가총액
         cap_path = ticker_dir / _filename("market_cap", ticker, start, end)
         df_cap = stock.get_market_cap_by_date(start_date, end_date, ticker)
         results["market_cap"].append(_save_dataframe(df_cap, cap_path, index_name="date"))
 
+        # 펀더멘털
         fundamental_path = ticker_dir / _filename("fundamental", ticker, start, end)
         df_fund = stock.get_market_fundamental(start_date, end_date, ticker)
         results["fundamental"].append(_save_dataframe(df_fund, fundamental_path, index_name="date"))
 
+        # 투자자별 거래대금(옵션)
         if include_trading_value:
             for investor in investors:
                 trading_path = ticker_dir / _filename(
@@ -118,11 +112,9 @@ def run(
                     end,
                 )
                 df_trade = _fetch_trading_value(start_date, end_date, ticker, investor)
-                results["trading_value"].append(
-                    _save_dataframe(df_trade, trading_path, index_name="date")
-                )
+                results["trading_value"].append(_save_dataframe(df_trade, trading_path, index_name="date"))
 
-    # 지수 데이터도 동일한 규칙으로 적재
+    # 지수 데이터 수집
     index_dir = pykrx_root / "index"
     index_dir.mkdir(parents=True, exist_ok=True)
     for code in index_codes:
@@ -134,8 +126,7 @@ def run(
 
 
 def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
-    """raw 디렉터리 경로를 보정하고 존재하지 않으면 생성한다."""
-
+    """raw 데이터 루트를 해석하고 디렉터리를 생성한다."""
     if raw_dir is None:
         project_root = _find_project_root()
         raw_dir = project_root / "data" / "raw"
@@ -145,31 +136,26 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
 
 
 def _parse_date(value: str) -> datetime:
-    """YYYY-MM-DD 형식을 검증하여 datetime으로 변환한다."""
-
-    try:
-        return datetime.strptime(value, DATE_FMT)
-    except ValueError as exc:  # pragma: no cover - 단순 검증
-        raise ValueError(f"날짜 형식이 YYYY-MM-DD가 아닙니다: {value}") from exc
+    """YYYY-MM-DD 문자열을 파싱해 datetime으로 변환한다."""
+    return datetime.strptime(value, DATE_FMT)
 
 
 def _filename(prefix: str, key: str, start: datetime, end: datetime) -> str:
-    """저장 파일명을 통일된 패턴으로 생성한다."""
-
+    """일관된 파일명을 생성한다."""
     return f"{prefix}_{key}_{start.strftime('%Y%m%d')}_{end.strftime('%Y%m%d')}.json"
 
 
 def _sanitize_for_path(value: str) -> str:
-    """파일 경로에 사용할 수 있도록 문자열을 정제한다."""
-
+    """경로에 안전하게 쓸 수 있도록 문자열을 정제한다."""
     return "".join(ch for ch in value if ch.isalnum() or ch in ("-", "_")) or "unknown"
 
 
 def _save_dataframe(df: "pd.DataFrame", path: Path, *, index_name: str) -> Path:
-    """DataFrame을 JSON 구조(meta+data)로 저장한다."""
-
+    """DataFrame을 JSON 페이로드(meta+data)로 저장한다."""
     if df is None or df.empty:
-        LOGGER.warning("pykrx 데이터가 비어 있어 저장을 건너뜁니다: %s", path.name)
+        LOGGER.warning("pykrx 데이터가 비어 있어 파일만 생성합니다: %s", path.name)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"meta": {}, "data": []}, ensure_ascii=False, indent=2), encoding="utf-8")
         return path
 
     df = df.copy()
@@ -179,7 +165,7 @@ def _save_dataframe(df: "pd.DataFrame", path: Path, *, index_name: str) -> Path:
     if index_name in df.columns:
         try:
             df[index_name] = pd.to_datetime(df[index_name]).dt.strftime(DATE_FMT)
-        except Exception:  # pragma: no cover - 변환 실패 시 기록만 남김
+        except Exception:  # pragma: no cover
             LOGGER.debug("%s 컬럼 날짜 형식 변환 실패", index_name, exc_info=True)
 
     df.rename(columns=_COLUMN_MAP, inplace=True)
@@ -195,13 +181,12 @@ def _save_dataframe(df: "pd.DataFrame", path: Path, *, index_name: str) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as fp:
         json.dump(payload, fp, ensure_ascii=False, indent=2)
-    LOGGER.info("pykrx 데이터 저장: %s", path)
+    LOGGER.info("pykrx 결과 저장: %s", path)
     return path
 
 
 def _fetch_trading_value(start_date: str, end_date: str, ticker: str, investor: str):
-    """투자주체별 매매대금 API 시그니처 변화에 대응한다."""
-
+    """투자자별 거래대금 API의 인자명을 유연하게 처리한다."""
     candidates = (
         {"ticker": ticker, "investor": investor},
         {"ticker": ticker, "invst": investor},

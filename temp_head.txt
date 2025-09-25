@@ -1,20 +1,330 @@
-"""CLI to execute the entire data-to-inference pipeline."""
-    # s0_discover Kiwoom ¼³Á¤ Àü´Þ ¿É¼Ç(¼±ÅÃ)
-    parser.add_argument("--auto-kiwoom-base", help="Kiwoom REST base URL (¿¹: https://gw.example)")
-    parser.add_argument("--auto-kiwoom-appkey", help="Kiwoom appkey")
-    parser.add_argument("--auto-kiwoom-secret", help="Kiwoom secretkey")
-    parser.add_argument("--auto-kiwoom-rank-path", help="Kiwoom rank API path (ka10027 ¸ÅÇÎ °æ·Î)")
-    parser.add_argument("--auto-kiwoom-rank-trid", help="Kiwoom rank TR ID (±âº» ka10027)")
-    parser.add_argument("--auto-kiwoom-api-id", help="¿äÃ» Çì´õ api-id °­Á¦ ÁöÁ¤")
+"""Top mover forecast aggregator in won (KRW) units.
+
+?ìœ„ ë³€??ì¢…ëª©(top movers)???€???ˆì¸¡ ê²°ê³¼ë¥?ê°€ê²??¨ìœ„ë¡?ì§‘ê³„?˜ì—¬
+ë³´ê³ ??JSON)ë¥??ì„±?©ë‹ˆ??
+"""
 
 from __future__ import annotations
 
 import argparse
 import json
-import os
-import subprocess
-import sys
-from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Optional
+
+import numpy as np
+
+try:
+    # ì¢…ëª©ëª?ë³´ê°•???¤ì¹˜?˜ì–´ ?ˆìœ¼ë©??¬ìš©)
+    from pykrx import stock  # type: ignore
+except Exception:  # pragma: no cover
+    stock = None  # type: ignore
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = _build_parser()
+    opts = parser.parse_args(argv)
+
+    close_snapshot = _load_close_snapshot(opts)
+    snapshot_generated_at = None
+    snapshot_source = None
+    snapshot_prices: dict[str, float] = {}
+    if isinstance(close_snapshot, dict):
+        snapshot_generated_at = close_snapshot.get("generated_at")
+        snapshot_source = close_snapshot.get("source")
+        prices_obj = close_snapshot.get("prices")
+        if isinstance(prices_obj, dict):
+            for key, value in prices_obj.items():
+                if _is_number(value):
+                    snapshot_prices[str(key)] = float(value)
+
+    top_data = _read_json(opts.top_movers)
+    predictions = _read_json(opts.predictions)
+    predicted_prices = np.array(predictions.get("prices"), dtype=float)
+    predicted_returns = np.array(predictions.get("returns"), dtype=float)
+    horizons = [str(h) for h in predictions.get("horizons", [])]
+    actual_prices = _load_array(opts.actual_prices)
+    if predicted_prices.shape != actual_prices.shape:
+        raise ValueError("Predicted and actual price arrays must have the same shape.")
+
+    labels = _load_labels(opts.labels, predicted_prices.shape[0]) if opts.labels else [
+        {"ticker": str(i), "index": i}
+        for i in range(predicted_prices.shape[0])
+    ]
+    current_close: np.ndarray | None = None
+    if opts.close_values and opts.close_values.exists():
+        current_close = _load_array(opts.close_values).astype(float)
+    elif "current_close" in predictions:
+        current_close = np.array(predictions["current_close"], dtype=float)
+
+    top_tickers = [str(t) for t in top_data.get("tickers", [])]
+    if opts.limit is not None:
+        top_tickers = top_tickers[: opts.limit]
+
+    # top movers??details?ì„œ ì¢…ëª©ëª…ì„ ?°ì„  ?¬ìš©
+    name_lookup = {
+        str(entry.get("ticker")): entry.get("name")
+        for entry in top_data.get("details", [])
+    }
+    # ì¢…ëª©ëª??„ë½ ë³´ê°•: pykrx ?¬ìš© ê°€?¥í•˜ë©?top_data.date ê¸°ì??¼ë¡œ ì¡°íšŒ
+    date_for_lookup = str(top_data.get("date") or "").replace("-", "")
+    if stock is not None and date_for_lookup:
+        for t in top_tickers:
+            if not name_lookup.get(t):
+                try:
+                    lookup_t = t.zfill(6)
+                    name_lookup[t] = stock.get_market_ticker_name(lookup_t, date=date_for_lookup)
+                except Exception:
+                    pass
+
+    # ?¼ë²¨ ?Œì¼???´ë¦„ ?•ë³´ê°€ ?ˆìœ¼ë©?ë³´ê°• (???„ë³´ ëª?ê°€ì§€ ?œë„)
+    label_name_keys = ("name", "company", "corp_name", "corp", "ì¢…ëª©ëª?, "?œê?ëª?)
+    for info in labels:
+        t = str(info.get("ticker", "")).strip()
+        if not t:
+            continue
+        if not name_lookup.get(t):
+            for k in label_name_keys:
+                v = info.get(k)
+                if v:
+                    name_lookup[t] = str(v)
+                    break
+
+    # ?¬ì „???„ë½??ê²½ìš° ticker ?ì²´ë¥??´ë¦„?¼ë¡œ ?¤ì •??null???¼í•¨
+    for t in top_tickers:
+        if not name_lookup.get(t):
+            name_lookup[t] = t
+
+    # labels ê¸°ì??¼ë¡œ ticker ??sample index ëª©ë¡ ë§¤í•‘
+    index_map: dict[str, list[int]] = {}
+    for idx, info in enumerate(labels):
+        ticker = str(info.get("ticker", "")).strip()
+        if ticker:
+            index_map.setdefault(ticker, []).append(idx)
+
+    entries: list[dict[str, Any]] = []
+    for ticker in top_tickers:
+        indices = index_map.get(ticker)
+        if not indices:
+            # ?¼ë²¨???†ì–´??ë³´ê³ ?œì—???œê¸°(?”ì²­: 5ê°?ì¢…ëª© ëª¨ë‘ ?œì‹œ)
+            entries.append({
+                "ticker": ticker,
+                "name": name_lookup.get(ticker),
+                "status": "not_found_in_labels",
+                "horizons": [],
+            })
+            continue
+
+        sample_idx = indices[-1]
+        pred_row = predicted_prices[sample_idx]
+        return_row = predicted_returns[sample_idx]
+        actual_row = actual_prices[sample_idx]
+        price_abs_err = np.abs(pred_row - actual_row)
+        base_close = float(current_close[sample_idx]) if current_close is not None else None
+        actual_return_row = None
+        if base_close is not None and base_close != 0:
+            actual_return_row = (actual_row / base_close) - 1.0
+
+        horizon_rows: list[dict[str, Any]] = []
+        for idx_h, label in enumerate(horizons):
+            pred_val = float(pred_row[idx_h])
+            act_val = float(actual_row[idx_h])
+            err_val = float(price_abs_err[idx_h])
+            pred_ret = float(return_row[idx_h])
+            horizon_entry: dict[str, Any] = {
+                "horizon": label,
+                "predicted_price": pred_val,
+                "actual_price": act_val,
+                "abs_error": err_val,
+                "predicted_interval": [pred_val - err_val, pred_val + err_val],
+                "predicted_return": pred_ret,
+            }
+            if actual_return_row is not None:
+                act_ret = float(actual_return_row[idx_h])
+                horizon_entry["actual_return"] = act_ret
+                horizon_entry["return_abs_error"] = abs(pred_ret - act_ret)
+            horizon_rows.append(horizon_entry)
+
+        entry: dict[str, Any] = {
+            "ticker": ticker,
+            "name": name_lookup.get(ticker),
+            "horizons": horizon_rows,
+            "label": labels[sample_idx],
+        }
+        # ?•ìƒ ë§¤ì¹­??ê²½ìš° ?íƒœë¥?ëª…ì‹œ?ìœ¼ë¡?ë¶€??        entry["status"] = "ok"
+
+        current_close_value: float | None = None
+        if current_close is not None:
+            current_close_value = float(current_close[sample_idx])
+        elif ticker in snapshot_prices:
+            current_close_value = float(snapshot_prices[ticker])
+
+        if current_close_value is not None:
+            entry["current_close"] = current_close_value
+            if snapshot_generated_at or snapshot_source:
+                entry["current_close_snapshot"] = {
+                    "generated_at": snapshot_generated_at,
+                    "source": snapshot_source,
+                }
+                if ticker in snapshot_prices:
+                    entry["current_close_snapshot"]["reported_price"] = float(snapshot_prices[ticker])
+                if close_snapshot and isinstance(close_snapshot, dict):
+                    entry["current_close_snapshot"].setdefault("path", close_snapshot.get("path"))
+
+        entries.append(entry)
+
+    close_snapshot_output: dict[str, Any] | None = None
+    if snapshot_generated_at or snapshot_source or snapshot_prices:
+        close_snapshot_output = {
+            "generated_at": snapshot_generated_at,
+            "source": snapshot_source,
+        }
+        if snapshot_prices:
+            close_snapshot_output["prices"] = snapshot_prices
+        if isinstance(close_snapshot, dict) and close_snapshot.get("path"):
+            close_snapshot_output["path"] = close_snapshot.get("path")
+        if isinstance(close_snapshot, dict) and close_snapshot.get("tickers"):
+            close_snapshot_output["tickers"] = close_snapshot.get("tickers")
+
+    output = {
+        "date": top_data.get("date"),
+        "market": top_data.get("market"),
+        "generated_at": snapshot_generated_at,
+        "price_source": snapshot_source,
+        "count": len(entries),
+        "horizons": horizons,
+        "entries": entries,
+        "meta": {
+            "description": "Forecast summary for top mover tickers (prices in KRW).",
+            "description_ko": "?ìœ„ ë³€??ì¢…ëª© ?ˆì¸¡ ì§‘ê³„ ë³´ê³ ??(?¨ìœ„: ??",
+            "fields": {
+                "date": "Reference date (YYYYMMDD).",
+                "market": "Market identifier provided by discovery stage.",
+                "generated_at": "Timestamp (UTC) when the baseline prices were fetched.",
+                "price_source": "Source of the baseline price data (e.g., pykrx).",
+                "count": "Number of entries contained in this report.",
+                "horizons": "List of horizon labels shared across entries.",
+                "entries": "Forecast detail objects per ticker.",
+                "entries.horizons": "Per-horizon prediction details (price, error, return).",
+                "close_snapshot": "Metadata describing the baseline close prices used when generating this report.",
+            },
+            "fields_ko": {
+                "date": "ê¸°ì? ?¼ìž (YYYYMMDD)",
+                "market": "ë°œê²¬ ?¨ê³„?ì„œ ?œê³µ???œìž¥ êµ¬ë¶„",
+                "generated_at": "ê¸°ì? ê°€ê²©ì„ ì¡°íšŒ???œê° (UTC)",
+                "price_source": "ê¸°ì? ê°€ê²??°ì´??ì¶œì²˜ (?? pykrx)",
+                "count": "ë³´ê³ ?œì— ?¬í•¨????ª© ??,
+                "horizons": "ëª¨ë“  ??ª©??ê³µí†µ?¼ë¡œ ?ìš©??ê¸°ê°„ ?¼ë²¨ ëª©ë¡",
+                "entries": "ì¢…ëª©ë³??ì„¸ ?ˆì¸¡ ê²°ê³¼",
+                "entries.horizons": "ê¸°ê°„ë³??ˆì¸¡ ê°€ê²??¤ì°¨/?˜ìµë¥?
+            },
+            "entry_fields_ko": {
+                "ticker": "ì¢…ëª© ì½”ë“œ",
+                "name": "ì¢…ëª©ëª?(?•ì¸ ê°€?¥í•œ ê²½ìš°)",
+                "current_close": "?ˆì¸¡ ê¸°ì??????„ìž¬ ì¢…ê?",
+                "label": "?ˆì´ë¸”ì…‹??ë¶€ê°€ ?•ë³´ (?? ?¹í„°, êµ¬ë¶„ ì½”ë“œ)",
+                "status": "?¼ë²¨ ë§¤ì¹­ ?¤íŒ¨ ???ˆì™¸ ?í™© ?œì‹œ (?ˆëŠ” ê²½ìš°)",
+                "horizons": "ê¸°ê°„ë³??ì„¸ ì§€??
+            },
+            "entry_horizon_fields_ko": {
+                "horizon": "ê¸°ê°„ ?¼ë²¨",
+                "predicted_price": "?ˆì¸¡???´ë‹¹ ê¸°ê°„ ì¢…ê?",
+                "actual_price": "?¤ì œ ê´€ì¸¡ëœ ?´ë‹¹ ê¸°ê°„ ì¢…ê?",
+                "abs_error": "?ˆì¸¡ ê°€ê²©ê³¼ ?¤ì œ ê°€ê²©ì˜ ?ˆë? ?¤ì°¨",
+                "predicted_interval": "?ˆì¸¡ ê°?Â± ?ˆë? ?¤ì°¨ êµ¬ê°„",
+                "predicted_return": "?ˆì¸¡ ?˜ìµë¥?,
+                "actual_return": "?¤ì œ ?˜ìµë¥?(?„ìž¬ê°€ ê¸°ì??¼ë¡œ ê³„ì‚°, ì¡´ìž¬?˜ëŠ” ê²½ìš°)",
+                "return_abs_error": "?ˆì¸¡/?¤ì œ ?˜ìµë¥ ì˜ ?ˆë? ?¤ì°¨ (ì¡´ìž¬?˜ëŠ” ê²½ìš°)"
+            }
+        }
+    }
+
+    if close_snapshot_output:
+        output["close_snapshot"] = close_snapshot_output
+    opts.output.parent.mkdir(parents=True, exist_ok=True)
+    opts.output.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(output, ensure_ascii=False, indent=2))
+    return 0
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Generate forecast report for top movers.")
+    parser.add_argument("--top-movers", type=Path, default=Path("data/raw/top_movers_auto.json"), help="top movers JSON ê²½ë¡œ")
+    parser.add_argument("--predictions", type=Path, default=Path("outputs/preds.json"), help="s4 ?ˆì¸¡ JSON ê²½ë¡œ")
+    parser.add_argument("--actual-prices", type=Path, default=Path("outputs/actual_prices.npy"), help="?¤ì œ ê°€ê²?numpy ê²½ë¡œ")
+    parser.add_argument("--close-values", type=Path, default=Path("data/live/current_close.npy"), help="?„ìž¬ ì¢…ê? numpy ê²½ë¡œ")
+    parser.add_argument("--close-metadata", type=Path, default=Path("data/live/current_close.json"), help="?„ìž¬ê°€ ?¤ëƒ…??JSON ê²½ë¡œ")
+    parser.add_argument("--labels", type=Path, default=Path("data/gold/test/labels.json"), help="?˜í”Œ ?ˆì´ë¸?JSON ê²½ë¡œ")
+    parser.add_argument("--output", type=Path, default=Path("outputs/top_mover_forecast.json"), help="ê²°ê³¼ JSON ê²½ë¡œ")
+    parser.add_argument("--limit", type=int, help="?‘ë¬´ë²??ìœ„ Nê°œë§Œ ì¶œë ¥")
+    return parser
+
+
+def _load_close_snapshot(opts: argparse.Namespace) -> Optional[dict[str, Any]]:
+    candidates: list[Path] = []
+    if getattr(opts, "close_metadata", None):
+        candidates.append(Path(opts.close_metadata))
+    if getattr(opts, "close_values", None):
+        close_path = Path(opts.close_values)
+        candidates.append(close_path.with_suffix(".json"))
+        candidates.append(close_path.parent / "current_close.json")
+    seen: set[Path] = set()
+    for candidate in candidates:
+        if not candidate:
+            continue
+        candidate = candidate.resolve()
+        if candidate in seen:
+            continue
+        seen.add(candidate)
+        if candidate.exists():
+            try:
+                data = _read_json(candidate)
+            except Exception:
+                continue
+            if isinstance(data, dict):
+                enriched = dict(data)
+                enriched.setdefault("path", str(candidate))
+                return enriched
+    return None
+
+
+# Helper utilities ---------------------------------------------------------
+def _is_number(value: Any) -> bool:
+    try:
+        float(value)
+    except (TypeError, ValueError):
+        return False
+    return True
+
+
+def _read_json(path: Path) -> Any:
+    if not path.exists():
+        raise FileNotFoundError(path)
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _load_array(path: Path) -> np.ndarray:
+    if not path.exists():
+        raise FileNotFoundError(path)
+    return np.load(path)
+
+
+def _load_labels(path: Path, expected: int) -> list[dict[str, Any]]:
+    if not path.exists():
+        raise FileNotFoundError(path)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, list):
+        raise ValueError("labels file must contain a list")
+    labels: list[dict[str, Any]] = []
+    for item in data:
+        if isinstance(item, dict):
+            labels.append(dict(item))
+        else:
+            labels.append({"ticker": str(item)})
+    if len(labels) < expected:
+        labels.extend({"ticker": f"#{i}"} for i in range(len(labels), expected))
+    return labels[:expected]
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
 

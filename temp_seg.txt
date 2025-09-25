@@ -1,0 +1,14 @@
+def _load_price_frame(ticker: str, config: MergeConfig) -> pd.DataFrame:
+    """가격 데이터 소스(pykrx 또는 kiwoom)를 읽어 공통 스키마로 변환한다."""
+
+    if config.price_source == "kiwoom":
+        directory = config.raw_root / "kiwoom" / ticker
+        loader = _load_kiwoom_price
+    else:
+        directory = config.raw_root / "pykrx" / ticker
+        loader = _load_pykrx_price
+    if not directory.exists():
+        raise FileNotFoundError(f"Price directory not found: {directory}")
+    return loader(directory)
+
+

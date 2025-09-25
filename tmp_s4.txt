@@ -1,0 +1,31 @@
+                s3_cmd += ["--settings", str(args.settings)]
+            if args.gold_root:
+                s3_cmd += ["--gold-root", str(args.gold_root)]
+            if args.artifacts_root:
+                s3_cmd += ["--artifacts-root", str(args.artifacts_root)]
+            if args.epochs is not None:
+                s3_cmd += ["--epochs", str(args.epochs)]
+            if args.batch_size is not None:
+                s3_cmd += ["--batch-size", str(args.batch_size)]
+            if args.learning_rate is not None:
+                s3_cmd += ["--learning-rate", str(args.learning_rate)]
+            if args.model_device is not None:
+                s3_cmd += ["--device", args.model_device]
+            stage_start_times["s3_model"] = time.time()
+            _run_stage("s3_model", s3_cmd, env)
+        stage_durations["s3_model"] = time.time() - stage_start_times["s3_model"]
+
+    labels_path = _resolve_labels_path(project_root, args)
+    live_close_path: Path | None = None
+    if not args.skip_s4:
+        live_close_path = _prepare_live_close_values(project_root, args, labels_path)
+        if live_close_path is not None:
+            print(f"[Pipeline] Live close snapshot saved to {live_close_path}")
+
+    infer_input = Path(args.infer_input) if args.infer_input else (project_root / "data" / "gold" / "test" / "X.npy")
+    infer_output = Path(args.infer_output)
+    s5_output = Path(args.s5_output)
+    # Stage 4: Ãß·Ð
+    if not args.skip_s4:
+        infer_cmd = [
+            "python",

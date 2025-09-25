@@ -1,0 +1,15 @@
+    market_map = {"KOSPI": "001", "KOSDAQ": "101", "ALL": "000"}
+    market_code = market_map.get(market.upper(), "000")
+
+    # ka10027 ??펙 기?? ??청 바디(기본값?? .env????버??이??가??
+    base_body = {
+        "mrkt_tp": market_code,  # 000 ??체, 001 코스?? 101 코스??        "sort_tp": os.getenv("KIWOOM_RANK_SORT_TP", "1"),  # 1 ??승?? 2 ??승?? 3 ??락?? 4 ??락?? 5 보합
+        "trde_qty_cnd": os.getenv("KIWOOM_RANK_TRDE_QTY_CND", "0000"),
+        "stk_cnd": os.getenv("KIWOOM_RANK_STK_CND", "0"),
+        "crd_cnd": os.getenv("KIWOOM_RANK_CRD_CND", "0"),
+        "updown_incls": os.getenv("KIWOOM_RANK_UPDOWN_INCLS", "1"),
+        "pric_cnd": os.getenv("KIWOOM_RANK_PRIC_CND", "0"),
+        "trde_prica_cnd": os.getenv("KIWOOM_RANK_TRDE_PRICA_CND", "0"),
+        "stex_tp": os.getenv("KIWOOM_RANK_STEX_TP", "1"),
+    }
+

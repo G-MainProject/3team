@@ -1,0 +1,6 @@
+# auto-generated for per-horizon training
+paths:
+  gold: data/gold
+  artifacts: Python/pipeline/artifacts
+dataset:
+  horizons: [120]
