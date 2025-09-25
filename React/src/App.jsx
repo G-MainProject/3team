@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { StockProvider } from './contexts/StockContext';
 import { PublicRoute, PrivateRoute } from './pages/Login/ProtectedRoute';
 
 import Home from './pages/Home/Home.jsx';
@@ -14,53 +15,63 @@ import StockAnalysis from './pages/StockAnalysis/StockAnalysis.jsx';
 import AIInsights from './pages/AIInsights/AIInsights.jsx';
 
 function App() {
-	const [selectedSymbol, setSelectedSymbol] = useState('005930'); // 기본값: 삼성전자
 	return (
 		<BrowserRouter>
 			<AuthProvider>
 				<NotificationProvider>
-					<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/login" element={
-						<PublicRoute>
-							<Login />
-						</PublicRoute>
-					} />
-					<Route path="/signup" element={
-						<PublicRoute>
-							<Signup />
-						</PublicRoute>
-					} />
-					<Route path="/dashboard" element={
-						<PrivateRoute>
-							<Dashboard 
-								selectedSymbol={selectedSymbol}
-								onSymbolChange={setSelectedSymbol}
+					<StockProvider>
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route
+								path="/login"
+								element={
+									<PublicRoute>
+										<Login />
+									</PublicRoute>
+								}
 							/>
-						</PrivateRoute>
-					} />
-					<Route path="/mypage" element={
-						<PrivateRoute>
-							<Mypage />
-						</PrivateRoute>
-					} />
-					<Route path="/stock-analysis" element={
-						<PrivateRoute>
-							<StockAnalysis 
-								selectedSymbol={selectedSymbol}
-								onSymbolChange={setSelectedSymbol}
+							<Route
+								path="/signup"
+								element={
+									<PublicRoute>
+										<Signup />
+									</PublicRoute>
+								}
 							/>
-						</PrivateRoute>
-					} />
-					<Route path="/ai-insights" element={
-						<PrivateRoute>
-							<AIInsights 
-								selectedSymbol={selectedSymbol}
-								onSymbolChange={setSelectedSymbol}
+							<Route
+								path="/dashboard"
+								element={
+									<PrivateRoute>
+										<Dashboard />
+									</PrivateRoute>
+								}
 							/>
-						</PrivateRoute>
-					} />
-				</Routes>
+							<Route
+								path="/mypage"
+								element={
+									<PrivateRoute>
+										<Mypage />
+									</PrivateRoute>
+								}
+							/>
+							<Route
+								path="/stock-analysis"
+								element={
+									<PrivateRoute>
+										<StockAnalysis />
+									</PrivateRoute>
+								}
+							/>
+							<Route
+								path="/ai-insights"
+								element={
+									<PrivateRoute>
+										<AIInsights />
+									</PrivateRoute>
+								}
+							/>
+						</Routes>
+					</StockProvider>
 				</NotificationProvider>
 			</AuthProvider>
 		</BrowserRouter>

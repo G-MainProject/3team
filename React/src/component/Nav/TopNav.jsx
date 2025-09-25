@@ -1,110 +1,79 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
-import './TopNav.css'
-import maleAvatar from '../../assets/images/male.jpg'
-import femaleAvatar from '../../assets/images/female.jpg'
-import { useAuth } from '../../contexts/AuthContext'
-import { useNotification } from '../../contexts/NotificationContext'
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import './TopNav.css';
+import maleAvatar from '../../assets/images/male.jpg';
+import femaleAvatar from '../../assets/images/female.jpg';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNotification } from '../../contexts/NotificationContext';
+import { useStock } from '../../hooks/useStock';
 
-const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, onStockSelect }) => {
-  const { user, logout } = useAuth()
-  const { notificationCount, notificationHistory, clearNotifications, setNotificationCount, setNotificationHistory } = useNotification()
-  const [topStocks, setTopStocks] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedStock, setSelectedStock] = useState(selectedSymbol || '005930') // props에서 받은 값 사용
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
-  const [previousTopStock, setPreviousTopStock] = useState(null)
-  // refreshing은 props로 받아서 사용
-  const dropdownRef = useRef(null)
-  const navigate = useNavigate()
-  
-  // 사용자 성별 정보 가져오기
+const TopNav = () => {
+  const { user, logout } = useAuth();
+  const {
+    notificationCount,
+    notificationHistory,
+    clearNotifications,
+    setNotificationCount,
+    setNotificationHistory,
+  } = useNotification();
+  const { stocks, selectedStock, setSelectedStockByCode, loading: stockLoading } = useStock();
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+  const [previousTopStock, setPreviousTopStock] = useState(null);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Memoize the sorted stock list for the TopNav
+  const topNavStocks = useMemo(() => {
+    if (!stocks) return [];
+    return [...stocks].sort((a, b) => Math.abs(b.changePercent || 0) - Math.abs(a.changePercent || 0));
+  }, [stocks]);
+
   const getUserGender = () => {
-    if (!user) return 'male'; // 기본값
-    // 서버에서 오는 성별 값: MALE, FEMALE, OTHER
+    if (!user) return 'male';
     return user.gender === 'FEMALE' ? 'female' : 'male';
-  }
-  
-  // 주요 주식 심볼 목록
-  const stockSymbols = useMemo(() => [
-    { symbol: '005930', name: '삼성전자' },
-    { symbol: '000660', name: 'SK하이닉스' },
-    { symbol: '035420', name: 'NAVER' },
-    { symbol: '207940', name: '삼성바이오로직스' },
-    { symbol: '006400', name: '삼성SDI' }
-  ], [])
+  };
 
-  // fetchRealStockData 함수 제거 - Dashboard에서 데이터를 받아서 사용
-
-  // Dashboard에서 전달받은 데이터만 사용 (완전 동기화)
   useEffect(() => {
     if (topNavStocks && topNavStocks.length > 0) {
-      // console.log('📡 TopNav props 데이터 받음:', topNavStocks);
-      
-      // Dashboard의 데이터가 있으면 사용
-      setIsLoading(topNavLoading)
-      
-      // 애니메이션 시작
-      setIsAnimating(true)
-      
-      // 약간의 지연 후 데이터 업데이트
+      setIsAnimating(true);
       setTimeout(() => {
-        const newTopStocks = topNavStocks.slice(0, 5)
-        
-        // 순위 변경 감지
-        if (previousTopStock && newTopStocks[0] && previousTopStock.symbol !== newTopStocks[0].symbol) {
-          console.log('🔔 순위 변경 감지:', previousTopStock.name, '→', newTopStocks[0].name);
-          
-          // 이전 1위의 현재 순위 찾기
-          const previousRank = newTopStocks.findIndex(stock => stock.symbol === previousTopStock.symbol) + 1
-          const currentRank = 1
-          
-          // 알림 히스토리에 추가
+        const newTopStocks = topNavStocks.slice(0, 5);
+
+        if (previousTopStock && newTopStocks[0] && previousTopStock.stockCode !== newTopStocks[0].stockCode) {
+          const previousRank = newTopStocks.findIndex(stock => stock.stockCode === previousTopStock.stockCode) + 1;
+          const currentRank = 1;
+
           const newNotification = {
-            id: Date.now(), // 고유 ID 추가
+            id: Date.now(),
             previousStock: {
-              name: previousTopStock.name,
+              name: previousTopStock.stockName,
               rank: previousRank,
-              changePercent: previousTopStock.changePercent
+              changePercent: previousTopStock.changePercent,
             },
             currentStock: {
-              name: newTopStocks[0].name,
+              name: newTopStocks[0].stockName,
               rank: currentRank,
-              changePercent: newTopStocks[0].changePercent
+              changePercent: newTopStocks[0].changePercent,
             },
-            type: 'rank_change'
-          }
-          setNotificationHistory(prev => [newNotification, ...prev.slice(0, 9)]) // 최대 10개 유지
-          
-          // 드롭다운이 닫혀있을 때만 카운트 증가
+            type: 'rank_change',
+          };
+          setNotificationHistory(prev => [newNotification, ...prev.slice(0, 9)]);
+
           if (!showNotificationDropdown) {
-            setNotificationCount(prev => prev + 1)
+            setNotificationCount(prev => prev + 1);
           }
         }
-        
-        setTopStocks(newTopStocks)
-        setPreviousTopStock(newTopStocks[0]) // 현재 1위 저장
-        setIsLoading(false)
-        // console.log('✅ TopNav 데이터 동기화 완료 - Dashboard와 동일한 데이터 사용');
-        
-        // 애니메이션 종료
-        setTimeout(() => {
-          setIsAnimating(false)
-        }, 300)
-      }, 150)
-    }
-  }, [topNavStocks, topNavLoading])
 
-  // selectedSymbol이 변경될 때 selectedStock 동기화
-  useEffect(() => {
-    if (selectedSymbol) {
-      setSelectedStock(selectedSymbol)
+        setPreviousTopStock(newTopStocks[0]);
+        setIsAnimating(false);
+      }, 300);
     }
-  }, [selectedSymbol])
+  }, [topNavStocks, setNotificationCount, setNotificationHistory, showNotificationDropdown, previousTopStock]);
 
-  // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -131,61 +100,47 @@ const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, o
     logout();
     setIsDropdownOpen(false);
     alert('로그아웃 되었습니다.');
-    // Dashboard에서 로그아웃 시 홈페이지로 이동
     window.location.href = '/';
   };
 
-  // 주식 클릭 핸들러
   const handleStockClick = (stock) => {
-    setSelectedStock(stock.symbol)
-    if (onStockSelect) { // onStockSelect가 제공되면 우선적으로 호출
-      onStockSelect(stock.symbol)
-    } else if (onSymbolChange) { // onStockSelect가 없으면 onSymbolChange 호출
-      onSymbolChange(stock.symbol)
-    }
-    // onStockSelect가 제공되지 않는 경우에만 Dashboard로 이동
-    if (!onStockSelect) {
-      navigate('/dashboard', { state: { selectedSymbol: stock.symbol } })
-    }
-  }
+    setSelectedStockByCode(stock.stockCode);
+    navigate(location.pathname);
+  };
 
-  // 벨 버튼 클릭 핸들러
   const handleBellClick = () => {
-    setShowNotificationDropdown(!showNotificationDropdown)
+    setShowNotificationDropdown(!showNotificationDropdown);
     if (notificationCount > 0) {
-      clearNotifications() // 알림 확인 시 카운트 리셋
+      clearNotifications();
     }
-  }
+  };
 
-  // 알림에서 주식 클릭 핸들러
   const handleNotificationStockClick = (stockName) => {
-    // 주식 이름으로 심볼 찾기
-    const stock = topStocks.find(s => s.name === stockName)
-    if (stock && onStockSelect) {
-      onStockSelect(stock.symbol)
-      setShowNotificationDropdown(false) // 알림 드롭다운 닫기
+    const stock = topNavStocks.find(s => s.stockName === stockName);
+    if (stock) {
+        setSelectedStockByCode(stock.stockCode);
+        setShowNotificationDropdown(false);
     }
-  }
+  };
 
   return (
     <div className='top-nav-container'>
-        {/* 주식 변동폭 순위 */}
         <div className='progress-indicator'>
-          {isLoading ? (
+          {stockLoading ? (
             <div className="stock-loading">실시간 주식 데이터 로딩 중...</div>
-          ) : topStocks.length > 0 ? (
+          ) : topNavStocks.length > 0 ? (
             <div className="stock-list-container">
               <div className="stock-items">
-                {topStocks.map((stock, index) => (
-                  <div key={stock.symbol} className={`stock-item ${isAnimating ? 'animating' : ''}`}>
+                {topNavStocks.slice(0, 5).map((stock, index) => (
+                  <div key={stock.stockCode} className={`stock-item ${isAnimating ? 'animating' : ''}`}>
                     <div 
-                      className={`stock-circle ${stock.symbol === selectedStock ? 'active' : ''}`}
+                      className={`stock-circle ${stock.stockCode === selectedStock?.stockCode ? 'active' : ''}`}
                       onClick={() => handleStockClick(stock)}
-                      title={`${stock.name} - ${stock.currentPrice?.toLocaleString()}원 (${stock.changePercent >= 0 ? '+' : ''}${stock.changePercent?.toFixed(2)}%)`}
+                      title={`${stock.stockName} - ${stock.currentPrice?.toLocaleString()}원 (${stock.changePercent >= 0 ? '+' : ''}${stock.changePercent?.toFixed(2)}%)`}
                     >
                       {index + 1}
                     </div>
-                    <span className='stock-label'>{stock.name}</span>
+                    <span className='stock-label'>{stock.stockName}</span>
                     <span className={`stock-change ${stock.changePercent >= 0 ? 'positive' : 'negative'}`}>
                       {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent?.toFixed(2)}%
                     </span>
@@ -194,20 +149,7 @@ const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, o
               </div>
             </div>
           ) : (
-            // 기본값 표시 (데이터가 없을 때)
-            stockSymbols.slice(0, 5).map((stock, index) => (
-              <div key={stock.symbol} className="stock-item">
-                <div 
-                  className={`stock-circle ${stock.symbol === selectedStock ? 'active' : ''}`}
-                  onClick={() => handleStockClick(stock)}
-                  title={`${stock.name} - 데이터 없음`}
-                >
-                  {index + 1}
-                </div>
-                <span className='stock-label'>{stock.name}</span>
-                <span className="stock-change">--%</span>
-              </div>
-            ))
+            <div className="stock-loading">주식 데이터가 없습니다.</div>
           )}
         </div>
 
@@ -223,7 +165,6 @@ const TopNav = ({ selectedSymbol, onSymbolChange, topNavStocks, topNavLoading, o
             )}
           </button>
           
-          {/* 알림 드롭다운 */}
           <div className={`notification-dropdown ${showNotificationDropdown ? 'open' : 'closed'}`}>
               <div className="notification-header">
                 <h4>알림</h4>
