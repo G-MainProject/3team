@@ -1,0 +1,489 @@
+{
+  "date": "20250925",
+  "market": "KOSPI",
+  "generated_at": null,
+  "price_source": null,
+  "count": 5,
+  "horizons": [
+    "1d",
+    "1w",
+    "1m",
+    "6m",
+    "1y"
+  ],
+  "entries": [
+    {
+      "ticker": "008500", // 종목코드
+      "name": "일정실업", // 종목명
+      "source": "kiwoom", // Api 종류 (pykrx, kiwoom)
+      "current_price": 14820.0, // 현재가
+      "change_pct": 30.0, // 전일대비 등락률
+      "horizons": [ // 기간별 분석
+        {
+          "horizon": "1d", // 1일 후
+          "predicted_price": 1833.0240129232407, // 예측가격
+          "actual_price": 1809.0, // 
+          "abs_error": 24.02401292324066, // 절대오차
+          "predicted_interval": [ // 예측구간
+            1809.0,
+            1857.0480258464813
+          ],
+          "predicted_return": 0.013280272483825684, // 신뢰도
+          "actual_return": 0.0, // 
+          "return_abs_error": 0.013280272483825684 // 학습 후 신뢰도
+        },
+        {
+          "horizon": "1w", // 1주 후
+          "predicted_price": 1816.5192704200745,
+          "actual_price": 1806.0,
+          "abs_error": 10.519270420074463,
+          "predicted_interval": [
+            1806.0,
+            1827.038540840149
+          ],
+          "predicted_return": 0.00415661558508873,
+          "actual_return": -0.0016583747927031434,
+          "return_abs_error": 0.005814990377791873
+        },
+        {
+          "horizon": "1m", // 1달 후
+          "predicted_price": 1778.5545887947083,
+          "actual_price": 1709.0,
+          "abs_error": 69.55458879470825,
+          "predicted_interval": [
+            1709.0,
+            1848.1091775894165
+          ],
+          "predicted_return": -0.016829971224069595,
+          "actual_return": -0.05527915975677167,
+          "return_abs_error": 0.03844918853270207
+        },
+        {
+          "horizon": "6m", // 6개월 후
+          "predicted_price": 1444.432913661003,
+          "actual_price": 1611.0,
+          "abs_error": 166.5670863389969,
+          "predicted_interval": [
+            1277.8658273220062,
+            1611.0
+          ],
+          "predicted_return": -0.20152965188026428,
+          "actual_return": -0.1094527363184079,
+          "return_abs_error": 0.09207691556185638
+        },
+        {
+          "horizon": "1y", // 1년 후
+          "predicted_price": 916.5591259002686,
+          "actual_price": 1208.0,
+          "abs_error": 291.44087409973145,
+          "predicted_interval": [
+            625.1182518005371,
+            1208.0
+          ],
+          "predicted_return": -0.4933338165283203,
+          "actual_return": -0.33222775013819794,
+          "return_abs_error": 0.16110606639012237
+        }],
+      "indicators": { // 기술지표
+        "bb_percent_b": 0.7088337996841723, 
+        "bb_bandwidth": 0.18731563810431384,
+        "bb_upper": 13587.604743903998, // 볼린저밴드 상단밴드
+        "bb_lower": 11260.395256096002, // 볼린저밴드 하단밴드
+        "bb_mid": 12424.0, // 볼린저밴드 중간밴드
+        "macd": 138.45784719030962, // MACD
+        "macd_signal": 101.79509397117263,
+        "macd_hist": 36.66275321913699,
+        "rsi": 67.28395061728395,
+        "obv": 0.0,
+        "obv_ema": 0.0
+      },
+      "fundamentals": { // 재무지표
+        "per": 0.0, 
+        "pbr": 5.019999980926514,
+        "roe": 0.0,
+        "roa": 0.0,
+        "market_cap": 15492000000.0,
+        "shares_outstanding": 1200000.0
+      }
+    },
+    {
+      "ticker": "010580",
+      "name": "에스엠벡셀",
+      "source": "kiwoom",
+      "current_price": 2645.0,
+      "change_pct": 29.98,
+      "horizons": [
+        {
+          "horizon": "1d",
+          "predicted_price": 1833.0240129232407,
+          "actual_price": 1809.0,
+          "abs_error": 24.02401292324066,
+          "predicted_interval": [
+            1809.0,
+            1857.0480258464813
+          ],
+          "predicted_return": 0.013280272483825684,
+          "actual_return": 0.0,
+          "return_abs_error": 0.013280272483825684
+        },
+        {
+          "horizon": "1w",
+          "predicted_price": 1816.5192704200745,
+          "actual_price": 1806.0,
+          "abs_error": 10.519270420074463,
+          "predicted_interval": [
+            1806.0,
+            1827.038540840149
+          ],
+          "predicted_return": 0.00415661558508873,
+          "actual_return": -0.0016583747927031434,
+          "return_abs_error": 0.005814990377791873
+        },
+        {
+          "horizon": "1m",
+          "predicted_price": 1778.5545887947083,
+          "actual_price": 1709.0,
+          "abs_error": 69.55458879470825,
+          "predicted_interval": [
+            1709.0,
+            1848.1091775894165
+          ],
+          "predicted_return": -0.016829971224069595,
+          "actual_return": -0.05527915975677167,
+          "return_abs_error": 0.03844918853270207
+        },
+        {
+          "horizon": "6m",
+          "predicted_price": 1444.432913661003,
+          "actual_price": 1611.0,
+          "abs_error": 166.5670863389969,
+          "predicted_interval": [
+            1277.8658273220062,
+            1611.0
+          ],
+          "predicted_return": -0.20152965188026428,
+          "actual_return": -0.1094527363184079,
+          "return_abs_error": 0.09207691556185638
+        },
+        {
+          "horizon": "1y",
+          "predicted_price": 916.5591259002686,
+          "actual_price": 1208.0,
+          "abs_error": 291.44087409973145,
+          "predicted_interval": [
+            625.1182518005371,
+            1208.0
+          ],
+          "predicted_return": -0.4933338165283203,
+          "actual_return": -0.33222775013819794,
+          "return_abs_error": 0.16110606639012237
+        }
+      ],
+      "indicators": {
+        "bb_percent_b": 0.1584535375532883,
+        "bb_bandwidth": 0.13449530535507828,
+        "bb_upper": 2023.6082742418819,
+        "bb_lower": 1768.591725758118,
+        "bb_mid": 1896.1,
+        "macd": -100.54891243071597,
+        "macd_signal": -104.75585464885924,
+        "macd_hist": 4.2069422181432685,
+        "rsi": 38.12785388127853,
+        "obv": 0.0,
+        "obv_ema": 0.0
+      },
+      "fundamentals": {
+        "per": 19.66,
+        "pbr": 3.0,
+        "roe": 0.15257048092868988,
+        "roa": 0.0,
+        "market_cap": 201254433840.0,
+        "shares_outstanding": 111251760.0
+      }
+    },
+    {
+      "ticker": "45014K",
+      "name": "코오롱모빌리티그룹우",
+      "source": "kiwoom",
+      "current_price": 51600.0,
+      "change_pct": 29.97,
+      "horizons": [
+        {
+          "horizon": "1d",
+          "predicted_price": 6731.74889087677,
+          "actual_price": 6600.0,
+          "abs_error": 131.74889087677002,
+          "predicted_interval": [
+            6600.0,
+            6863.49778175354
+          ],
+          "predicted_return": 0.019961968064308167,
+          "actual_return": 0.0,
+          "return_abs_error": 0.019961968064308167
+        },
+        {
+          "horizon": "1w",
+          "predicted_price": 6604.561758041382,
+          "actual_price": 6250.0,
+          "abs_error": 354.56175804138184,
+          "predicted_interval": [
+            6250.0,
+            6959.123516082764
+          ],
+          "predicted_return": 0.0006912015378475189,
+          "actual_return": -0.05303030303030298,
+          "return_abs_error": 0.0537215045681505
+        },
+        {
+          "horizon": "1m",
+          "predicted_price": 7421.126675605774,
+          "actual_price": 5600.0,
+          "abs_error": 1821.126675605774,
+          "predicted_interval": [
+            5600.0,
+            9242.253351211548
+          ],
+          "predicted_return": 0.1244131326675415,
+          "actual_return": -0.1515151515151515,
+          "return_abs_error": 0.275928284182693
+        },
+        {
+          "horizon": "6m",
+          "predicted_price": 10651.60903930664,
+          "actual_price": 6110.0,
+          "abs_error": 4541.609039306641,
+          "predicted_interval": [
+            6110.0,
+            15193.218078613281
+          ],
+          "predicted_return": 0.6138801574707031,
+          "actual_return": -0.07424242424242422,
+          "return_abs_error": 0.6881225817131273
+        },
+        {
+          "horizon": "1y",
+          "predicted_price": 11418.042612075806,
+          "actual_price": 4084.9999999999995,
+          "abs_error": 7333.042612075806,
+          "predicted_interval": [
+            4085.0,
+            18751.08522415161
+          ],
+          "predicted_return": 0.7300063967704773,
+          "actual_return": -0.3810606060606061,
+          "return_abs_error": 1.1110670028310834
+        }
+      ],
+      "indicators": {
+        "bb_percent_b": 0.1753573298792452,
+        "bb_bandwidth": 0.27925652409811996,
+        "bb_upper": 8271.421925952078,
+        "bb_lower": 6244.578074047923,
+        "bb_mid": 7258.0,
+        "macd": -265.6608726786071,
+        "macd_signal": -193.5336944161096,
+        "macd_hist": -72.12717826249752,
+        "rsi": 22.222222222222214,
+        "obv": 0.0,
+        "obv_ema": 0.0
+      },
+      "fundamentals": {
+        "per": 0.0,
+        "pbr": 0.0,
+        "roe": 0.0,
+        "roa": 0.0,
+        "market_cap": 16210392000.0,
+        "shares_outstanding": 2456120.0
+      }
+    },
+    {
+      "ticker": "450140",
+      "name": "코오롱모빌리티그룹",
+      "source": "kiwoom",
+      "current_price": 18550.0,
+      "change_pct": 22.28,
+      "horizons": [
+        {
+          "horizon": "1d",
+          "predicted_price": 3244.5016026496887,
+          "actual_price": 3230.0,
+          "abs_error": 14.50160264968872,
+          "predicted_interval": [
+            3230.0,
+            3259.0032052993774
+          ],
+          "predicted_return": 0.004489712417125702,
+          "actual_return": 0.0,
+          "return_abs_error": 0.004489712417125702
+        },
+        {
+          "horizon": "1w",
+          "predicted_price": 3249.8152375221252,
+          "actual_price": 3060.0,
+          "abs_error": 189.81523752212524,
+          "predicted_interval": [
+            3060.0,
+            3439.6304750442505
+          ],
+          "predicted_return": 0.006134707480669022,
+          "actual_return": -0.052631578947368474,
+          "return_abs_error": 0.058766286428037495
+        },
+        {
+          "horizon": "1m",
+          "predicted_price": 3146.5999978780746,
+          "actual_price": 2700.0,
+          "abs_error": 446.59999787807465,
+          "predicted_interval": [
+            2700.0,
+            3593.1999957561493
+          ],
+          "predicted_return": -0.025820408016443253,
+          "actual_return": -0.16408668730650156,
+          "return_abs_error": 0.1382662792900583
+        },
+        {
+          "horizon": "6m",
+          "predicted_price": 2602.9310178756714,
+          "actual_price": 3824.9999999999995,
+          "abs_error": 1222.0689821243282,
+          "predicted_interval": [
+            1380.8620357513432,
+            3824.9999999999995
+          ],
+          "predicted_return": -0.19413898885250092,
+          "actual_return": 0.18421052631578938,
+          "return_abs_error": 0.3783495151682903
+        },
+        {
+          "horizon": "1y",
+          "predicted_price": 1754.794995188713,
+          "actual_price": 2425.0,
+          "abs_error": 670.2050048112869,
+          "predicted_interval": [
+            1084.5899903774261,
+            2425.0
+          ],
+          "predicted_return": -0.4567198157310486,
+          "actual_return": -0.24922600619195046,
+          "return_abs_error": 0.20749380953909813
+        }
+      ],
+      "indicators": {
+        "bb_percent_b": 0.12747731244766008,
+        "bb_bandwidth": 0.248321636919231,
+        "bb_upper": 4001.1693931023865,
+        "bb_lower": 3117.3306068976135,
+        "bb_mid": 3559.25,
+        "macd": -144.95443909326195,
+        "macd_signal": -102.54659177912141,
+        "macd_hist": -42.40784731414054,
+        "rsi": 13.74045801526718,
+        "obv": 0.0,
+        "obv_ema": 0.0
+      },
+      "fundamentals": {
+        "per": 0.0,
+        "pbr": 0.0,
+        "roe": 0.0,
+        "roa": 0.0,
+        "market_cap": 202770517500.0,
+        "shares_outstanding": 62777250.0
+      }
+    },
+    {
+      "ticker": "462520",
+      "name": "조선내화",
+      "source": "kiwoom",
+      "current_price": 17880.0,
+      "change_pct": 22.05,
+      "horizons": [
+        {
+          "horizon": "1d",
+          "predicted_price": 1833.0240129232407,
+          "actual_price": 1809.0,
+          "abs_error": 24.02401292324066,
+          "predicted_interval": [
+            1809.0,
+            1857.0480258464813
+          ],
+          "predicted_return": 0.013280272483825684,
+          "actual_return": 0.0,
+          "return_abs_error": 0.013280272483825684
+        },
+        {
+          "horizon": "1w",
+          "predicted_price": 1816.5192704200745,
+          "actual_price": 1806.0,
+          "abs_error": 10.519270420074463,
+          "predicted_interval": [
+            1806.0,
+            1827.038540840149
+          ],
+          "predicted_return": 0.00415661558508873,
+          "actual_return": -0.0016583747927031434,
+          "return_abs_error": 0.005814990377791873
+        },
+        {
+          "horizon": "1m",
+          "predicted_price": 1778.5545887947083,
+          "actual_price": 1709.0,
+          "abs_error": 69.55458879470825,
+          "predicted_interval": [
+            1709.0,
+            1848.1091775894165
+          ],
+          "predicted_return": -0.016829971224069595,
+          "actual_return": -0.05527915975677167,
+          "return_abs_error": 0.03844918853270207
+        },
+        {
+          "horizon": "6m",
+          "predicted_price": 1444.432913661003,
+          "actual_price": 1611.0,
+          "abs_error": 166.5670863389969,
+          "predicted_interval": [
+            1277.8658273220062,
+            1611.0
+          ],
+          "predicted_return": -0.20152965188026428,
+          "actual_return": -0.1094527363184079,
+          "return_abs_error": 0.09207691556185638
+        },
+        {
+          "horizon": "1y",
+          "predicted_price": 916.5591259002686,
+          "actual_price": 1208.0,
+          "abs_error": 291.44087409973145,
+          "predicted_interval": [
+            625.1182518005371,
+            1208.0
+          ],
+          "predicted_return": -0.4933338165283203,
+          "actual_return": -0.33222775013819794,
+          "return_abs_error": 0.16110606639012237
+        }],
+      "indicators": {
+        "bb_percent_b": 1.0778465530428019,
+        "bb_bandwidth": 0.12372277455561193,
+        "bb_upper": 17719.280969504747,
+        "bb_lower": 15654.719030495251,
+        "bb_mid": 16687.0,
+        "macd": -283.9529529482352,
+        "macd_signal": -378.5987333902776,
+        "macd_hist": 94.6457804420424,
+        "rsi": 63.20224719101124,
+        "obv": 0.0,
+        "obv_ema": 0.0
+      },
+      "fundamentals": {
+        "per": 8.98,
+        "pbr": 1.0,
+        "roe": 0.11080178173719377,
+        "roa": 0.0,
+        "market_cap": 211970403840.0,
+        "shares_outstanding": 11855168.0
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import finalReportData from '../../../data/final_report.json';
+import finalReportData from '../../../data/sentiment_report.json';
 import { getStockSummary } from '../services/yahooFinanceApi';
 
 export const StockContext = createContext();
