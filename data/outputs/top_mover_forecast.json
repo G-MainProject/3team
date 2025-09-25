@@ -307,7 +307,7 @@
 			"name": "코오롱모빌리티그룹",
 			"source": "kiwoom",
 			"current_price": 3400.0,
-			"change_pct": 1.2,
+			"change_pct": -1.2,
 			"horizons": [
 				{
 					"horizon": "1d",

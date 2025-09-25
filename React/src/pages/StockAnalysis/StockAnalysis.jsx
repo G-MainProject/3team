@@ -193,13 +193,12 @@ export default function StockAnalysis() {
 											₩{stockInfo.current_price?.toLocaleString() || '0'}
 										</p>
 									</div>
-									<div className={styles['stock-card']}>
-										<h3>전일 대비</h3>
-										<p className={`${styles['stock-value']} ${styles['positive']}`}>
-											{stockInfo.change_pct?.toFixed(1) || '0.0'}%
-										</p>
-									</div>
-									<div className={styles['stock-card']}>
+															<div className={styles['stock-card']}>
+																			<h3>전일 대비</h3>
+																			<p className={`${styles['stock-value']} ${stockInfo.change_pct > 0 ? styles['positive'] : styles['negative']}`}>
+																				{stockInfo.change_pct > 0 ? '+' : ''}{stockInfo.change_pct?.toFixed(1) || '0.0'}%
+																			</p>
+																		</div>									<div className={styles['stock-card']}>
 										<h3>거래량</h3>
 										<p className={styles['stock-value']}>
 											{stockInfo.time_series.price_history[stockInfo.time_series.price_history.length - 1]?.volume?.toLocaleString() || '0'}
