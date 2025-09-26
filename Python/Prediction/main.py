@@ -425,7 +425,7 @@ def main() -> None:
 
     script_dir = Path(__file__).resolve().parent
     repo_root = script_dir.parent.parent
-    data_dir = repo_root / "data"
+    data_dir = repo_root / "data/raw"
     data_dir.mkdir(parents=True, exist_ok=True)
 
     dotenv_path = repo_root / ".env"
@@ -448,7 +448,7 @@ def main() -> None:
     if not search_words:
         search_words = [DEFAULT_SEARCH_WORD_FALLBACK]
 
-    base_output = args.output or (data_dir / "final_report.json")
+    base_output = args.output or (data_dir / "sentiment_report.json")
 
     aggregated_reports: list[dict] = []
     failed_targets: list[str] = []
