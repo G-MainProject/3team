@@ -15,129 +15,10 @@ import UnifiedStockChart from '../../component/UnifiedStockChart/UnifiedStockCha
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { useStock } from '../../hooks/useStock';
-import newsData from '../../../../data/newsData.json';
+import stockAnalysisData from '../../../../data/outputs/top_mover_forecast.json';
 
-// 뉴스 감성 분석 데이터 (각 뉴스는 하나의 감성만 가짐)
-const newsSentimentData = [
-	'positive',
-	'positive',
-	'negative',
-	'positive',
-	'neutral',
-	'negative',
-	'positive',
-	'negative',
-	'positive',
-	'neutral',
-	'positive',
-	'negative',
-	'positive',
-	'neutral',
-	'neutral',
-	'positive',
-	'neutral',
-	'positive',
-	'negative',
-	'positive',
-	'neutral',
-	'positive',
-	'negative',
-	'positive',
-	'neutral',
-	'positive',
-	'negative',
-	'positive',
-	'neutral',
-	'positive',
-	'negative',
-	'positive',
-	'neutral',
-	'positive',
-	'negative',
-	'positive',
-	'neutral',
-	'positive',
-	'negative',
-	'positive',
-];
 
-// 뉴스 감성 분포 계산
-const calculateSentimentRatio = (sentimentData) => {
-	const total = sentimentData.length;
-	const positiveCount = sentimentData.filter(
-		(sentiment) => sentiment === 'positive'
-	).length;
-	const negativeCount = sentimentData.filter(
-		(sentiment) => sentiment === 'negative'
-	).length;
-	const neutralCount = sentimentData.filter(
-		(sentiment) => sentiment === 'neutral'
-	).length;
 
-	return [
-		{ name: '긍정', value: Math.round((positiveCount / total) * 100) },
-		{ name: '부정', value: Math.round((negativeCount / total) * 100) },
-		{ name: '중립', value: Math.round((neutralCount / total) * 100) },
-	];
-};
-
-const CircleGraphData = calculateSentimentRatio(newsSentimentData);
-
-const wordCloudData = [
-	{ text: 'AI', value: 64 },
-	{ text: '반도체', value: 45 },
-	{ text: '투자', value: 80 },
-	{ text: '성장', value: 70 },
-	{ text: '기술', value: 55 },
-	{ text: '삼성전자', value: 72 },
-	{ text: '시장', value: 88 },
-	{ text: '혁신', value: 40 },
-];
-
-const financialData = [
-	{
-		year: '2017',
-		revenue: 2395800000000,
-		operatingProfit: 536000000000,
-		netProfit: 421900000000,
-	},
-	{
-		year: '2018',
-		revenue: 2437700000000,
-		operatingProfit: 588900000000,
-		netProfit: 443400000000,
-	},
-	{
-		year: '2019',
-		revenue: 2304000000000,
-		operatingProfit: 277700000000,
-		netProfit: 217400000000,
-	},
-	{
-		year: '2020',
-		revenue: 2368100000000,
-		operatingProfit: 359900000000,
-		netProfit: 264100000000,
-	},
-	{
-		year: '2021',
-		revenue: 2796000000000,
-		operatingProfit: 516300000000,
-		netProfit: 399100000000,
-	},
-	{
-		year: '2022',
-		revenue: 3022300000000,
-		operatingProfit: 433800000000,
-		netProfit: 556500000000,
-	},
-	{
-		year: '2023',
-		revenue: 2589400000000,
-		operatingProfit: 65700000000,
-		netProfit: 154900000000,
-	},
-];
 
 const financialChartSeries = [
 	{ key: 'revenue', name: '매출액', color: '#3b82f6' },
@@ -152,6 +33,104 @@ export default function Dashboard() {
 		loading: stockLoading,
 		setSelectedStockByCode,
 	} = useStock();
+
+	const stockInfo = useMemo(() => {
+		if (!selectedStock) return null;
+		return stockAnalysisData.entries.find(
+			(stock) => stock.ticker === selectedStock.stockCode
+		);
+	}, [selectedStock]);
+
+	const dashboardNews = useMemo(() => {
+		if (!selectedStock || !selectedStock.relatedNews) {
+			return [];
+		}
+
+		const newsWithSentiment = selectedStock.relatedNews.map((n) => ({
+			...n,
+			sentiment: n.sentimentClass,
+		}));
+
+		// Sort by date descending
+		const sortedNews = [...newsWithSentiment].sort(
+			(a, b) => new Date(b.date) - new Date(a.date)
+		);
+
+		const uniqueNewsByDate = [];
+		const dates = new Set();
+
+		for (const news of sortedNews) {
+			if (!dates.has(news.date)) {
+				uniqueNewsByDate.push(news);
+				dates.add(news.date);
+			}
+		}
+
+		// If we have 3 or more unique-date news, take the first 3.
+		if (uniqueNewsByDate.length >= 3) {
+			return uniqueNewsByDate.slice(0, 3);
+		}
+
+		// Otherwise, just return the top 3 most recent news regardless of date.
+		return sortedNews.slice(0, 3);
+	}, [selectedStock]);
+
+	// 전체 뉴스 데이터를 기반으로 한 감성 분석 데이터 (항상 전체 비율 표시)
+	const CircleGraphData = useMemo(() => {
+		if (
+			!selectedStock ||
+			!selectedStock.sentimentAnalysis ||
+			!selectedStock.sentimentAnalysis.sentimentDistribution
+		) {
+			return [
+				{ name: '긍정', value: 0 },
+				{ name: '부정', value: 0 },
+				{ name: '중립', value: 0 },
+			];
+		}
+		const distribution = selectedStock.sentimentAnalysis.sentimentDistribution;
+		const total =
+			(distribution.positive || 0) +
+			(distribution.negative || 0) +
+			(distribution.neutral || 0);
+
+		if (total === 0) {
+			return [
+				{ name: '긍정', value: 0 },
+				{ name: '부정', value: 0 },
+				{ name: '중립', value: 0 },
+			];
+		}
+
+		return [
+			{
+				name: '긍정',
+				value: Math.round(((distribution.positive || 0) / total) * 100),
+			},
+			{
+				name: '부정',
+				value: Math.round(((distribution.negative || 0) / total) * 100),
+			},
+			{
+				name: '중립',
+				value: Math.round(((distribution.neutral || 0) / total) * 100),
+			},
+		];
+	}, [selectedStock]);
+
+	// 워드 클라우드 데이터
+	const wordCloudData = useMemo(() => {
+		if (
+			!selectedStock ||
+			!selectedStock.keywordAnalysis ||
+			!selectedStock.keywordAnalysis.wordCloud
+		) {
+			return [];
+		}
+		return Object.entries(selectedStock.keywordAnalysis.wordCloud).map(
+			([text, value]) => ({ text, value })
+		);
+	}, [selectedStock]);
 	const [showFooterButton, setShowFooterButton] = useState(false);
 	const [showFooter, setShowFooter] = useState(false);
 	const [buttonAnimation, setButtonAnimation] = useState('');
@@ -348,7 +327,7 @@ export default function Dashboard() {
 		}
 	};
 
-	if (stockLoading || !selectedStock) {
+	if (stockLoading || !selectedStock || !stockInfo) {
 		return <div>Loading...</div>; // or a spinner component
 	}
 
@@ -484,8 +463,8 @@ export default function Dashboard() {
 						<div className={styles['section-container']}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
-									<h2>리포트 기준 주가</h2>
-									<p>{selectedStock.analysisDate} 기준 주가 및 지표</p>
+									<h2>{stockInfo.name}/{stockInfo.ticker}/KOSPI</h2>
+									<p>{stockAnalysisData.date} 기준 주가 및 지표</p>
 								</div>
 								<button className={styles['detail-button']}>
 									상세보기
@@ -498,18 +477,14 @@ export default function Dashboard() {
 									<div className={styles['chart-header']}>
 										<h3>기준 시점 주가 및 거래량</h3>
 										<div className={styles['analysis-timestamp']}>
-											<span className={styles['timestamp-label']}>
-												분석 시점:
-											</span>
-											<span className={styles['timestamp-value']}>
-												{selectedStock.analysisDate}
-											</span>
+											<span className={styles['timestamp-label']}>분석 시점:</span>
+											<span className={styles['timestamp-value']}>{stockAnalysisData.date}</span>
 										</div>
 									</div>
 									<div className={styles['unified-chart-wrapper']}>
 										<UnifiedStockChart
-											stockData={stockData} // Using dynamic data now
-											volumeData={volumeData} // Using dynamic data now
+											stockData={stockInfo.time_series.price_history}
+											volumeData={stockInfo.time_series.price_history.map(d => ({ time: d.time, volume: d.volume }))}
 											simpleMode={false}
 										/>
 									</div>
@@ -520,32 +495,25 @@ export default function Dashboard() {
 									<div className={styles['stock-card']}>
 										<h3>기준가</h3>
 										<p className={styles['stock-value']}>
-											₩{stockSummary?.currentPrice?.toLocaleString() || '0'}
+											₩{stockInfo.current_price?.toLocaleString() || '0'}
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>전일 대비</h3>
-										<p
-											className={`${styles['stock-value']} ${styles['positive']}`}
-										>
-											{(stockSummary?.changePercent || 0) >= 0 ? '+' : ''}
-											{(stockSummary?.changePercent || 0).toFixed(2)}%
+										<p className={`${styles['stock-value']} ${stockInfo.change_pct > 0 ? styles['positive'] : styles['negative']}`}>
+											{stockInfo.change_pct > 0 ? '+' : ''}{stockInfo.change_pct?.toFixed(1) || '0.0'}%
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>거래량</h3>
 										<p className={styles['stock-value']}>
-											{(stockSummary?.volume || 0).toLocaleString()}
+											{stockInfo.time_series.price_history[stockInfo.time_series.price_history.length - 1]?.volume?.toLocaleString() || '0'}
 										</p>
 									</div>
 									<div className={styles['stock-card']}>
 										<h3>시가총액</h3>
 										<p className={styles['stock-value']}>
-											₩
-											{((stockSummary?.marketCap || 0) / 1000000000000).toFixed(
-												1
-											)}
-											조
+											₩{(stockInfo.fundamentals.market_cap / 1000000000000).toFixed(1)}조
 										</p>
 									</div>
 								</div>
@@ -572,7 +540,7 @@ export default function Dashboard() {
 									</div>
 									<div className={styles['unified-chart-wrapper']}>
 										<Chart
-											data={financialData}
+											data={stockInfo.financials.yearly}
 											series={financialChartSeries}
 											xAxisKey="year"
 											yAxisUnit="원"
@@ -585,30 +553,18 @@ export default function Dashboard() {
 								<div className={styles['financial-cards']}>
 									<div className={styles['financial-card']}>
 										<h3>매출액</h3>
-										<p className={styles['financial-value']}>₩1,000억</p>
-										<span
-											className={`${styles['financial-change']} ${styles['positive']}`}
-										>
-											+12.5%
-										</span>
+										<p className={styles['financial-value']}>₩{(stockInfo.financials.summary.revenue.value / 100000000).toFixed(0)}억</p>
+										<span className={`${styles['financial-change']} ${stockInfo.financials.summary.revenue.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.summary.revenue.change > 0 ? '+' : ''}{stockInfo.financials.summary.revenue.change}%</span>
 									</div>
 									<div className={styles['financial-card']}>
 										<h3>영업이익</h3>
-										<p className={styles['financial-value']}>₩200억</p>
-										<span
-											className={`${styles['financial-change']} ${styles['positive']}`}
-										>
-											+8.3%
-										</span>
+										<p className={styles['financial-value']}>₩{(stockInfo.financials.summary.operating_profit.value / 100000000).toFixed(0)}억</p>
+										<span className={`${styles['financial-change']} ${stockInfo.financials.summary.operating_profit.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.summary.operating_profit.change > 0 ? '+' : ''}{stockInfo.financials.summary.operating_profit.change}%</span>
 									</div>
 									<div className={styles['financial-card']}>
 										<h3>당기순이익</h3>
-										<p className={styles['financial-value']}>₩150억</p>
-										<span
-											className={`${styles['financial-change']} ${styles['positive']}`}
-										>
-											+15.2%
-										</span>
+										<p className={styles['financial-value']}>₩{(stockInfo.financials.summary.net_profit.value / 100000000).toFixed(0)}억</p>
+										<span className={`${styles['financial-change']} ${stockInfo.financials.summary.net_profit.change > 0 ? styles['positive'] : styles['negative']}`}>{stockInfo.financials.summary.net_profit.change > 0 ? '+' : ''}{stockInfo.financials.summary.net_profit.change}%</span>
 									</div>
 								</div>
 							</div>
@@ -628,7 +584,7 @@ export default function Dashboard() {
 							</div>
 							<div className={styles['news-section']}>
 								<div className={styles['news-list']}>
-									{newsData.slice(0, 3).map((news, index) => (
+									{dashboardNews.map((news, index) => (
 										<div
 											key={index}
 											className={`${styles['news-item']} ${
