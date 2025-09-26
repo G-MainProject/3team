@@ -1,4 +1,4 @@
-<Process id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" type="task" workType="foreground" name="T_2_4_DART_엑셀저장" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="15" Orientation="horizontal">
+<Process id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" type="task" workType="foreground" name="T_1_4_DART_엑셀저장" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="15" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-12 14:46:52" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-25 15:04:38" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:47:21" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -195,7 +195,7 @@ this.Excel_header[0][0] = Global.Stock[Global.l]
       <Script><![CDATA[StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_15);]]></Script>
     </Step>
   </Steps>
-  <JScript><![CDATA[function T_2_4_DART_엑셀저장() {
+  <JScript><![CDATA[function T_1_4_DART_엑셀저장() {
 
     this.Excel_header;
     this.DART_data;

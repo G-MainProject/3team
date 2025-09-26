@@ -1,4 +1,4 @@
-<Process id="ae714252-f4c4-48a6-8cb3-7425d48e8133" type="task" workType="foreground" name="T_2_1_DART_열기" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="4" Orientation="horizontal">
+<Process id="ae714252-f4c4-48a6-8cb3-7425d48e8133" type="task" workType="foreground" name="T_1_1_DART_열기" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="4" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 14:25:03" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-25 10:28:48" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:46:58" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -179,7 +179,7 @@
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_4);]]></Script>
     </Step>
   </Steps>
-  <JScript><![CDATA[function T_2_1_DART_열기() {
+  <JScript><![CDATA[function T_1_1_DART_열기() {
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};

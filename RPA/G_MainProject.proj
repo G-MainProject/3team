@@ -4,16 +4,16 @@
     <LinkItem id="7ad6bcdf-87bd-4850-a588-95a494eb580c" category="NormalTask" isChanged="Y" desc="" stepCount="6" name="T_0_조건설정">
       <Properties />
     </LinkItem>
-    <LinkItem id="ae714252-f4c4-48a6-8cb3-7425d48e8133" category="NormalTask" isChanged="Y" desc="" stepCount="4" name="T_2_1_DART_열기">
+    <LinkItem id="ae714252-f4c4-48a6-8cb3-7425d48e8133" category="NormalTask" isChanged="Y" desc="" stepCount="4" name="T_1_1_DART_열기">
       <Properties />
     </LinkItem>
-    <LinkItem id="5c816bc1-553e-4bc4-987b-22e059800553" category="NormalTask" isChanged="Y" desc="" stepCount="71" name="T_2_2_DART_데이터추출">
+    <LinkItem id="5c816bc1-553e-4bc4-987b-22e059800553" category="NormalTask" isChanged="Y" desc="" stepCount="71" name="T_1_2_DART_데이터추출">
       <Properties />
     </LinkItem>
-    <LinkItem id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" category="NormalTask" isChanged="Y" desc="" stepCount="8" name="T_2_3_DART_첨부파일가공">
+    <LinkItem id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" category="NormalTask" isChanged="Y" desc="" stepCount="8" name="T_1_3_DART_첨부파일가공">
       <Properties />
     </LinkItem>
-    <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="15" name="T_2_4_DART_엑셀저장">
+    <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="15" name="T_1_4_DART_엑셀저장">
       <Properties />
     </LinkItem>
   </NormalTask>

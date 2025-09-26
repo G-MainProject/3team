@@ -1,4 +1,4 @@
-<Process id="5c816bc1-553e-4bc4-987b-22e059800553" type="task" workType="foreground" name="T_2_2_DART_데이터추출" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="71" Orientation="horizontal">
+<Process id="5c816bc1-553e-4bc4-987b-22e059800553" type="task" workType="foreground" name="T_1_2_DART_데이터추출" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="71" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 14:30:56" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:38:21" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:47:06" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -2985,7 +2985,7 @@ Global.DART_flag = false]]></Script>
       <Script><![CDATA[}]]></Script>
     </Step>
   </Steps>
-  <JScript><![CDATA[function T_2_2_DART_데이터추출() {
+  <JScript><![CDATA[function T_1_2_DART_데이터추출() {
 
     this.tmp;
     this.DART_id;
@@ -3312,7 +3312,7 @@ Global.DART_flag = false]]></Script>
 
             //------------------------------------------------
             }
-            STEP('S3843cd1c55dc4b4d8e683d2ad159fe7c', '[69] EndLoop');
+            STEP('S3843cd1c55dc4b4d8e683d2ad159fe7c', '[69] End-For');
 
             //------------------------------------------------
             STEP('Sa5b8abbbf964490585d9b7718af9956a', '[70] ChromeClose');
