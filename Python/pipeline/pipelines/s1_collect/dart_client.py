@@ -128,6 +128,38 @@ def fetch_filings(
             multi_path = corp_dir / f"fnlttMultiAcnt_{year}.json"
             _write_json(multi_path, multi_records)
             saved.setdefault(corp_code, []).append(multi_path)
+
+            # 추가: 전년도 보고서도 항상 수집하여 TTM(최근 4분기) 구성 보장
+            try:
+                prev_year = int(year) - 1
+            except Exception:
+                prev_year = year
+            multi_prev: list[dict] = []
+            for reprt_code in reprt_codes:
+                payload = {
+                    "crtfc_key": api_key,
+                    "corp_code": corp_code,
+                    "bsns_year": str(prev_year),
+                    "reprt_code": reprt_code,
+                    "fs_div": fs_div,
+                }
+                data = _request_json(sess, "fnlttMultiAcnt.json", params=payload)
+                status = data.get("status")
+                if status == "000":
+                    multi_prev.append(
+                        {
+                            "corp_code": corp_code,
+                            "reprt_code": reprt_code,
+                            "fs_div": fs_div,
+                            "year": prev_year,
+                            "rows": data.get("list", []),
+                        }
+                    )
+                time.sleep(max(pause, 0))
+            if multi_prev:
+                multi_prev_path = corp_dir / f"fnlttMultiAcnt_{prev_year}.json"
+                _write_json(multi_prev_path, multi_prev)
+                saved.setdefault(corp_code, []).append(multi_prev_path)
             # 폴백: 올해 데이터가 전혀 없으면 직전 연도 한 번 더 시도
             try:
                 has_any_rows = any(rec.get("rows") for rec in multi_records)

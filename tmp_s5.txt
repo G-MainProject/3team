@@ -1,0 +1,15 @@
+def _format_financials_for_display(fund: dict[str, Any]) -> list[dict[str, Any]]:
+    """fundamentals로부터 보기 좋은 문자열 표기를 생성하고,
+    동시에 해당 표기를 fundamentals에도 *_display 키로 병합한다.
+
+    - 퍼센트 지표: debt_ratio, current_ratio, quick_ratio, equity_ratio, roe, roa
+    - 배수 지표: per, pbr
+    """
+    def num(v: Any) -> float | None:
+        try:
+            return float(v)
+        except Exception:
+            return None
+
+    items: list[tuple[str, str, float | None, str]] = [
+        ("debt_ratio", "부채비율", nu

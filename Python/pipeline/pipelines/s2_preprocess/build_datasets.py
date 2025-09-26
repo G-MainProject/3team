@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os  # 동적 horizon 환경변수 사용
 import logging
 import pickle
 from dataclasses import dataclass
@@ -73,11 +74,13 @@ def run(
         (cfg.gold_root / split).mkdir(parents=True, exist_ok=True)
     (cfg.artifacts_root / "models").mkdir(parents=True, exist_ok=True)
 
-    X, y, labels, closes = _assemble_sequences(cfg, tickers)
+    X, y, labels, closes, used_horizons = _assemble_sequences(cfg, tickers)
     if X.size == 0:
         raise RuntimeError("No samples collected from silver datasets.")
 
-    splits = _split_indices(len(y), cfg.split)
+    # 티커별로 최신 샘플이 test에 최소 1개 포함되도록 분할(시간 순서 보존)
+    # 전체 비율(cfg.split)은 가급적 유지하되, 티커 단위 보장을 우선시한다.
+    splits = _split_indices_grouped(labels, cfg.split)
 
     scaler = StandardScaler()
     train_idx = splits["train"]
@@ -87,6 +90,12 @@ def run(
     scaler.fit(X_train.reshape(X_train.shape[0], -1))
 
     datasets: dict[str, Path] = {}
+    # 동적으로 선택된 horizons를 고정 파일로 저장하여 s3/s4/s5와 일관성 유지
+    try:
+        horizons_path = cfg.gold_root / "horizons.json"
+        horizons_path.write_text(json.dumps(list(map(int, used_horizons)), ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        pass
     for split_name in ("train", "val", "test"):
         idx = splits[split_name]
         X_split = X[idx]
@@ -115,18 +124,77 @@ def run(
     return datasets
 
 
-def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tuple[np.ndarray, np.ndarray, list[dict[str, object]]]:
+def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tuple[np.ndarray, np.ndarray, list[dict[str, object]], np.ndarray, list[int]]:
     files = sorted(cfg.silver_root.glob("*.parquet"))
     if tickers:
         tickers = {ticker for ticker in tickers}
         files = [file for file in files if file.stem in tickers]
+
+    # 모든 티커에서 동일한 feature 차원을 보장하기 위해 스키마를 먼저 수집한다.  # 한글 주석
+    union_cols: set[str] = set()
+    rows_per_file: dict[Path, int] = {}
+    for file in files:
+        try:
+            df_probe = _read_table(file)
+        except Exception:
+            continue
+        if df_probe is None or df_probe.empty:
+            continue
+        try:
+            rows_per_file[file] = int(len(df_probe))
+        except Exception:
+            rows_per_file[file] = 0
+        numeric_cols = df_probe.select_dtypes(include=[np.number, bool]).columns
+        for col in numeric_cols:
+            if col not in {"date", "ticker"}:
+                union_cols.add(str(col))
+    # 핵심 컬럼 순서를 먼저 고정(open, high, low, close, volume), 그 외는 알파벳 정렬  # 한글 주석
+    primary = ["open", "high", "low", "close", "volume"]
+    feature_order = [c for c in primary if c in union_cols] + sorted([c for c in union_cols if c not in primary])
 
     X_list: list[np.ndarray] = []
     y_list: list[np.ndarray] = []
     labels: list[dict[str, object]] = []
     closes_list: list[float] = []
     seq_len = cfg.sequence_length
-    horizons = cfg.horizons
+    # 동적 horizon 선택: 가용 커버리지 기반으로 최대 horizon 축소
+    base_horizons = sorted(int(h) for h in cfg.horizons)
+    total_files = max(len(files), 1)
+    # 최소 커버리지 비율(기본 0.8). 환경변수로 조정 가능
+    try:
+        min_cov = float(os.getenv("DYNAMIC_HORIZON_MIN_COVERAGE", "0.8"))
+    except Exception:
+        min_cov = 0.8
+    # 각 후보 h에 대해 rows >= seq_len + h 를 만족하는 파일 비율 계산
+    best_h: int | None = None
+    for h in base_horizons:
+        ok = 0
+        need = seq_len + int(h)
+        for f in files:
+            n = rows_per_file.get(f)
+            if n is None:
+                # 파일을 다시 읽어 행수 계산
+                try:
+                    n = int(len(_read_table(f)))
+                except Exception:
+                    n = 0
+                rows_per_file[f] = n
+            if n >= need:
+                ok += 1
+        frac = ok / total_files if total_files else 0.0
+        if frac >= min_cov:
+            best_h = h
+    if best_h is None:
+        # 한 개 파일이라도 만들 수 있는 최소 horizon로 폴백
+        for h in base_horizons:
+            need = seq_len + int(h)
+            if any(rows_per_file.get(f, 0) >= need for f in files):
+                best_h = h
+                break
+    selected_horizons = [h for h in base_horizons if best_h is None or h <= int(best_h)]
+    if not selected_horizons:
+        selected_horizons = base_horizons[:1]
+    horizons = selected_horizons
     max_horizon = max(horizons)
 
     for file in files:
@@ -139,8 +207,14 @@ def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tu
             df.sort_values("date", inplace=True)
             df.reset_index(drop=True, inplace=True)
 
-        feature_cols = [col for col in df.columns if col not in {"date", "ticker"}]
-        feature_frame = df[feature_cols].select_dtypes(include=[np.number, bool]).astype(float)
+        # 수집된 스키마 순서(feature_order)에 맞춰 컬럼을 재배치하고, 없는 컬럼은 0으로 채움  # 한글 주석
+        if feature_order:
+            # 모든 수치 컬럼 변환 후 스키마 적용
+            numeric_df = df.select_dtypes(include=[np.number, bool]).astype(float)
+            feature_frame = numeric_df.reindex(columns=feature_order).fillna(0.0)
+        else:
+            feature_cols = [col for col in df.columns if col not in {"date", "ticker"}]
+            feature_frame = df[feature_cols].select_dtypes(include=[np.number, bool]).astype(float)
         if feature_frame.shape[1] == 0:
             LOGGER.warning("No numeric features in %s", file)
             continue
@@ -186,12 +260,12 @@ def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tu
             closes_list.append(close_value)
 
     if not X_list:
-        return np.empty((0, seq_len, 0)), np.empty((0, len(horizons))), [], np.empty(0)
+        return np.empty((0, seq_len, 0)), np.empty((0, len(horizons))), [], np.empty(0), horizons
 
     X = np.stack(X_list)
     y = np.stack(y_list)
     closes_array = np.asarray(closes_list, dtype=float) if closes_list else np.empty(0)
-    return X, y, labels, closes_array
+    return X, y, labels, closes_array, horizons
 
 
 def _split_indices(sample_count: int, split: Mapping[str, float]) -> dict[str, np.ndarray]:
@@ -205,6 +279,77 @@ def _split_indices(sample_count: int, split: Mapping[str, float]) -> dict[str, n
         "test": indices[train_size + val_size : train_size + val_size + test_size],
     }
     return {k: v.copy() for k, v in result.items()}
+
+
+def _split_indices_grouped(labels: list[dict[str, object]], split: Mapping[str, float]) -> dict[str, np.ndarray]:
+    """티커별로 그룹핑하여 시간 순서를 보존한 분할을 수행한다.
+
+    규칙
+    - 각 티커의 마지막(최신) 샘플은 무조건 test에 포함
+    - 남은 샘플은 train/val/test 비율에 맞춰 앞에서부터 순차 배치
+    - 글로벌 비율과 약간의 오차는 허용(티커 보장을 우선)
+    - 모든 티커가 샘플 1개뿐이면 train이 비게 될 수 있으므로, 그 경우에는
+      기존 전역 분할(_split_indices)로 폴백한다.
+    """
+    import math
+
+    train_ratio = float(split.get("train", 0.7))
+    val_ratio = float(split.get("val", 0.15))
+    # test_ratio = 1 - train - val (암묵적 계산)
+
+    # 1) 티커별 인덱스 그룹핑(이미 라벨 순서는 시간 순서와 정렬되어 있음)
+    groups: dict[str, list[int]] = {}
+    for idx, item in enumerate(labels):
+        ticker = str(item.get("ticker", ""))
+        groups.setdefault(ticker, []).append(idx)
+
+    train_idx: list[int] = []
+    val_idx: list[int] = []
+    test_idx: list[int] = []
+
+    # 2) 각 그룹 내에서 분할 수행(마지막은 test 고정)
+    for ticker, idxs in groups.items():
+        if not idxs:
+            continue
+        if len(idxs) == 1:
+            # 샘플이 1개면 test로만 보냄
+            test_idx.append(idxs[0])
+            continue
+        # 최신 샘플(마지막)을 우선 test에 할당
+        reserved_test = idxs[-1]
+        remaining = idxs[:-1]
+
+        if remaining:
+            n = len(remaining)
+            n_train = int(math.floor(n * train_ratio))
+            n_val = int(math.floor(n * val_ratio))
+            # 최소 1개는 train에 배치(가능한 경우)
+            if n >= 2 and n_train == 0:
+                n_train = 1
+            # 슬라이싱 범위 보정
+            n_train = min(n_train, n)
+            n_val = min(n_val, max(0, n - n_train))
+
+            train_part = remaining[:n_train]
+            val_part = remaining[n_train:n_train + n_val]
+            test_part = remaining[n_train + n_val:]
+
+            train_idx.extend(train_part)
+            val_idx.extend(val_part)
+            test_idx.extend(test_part)
+
+        test_idx.append(reserved_test)
+
+    # 3) 폴백: train이 비면 전역 분할로 대체(학습 불가 방지)
+    if len(train_idx) == 0:
+        return _split_indices(len(labels), split)
+
+    # 4) numpy 배열로 변환하여 반환
+    return {
+        "train": np.asarray(sorted(train_idx), dtype=int),
+        "val": np.asarray(sorted(val_idx), dtype=int),
+        "test": np.asarray(sorted(test_idx), dtype=int),
+    }
 
 
 def _load_config(

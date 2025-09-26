@@ -93,7 +93,7 @@ def _build_single_bronze(ticker: str, config: MergeConfig) -> Path:
     """개별 티커에 대한 가격/재무/뉴스 데이터를 병합한다."""
 
     price_df = _load_price_frame(ticker, config)
-    fundamental_df = _load_fundamentals(ticker, config)
+    fundamental_df = _load_fundamentals2(ticker, config)
     news_df = _load_news_features(ticker, config)
 
     frames = [price_df]
@@ -251,7 +251,45 @@ def _load_fundamentals(ticker: str, config: MergeConfig) -> Optional[pd.DataFram
 
     files = list(root.glob("*/fnlttMultiAcnt_*.json"))
     if not files:
+        # 보조 경로: <project>/Python/data/raw/dart 에 저장된 경우 대응
+        try:
+            alt_root = _find_project_root() / "Python" / "data" / "raw" / "dart"
+            if alt_root.exists():
+                files = list(alt_root.glob("*/fnlttMultiAcnt_*.json"))
+        except Exception:
+            files = []
+    if not files:
         return None
+
+    # corp_code 기반 필터링: data/dart_corpcode.csv에서 ticker->corp_code 매핑 시도  # 한글 주석
+    try:
+        def _base(code: str) -> str:
+            digits = "".join(ch for ch in str(code).strip() if ch.isdigit())
+            if not digits:
+                return str(code).zfill(6)
+            d = digits.zfill(6)
+            return d[:-1] + '0'
+        expected_corp: str | None = None
+        base_ticker = _base(ticker)
+        csv_path = _find_project_root() / "data" / "dart_corpcode.csv"
+        if csv_path.exists():
+            import csv as _csv
+            with csv_path.open("r", encoding="utf-8") as fp:
+                rdr = _csv.DictReader(fp)
+                headers = {h.lower(): h for h in (rdr.fieldnames or [])}
+                t_col = headers.get("ticker") or headers.get("stock_code") or headers.get("code") or headers.get("symbol")
+                c_col = headers.get("corp_code") or headers.get("corpcode") or headers.get("corpcode_id") or headers.get("corp")
+                if t_col and c_col:
+                    for row in rdr:
+                        t = _base(row.get(t_col, ""))
+                        c = str(row.get(c_col, "")).strip()
+                        if t == base_ticker and c:
+                            expected_corp = c
+                            break
+        if expected_corp:
+            files = [p for p in files if p.parent.name == expected_corp]
+    except Exception:
+        pass
 
     frames: list[pd.DataFrame] = []
     for path in files:
@@ -284,9 +322,22 @@ def _parse_dart_multi(path: Path, ticker: str) -> Optional[pd.DataFrame]:
             continue
         df = pd.DataFrame(rows)
         if "stock_code" in df.columns:
-            codes = df["stock_code"].astype(str).unique()
-            if ticker not in codes:
-                continue
+            try:
+                # stock_code가 비어 있지 않은 경우에만 필터 적용 (비어 있으면 corp_code 디렉터리 신뢰)
+                if df["stock_code"].notna().any():
+                    def _base(code: object) -> str:
+                        raw = str(code or "").strip()
+                        digits = "".join(ch for ch in raw if ch.isdigit())
+                        if not digits:
+                            return raw.zfill(6)
+                        d = digits.zfill(6)
+                        return d[:-1] + '0'
+                    tick_base = _base(ticker)
+                    codes = df["stock_code"].astype(str).map(_base).unique()
+                    if tick_base not in codes:
+                        continue
+            except Exception:
+                pass
         if "thstrm_amount" not in df.columns or "account_nm" not in df.columns:
             continue
         df["date"] = _reprt_to_date(df["bsns_year"], df["reprt_code"])
@@ -307,6 +358,62 @@ def _parse_dart_multi(path: Path, ticker: str) -> Optional[pd.DataFrame]:
         values["account_key"] = values["account_nm"].map(_norm_account)
         pivot = values.pivot_table(index="date", columns="account_key", values="value", aggfunc="last")
         pivot.columns = [f"fund_{col}" for col in pivot.columns]
+        # 분기 금액 보정 및 계정 재매핑(당기-전기누계 차분)  # 한글 주석
+        try:
+            for col_name in ("thstrm_amount", "frmtrm_amount"):
+                if col_name in df.columns:
+                    df[col_name] = pd.to_numeric(df[col_name].astype(str).str.replace(",", ""), errors="coerce")
+            def _ak(row: pd.Series) -> object:
+                acc_id = str(row.get("account_id") or "").lower()
+                if acc_id:
+                    if "profitloss" in acc_id:
+                        return "net_income"
+                    if "totalassets" in acc_id:
+                        return "assets"
+                    if "totalequity" in acc_id or acc_id.endswith("equity"):
+                        return "equity"
+                    if "currentassets" in acc_id:
+                        return "current_assets"
+                    if "currentliabilities" in acc_id:
+                        return "current_liabilities"
+                    if "liabilities" in acc_id and "current" not in acc_id:
+                        return "liabilities"
+                    if "inventor" in acc_id:
+                        return "inventories"
+                name_c = str(row.get("account_nm") or "").replace(" ", "")
+                if "당기순이익" in name_c or "분기순이익" in name_c or "순이익" in name_c:
+                    return "net_income"
+                if "자산총계" in name_c:
+                    return "assets"
+                if "부채총계" in name_c:
+                    return "liabilities"
+                if "자본총계" in name_c or "총자본" in name_c:
+                    return "equity"
+                if "유동자산" in name_c:
+                    return "current_assets"
+                if "유동부채" in name_c:
+                    return "current_liabilities"
+                if "재고자산" in name_c:
+                    return "inventories"
+                return None
+            df["_ak"] = df.apply(_ak, axis=1)
+            df_q = df.dropna(subset=["_ak"]).copy()
+            if not df_q.empty:
+                def _qv(r: pd.Series) -> float:
+                    th = r.get("thstrm_amount"); fr = r.get("frmtrm_amount")
+                    try:
+                        thf = float(th) if pd.notna(th) else np.nan
+                        frf = float(fr) if pd.notna(fr) else np.nan
+                        return thf - frf if pd.notna(thf) and pd.notna(frf) else thf
+                    except Exception:
+                        return np.nan
+                df_q["_val"] = df_q.apply(_qv, axis=1)
+                pv2 = df_q[["date", "_ak", "_val"]].rename(columns={"_ak": "account_key", "_val": "value"})
+                pv2 = pv2.pivot_table(index="date", columns="account_key", values="value", aggfunc="last")
+                for col in pv2.columns:
+                    pivot[f"fund_{col}"] = pv2[col]
+        except Exception:
+            pass
         # 추가 보강: 한국어 계정명을 직접 스캔해 핵심 항목을 채운다
         try:
             df_names = df.copy()
@@ -346,6 +453,201 @@ def _parse_dart_multi(path: Path, ticker: str) -> Optional[pd.DataFrame]:
     # TTM 순이익(최근 4개 분기 합계)
     if "fund_net_income" in merged.columns:
         merged["fund_net_income_ttm"] = merged["fund_net_income"].rolling(window=4, min_periods=1).sum()
+        _ni_tmp = merged["fund_net_income"].astype(float)
+        _cnt = _ni_tmp.notna().astype(int).rolling(window=4, min_periods=1).sum()
+        merged["fund_ttm_count"] = _cnt
+        merged["fund_ttm_coverage"] = (_cnt / 4.0).astype(float)
+    return merged
+
+
+def _load_fundamentals2(ticker: str, config: MergeConfig) -> Optional[pd.DataFrame]:
+    """멀티/단일 계정 JSON을 모두 읽어 결합한 재무 프레임을 반환한다.
+
+    - 단일 계정(Single) 값이 있을 경우 우선 사용
+    - 멀티 계정(Multi)은 보조로 사용
+    - corp_code 매핑이 가능하면 해당 회사 디렉터리만 사용
+    """
+    root = config.fundamentals_dir or config.raw_root / "dart"
+    roots = [root]
+    try:
+        alt = _find_project_root() / "Python" / "data" / "raw" / "dart"
+        if alt.exists():
+            roots.append(alt)
+    except Exception:
+        pass
+
+    files_multi: list[Path] = []
+    files_single: list[Path] = []
+    for r in roots:
+        if r.exists():
+            files_multi.extend(r.glob("*/fnlttMultiAcnt_*.json"))
+            files_single.extend(r.glob("*/fnlttSinglAcntAll_*.json"))
+
+    # corp_code 필터링(가능 시)
+    try:
+        def _base(code: str) -> str:
+            digits = "".join(ch for ch in str(code).strip() if ch.isdigit())
+            if not digits:
+                return str(code).zfill(6)
+            d = digits.zfill(6)
+            return d[:-1] + '0'
+        base_ticker = _base(ticker)
+        expected_corp: str | None = None
+        csv_path = _find_project_root() / "data" / "dart_corpcode.csv"
+        if csv_path.exists():
+            import csv as _csv
+            with csv_path.open("r", encoding="utf-8") as fp:
+                rdr = _csv.DictReader(fp)
+                headers = {h.lower(): h for h in (rdr.fieldnames or [])}
+                t_col = headers.get("ticker") or headers.get("stock_code") or headers.get("code") or headers.get("symbol")
+                c_col = headers.get("corp_code") or headers.get("corpcode") or headers.get("corpcode_id") or headers.get("corp")
+                if t_col and c_col:
+                    for row in rdr:
+                        t = _base(row.get(t_col, ""))
+                        c = str(row.get(c_col, "")).strip()
+                        if t == base_ticker and c:
+                            expected_corp = c
+                            break
+        if expected_corp:
+            files_multi = [p for p in files_multi if p.parent.name == expected_corp]
+            files_single = [p for p in files_single if p.parent.name == expected_corp]
+    except Exception:
+        pass
+
+    frames_multi: list[pd.DataFrame] = []
+    for path in files_multi:
+        try:
+            f = _parse_dart_multi(path, ticker)
+            if f is not None and not f.empty:
+                frames_multi.append(f)
+        except Exception:
+            continue
+
+    frames_single: list[pd.DataFrame] = []
+    for path in files_single:
+        try:
+            f = _parse_dart_single(path, ticker)
+            if f is not None and not f.empty:
+                frames_single.append(f)
+        except Exception:
+            continue
+
+    df_multi = None
+    if frames_multi:
+        df_multi = pd.concat(frames_multi, axis=0).sort_index()
+        df_multi = df_multi.groupby(level=0).last()
+
+    df_single = None
+    if frames_single:
+        df_single = pd.concat(frames_single, axis=0).sort_index()
+        df_single = df_single.groupby(level=0).last()
+
+    if df_single is not None and df_multi is not None:
+        return df_single.combine_first(df_multi)
+    if df_single is not None:
+        return df_single
+    if df_multi is not None:
+        return df_multi
+    return None
+
+
+def _parse_dart_single(path: Path, ticker: str) -> Optional[pd.DataFrame]:
+    """fnlttSinglAcntAll JSON을 account_id/계정명으로 매핑하여 pivot 반환."""
+    payload = _read_json(path)
+    if not isinstance(payload, list):
+        return None
+
+    frames: list[pd.DataFrame] = []
+    for entry in payload:
+        rows = entry.get("rows", [])
+        if not rows:
+            continue
+        df = pd.DataFrame(rows)
+        # stock_code를 보통주 코드로 정규화하여 비교
+        def _base(code: object) -> str:
+            raw = str(code or "").strip()
+            digits = "".join(ch for ch in raw if ch.isdigit())
+            if not digits:
+                return raw.zfill(6)
+            d = digits.zfill(6)
+            return d[:-1] + '0'
+        if "stock_code" in df.columns:
+            try:
+                if df["stock_code"].notna().any():
+                    codes = df["stock_code"].astype(str).map(_base).unique()
+                    if _base(ticker) not in codes:
+                        continue
+            except Exception:
+                pass
+        if "account_nm" not in df.columns or "thstrm_amount" not in df.columns:
+            continue
+        df["date"] = _reprt_to_date(df.get("bsns_year"), df.get("reprt_code"))
+        df = df.dropna(subset=["date"])  # remove invalid rows
+        for col in ("thstrm_amount", "frmtrm_amount"):
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col].astype(str).str.replace(",", ""), errors="coerce")
+
+        def _account_key_id(row: pd.Series) -> Optional[str]:
+            acc_id = str(row.get("account_id") or "").lower()
+            if acc_id:
+                if "profitloss" in acc_id:
+                    return "net_income"
+                if "totalassets" in acc_id:
+                    return "assets"
+                if "totalequity" in acc_id or acc_id.endswith("equity"):
+                    return "equity"
+                if "currentassets" in acc_id:
+                    return "current_assets"
+                if "currentliabilities" in acc_id:
+                    return "current_liabilities"
+                if "liabilities" in acc_id and "current" not in acc_id:
+                    return "liabilities"
+                if "inventor" in acc_id:
+                    return "inventories"
+            # account_id가 없을 때 한글 계정명으로 보조
+            name_c = str(row.get("account_nm") or "").replace(" ", "")
+            if "당기순이익" in name_c or "분기순이익" in name_c or "순이익" in name_c:
+                return "net_income"
+            if "자산총계" in name_c:
+                return "assets"
+            if "부채총계" in name_c:
+                return "liabilities"
+            if "자본총계" in name_c or "총자본" in name_c:
+                return "equity"
+            if "유동자산" in name_c:
+                return "current_assets"
+            if "유동부채" in name_c:
+                return "current_liabilities"
+            if "재고자산" in name_c:
+                return "inventories"
+            return None
+
+        df["account_key"] = df.apply(_account_key_id, axis=1)
+        df = df.dropna(subset=["account_key"])  # 관심 계정만 유지
+
+        def _quarter_value(row: pd.Series) -> float:
+            th = row.get("thstrm_amount"); fr = row.get("frmtrm_amount")
+            try:
+                thf = float(th) if pd.notna(th) else np.nan
+                frf = float(fr) if pd.notna(fr) else np.nan
+                if pd.notna(thf) and pd.notna(frf):
+                    return thf - frf
+                return thf
+            except Exception:
+                return np.nan
+
+        df["value_q"] = df.apply(_quarter_value, axis=1)
+        values = df[["date", "account_key", "value_q"]].rename(columns={"value_q": "value"})
+        pivot = values.pivot_table(index="date", columns="account_key", values="value", aggfunc="last")
+        pivot.columns = [f"fund_{col}" for col in pivot.columns]
+        frames.append(pivot)
+
+    if not frames:
+        return None
+
+    merged = pd.concat(frames, axis=0).sort_index()
+    merged.index = pd.to_datetime(merged.index)
+    merged = merged.groupby(level=0).last().sort_index()
     return merged
 
 
@@ -354,7 +656,8 @@ def _load_news_features(ticker: str, config: MergeConfig) -> Optional[pd.DataFra
 
     directory = config.news_dir or config.raw_root / "news" / ticker
     if not directory.exists():
-        return None
+        # 뉴스 폴더가 없어도 sentiment_report.json을 통해 감성 피처를 생성할 수 있으므로 아래에서 추가 시도  # 한글 주석
+        pass
 
     frames: list[pd.DataFrame] = []
     for path in directory.glob("**/*"):
@@ -387,6 +690,61 @@ def _load_news_features(ticker: str, config: MergeConfig) -> Optional[pd.DataFra
             agg_kwargs["news_sentiment_mean"] = ("sentiment", "mean")
         grouped = df.groupby("date").agg(**agg_kwargs)
         frames.append(grouped)
+    # 추가: 데이터 루트의 sentiment_report.json에서 감성 집계 병합 시도  # 한글 주석
+    try:
+        report_path = config.raw_root / "sentiment_report.json"
+        if report_path.exists():
+            payload = _read_json(report_path)
+            rows = payload if isinstance(payload, list) else (
+                payload.get("items")
+                or payload.get("data")
+                or payload.get("rows")
+                or payload.get("result")
+                or []
+            )
+            selected: list[dict] = []
+            for item in (rows or []):
+                try:
+                    code = str(item.get("stockCode") or item.get("ticker") or item.get("code") or "").zfill(6)
+                    if code != ticker:
+                        continue
+                    raw_date = str(item.get("analysisDate") or item.get("date") or "").split(" ")[0]
+                    dt = pd.to_datetime(raw_date, errors="coerce")
+                    if pd.isna(dt):
+                        continue
+                    dt = dt.normalize()
+                    sa = item.get("sentimentAnalysis") or {}
+                    avg = sa.get("averageScore")
+                    dist = sa.get("sentimentDistribution") or {}
+                    pos = dist.get("positive")
+                    neu = dist.get("neutral")
+                    neg = dist.get("negative")
+                    try:
+                        total = float((pos or 0) + (neu or 0) + (neg or 0))
+                    except Exception:
+                        total = None
+                    selected.append({
+                        "date": dt,
+                        "news_sentiment_mean": avg,
+                        "news_count": total,
+                        "news_pos": pos,
+                        "news_neu": neu,
+                        "news_neg": neg,
+                    })
+                except Exception:
+                    continue
+            if selected:
+                sdf = pd.DataFrame(selected).dropna(subset=["date"]) 
+                grouped = sdf.groupby("date").agg(
+                    news_sentiment_mean=("news_sentiment_mean", "mean"),
+                    news_count=("news_count", "sum"),
+                    news_pos=("news_pos", "sum"),
+                    news_neu=("news_neu", "sum"),
+                    news_neg=("news_neg", "sum"),
+                )
+                frames.append(grouped)
+    except Exception:
+        pass
     if not frames:
         return None
 
@@ -395,9 +753,19 @@ def _load_news_features(ticker: str, config: MergeConfig) -> Optional[pd.DataFra
     sentiment = None
     if "news_sentiment_mean" in merged.columns:
         sentiment = merged.groupby(level=0)["news_sentiment_mean"].mean()
+    # 감성 분포(양/중립/음) 합계가 존재하면 함께 포함한다.  # 한글 주석
+    pos = merged["news_pos"].groupby(level=0).sum(min_count=1) if "news_pos" in merged.columns else None
+    neu = merged["news_neu"].groupby(level=0).sum(min_count=1) if "news_neu" in merged.columns else None
+    neg = merged["news_neg"].groupby(level=0).sum(min_count=1) if "news_neg" in merged.columns else None
     result = pd.DataFrame({"news_count": news_count})
     if sentiment is not None:
         result["news_sentiment_mean"] = sentiment
+    if pos is not None:
+        result["news_pos"] = pos
+    if neu is not None:
+        result["news_neu"] = neu
+    if neg is not None:
+        result["news_neg"] = neg
     result.index = pd.to_datetime(result.index)
     return result.sort_index()
 

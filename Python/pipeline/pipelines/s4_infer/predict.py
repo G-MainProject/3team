@@ -22,6 +22,15 @@ def main(args: Optional[list[str]] = None) -> int:
 
     project_root = _find_project_root()
     dataset_cfg = build_datasets._load_config(None, None, None, opts.settings)
+    # 동적 horizon: gold/horizons.json이 있으면 우선 적용
+    try:
+        gold_root = _find_project_root() / "data" / "gold"
+        hfile = gold_root / "horizons.json"
+        if hfile.exists():
+            import json as _json
+            dataset_cfg.horizons = [int(x) for x in _json.loads(hfile.read_text(encoding="utf-8"))]
+    except Exception:
+        pass
     horizons = dataset_cfg.horizons
     horizon_labels = _format_horizon_labels(horizons)
 

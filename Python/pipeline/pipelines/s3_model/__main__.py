@@ -32,6 +32,14 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     project_root = _find_project_root()
     dataset_cfg = build_datasets._load_config(None, args.gold_root, args.artifacts_root, args.settings)
+    # 동적 horizon: gold/horizons.json이 있으면 우선 적용
+    try:
+        gold_root = dataset_cfg.gold_root
+        hfile = gold_root / "horizons.json"
+        if hfile.exists():
+            dataset_cfg.horizons = [int(x) for x in json.loads(hfile.read_text(encoding="utf-8"))]
+    except Exception:
+        pass
     horizon_labels = _format_horizon_labels(dataset_cfg.horizons)
 
     seq_len = args.seq_len

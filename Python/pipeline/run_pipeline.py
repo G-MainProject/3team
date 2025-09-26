@@ -13,6 +13,7 @@ from typing import Iterable
 import csv
 
 import numpy as np
+from time import perf_counter  # 단계별 소요시간 측정용  # 한글 주석
 
 COLLECT_MODULE = "Python.pipeline.pipelines.s1_collect"
 PREPROCESS_MODULE = "Python.pipeline.pipelines.s2_preprocess"
@@ -33,6 +34,7 @@ def main(argv: list[str] | None = None) -> int:
 
     project_root = _find_project_root()
     env = _build_env(project_root)
+    stage_times: dict[str, float] = {}
 
     tickers = list(args.tickers)
 
@@ -54,7 +56,7 @@ def main(argv: list[str] | None = None) -> int:
             "--source",
             args.auto_source,
         ]
-        _run_stage("s0_discover", discover_cmd, env)
+        stage_times["s0_discover"] = _run_stage("s0_discover", discover_cmd, env)
         auto_tickers = _load_tickers(discovery_output)
         if not auto_tickers:
             raise RuntimeError("Top movers 탐색 실패: 자동 티커 목록이 비었습니다.")
@@ -80,7 +82,8 @@ def main(argv: list[str] | None = None) -> int:
         try:
             data_root = next((p for p in [project_root / "data", Path("data")] if p.exists()), project_root / "data")
             corp_map = data_root / "dart_corpcode.csv"
-            want_dart = bool(os.getenv("DART_API_KEY")) and corp_map.exists()
+            # 개선: CSV 유무와 무관하게 API 키가 있으면 DART 단계 활성화
+            want_dart = bool(os.getenv("DART_API_KEY"))
         except Exception:
             want_dart = False
         if want_dart:
@@ -93,9 +96,18 @@ def main(argv: list[str] | None = None) -> int:
         if "--with-dart" in s1_cmd:
             if corp_codes:
                 s1_cmd += ["--corp-codes", *corp_codes]
-            else:
-                s1_cmd = [x for x in s1_cmd if x != "--with-dart"]
-        _run_stage("s1_collect", s1_cmd, env)
+            s1_cmd += [
+                "--single-accounts",
+                "당기순이익",
+                "자산총계",
+                "부채총계",
+                "자본총계",
+                "유동자산",
+                "유동부채",
+                "재고자산",
+            ]
+            # corp_codes가 없으면 s1 내부의 자동 매핑(API/CSV)을 사용하도록 그대로 둔다
+        stage_times["s1_collect"] = _run_stage("s1_collect", s1_cmd, env)
 
     # Stage 2: 전처리
     if not args.skip_s2:
@@ -108,7 +120,7 @@ def main(argv: list[str] | None = None) -> int:
             s2_cmd.append("--skip-features")
         if args.skip_datasets:
             s2_cmd.append("--skip-datasets")
-        _run_stage("s2_preprocess", s2_cmd, env)
+        stage_times["s2_preprocess"] = _run_stage("s2_preprocess", s2_cmd, env)
 
     # Stage 3: 모델 학습
     if not args.skip_s3:
@@ -127,7 +139,7 @@ def main(argv: list[str] | None = None) -> int:
             s3_cmd += ["--learning-rate", str(args.learning_rate)]
         if args.model_device is not None:
             s3_cmd += ["--device", args.model_device]
-        _run_stage("s3_model", s3_cmd, env)
+        stage_times["s3_model"] = _run_stage("s3_model", s3_cmd, env)
 
     infer_input = Path(args.infer_input) if args.infer_input else (project_root / "data" / "gold" / "test" / "X.npy")
     infer_output = Path(args.infer_output)
@@ -153,7 +165,7 @@ def main(argv: list[str] | None = None) -> int:
             infer_cmd += ["--close-values", str(args.close_values)]
         if args.infer_device is not None:
             infer_cmd += ["--device", args.infer_device]
-        _run_stage("s4_infer", infer_cmd, env)
+        stage_times["s4_infer"] = _run_stage("s4_infer", infer_cmd, env)
 
     # Stage 5: 평가
     if not args.skip_s5:
@@ -191,7 +203,7 @@ def main(argv: list[str] | None = None) -> int:
             s5_cmd = [
                 "python",
                 "-m",
-                "Python.pipeline.pipelines.s5_evaluate.top_mover_report",
+                "Python.pipeline.pipelines.s5_evaluate.top_mover_report_clean",
                 "--top-movers",
                 str(discovery_output),
                 "--predictions",
@@ -205,7 +217,7 @@ def main(argv: list[str] | None = None) -> int:
             s5_cmd = [
                 "python",
                 "-m",
-                "Python.pipeline.pipelines.s5_evaluate.report",
+                "Python.pipeline.pipelines.s5_evaluate.top_mover_report_clean",
                 "--predictions",
                 str(predictions_path),
                 "--actual-prices",
@@ -215,8 +227,16 @@ def main(argv: list[str] | None = None) -> int:
             ]
             if args.s5_horizons:
                 s5_cmd += ["--horizons", *map(str, args.s5_horizons)]
-        _run_stage("s5_evaluate", s5_cmd, env)
+        stage_times["s5_evaluate"] = _run_stage("s5_evaluate", s5_cmd, env)
 
+    # Final one-shot time summary
+    if stage_times:
+        total = sum(stage_times.values())
+        print("[Pipeline] Time summary (seconds):")
+        for k in ("s0_discover", "s1_collect", "s2_preprocess", "s3_model", "s4_infer", "s5_evaluate"):
+            if k in stage_times:
+                print(f"  - {k}: {stage_times[k]:.3f}s")
+        print(f"  = Total: {total:.3f}s")
 
     print("Pipeline completed successfully.")
     return 0
@@ -268,11 +288,12 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _run_stage(name: str, cmd: list[str], env: dict[str, str]) -> None:
-    print(f"[Pipeline] Running {name}: {' '.join(cmd)}")
+def _run_stage(name: str, cmd: list[str], env: dict[str, str]) -> float:
+    start = perf_counter()
     completed = subprocess.run(cmd, env=env)
     if completed.returncode != 0:
         raise RuntimeError(f"Stage {name} failed with exit code {completed.returncode}")
+    return perf_counter() - start
 
 
 def _build_env(project_root: Path) -> dict[str, str]:
@@ -335,3 +356,9 @@ def _load_corp_codes_from_csv(project_root: Path, tickers: list[str]) -> list[st
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+
+
+
+

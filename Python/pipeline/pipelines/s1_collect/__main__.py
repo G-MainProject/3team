@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os  # 환경변수 사용을 위해 os 모듈 추가
 import json
 import sys
 from datetime import datetime
@@ -61,15 +62,38 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.with_dart:
         corp_codes = list(args.corp_codes or [])
         if not corp_codes:
-            # Try auto-resolve from data/dart_corpcode.csv using provided tickers
-            corp_codes = _auto_resolve_corp_codes(args.tickers)
+            # 제공된 ticker 목록을 기반으로 DART corp_code 자동 매핑
+            # (data/dart_corpcode.csv 또는 DART corpCode.xml을 사용)
+            corp_codes = _auto_resolve_corp_codes_base(args.tickers)
         if not corp_codes:
             parser.error("--with-dart 사용 시 corp-codes를 지정하거나 data/dart_corpcode.csv에 매핑을 준비해 주세요.")
+        # 최신 보고서만 기본 사용. --reprt-codes로 명시되면 우선.
+        _reprt = list(args.reprt_codes) if args.reprt_codes else None
+        if not args.single_accounts:
+            args.single_accounts = [
+                "당기순이익",
+                "자산총계",
+                "부채총계",
+                "자본총계",
+                "유동자산",
+                "유동부채",
+                "재고자산",
+            ]
+        # Force standard single-accounts (ensure UTF-8 correctness)
+        args.single_accounts = [
+            "당기순이익",
+            "자산총계",
+            "부채총계",
+            "자본총계",
+            "유동자산",
+            "유동부채",
+            "재고자산",
+        ]
         summaries["dart"] = dart_client.fetch_filings(
             corp_codes=corp_codes,
             year=args.dart_year or datetime.now().year,
             raw_dir=args.raw_dir,
-            reprt_codes=args.reprt_codes,
+            reprt_codes=_reprt,
             fs_div=args.fs_div,
             pause=args.dart_pause,
             single_accounts=args.single_accounts,
@@ -172,7 +196,12 @@ def _auto_resolve_corp_codes(tickers: Sequence[str] | None) -> list[str]:
         path = project_root / "data" / "dart_corpcode.csv"
         if not path.exists() or not tickers:
             return []
-        want = [str(t).zfill(6) for t in tickers]
+        def _norm(code: object) -> str:
+            raw = str(code or "").strip()
+            digits = "".join(ch for ch in raw if ch.isdigit())
+            return digits.zfill(6) if digits else raw.zfill(6)
+
+        want = [_norm(t) for t in tickers]
         mapping: dict[str, str] = {}
         with path.open("r", encoding="utf-8") as fp:
             reader = csv.DictReader(fp)
@@ -183,13 +212,13 @@ def _auto_resolve_corp_codes(tickers: Sequence[str] | None) -> list[str]:
                 for row in reader:
                     vals = list(row.values())
                     if len(vals) >= 2:
-                        t = str(vals[0]).strip().zfill(6)
+                        t = _norm(vals[0])
                         c = str(vals[1]).strip()
                         if t and c:
                             mapping[t] = c
             else:
                 for row in reader:
-                    t = str(row.get(t_col, "")).strip().zfill(6)
+                    t = _norm(row.get(t_col, ""))
                     c = str(row.get(c_col, "")).strip()
                     if t and c:
                         mapping[t] = c
@@ -200,3 +229,145 @@ def _auto_resolve_corp_codes(tickers: Sequence[str] | None) -> list[str]:
 
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(main())
+
+
+def _auto_resolve_corp_codes_base(tickers: Sequence[str] | None) -> list[str]:
+    """Resolve corp_code by normalizing any ticker to base stock_code (last digit '0').
+
+    - Extract digits, pad to 6, then force last digit to '0' (common stock).
+    - Look up in data/dart_corpcode.csv first; if missing and DART_API_KEY exists,
+      download corpCode.xml and build stock_code->corp_code map.
+    """
+    if not tickers:
+        return []
+    def base(code: object) -> str:
+        raw = str(code or "").strip()
+        digits = "".join(ch for ch in raw if ch.isdigit())
+        if not digits:
+            return raw.zfill(6)
+        d = digits.zfill(6)
+        return d[:-1] + '0'
+    want = [base(t) for t in tickers]
+    mapping: dict[str, str] = {}
+    try:
+        start = Path(__file__).resolve()
+        project_root = next((p for p in start.parents if (p / "data").exists()), start.parents[4])
+        csv_path = project_root / "data" / "dart_corpcode.csv"
+        if csv_path.exists():
+            with csv_path.open("r", encoding="utf-8") as fp:
+                reader = csv.DictReader(fp)
+                headers = {h.lower(): h for h in (reader.fieldnames or [])}
+                t_col = headers.get("ticker") or headers.get("stock_code") or headers.get("code") or headers.get("symbol")
+                c_col = headers.get("corp_code") or headers.get("corpcode") or headers.get("corpcode_id") or headers.get("corp")
+                if not t_col or not c_col:
+                    for row in reader:
+                        vals = list(row.values())
+                        if len(vals) >= 2:
+                            t = base(vals[0])
+                            c = str(vals[1]).strip()
+                            if t and c:
+                                mapping[t] = c
+                else:
+                    for row in reader:
+                        t = base(row.get(t_col, ""))
+                        c = str(row.get(c_col, "")).strip()
+                        if t and c:
+                            mapping[t] = c
+    except Exception:
+        pass
+    unresolved = [t for t in want if t not in mapping]
+    api_key = os.getenv("DART_API_KEY")
+    if unresolved and api_key:
+        try:
+            api_map = _download_corpcode_lookup(api_key)
+            for t in unresolved:
+                corp = api_map.get(t)
+                if corp:
+                    mapping[t] = corp
+        except Exception:
+            pass
+    return [mapping[t] for t in want if t in mapping]
+
+def _auto_resolve_corp_codes_v2(tickers: Sequence[str] | None) -> list[str]:
+    """ticker(=stock_code) -> corp_code 매핑을 CSV 또는 DART API로 자동 해석.
+
+    우선순위: data/dart_corpcode.csv -> DART corpCode.xml(네트워크)
+    - 지원 컬럼명: ticker, code, stock_code, symbol / corp_code, corpcode, corpcode_id, corp
+    - 우선주 등 영문 포함 티커는 숫자만 추출해 6자리로 정규화
+    """
+    if not tickers:
+        return []
+
+    def _base(code: object) -> str:
+        raw = str(code or "").strip()
+        digits = "".join(ch for ch in raw if ch.isdigit())
+        if not digits:
+            return raw.zfill(6)
+        d = digits.zfill(6)
+        # DART 매핑 전용 규칙: 보통주 stock_code로 검색하기 위해 끝자리를 0으로 정규화  # 한글 주석
+        return d[:-1] + '0'
+
+    want = [_base(t) for t in tickers]
+    mapping: dict[str, str] = {}
+    try:
+        start = Path(__file__).resolve()
+        project_root = next((p for p in start.parents if (p / "data").exists()), start.parents[4])
+        path = project_root / "data" / "dart_corpcode.csv"
+        if path.exists():
+            with path.open("r", encoding="utf-8") as fp:
+                reader = csv.DictReader(fp)
+                headers = {h.lower(): h for h in (reader.fieldnames or [])}
+                t_col = headers.get("ticker") or headers.get("stock_code") or headers.get("code") or headers.get("symbol")
+                c_col = headers.get("corp_code") or headers.get("corpcode") or headers.get("corpcode_id") or headers.get("corp")
+                if not t_col or not c_col:
+                    for row in reader:
+                        vals = list(row.values())
+                        if len(vals) >= 2:
+                            t = _base(vals[0])
+                            c = str(vals[1]).strip()
+                            if t and c:
+                                mapping[t] = c
+                else:
+                    for row in reader:
+                        t = _base(row.get(t_col, ""))
+                        c = str(row.get(c_col, "")).strip()
+                        if t and c:
+                            mapping[t] = c
+    except Exception:
+        pass
+
+    unresolved = [t for t in want if t not in mapping]
+    api_key = os.getenv("DART_API_KEY")
+    if unresolved and api_key:
+        try:
+            api_map = _download_corpcode_lookup(api_key)
+            for t in unresolved:
+                corp = api_map.get(t)
+                if corp:
+                    mapping[t] = corp
+        except Exception:
+            pass
+    return [mapping[t] for t in want if t in mapping]
+
+
+def _download_corpcode_lookup(api_key: str) -> dict[str, str]:
+    """DART corpCode.xml(Zip)을 내려받아 stock_code -> corp_code 매핑을 만든다."""
+    import requests  # lazy import
+    url = "https://opendart.fss.or.kr/api/corpCode.xml"
+    resp = requests.get(url, params={"crtfc_key": api_key}, timeout=30)
+    resp.raise_for_status()
+    import zipfile, io, xml.etree.ElementTree as ET
+    with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+        name = next((n for n in zf.namelist() if n.lower().endswith(".xml")), None)
+        if not name:
+            return {}
+        xml_bytes = zf.read(name)
+    root = ET.fromstring(xml_bytes)
+    out: dict[str, str] = {}
+    for el in root.findall("list"):
+        corp_code = (el.findtext("corp_code") or "").strip()
+        stock_code = (el.findtext("stock_code") or "").strip()
+        if stock_code and corp_code:
+            out[stock_code] = corp_code
+    return out
+
