@@ -15,6 +15,7 @@ import UnifiedStockChart from '../../component/UnifiedStockChart/UnifiedStockCha
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { useStock } from '../../hooks/useStock';
+import { useRealtimeStockData } from '../../hooks/useRealtimeStockData';
 import stockAnalysisData from '../../../../data/outputs/top_mover_forecast.json';
 
 
@@ -29,10 +30,80 @@ const financialChartSeries = [
 export default function Dashboard() {
 	const {
 		selectedStock,
-		stocks,
 		loading: stockLoading,
-		setSelectedStockByCode,
 	} = useStock();
+
+	// 통합된 실시간 주식 데이터 훅 사용 (1분마다 자동 갱신)
+	const {
+		stockData: realtimeStockData,
+		volumeData: realtimeVolumeData,
+		summaryData: realtimeSummaryData,
+		loading: realtimeLoading,
+		error: realtimeError,
+		lastUpdate: realtimeLastUpdate,
+		lastTradeTime: realtimeLastTradeTime,
+		refreshData: refreshRealtimeData,
+	} = useRealtimeStockData(selectedStock?.stockCode || '005930');
+
+	// 캐시 갱신 상태 관리
+	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [isMarketClosed, setIsMarketClosed] = useState(false);
+
+	// 장마감 상태 확인 함수
+	const checkMarketStatus = useCallback(() => {
+		const now = new Date();
+		const hour = now.getHours();
+		const minute = now.getMinutes();
+		const day = now.getDay(); // 0=일요일, 6=토요일
+		
+		// 주말이면 장마감
+		if (day === 0 || day === 6) {
+			setIsMarketClosed(true);
+			return;
+		}
+		
+		// 실제 거래 마지막 시간을 기준으로 판단
+		if (realtimeLastTradeTime) {
+			const lastTradeHour = realtimeLastTradeTime.getHours();
+			const lastTradeMinute = realtimeLastTradeTime.getMinutes();
+			
+			// 마지막 거래가 15:30 이후이거나, 현재 시간이 15:30 이후면 장마감
+			const isDataAfterClose = lastTradeHour > 15 || (lastTradeHour === 15 && lastTradeMinute >= 30);
+			const isCurrentAfterClose = hour > 15 || (hour === 15 && minute >= 30);
+			
+			setIsMarketClosed(isDataAfterClose || isCurrentAfterClose);
+		} else {
+			// 데이터가 없으면 현재 시간 기준으로 판단
+			const isClosed = hour > 15 || (hour === 15 && minute >= 30);
+			setIsMarketClosed(isClosed);
+		}
+	}, [realtimeLastTradeTime]);
+
+	// 1분마다 캐시 갱신 상태 표시 및 장마감 상태 확인
+	useEffect(() => {
+		checkMarketStatus(); // 초기 확인
+		
+		const interval = setInterval(() => {
+			setIsRefreshing(true);
+			checkMarketStatus(); // 장마감 상태 재확인
+			// 2초 후 로딩 상태 해제 (실제 갱신 시간과 맞춤)
+			setTimeout(() => {
+				setIsRefreshing(false);
+			}, 2000);
+		}, 60000); // 1분마다
+
+		return () => {
+			clearInterval(interval);
+		};
+	}, [checkMarketStatus]);
+
+	// 에러 발생 시에만 로그 출력
+	useEffect(() => {
+		if (realtimeError) {
+			console.error('[Dashboard] 실시간 데이터 에러:', realtimeError);
+		}
+	}, [realtimeError]);
+
 
 	const stockInfo = useMemo(() => {
 		if (!selectedStock) return null;
@@ -139,81 +210,108 @@ export default function Dashboard() {
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
 
-	// 실시간 주식 데이터 상태
-	const [stockData, setStockData] = useState([]);
-	const [volumeData, setVolumeData] = useState([]);
-	const [stockSummary, setStockSummary] = useState({
-		currentPrice: 0,
-		change: 0,
-		changePercent: 0,
-		volume: 0,
-		marketCap: 0,
-	});
-	const [loading, setLoading] = useState(true);
-	const [refreshing, setRefreshing] = useState(false);
-	const [error, setError] = useState(null);
-	const [lastUpdated, setLastUpdated] = useState(null);
-
 	// 차트 간격 설정 상태
 	const [chartInterval, setChartInterval] = useState('1m'); // 1m, 5m, 15m, 30m, 1h
 
-	useEffect(() => {
-		if (selectedStock && stocks.length > 0) {
-			const selectedRealTimeData = stocks.find(
-				(s) => s.stockCode === selectedStock.stockCode
-			);
-			if (selectedRealTimeData) {
-				setStockSummary(selectedRealTimeData);
+	// 차트 간격 변경 핸들러 (성능 최적화)
+	const handleIntervalChange = useCallback((e) => {
+		setChartInterval(e.target.value);
+	}, []);
 
-				const now = new Date();
-				const newStockData = [];
-				const newVolumeData = [];
-				const intervalSettings = {
-					'1m': { count: 15, intervalMs: 60000 },
-					'5m': { count: 12, intervalMs: 300000 },
-					'15m': { count: 16, intervalMs: 900000 },
-					'30m': { count: 12, intervalMs: 1800000 },
-					'1h': { count: 12, intervalMs: 3600000 },
-				};
-				const settings =
-					intervalSettings[chartInterval] || intervalSettings['1m'];
+	// 실시간 데이터를 차트 형식으로 변환 (성능 최적화)
+	const stockData = useMemo(() => {
+		if (!realtimeStockData || realtimeStockData.length === 0) return [];
+		
+		return realtimeStockData.map((item, index) => ({
+			time: item.time || new Date(Date.now() - (realtimeStockData.length - index - 1) * 60000).toLocaleTimeString('ko-KR', {
+				hour: '2-digit',
+				minute: '2-digit',
+				hour12: false,
+			}),
+			price: item.price || 0,
+			open: item.open || item.price || 0,
+			high: item.high || item.price || 0,
+			low: item.low || item.price || 0,
+			close: item.close || item.price || 0,
+		}));
+	}, [realtimeStockData]);
 
-				for (let i = settings.count - 1; i >= 0; i--) {
-					const time = new Date(now.getTime() - i * settings.intervalMs);
-					const basePrice = selectedRealTimeData.currentPrice;
-					const priceVariation = (Math.random() - 0.5) * (basePrice * 0.01);
-					const price = basePrice + priceVariation;
-					const volume = Math.floor(Math.random() * 1000000) + 500000;
-					const timeString = time.toLocaleTimeString('ko-KR', {
-						hour: '2-digit',
-						minute: '2-digit',
-						hour12: false,
-					});
+	const volumeData = useMemo(() => {
+		if (!realtimeVolumeData || realtimeVolumeData.length === 0) return [];
+		
+		return realtimeVolumeData.map((item, index) => ({
+			time: item.time || new Date(Date.now() - (realtimeVolumeData.length - index - 1) * 60000).toLocaleTimeString('ko-KR', {
+				hour: '2-digit',
+				minute: '2-digit',
+				hour12: false,
+			}),
+			volume: item.volume || 0,
+		}));
+	}, [realtimeVolumeData]);
 
-					newStockData.push({
-						time: timeString,
-						price: Math.round(price),
-						open: Math.round(basePrice),
-						high: Math.round(Math.max(basePrice, price)),
-						low: Math.round(Math.min(basePrice, price)),
-						close: Math.round(price),
-					});
-					newVolumeData.push({ time: timeString, volume: volume });
-				}
-				setStockData(newStockData);
-				setVolumeData(newVolumeData);
-				setLastUpdated(new Date());
-				setLoading(false);
-			}
+	// 주식 요약 정보 (통합된 실시간 데이터 우선 사용)
+	const stockSummary = useMemo(() => {
+		// 실시간 요약 데이터가 있으면 우선 사용
+		if (realtimeSummaryData) {
+			return {
+				currentPrice: realtimeSummaryData.currentPrice || 0,
+				change: realtimeSummaryData.change || 0,
+				changePercent: realtimeSummaryData.changePercent || 0,
+				volume: realtimeSummaryData.volume || 0,
+				marketCap: realtimeSummaryData.marketCap || 0,
+			};
 		}
-	}, [selectedStock, stocks, chartInterval]);
 
-	useEffect(() => {
-		const dashboardMain = document.querySelector(
-			`.${styles['dashboard-main']}`
-		);
+		// 실시간 요약 데이터가 없으면 실시간 차트 데이터에서 계산
+		if (realtimeStockData && realtimeStockData.length > 0) {
+			const latestData = realtimeStockData[realtimeStockData.length - 1];
+			const previousData = realtimeStockData[realtimeStockData.length - 2] || latestData;
+			
+			const currentPrice = latestData.price || 0;
+			const previousPrice = previousData.price || currentPrice;
+			const change = currentPrice - previousPrice;
+			const changePercent = previousPrice > 0 ? (change / previousPrice) * 100 : 0;
 
-		const handleScroll = () => {
+			// 거래량은 별도 실시간 데이터에서 가져오기
+			let volume = 0;
+			if (realtimeVolumeData && realtimeVolumeData.length > 0) {
+				const latestVolume = realtimeVolumeData[realtimeVolumeData.length - 1];
+				volume = latestVolume.volume || 0;
+			}
+
+			return {
+				currentPrice,
+				change,
+				changePercent: Math.round(changePercent * 100) / 100,
+				volume,
+				marketCap: selectedStock?.marketCap || 0,
+			};
+		}
+
+		// 모든 실시간 데이터가 없으면 selectedStock에서 가져오기
+		if (selectedStock) {
+			return {
+			currentPrice: selectedStock.currentPrice || 0,
+			change: selectedStock.change || 0,
+			changePercent: selectedStock.changePercent || 0,
+			volume: selectedStock.volume || 0,
+			marketCap: selectedStock.marketCap || 0,
+		};
+		}
+
+		// 기본값
+		return {
+			currentPrice: 0,
+			change: 0,
+			changePercent: 0,
+			volume: 0,
+			marketCap: 0,
+		};
+	}, [realtimeSummaryData, realtimeStockData, realtimeVolumeData, selectedStock]);
+
+	// 스크롤 핸들러 최적화 (throttling 적용)
+	const handleScroll = useCallback(() => {
+		const dashboardMain = document.querySelector(`.${styles['dashboard-main']}`);
 			if (!dashboardMain) return;
 
 			const scrollTop = dashboardMain.scrollTop;
@@ -250,20 +348,29 @@ export default function Dashboard() {
 				}
 				setShowFooter(false);
 			}
-		};
+	}, []);
 
-		if (dashboardMain) {
-			dashboardMain.addEventListener('scroll', handleScroll);
-			return () => dashboardMain.removeEventListener('scroll', handleScroll);
-		}
-	}, [allowScrollToFooter]);
-
-	// 전체 페이지 스크롤 제한
 	useEffect(() => {
-		const handlePageScroll = (e) => {
-			const dashboardMain = document.querySelector(
-				`.${styles['dashboard-main']}`
-			);
+		const dashboardMain = document.querySelector(`.${styles['dashboard-main']}`);
+		if (dashboardMain) {
+			// throttling 적용 (100ms마다 실행)
+			let timeoutId;
+			const throttledHandleScroll = () => {
+				clearTimeout(timeoutId);
+				timeoutId = setTimeout(handleScroll, 100);
+			};
+
+			dashboardMain.addEventListener('scroll', throttledHandleScroll);
+			return () => {
+				dashboardMain.removeEventListener('scroll', throttledHandleScroll);
+				clearTimeout(timeoutId);
+			};
+		}
+	}, [handleScroll]);
+
+	// 전체 페이지 스크롤 제한 (최적화)
+	const handlePageScroll = useCallback((e) => {
+		const dashboardMain = document.querySelector(`.${styles['dashboard-main']}`);
 			if (!dashboardMain) return;
 
 			const scrollTop = dashboardMain.scrollTop;
@@ -287,13 +394,14 @@ export default function Dashboard() {
 					behavior: 'smooth',
 				});
 			}
-		};
-
-		window.addEventListener('wheel', handlePageScroll, { passive: false });
-		return () => window.removeEventListener('wheel', handlePageScroll);
 	}, [allowScrollToFooter, isInFooter]);
 
-	const handleButtonClick = () => {
+	useEffect(() => {
+		window.addEventListener('wheel', handlePageScroll, { passive: false });
+		return () => window.removeEventListener('wheel', handlePageScroll);
+	}, [handlePageScroll]);
+
+	const handleButtonClick = useCallback(() => {
 		if (isInFooter) {
 			// Footer에서 Dashboard로 이동 - fadeOut 애니메이션 적용
 			setButtonAnimation('fade-out');
@@ -303,9 +411,7 @@ export default function Dashboard() {
 				setAllowScrollToFooter(false);
 				setIsInFooter(false);
 
-				const dashboardMain = document.querySelector(
-					`.${styles['dashboard-main']}`
-				);
+				const dashboardMain = document.querySelector(`.${styles['dashboard-main']}`);
 				if (dashboardMain) {
 					dashboardMain.scrollTo({
 						top: 0,
@@ -325,9 +431,9 @@ export default function Dashboard() {
 				});
 			}
 		}
-	};
+	}, [isInFooter]);
 
-	if (stockLoading || !selectedStock || !stockInfo) {
+	if (stockLoading || !selectedStock) {
 		return (
 			<div className="flex items-center justify-center h-screen">
 				<div className="flex flex-col items-center justify-center space-y-4">
@@ -356,19 +462,45 @@ export default function Dashboard() {
 									<p>실시간 주가 및 주요 지표</p>
 								</div>
 								<div className={styles['section-action']}>
-									{refreshing ? (
-										<div className={styles['refresh-indicator']}>
-											<div className={styles['refresh-spinner']}></div>
-											<span>갱신 중...</span>
+									{isMarketClosed && (
+										<div className={styles['market-closed-badge']}>
+											<i className="fas fa-clock"></i>
+											<span>
+												장마감
+												{realtimeLastTradeTime && (
+													<span className={styles['last-trade-time']}>
+														(마지막: {realtimeLastTradeTime.toLocaleTimeString('ko-KR', {
+															hour: '2-digit',
+															minute: '2-digit',
+															hour12: false
+														})})
+													</span>
+												)}
+											</span>
 										</div>
-									) : lastUpdated ? (
+									)}
+									{!isMarketClosed && realtimeLastUpdate && (
 										<div className={styles['last-updated']}>
 											<i className="fas fa-clock"></i>
 											<span>
-												마지막 업데이트: {lastUpdated.toLocaleTimeString()}
+												마지막 업데이트: {realtimeLastUpdate.toLocaleString('ko-KR', {
+													year: 'numeric',
+													month: '2-digit',
+													day: '2-digit',
+													hour: '2-digit',
+													minute: '2-digit',
+													second: '2-digit',
+													hour12: false
+												})}
 											</span>
+											{isRefreshing && (
+												<span className={styles['refreshing-indicator']}>
+													<i className="fas fa-sync-alt fa-spin"></i>
+													갱신 중...
+												</span>
+											)}
 										</div>
-									) : null}
+									)}
 								</div>
 							</div>
 							<div className={styles['stock-info-section']}>
@@ -381,7 +513,7 @@ export default function Dashboard() {
 											<select
 												id="interval-select"
 												value={chartInterval}
-												onChange={(e) => setChartInterval(e.target.value)}
+												onChange={handleIntervalChange}
 												className={styles['interval-select']}
 											>
 												<option value="1m">1분</option>
@@ -392,15 +524,27 @@ export default function Dashboard() {
 											</select>
 										</div>
 									</div>
-									{loading ? (
+									{realtimeLoading || isRefreshing ? (
 										<div className={styles['chart-loading']}>
-											데이터를 불러오는 중...
+											<i className="fas fa-sync-alt fa-spin"></i>
+											{realtimeLoading ? '데이터를 불러오는 중...' : '데이터를 갱신하는 중...'}
 										</div>
-									) : error ? (
+									) : realtimeError ? (
 										<div className={styles['chart-error']}>
 											<i className="fas fa-exclamation-triangle"></i>
-											<p>차트 데이터를 불러올 수 없습니다</p>
-											<p className={styles['error-detail']}>{error}</p>
+											<p>실시간 데이터를 불러올 수 없습니다</p>
+											<p className={styles['error-detail']}>
+												{realtimeError.includes('SERVICE_UNAVAILABLE') 
+													? '서버가 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
+													: realtimeError
+												}
+											</p>
+											<button 
+												onClick={refreshRealtimeData}
+												className={styles['retry-button']}
+											>
+												다시 시도
+											</button>
 										</div>
 									) : stockData.length === 0 ? (
 										<div className={styles['chart-error']}>
@@ -409,6 +553,12 @@ export default function Dashboard() {
 											<p className={styles['error-detail']}>
 												주식 데이터를 가져올 수 없습니다
 											</p>
+											<button 
+												onClick={refreshRealtimeData}
+												className={styles['retry-button']}
+											>
+												다시 시도
+											</button>
 										</div>
 									) : (
 										<div className={styles['unified-chart-wrapper']}>
@@ -466,13 +616,14 @@ export default function Dashboard() {
 					</div>
 
 					<div className={styles['dashboard-grid2']}>
-						{/* 리포트 기준 주가 섹션 */}
-						<div className={styles['section-container']}>
-							<div className={styles['section-label']}>
-								<div className={styles['section-title']}>
-									<h2>{stockInfo.name}/{stockInfo.ticker}/KOSPI</h2>
-									<p>{stockAnalysisData.date} 기준 주가 및 지표</p>
-								</div>
+						{/* 리포트 기준 주가 섹션 - stockInfo가 있을 때만 표시 */}
+						{stockInfo && (
+							<div className={styles['section-container']}>
+								<div className={styles['section-label']}>
+									<div className={styles['section-title']}>
+										<h2>{stockInfo.name}/{stockInfo.ticker}/KOSPI</h2>
+										<p>{stockAnalysisData.date} 기준 주가 및 지표</p>
+									</div>
 								<button className={styles['detail-button']}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
@@ -525,10 +676,12 @@ export default function Dashboard() {
 									</div>
 								</div>
 							</div>
-						</div>
+							</div>
+						)}
 
-						{/* 재무제표 섹션 */}
-						<div className={styles['section-container']}>
+						{/* 재무제표 섹션 - stockInfo가 있을 때만 표시 */}
+						{stockInfo && (
+							<div className={styles['section-container']}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
 									<h2>재무제표 분석</h2>
@@ -576,6 +729,7 @@ export default function Dashboard() {
 								</div>
 							</div>
 						</div>
+						)}
 
 						{/* 뉴스 섹션 */}
 						<div className={styles['section-container']}>

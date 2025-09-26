@@ -22,10 +22,10 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 	// 기존 상태
 	const [redditPosts, setRedditPosts] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [refreshing, setRefreshing] = useState(false);
 	const [error, setError] = useState(null);
 	const [activePlatform, setActivePlatform] = useState('x');
 	const [lastUpdated, setLastUpdated] = useState(null);
+	const [isRefreshing, setIsRefreshing] = useState(false);
 	const snsContainerRef = useRef(null);
 
 	// 실시간 채팅용 상태
@@ -43,6 +43,41 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 
 	// 관리자 여부 확인
 	const isAdmin = currentUser && currentUser.role === 'ADMIN';
+
+	// Reddit 데이터 가져오기 함수
+	const fetchRedditData = useCallback(async () => {
+		try {
+			console.log('🔄 Reddit 데이터 요청 중 - 심볼:', selectedSymbol);
+			const response = await apiService.getSnsData(selectedSymbol);
+			
+			// 새로운 API 응답 구조 처리
+			const data = response.success ? response.data.data : null;
+			const metadata = response.success ? response.data.metadata : null;
+			
+			if (data) {
+				setRedditPosts(data.redditPosts || []);
+				// 캐시 메타데이터에서 lastUpdate 시간 추출 (반드시 캐시 시간 사용)
+				if (metadata && metadata.lastUpdated) {
+					setLastUpdated(new Date(metadata.lastUpdated));
+					console.log('✅ Reddit 데이터 로드 완료 (캐시 시간 사용):', data.redditPosts?.length || 0, '개, 캐시 시간:', metadata.lastUpdated);
+				} else {
+					// 캐시 메타데이터가 없으면 현재 시간을 사용하지 않고 기존 시간 유지
+					console.log('⚠️ 캐시 메타데이터 없음, 기존 시간 유지');
+				}
+				console.log('✅ Reddit 데이터 로드 완료:', data.redditPosts?.length || 0, '개');
+			} else {
+				setRedditPosts([]);
+				// 데이터가 없어도 기존 lastUpdated 시간은 유지
+				console.log('⚠️ 데이터 없음, 기존 시간 유지');
+			}
+		} catch (err) {
+			console.error('Reddit 데이터 요청 오류:', err);
+			setError('Reddit 데이터를 가져올 수 없습니다.');
+			setRedditPosts([]);
+		} finally {
+			setLoading(false);
+		}
+	}, [selectedSymbol]);
 
 	// 높이 조정
 	const adjustHeightToMatchSection = () => {
@@ -150,21 +185,6 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 		if (activePlatform === 'reddit') {
 			setLoading(true);
 			setError(null);
-			const fetchRedditData = async () => {
-				try {
-					console.log('🔄 Reddit 데이터 요청 중 - 심볼:', selectedSymbol);
-					const data = await apiService.getSnsData(selectedSymbol);
-					setRedditPosts(data.redditPosts || []);
-					setLastUpdated(new Date());
-					console.log('✅ Reddit 데이터 로드 완료:', data.redditPosts?.length || 0, '개');
-				} catch (err) {
-					console.error('Reddit 데이터 요청 오류:', err);
-					setError('Reddit 데이터를 가져올 수 없습니다.');
-					setRedditPosts([]);
-				} finally {
-					setLoading(false);
-				}
-			};
 			fetchRedditData();
 			return;
 		}
@@ -227,33 +247,23 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 				if (unsubscribe) unsubscribe();
 			};
 		}
-	}, [activePlatform, selectedSymbol]);
+	}, [activePlatform, selectedSymbol]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// 자동 새로고침 (Reddit 전용)
 	useEffect(() => {
 		if (activePlatform !== 'reddit') return;
+		
+		// 5분마다 Reddit 데이터 갱신 (백엔드 캐시 업데이트와 동기화)
 		const interval = setInterval(() => {
-			if (!loading) {
-				const fetchRedditData = async () => {
-					try {
-						setRefreshing(true);
-						console.log('🔄 Reddit 자동 새로고침 - 심볼:', selectedSymbol);
-						const data = await apiService.getSnsData(selectedSymbol);
-						setRedditPosts(data.redditPosts || []);
-						setLastUpdated(new Date());
-						setError(null);
-						console.log('✅ Reddit 자동 새로고침 완료:', data.redditPosts?.length || 0, '개');
-					} catch (error) {
-						console.error('Reddit 자동 새로고침 오류:', error);
-					} finally {
-						setRefreshing(false);
-					}
-				};
-				fetchRedditData();
-			}
-		}, 60000);
+			setIsRefreshing(true);
+			fetchRedditData();
+			// 2초 후 갱신 상태 해제
+			setTimeout(() => {
+				setIsRefreshing(false);
+			}, 2000);
+		}, 300000); // 5분마다 (300초)
+		
 		return () => clearInterval(interval);
-	}, [selectedSymbol, loading, activePlatform]);
+	}, [selectedSymbol, activePlatform]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// 높이 조정 관련 useEffect
 	useEffect(() => {
@@ -528,15 +538,26 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 						)}
 					</div>
 					<div className="sns-status">
-						{refreshing ? (
-							<div className="refresh-indicator">
-								<div className="refresh-spinner"></div>
-								<span>갱신 중...</span>
-							</div>
-						) : lastUpdated ? (
+						{lastUpdated ? (
 							<div className="last-updated">
 								<i className="fa-solid fa-clock"></i>
-								<span>마지막 업데이트: {lastUpdated.toLocaleTimeString()}</span>
+								<span>
+									마지막 업데이트: {lastUpdated.toLocaleString('ko-KR', {
+										year: 'numeric',
+										month: '2-digit',
+										day: '2-digit',
+										hour: '2-digit',
+										minute: '2-digit',
+										second: '2-digit',
+										hour12: false
+									})}
+								</span>
+								{isRefreshing && (
+									<span className="refreshing-indicator">
+										<i className="fas fa-sync-alt fa-spin"></i>
+										갱신 중...
+									</span>
+								)}
 							</div>
 						) : null}
 					</div>

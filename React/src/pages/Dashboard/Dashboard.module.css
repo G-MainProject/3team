@@ -144,6 +144,7 @@
 	padding-right: 10px;
 }
 
+
 /* KPI 차트 섹션 */
 .kpi-chart-section {
 	background: white;
@@ -243,6 +244,51 @@
 	font-size: 11px;
 	opacity: 0.7;
 	flex-shrink: 0;
+}
+
+.refreshing-indicator {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	color: #007bff;
+	font-size: 11px;
+	font-weight: 500;
+	margin-left: 8px;
+	animation: pulse 1.5s ease-in-out infinite;
+}
+
+.refreshing-indicator i {
+	font-size: 10px;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.6; }
+}
+
+.market-closed-badge {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	background-color: #dc3545;
+	color: white;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 12px;
+	margin-right: 8px;
+	animation: pulse 2s ease-in-out infinite;
+}
+
+.market-closed-badge i {
+	font-size: 10px;
+}
+
+.last-trade-time {
+	font-size: 10px;
+	opacity: 0.9;
+	margin-left: 4px;
 }
 
 @keyframes spin {

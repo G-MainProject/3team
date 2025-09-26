@@ -5,8 +5,35 @@
 		<link rel="icon" type="image/png" sizes="32x32" href="/assets/logoS-BpC_jCnz.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>SIGNAL</title>
-		<script type="module" crossorigin src="/assets/index-DMx5VT1q.js"></script>
-		<link rel="stylesheet" crossorigin href="/assets/index-D19ACOr2.css">
+		<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+		<script>
+			tailwind.config = {
+				darkMode: "class",
+				theme: {
+					extend: {
+						colors: {
+							primary: "#007bff",
+							"background-light": "#F9FAFB",
+							"background-dark": "#111827",
+							"text-light": "#1F2937",
+							"text-dark": "#F9FAFB",
+							"card-light": "#FFFFFF",
+							"card-dark": "#1F2937",
+							"border-light": "#E5E7EB",
+							"border-dark": "#374151"
+						},
+						fontFamily: {
+							display: ["Inter", "sans-serif"],
+						},
+						borderRadius: {
+							DEFAULT: "0.5rem",
+						},
+					},
+				},
+			};
+		</script>
+		<script type="module" crossorigin src="/assets/index-BC-kiLjr.js"></script>
+		<link rel="stylesheet" crossorigin href="/assets/index-BQS0f6WT.css">
 	</head>
 	<body>
 		<div id="root"></div>

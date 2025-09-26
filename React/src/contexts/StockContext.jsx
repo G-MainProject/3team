@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react';
 import finalReportData from '../../../data/raws/sentiment_report.json';
-import { getStockSummary } from '../services/yahooFinanceApi';
 
-export const StockContext = createContext();
+const StockContext = createContext();
+export { StockContext };
 
 export const StockProvider = ({ children }) => {
     const [stocks, setStocks] = useState([]);
@@ -17,45 +17,19 @@ export const StockProvider = ({ children }) => {
             );
             const initialStocks = uniqueStocks.map(stock => ({ ...stock }));
 
+            // 초기 선택된 주식 설정 (변동폭 절댓값 기준 1등 주식)
             if (initialStocks.length > 0 && !selectedStock) {
-                setSelectedStock(initialStocks[0]);
+                const sortedStocks = [...initialStocks].sort((a, b) => Math.abs(b.changePercent || 0) - Math.abs(a.changePercent || 0));
+                setSelectedStock(sortedStocks[0]);
             }
 
-            const fetchStockData = async () => {
-                try {
-                    const promises = initialStocks.map(stock => getStockSummary(stock.stockCode));
-                    const results = await Promise.all(promises);
-
-                    const updatedStocks = initialStocks.map((stock, index) => ({
-                        ...stock,
-                        ...(results[index] || {}),
-                    }));
-
-                    setStocks(updatedStocks);
-
-                    // Update selected stock with new data
-                    if (selectedStock) {
-                        const updatedSelected = updatedStocks.find(s => s.stockCode === selectedStock.stockCode);
-                        if (updatedSelected) {
-                            setSelectedStock(updatedSelected);
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error fetching real-time stock data:", error);
-                    setStocks(initialStocks); // On error, revert to initial data
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            fetchStockData();
-            const interval = setInterval(fetchStockData, 60000);
-
-            return () => clearInterval(interval);
+            // API 호출 제거 - useRealtimeStockData에서 처리
+            setStocks(initialStocks);
+            setLoading(false);
         };
 
         initializeStocks();
-    }, []); // Run only once on mount
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const setSelectedStockByCode = (stockCode) => {
         const stock = stocks.find(s => s.stockCode === stockCode);

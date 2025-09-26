@@ -72,6 +72,26 @@ class ApiService {
   async getSnsHealth() {
     return this.get('/sns/health');
   }
+
+  // 주식 요약 정보 조회 API
+  async getStockSummary(symbol) {
+    return this.get(`/stock/summary/${symbol}`);
+  }
+
+  // 실시간 주가 데이터 조회 API
+  async getRealtimeStockData(symbol) {
+    return this.get(`/stock/realtime/${symbol}`);
+  }
+
+  // 거래량 데이터 조회 API
+  async getVolumeData(symbol) {
+    return this.get(`/stock/volume/${symbol}`);
+  }
+
+  // 통합 주식 데이터 조회 API
+  async getUnifiedStockData(symbol, interval = '1m') {
+    return this.get(`/stock/unified/${symbol}?interval=${interval}`);
+  }
 }
 
 // 싱글톤 인스턴스 생성

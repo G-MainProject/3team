@@ -17,21 +17,40 @@ const UnifiedStockChart = ({
 	volumeData, 
 	simpleMode = false 
 }) => {
-	if (!stockData || stockData.length === 0 || !volumeData || volumeData.length === 0) {
+	if (!stockData || stockData.length === 0) {
 		return (
 			<div className="unified-chart-placeholder">차트 데이터가 없습니다.</div>
 		);
 	}
 
-	// 데이터를 통합하여 하나의 배열로 만들기
-	const combinedData = stockData.map((stockItem, index) => {
-		const volumeItem = volumeData[index] || volumeData[volumeData.length - 1];
-		return {
-			...stockItem,
-			volume: volumeItem ? volumeItem.volume : 0,
-			date: stockItem.time || stockItem.date,
-		};
-	});
+    // 거래량을 시간 기준으로 매칭 (인덱스가 아닌 time/date 키로 결합)
+    const volumeByTime = (volumeData || []).reduce((acc, v) => {
+        const key = v.time || v.date;
+        if (key) acc[key] = v.volume ?? 0;
+        return acc;
+    }, {});
+
+    // 데이터를 통합하여 하나의 배열로 만들기 (시간 정렬 포함)
+    const combinedData = stockData
+        .map((stockItem) => {
+            const key = stockItem.time || stockItem.date;
+            const vol = key && volumeByTime[key] != null ? volumeByTime[key] : 0;
+            return {
+                ...stockItem,
+                volume: vol,
+                date: key,
+            };
+        })
+        .filter(d => d.date)
+        .sort((a, b) => {
+            // HH:mm 형식 우선 비교, 아니면 문자열 비교
+            const at = a.date;
+            const bt = b.date;
+            if (/^\d{2}:\d{2}$/.test(at) && /^\d{2}:\d{2}$/.test(bt)) {
+                return at.localeCompare(bt);
+            }
+            return String(at).localeCompare(String(bt));
+        });
 
 	// Y축 도메인 계산
 	const priceValues = combinedData.map(d => d.price).filter(v => typeof v === 'number');
@@ -61,7 +80,12 @@ const UnifiedStockChart = ({
 
 	// Y축 틱 포맷터
 	const priceTickFormatter = (value) => `₩${value.toLocaleString()}`;
-	const volumeTickFormatter = (value) => `${(value / 1000000).toFixed(1)}M`;
+    const volumeTickFormatter = (value) => {
+        if (value >= 1000000000) return `${(value / 1000000000).toFixed(1)}B`;
+        if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+        if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
+        return `${value.toLocaleString()}`;
+    };
 
 	return (
 		<div className="unified-stock-chart">
@@ -93,15 +117,17 @@ const UnifiedStockChart = ({
 						tick={{ fontSize: 12 }}
 					/>
 					
-					{/* 거래량 Y축 */}
-					<YAxis
-						yAxisId="volume"
-						orientation="right"
-						domain={volumeDomain}
-						tickFormatter={volumeTickFormatter}
-						hide={simpleMode}
-						tick={{ fontSize: 12 }}
-					/>
+					{/* 거래량 Y축 - 거래량 데이터가 있을 때만 표시 */}
+					{volumeData && volumeData.length > 0 && (
+						<YAxis
+							yAxisId="volume"
+							orientation="right"
+							domain={volumeDomain}
+							tickFormatter={volumeTickFormatter}
+							hide={simpleMode}
+							tick={{ fontSize: 12 }}
+						/>
+					)}
 
 					<Tooltip
 						formatter={formatTooltipValue}
@@ -132,15 +158,17 @@ const UnifiedStockChart = ({
 						/>
 					)}
 
-					{/* 거래량 바 차트 */}
-					<Bar
-						yAxisId="volume"
-						dataKey="volume"
-						name="거래량"
-						fill="#e3f2fd"
-						opacity={0.7}
-						radius={[2, 2, 0, 0]}
-					/>
+					{/* 거래량 바 차트 - 거래량 데이터가 있을 때만 표시 */}
+					{volumeData && volumeData.length > 0 && (
+						<Bar
+							yAxisId="volume"
+							dataKey="volume"
+							name="거래량"
+							fill="#e3f2fd"
+							opacity={0.7}
+							radius={[2, 2, 0, 0]}
+						/>
+					)}
 
 					{/* 실시간 주가 라인 차트 */}
 					<Line

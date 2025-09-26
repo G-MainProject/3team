@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './TopNav.css';
 import maleAvatar from '../../assets/images/male.jpg';
@@ -6,6 +6,7 @@ import femaleAvatar from '../../assets/images/female.jpg';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 import { useStock } from '../../hooks/useStock';
+import { useRealtimeStockData } from '../../hooks/useRealtimeStockData';
 
 const TopNav = () => {
   const { user, logout } = useAuth();
@@ -21,58 +22,121 @@ const TopNav = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
-  const [previousTopStock, setPreviousTopStock] = useState(null);
+  const previousTopStockRef = useRef(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Memoize the sorted stock list for the TopNav
-  const topNavStocks = useMemo(() => {
-    if (!stocks) return [];
-    return [...stocks].sort((a, b) => Math.abs(b.changePercent || 0) - Math.abs(a.changePercent || 0));
+  // 상위 5개 주식 선택 (초기에는 랜덤하게 5개 선택)
+  const top5Stocks = useMemo(() => {
+    if (!stocks || stocks.length === 0) return [];
+    return [...stocks].slice(0, 5); // 일단 처음 5개 선택
   }, [stocks]);
+
+  // 각 주식의 실시간 데이터 가져오기
+  const stock1Data = useRealtimeStockData(top5Stocks[0]?.stockCode || '');
+  const stock2Data = useRealtimeStockData(top5Stocks[1]?.stockCode || '');
+  const stock3Data = useRealtimeStockData(top5Stocks[2]?.stockCode || '');
+  const stock4Data = useRealtimeStockData(top5Stocks[3]?.stockCode || '');
+  const stock5Data = useRealtimeStockData(top5Stocks[4]?.stockCode || '');
+
+  // 실시간 데이터가 포함된 상위 5개 주식 (실시간 데이터로 정렬)
+  const topStocks = useMemo(() => {
+    if (!top5Stocks || top5Stocks.length === 0) return [];
+    
+    const realtimeDataArray = [stock1Data, stock2Data, stock3Data, stock4Data, stock5Data];
+    
+    // 실시간 데이터로 업데이트된 주식 목록 생성
+    const updatedStocks = top5Stocks.map((stock, index) => {
+      const realtimeData = realtimeDataArray[index];
+      if (realtimeData?.summaryData) {
+        return {
+          ...stock,
+          currentPrice: realtimeData.summaryData.currentPrice || stock.currentPrice,
+          changePercent: realtimeData.summaryData.changePercent || stock.changePercent,
+          volume: realtimeData.summaryData.volume || stock.volume,
+          marketCap: realtimeData.summaryData.marketCap || stock.marketCap,
+        };
+      }
+      return stock;
+    });
+    
+    // 등락폭 절댓값 기준으로 정렬 (실시간 데이터가 있는 것만)
+    const sortedStocks = [...updatedStocks].sort((a, b) => {
+      const aChange = Math.abs(a.changePercent || 0);
+      const bChange = Math.abs(b.changePercent || 0);
+      return bChange - aChange;
+    });
+    
+    return sortedStocks;
+  }, [top5Stocks, stock1Data, stock2Data, stock3Data, stock4Data, stock5Data]);
 
   const getUserGender = () => {
     if (!user) return 'male';
     return user.gender === 'FEMALE' ? 'female' : 'male';
   };
 
-  useEffect(() => {
-    if (topNavStocks && topNavStocks.length > 0) {
+
+  // 순위 변경 감지 및 알림 처리 (실제 순위 변경만 감지)
+  const handleRankChange = useCallback((currentTopStock, topStocks) => {
+    const prevStock = previousTopStockRef.current;
+    
+    // 이전 주식이 있고, 실제로 다른 주식이 1등이 된 경우에만 처리
+    if (prevStock && prevStock.stockCode !== currentTopStock.stockCode) {
+      const previousRank = topStocks.findIndex(stock => stock.stockCode === prevStock.stockCode) + 1;
+      const currentRank = 1;
+
+      // 애니메이션 시작
       setIsAnimating(true);
       setTimeout(() => {
-        const newTopStocks = topNavStocks.slice(0, 5);
-
-        if (previousTopStock && newTopStocks[0] && previousTopStock.stockCode !== newTopStocks[0].stockCode) {
-          const previousRank = newTopStocks.findIndex(stock => stock.stockCode === previousTopStock.stockCode) + 1;
-          const currentRank = 1;
-
-          const newNotification = {
-            id: Date.now(),
-            previousStock: {
-              name: previousTopStock.stockName,
-              rank: previousRank,
-              changePercent: previousTopStock.changePercent,
-            },
-            currentStock: {
-              name: newTopStocks[0].stockName,
-              rank: currentRank,
-              changePercent: newTopStocks[0].changePercent,
-            },
-            type: 'rank_change',
-          };
-          setNotificationHistory(prev => [newNotification, ...prev.slice(0, 9)]);
-
-          if (!showNotificationDropdown) {
-            setNotificationCount(prev => prev + 1);
-          }
-        }
-
-        setPreviousTopStock(newTopStocks[0]);
         setIsAnimating(false);
       }, 300);
+
+      // 알림 생성
+      const newNotification = {
+        id: Date.now(),
+        previousStock: {
+          name: prevStock.stockName,
+          rank: previousRank,
+          changePercent: prevStock.changePercent,
+        },
+        currentStock: {
+          name: currentTopStock.stockName,
+          rank: currentRank,
+          changePercent: currentTopStock.changePercent,
+        },
+        type: 'rank_change',
+      };
+      
+      // setNotificationHistory 호출
+      if (setNotificationHistory) {
+        setNotificationHistory(prev => [newNotification, ...prev.slice(0, 9)]);
+      }
+
+      if (!showNotificationDropdown && setNotificationCount) {
+        setNotificationCount(prev => prev + 1);
+      }
     }
-  }, [topNavStocks, setNotificationCount, setNotificationHistory, showNotificationDropdown, previousTopStock]);
+    
+    // 현재 주식을 이전 주식으로 저장
+    previousTopStockRef.current = currentTopStock;
+  }, [setNotificationCount, setNotificationHistory, showNotificationDropdown]);
+
+  // topStocks를 ref로 저장하여 최신 값 참조
+  const topStocksRef = useRef(topStocks);
+  topStocksRef.current = topStocks;
+
+  useEffect(() => {
+    if (topStocks && topStocks.length > 0) {
+      const currentTopStock = topStocks[0];
+      handleRankChange(currentTopStock, topStocksRef.current);
+      
+      // 새로고침 시 실시간 데이터로 정렬된 1등 주식 자동 선택 (한 번만 실행)
+      if (!selectedStock) {
+        setSelectedStockByCode(currentTopStock.stockCode);
+      }
+    }
+  }, [topStocks[0]?.stockCode, handleRankChange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -116,7 +180,7 @@ const TopNav = () => {
   };
 
   const handleNotificationStockClick = (stockName) => {
-    const stock = topNavStocks.find(s => s.stockName === stockName);
+    const stock = topStocks.find(s => s.stockName === stockName);
     if (stock) {
         setSelectedStockByCode(stock.stockCode);
         setShowNotificationDropdown(false);
@@ -128,10 +192,10 @@ const TopNav = () => {
         <div className='progress-indicator'>
           {stockLoading ? (
             <div className="stock-loading">실시간 주식 데이터 로딩 중...</div>
-          ) : topNavStocks.length > 0 ? (
+          ) : topStocks.length > 0 ? (
             <div className="stock-list-container">
               <div className="stock-items">
-                {topNavStocks.slice(0, 5).map((stock, index) => (
+                {topStocks.map((stock, index) => (
                   <div key={stock.stockCode} className={`stock-item ${isAnimating ? 'animating' : ''}`}>
                     <div 
                       className={`stock-circle ${stock.stockCode === selectedStock?.stockCode ? 'active' : ''}`}

@@ -1,21 +1,22 @@
 package com.team3.backendapi.service.sns;
 
-import com.team3.backendapi.dto.sns.SnsPostDto;
+import com.team3.backendapi.dto.CacheMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-@Service
+@Service // 활성화 - ScheduledSnsDataService와 역할 분리
 @RequiredArgsConstructor
 @Slf4j
 public class SnsSchedulerService {
 
     private final RedditApiService redditApiService;
+    private final RedisTemplate<String, Object> redisTemplate;
     
     // 인기 주식 심볼들
     private static final String[] POPULAR_SYMBOLS = {"005930", "000660", "035420", "207940", "006400"};
@@ -30,24 +31,44 @@ public class SnsSchedulerService {
     );
 
     /**
-     * 1분마다 인기 주식들의 SNS 데이터를 실시간 업데이트
+     * 5분마다 인기 주식들의 SNS 데이터를 실시간 업데이트 (ScheduledSnsDataService와 중복 방지)
      */
-    @Scheduled(fixedRate = 60000) // 1분 = 60,000ms
+    @Scheduled(fixedRate = 300000) // 5분 = 300,000ms (ScheduledSnsDataService와 동일)
     public void preloadSnsData() {
-        log.info("실시간 SNS 데이터 업데이트 시작...");
+        log.info("인기 주식 SNS 데이터 업데이트 시작...");
         
         for (String symbol : POPULAR_SYMBOLS) {
             String stockName = STOCK_NAMES.get(symbol);
             if (stockName != null) {
-                // Reddit 데이터 실시간 업데이트 (캐시 무시)
-                redditApiService.getRedditPostsBySymbol(symbol, stockName)
-                    .doOnSuccess(redditPosts -> log.info("실시간 Reddit 데이터 업데이트 완료: {} - {}개", stockName, redditPosts.size()))
-                    .doOnError(error -> log.error("실시간 Reddit 데이터 업데이트 실패: {} - {}", stockName, error.getMessage()))
-                    .subscribe();
+                try {
+                    // Reddit 데이터 실시간 업데이트 및 캐시 저장
+                    redditApiService.getRedditPostsBySymbol(symbol, stockName)
+                        .doOnSuccess(redditPosts -> {
+                            if (redditPosts != null && !redditPosts.isEmpty()) {
+                                // Redis에 캐시 저장 (10분 TTL)
+                                String cacheKey = "sns:" + symbol;
+                                String metadataKey = "metadata:sns:" + symbol;
+                                CacheMetadata metadata = new CacheMetadata("sns", symbol, null);
+                                
+                                redisTemplate.opsForValue().set(cacheKey, redditPosts, Duration.ofMinutes(10));
+                                redisTemplate.opsForValue().set(metadataKey, metadata, Duration.ofMinutes(10));
+                                log.info("인기 주식 Reddit 데이터 업데이트 및 캐시 저장 완료: {} - {}개", stockName, redditPosts.size());
+                            } else {
+                                log.warn("인기 주식 Reddit 데이터가 비어있음: {}", stockName);
+                            }
+                        })
+                        .doOnError(error -> log.error("인기 주식 Reddit 데이터 업데이트 실패: {} - {}", stockName, error.getMessage()))
+                        .subscribe(
+                            success -> {}, // 성공 시 추가 처리 없음
+                            error -> log.error("Reddit API 구독 에러: {}", error.getMessage())
+                        );
+                } catch (Exception e) {
+                    log.error("인기 주식 SNS 데이터 처리 중 오류: {} - {}", stockName, e.getMessage());
+                }
             }
         }
         
-        log.info("실시간 SNS 데이터 업데이트 완료");
+        log.info("인기 주식 SNS 데이터 업데이트 완료");
     }
 
     /**
