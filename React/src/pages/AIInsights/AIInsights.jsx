@@ -224,7 +224,14 @@ export default function AIInsights() {
 	};
 
 	if (stockLoading || !selectedStock) {
-		return <div>Loading...</div>;
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<div className="flex flex-col items-center justify-center space-y-4">
+					<div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin-slow"></div>
+					<div className="text-lg font-semibold text-text-light dark:text-text-dark">Loading...</div>
+				</div>
+			</div>
+		);
 	}
 
 	return (
