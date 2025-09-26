@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 11:49:43" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-16 15:15:30" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-23 09:47:21" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -25,7 +25,7 @@
       <Properties id="e4c87eff-028c-41f0-aa98-d93ac15696dd" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
         <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object[]" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.File_list" />
         <Property type="Desktop" key="Command_SearchPattern" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" filter="filename" />
         <Property type="Desktop" key="Command_SearchOption" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="TopDirectoryOnly" valuelist="TopDirectoryOnly;AllDirectories" />
@@ -46,23 +46,23 @@
       </RelatedSteps>
       <Script><![CDATA[if (this.File_list.length !== 0) {]]></Script>
     </Step>
-    <Step id="S181dd12f8fc4471986da46326493db31" ver="311241220" createVer="311241220" type="Pdf" name="MergePdfActivity" dpName="MergePdf" dpValue="C:\3team\RPA\데이터추출\DART' + Global.Stock[Global.l] +'\pdf" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S181dd12f8fc4471986da46326493db31" ver="311241220" createVer="311241220" type="Pdf" name="MergePdfActivity" dpName="MergePdf" dpValue="Global.file_path + '\DART' + Global.Stock[Global.l] +'\pdf'" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="bca997c2-1c28-433c-970f-b9cbc9e317a9" type="Pdf">
         <Property type="Pdf" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Pdf" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Pdf" key="Input_InputDirPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
-        <Property type="Pdf" key="Input_OutputFilePath" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.l] +'\\pdf\\추출_' + Global.Stock[Global.l] + '.pdf'" />
+        <Property type="Pdf" key="Input_InputDirPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
+        <Property type="Pdf" key="Input_OutputFilePath" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\pdf\\추출_' + Global.Stock[Global.l] + '.pdf'" />
         <Property type="Pdf" key="Input_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_3);]]></Script>
     </Step>
-    <Step id="S8a204a4392c84a18a1ff14a03dd4be03" ver="311241220" createVer="311241220" type="Pdf" name="ExtractImageFromPdfActivity" dpName="ExtractImageFromPdf" dpValue="C:\3team\RPA\데이터추출\DART' + Global.Stock[Global.l] +'\pdf\추출_' + Global.Stock[Global.l] + '.pdf" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S8a204a4392c84a18a1ff14a03dd4be03" ver="311241220" createVer="311241220" type="Pdf" name="ExtractImageFromPdfActivity" dpName="ExtractImageFromPdf" dpValue="Global.file_path + '\DART' + Global.Stock[Global.l] +'\pdf\추출_' + Global.Stock[Global.l] + '.pdf'" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="0e6ad727-0fe3-4983-8822-1f7ddad015d9" type="Pdf">
         <Property type="Pdf" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Pdf" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Pdf" key="Output_Result" controlType="OutputControlType" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.DART_img" />
-        <Property type="Pdf" key="Input_File" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.l] +'\\pdf\\추출_' + Global.Stock[Global.l] + '.pdf'" order="1" />
+        <Property type="Pdf" key="Input_File" controlType="PDF" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\pdf\\추출_' + Global.Stock[Global.l] + '.pdf'" order="1" />
         <Property type="Pdf" key="Input_Password" controlType="PropertyItemPasswordView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="True" isChanged="Y" encryptedFrom="" value="OFHXrJv2HBkJpaqdsGVnRA==" order="2" />
         <Property type="Pdf" key="Input_PageRange" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'All'" order="5" />
       </Properties>
@@ -86,7 +86,7 @@
         <Property type="ImageConverter" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="ImageConverter" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="ImageConverter" key="ImageConvertAttr_InputBitmap" controlType="InputControlType" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.DART_img[this.i]" />
-        <Property type="ImageConverter" key="ImageFile_SavePath" controlType="Image" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.l] +'\\이미지\\' + Global.Stock[Global.l] + '_' + this.i + 1 + '.png'" />
+        <Property type="ImageConverter" key="ImageFile_SavePath" controlType="Image" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\이미지\\' + Global.Stock[Global.l] + '_' + this.i + 1 + '.png'" />
         <Property type="ImageConverter" key="ImageFile_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="ImageConverter" key="ImageFile_Encoding" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="png" valuelist="png;jpg;bmp" />
       </Properties>

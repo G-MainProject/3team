@@ -10,28 +10,28 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 14:30:56" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-16 10:25:10" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:38:21" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
   <Variables>
-    <Variable name="tmp" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFE49393" showMarker="False" />
+    <Variable name="tmp" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFE49393" showMarker="True" />
     <Variable name="DART_id" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF2DCDDF" showMarker="False" />
     <Variable name="DART_File_path" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="주소" colorValue="#FFF7DB6A" showMarker="False" />
     <Variable name="DART_index" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF617143" showMarker="False" />
   </Variables>
   <Steps>
-    <Step id="S5fd64201d8074de4afd8db64f0d5c076" ver="311241220" createVer="311241220" type="Flow" name="Delay" dpName="Delay" dpValue="1 sec" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S5fd64201d8074de4afd8db64f0d5c076" ver="311241220" createVer="311241220" type="Flow" name="Delay" dpName="Delay" dpValue=".5 sec" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="1bb94fc0-4c54-4cb1-a2f2-9f22774250a8" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Second" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="1" />
-        <Property type="Flow" key="Conditions_Millisecond" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Flow" key="Conditions_Second" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Flow" key="Conditions_Millisecond" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="500" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[Delay(1000);]]></Script>
+      <Script><![CDATA[Delay(500);]]></Script>
     </Step>
     <Step id="S88e4590ac6374f2baf19fd72f90eae2b" ver="311241220" createVer="311241220" type="Chrome" name="ChromeIsExist" dpName="ChromeIsExist" dpValue="RESULT" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="d856237b-ec7f-4fe7-8a81-d65d85e54fbb" type="Chrome">
@@ -132,7 +132,7 @@
       <Properties id="eaad045e-9046-4903-b8f1-a90f808a9dca" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\네이버증권\\' + Global.Stock[Global.l]" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l]" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_6);]]></Script>
@@ -2582,7 +2582,7 @@ if (index !== -1) {
     </Step>
     <Step id="Sf458f83d08064936a3093f51fa420582" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="" dpValue2="Download - Chrome" dpImage="Target_Capture" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="3da01aca-330e-4132-9d23-74f8f9845bfa" type="Win">
-        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="--Ignore--" />
         <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Win" key="Target_Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Win" key="Target_TargetNo" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" order="4" />
@@ -2645,7 +2645,12 @@ if (index !== -1) {
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'7.5, 8'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_56);]]></Script>
+      <Script><![CDATA[try{
+    StepPlayer.Run('Win.Click', this.click_info_56);
+}catch(e){
+    Warn('CatchException: ' + e.message);
+}
+]]></Script>
     </Step>
     <Step id="Se79b76f279ba4d12842bfdca9d208afb" ver="311241220" createVer="311241220" type="Win" name="IsVisible" dpName="IsVisible" dpValue="다른 이름으로 저장" dpValue2="Download - Chrome" dpImage="Target_Capture" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="9eae3e00-1c12-4377-9ef3-fa835137e58e" type="Win">
@@ -2813,10 +2818,10 @@ if (index !== -1) {
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="다운로드경로필요여부" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.tmp = 'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'&#xD;&#xA;Global.DART_flag = false" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.tmp = Global.file_path + '\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'&#xD;&#xA;Global.DART_flag = false" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.tmp = 'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'
+      <Script><![CDATA[this.tmp = Global.file_path + '\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'
 Global.DART_flag = false]]></Script>
     </Step>
     <Step id="S57d6f350751b438694909d95cf5547f7" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
@@ -2998,7 +3003,7 @@ Global.DART_flag = false]]></Script>
 
         //------------------------------------------------
         STEP('S5fd64201d8074de4afd8db64f0d5c076', '[1] Delay');
-        Delay(1000);
+        Delay(500);
 
         //------------------------------------------------
         STEP('S88e4590ac6374f2baf19fd72f90eae2b', '[2] ChromeIsExist');
@@ -3249,7 +3254,12 @@ Global.DART_flag = false]]></Script>
 
                 //------------------------------------------------
                 STEP('Sf458f83d08064936a3093f51fa420582', '[56] Click');
-                StepPlayer.Run('Win.Click', this.click_info_56);
+                try{
+                    StepPlayer.Run('Win.Click', this.click_info_56);
+                }catch(e){
+                    Warn('CatchException: ' + e.message);
+                }
+
 
                 //------------------------------------------------
                 STEP('Se79b76f279ba4d12842bfdca9d208afb', '[57] IsVisible');
@@ -3269,7 +3279,7 @@ Global.DART_flag = false]]></Script>
 
                         //------------------------------------------------
                         STEP('S49d2b788c03346ff96b5fe69d59b908a', '[61] ExecuteScript');
-                        this.tmp = 'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'
+                        this.tmp = Global.file_path + '\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'
                         Global.DART_flag = false
 
                         //------------------------------------------------
@@ -3302,7 +3312,7 @@ Global.DART_flag = false]]></Script>
 
             //------------------------------------------------
             }
-            STEP('S3843cd1c55dc4b4d8e683d2ad159fe7c', '[69] End-For');
+            STEP('S3843cd1c55dc4b4d8e683d2ad159fe7c', '[69] EndLoop');
 
             //------------------------------------------------
             STEP('Sa5b8abbbf964490585d9b7718af9956a', '[70] ChromeClose');
