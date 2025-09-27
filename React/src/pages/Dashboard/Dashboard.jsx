@@ -15,7 +15,7 @@ import UnifiedStockChart from '../../component/UnifiedStockChart/UnifiedStockCha
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { useStock } from '../../hooks/useStock';
-import { useRealtimeStockData } from '../../hooks/useRealtimeStockData';
+import { useRealtimeStockData } from '../../hooks/useRealtimeStockData.jsx';
 import stockAnalysisData from '../../../../data/outputs/top_mover_forecast.json';
 
 
@@ -479,19 +479,21 @@ export default function Dashboard() {
 											</span>
 										</div>
 									)}
-									{!isMarketClosed && realtimeLastUpdate && (
+									{!isMarketClosed && (
 										<div className={styles['last-updated']}>
-											<i className="fas fa-clock"></i>
+											<i className="fas fa-sync-alt"></i>
 											<span>
-												마지막 업데이트: {realtimeLastUpdate.toLocaleString('ko-KR', {
-													year: 'numeric',
-													month: '2-digit',
-													day: '2-digit',
-													hour: '2-digit',
-													minute: '2-digit',
-													second: '2-digit',
-													hour12: false
-												})}
+												실시간 데이터 업데이트 중
+												{realtimeLastUpdate && (
+													<span style={{ marginLeft: '8px', fontSize: '0.9em', opacity: 0.8 }}>
+														({realtimeLastUpdate.toLocaleTimeString('ko-KR', {
+															hour: '2-digit',
+															minute: '2-digit',
+															second: '2-digit',
+															hour12: false
+														})})
+													</span>
+												)}
 											</span>
 											{isRefreshing && (
 												<span className={styles['refreshing-indicator']}>

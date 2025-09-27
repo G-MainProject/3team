@@ -17,6 +17,7 @@ const UnifiedStockChart = ({
 	volumeData, 
 	simpleMode = false 
 }) => {
+
 	if (!stockData || stockData.length === 0) {
 		return (
 			<div className="unified-chart-placeholder">차트 데이터가 없습니다.</div>
@@ -30,11 +31,19 @@ const UnifiedStockChart = ({
         return acc;
     }, {});
 
+
     // 데이터를 통합하여 하나의 배열로 만들기 (시간 정렬 포함)
     const combinedData = stockData
-        .map((stockItem) => {
+        .map((stockItem, index) => {
             const key = stockItem.time || stockItem.date;
-            const vol = key && volumeByTime[key] != null ? volumeByTime[key] : 0;
+            // 시간이 정확히 일치하지 않으면 인덱스로 매칭 시도
+            let vol = key && volumeByTime[key] != null ? volumeByTime[key] : 0;
+            
+            // 시간 매칭이 실패한 경우 인덱스로 매칭
+            if (vol === 0 && volumeData && volumeData[index]) {
+                vol = volumeData[index].volume || 0;
+            }
+            
             return {
                 ...stockItem,
                 volume: vol,

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team3.backendapi.dto.CacheMetadata;
 import com.team3.backendapi.dto.StockPriceDto;
 import com.team3.backendapi.dto.StockSummaryDto;
+import com.team3.backendapi.dto.UnifiedStockData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -80,6 +81,36 @@ public class ScheduledStockDataService {
                         }
                     } catch (Exception e) {
                         log.warn("거래량 데이터 수집 실패: {} - {}", stockCode, e.getMessage());
+                    }
+                    
+                    // 4. 통합 데이터 생성 및 캐시 저장
+                    try {
+                        // 개별 데이터들을 안전하게 조회하여 통합 데이터 생성
+                        Object summaryObj = redisTemplate.opsForValue().get("stock:" + stockCode);
+                        Object realtimeObj = redisTemplate.opsForValue().get("realtime:" + stockCode + ":1m");
+                        Object volumeObj = redisTemplate.opsForValue().get("volume:" + stockCode + ":1m");
+                        
+                        if (summaryObj != null && realtimeObj != null && volumeObj != null) {
+                            // ObjectMapper를 사용해서 안전하게 변환
+                            StockSummaryDto summaryData = objectMapper.convertValue(summaryObj, StockSummaryDto.class);
+                            @SuppressWarnings("unchecked")
+                            List<StockPriceDto> realtimeData = objectMapper.convertValue(realtimeObj, new TypeReference<List<StockPriceDto>>() {});
+                            @SuppressWarnings("unchecked")
+                            List<StockPriceDto> volumeData = objectMapper.convertValue(volumeObj, new TypeReference<List<StockPriceDto>>() {});
+                            
+                            // UnifiedStockData 객체 생성
+                            UnifiedStockData unifiedData = new UnifiedStockData();
+                            unifiedData.setStockData(realtimeData);
+                            unifiedData.setVolumeData(volumeData);
+                            unifiedData.setSummary(summaryData);
+                            
+                            // 통합 데이터 캐시 저장
+                            String unifiedCacheKey = "unified:" + stockCode + ":1m";
+                            redisTemplate.opsForValue().set(unifiedCacheKey, unifiedData, Duration.ofMinutes(2));
+                            log.info("통합 주식 데이터 수집 완료: {} - 통합 캐시 저장", stockCode);
+                        }
+                    } catch (Exception e) {
+                        log.warn("통합 데이터 생성 실패: {} - {}", stockCode, e.getMessage());
                     }
                     
                 } catch (Exception e) {

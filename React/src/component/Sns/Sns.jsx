@@ -222,18 +222,14 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 					}
 					setLoading(false);
 
-					const latestTimestamp = snapshot.docs[0]?.data().timestamp || new Date();
-					const newMessagesQuery = query(messagesRef, orderBy('timestamp', 'asc'), where('timestamp', '>', latestTimestamp));
-
-					unsubscribe = onSnapshot(newMessagesQuery, (querySnapshot) => {
-						querySnapshot.docChanges().forEach((change) => {
-							if (change.type === 'added') {
-								const newMessageData = { id: change.doc.id, ...change.doc.data() };
-								setMessages(prev => prev.some(msg => msg.id === newMessageData.id) ? prev : [...prev, newMessageData]);
-							}
-						});
+					// 전체 메시지 컬렉션을 실시간으로 감지 (추가, 수정, 삭제 모두)
+					const allMessagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
+					
+					unsubscribe = onSnapshot(allMessagesQuery, (querySnapshot) => {
+						const allMessages = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+						setMessages(allMessages);
 					}, (err) => {
-						console.error('새 메시지 수신 실패:', err);
+						console.error('메시지 실시간 수신 실패:', err);
 					});
 
 				} catch (err) {

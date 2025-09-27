@@ -116,7 +116,8 @@ public class YahooFinanceApiService {
     public List<StockPriceDto> getVolumeData(String symbol, String interval) {
         try {
             String yahooSymbol = getYahooSymbol(symbol);
-            String url = "https://query1.finance.yahoo.com/v8/finance/chart/" + yahooSymbol + "?interval=" + interval + "&range=1d";
+            // 사전/사후거래 포함 (includePrePost=true) - 주가 데이터와 동일하게 설정
+            String url = "https://query1.finance.yahoo.com/v8/finance/chart/" + yahooSymbol + "?interval=" + interval + "&range=1d&includePrePost=true";
             
             HttpEntity<String> entity = new HttpEntity<>(createYahooHeaders());
             ResponseEntity<Map> response = restTemplate.exchange(

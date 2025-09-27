@@ -6,6 +6,7 @@ import com.team3.backendapi.dto.CacheMetadata;
 import com.team3.backendapi.dto.CachedDataResponse;
 import com.team3.backendapi.dto.StockPriceDto;
 import com.team3.backendapi.dto.StockSummaryDto;
+import com.team3.backendapi.dto.UnifiedStockData;
 import com.team3.backendapi.service.YahooFinanceApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class StockController {
 
     private final YahooFinanceApiService yahooFinanceApiService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     
     // Redis 연결 테스트
     @GetMapping("/test-redis")
@@ -260,30 +262,36 @@ public class StockController {
         try {
             // Redis에서 캐시된 통합 데이터 조회
             String cacheKey = "unified:" + symbol + ":" + interval;
-            UnifiedStockData cachedData = (UnifiedStockData) redisTemplate.opsForValue().get(cacheKey);
+            Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
             
-            if (cachedData != null) {
-                log.info("캐시된 통합 주식 데이터 반환: {} - {}", symbol, interval);
-                return ResponseEntity.ok(ApiResponse.success("통합 주식 데이터를 성공적으로 조회했습니다.", cachedData));
-            } else {
-                // 캐시에 없으면 실시간 조회
-                log.info("캐시에 없는 통합 주식 데이터 실시간 조회: {} - {}", symbol, interval);
-                
-                // 개별 데이터 조회 (각각 캐시 확인)
-                List<StockPriceDto> stockData = getCachedOrFetchStockData(symbol, interval, "realtime");
-                List<StockPriceDto> volumeData = getCachedOrFetchVolumeData(symbol, interval);
-                StockSummaryDto summary = getCachedOrFetchSummary(symbol);
-
-                UnifiedStockData response = new UnifiedStockData();
-                response.setStockData(stockData);
-                response.setVolumeData(volumeData);
-                response.setSummary(summary);
-
-                // 통합 데이터를 캐시에 저장 (2분 TTL)
-                redisTemplate.opsForValue().set(cacheKey, response, java.time.Duration.ofMinutes(2));
-
-                return ResponseEntity.ok(ApiResponse.success("통합 주식 데이터를 성공적으로 조회했습니다.", response));
+            if (cachedObject != null) {
+                try {
+                    // ObjectMapper를 사용해서 안전하게 역직렬화
+                    UnifiedStockData cachedData = objectMapper.convertValue(cachedObject, UnifiedStockData.class);
+                    log.info("캐시된 통합 주식 데이터 반환: {} - {}", symbol, interval);
+                    return ResponseEntity.ok(ApiResponse.success("통합 주식 데이터를 성공적으로 조회했습니다.", cachedData));
+                } catch (Exception e) {
+                    log.warn("캐시된 통합 데이터 역직렬화 실패: {} - {}, 실시간 조회로 전환", symbol, e.getMessage());
+                }
             }
+            
+            // 캐시에 없거나 역직렬화 실패 시 실시간 조회
+            log.info("캐시에 없는 통합 주식 데이터 실시간 조회: {} - {}", symbol, interval);
+            
+            // 개별 데이터 조회 (각각 캐시 확인)
+            List<StockPriceDto> stockData = getCachedOrFetchStockData(symbol, interval, "realtime");
+            List<StockPriceDto> volumeData = getCachedOrFetchVolumeData(symbol, interval);
+            StockSummaryDto summary = getCachedOrFetchSummary(symbol);
+
+            UnifiedStockData response = new UnifiedStockData();
+            response.setStockData(stockData);
+            response.setVolumeData(volumeData);
+            response.setSummary(summary);
+
+            // 통합 데이터를 캐시에 저장 (2분 TTL)
+            redisTemplate.opsForValue().set(cacheKey, response, java.time.Duration.ofMinutes(2));
+
+            return ResponseEntity.ok(ApiResponse.success("통합 주식 데이터를 성공적으로 조회했습니다.", response));
         } catch (Exception e) {
             log.error("통합 주식 데이터 조회 실패: {} - {}", symbol, e.getMessage());
             return ResponseEntity.badRequest()
@@ -294,81 +302,61 @@ public class StockController {
     // 캐시된 주가 데이터 조회 또는 실시간 조회
     private List<StockPriceDto> getCachedOrFetchStockData(String symbol, String interval, String type) {
         String cacheKey = type + ":" + symbol + ":" + interval;
-        @SuppressWarnings("unchecked")
-        List<StockPriceDto> cachedData = (List<StockPriceDto>) redisTemplate.opsForValue().get(cacheKey);
+        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
         
-        if (cachedData != null) {
-            return cachedData;
-        } else {
-            List<StockPriceDto> data = yahooFinanceApiService.getRealtimeStockData(symbol, interval);
-            if (data != null && !data.isEmpty()) {
-                redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
+        if (cachedObject != null) {
+            try {
+                return objectMapper.convertValue(cachedObject, new com.fasterxml.jackson.core.type.TypeReference<List<StockPriceDto>>() {});
+            } catch (Exception e) {
+                log.warn("캐시된 주가 데이터 역직렬화 실패: {} - {}", cacheKey, e.getMessage());
             }
-            return data;
         }
+        
+        List<StockPriceDto> data = yahooFinanceApiService.getRealtimeStockData(symbol, interval);
+        if (data != null && !data.isEmpty()) {
+            redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
+        }
+        return data;
     }
     
     // 캐시된 거래량 데이터 조회 또는 실시간 조회
     private List<StockPriceDto> getCachedOrFetchVolumeData(String symbol, String interval) {
         String cacheKey = "volume:" + symbol + ":" + interval;
-        @SuppressWarnings("unchecked")
-        List<StockPriceDto> cachedData = (List<StockPriceDto>) redisTemplate.opsForValue().get(cacheKey);
+        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
         
-        if (cachedData != null) {
-            return cachedData;
-        } else {
-            List<StockPriceDto> data = yahooFinanceApiService.getVolumeData(symbol, interval);
-            if (data != null && !data.isEmpty()) {
-                redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
+        if (cachedObject != null) {
+            try {
+                return objectMapper.convertValue(cachedObject, new com.fasterxml.jackson.core.type.TypeReference<List<StockPriceDto>>() {});
+            } catch (Exception e) {
+                log.warn("캐시된 거래량 데이터 역직렬화 실패: {} - {}", cacheKey, e.getMessage());
             }
-            return data;
         }
+        
+        List<StockPriceDto> data = yahooFinanceApiService.getVolumeData(symbol, interval);
+        if (data != null && !data.isEmpty()) {
+            redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
+        }
+        return data;
     }
     
     // 캐시된 요약 데이터 조회 또는 실시간 조회
     private StockSummaryDto getCachedOrFetchSummary(String symbol) {
         String cacheKey = "stock:" + symbol;
-        StockSummaryDto cachedData = (StockSummaryDto) redisTemplate.opsForValue().get(cacheKey);
+        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
         
-        if (cachedData != null) {
-            return cachedData;
-        } else {
-            StockSummaryDto data = yahooFinanceApiService.getStockSummary(symbol);
-            if (data != null) {
-                redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
+        if (cachedObject != null) {
+            try {
+                return objectMapper.convertValue(cachedObject, StockSummaryDto.class);
+            } catch (Exception e) {
+                log.warn("캐시된 요약 데이터 역직렬화 실패: {} - {}", cacheKey, e.getMessage());
             }
-            return data;
         }
+        
+        StockSummaryDto data = yahooFinanceApiService.getStockSummary(symbol);
+        if (data != null) {
+            redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
+        }
+        return data;
     }
 
-    // 통합 데이터 응답 클래스
-    public static class UnifiedStockData {
-        private List<StockPriceDto> stockData;
-        private List<StockPriceDto> volumeData;
-        private StockSummaryDto summary;
-
-        public List<StockPriceDto> getStockData() {
-            return stockData;
-        }
-
-        public void setStockData(List<StockPriceDto> stockData) {
-            this.stockData = stockData;
-        }
-
-        public List<StockPriceDto> getVolumeData() {
-            return volumeData;
-        }
-
-        public void setVolumeData(List<StockPriceDto> volumeData) {
-            this.volumeData = volumeData;
-        }
-
-        public StockSummaryDto getSummary() {
-            return summary;
-        }
-
-        public void setSummary(StockSummaryDto summary) {
-            this.summary = summary;
-        }
-    }
 }

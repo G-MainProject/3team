@@ -6,7 +6,7 @@ import femaleAvatar from '../../assets/images/female.jpg';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 import { useStock } from '../../hooks/useStock';
-import { useRealtimeStockData } from '../../hooks/useRealtimeStockData';
+import { useRealtimeStockData } from '../../hooks/useRealtimeStockData.jsx';
 
 const TopNav = () => {
   const { user, logout } = useAuth();
@@ -27,10 +27,18 @@ const TopNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 상위 5개 주식 선택 (초기에는 랜덤하게 5개 선택)
+  // 상위 5개 주식 선택 (변동폭 절댓값 기준으로 정렬)
   const top5Stocks = useMemo(() => {
     if (!stocks || stocks.length === 0) return [];
-    return [...stocks].slice(0, 5); // 일단 처음 5개 선택
+    
+    // 변동폭 절댓값 기준으로 정렬하여 상위 5개 선택
+    const sortedStocks = [...stocks].sort((a, b) => {
+      const aChange = Math.abs(a.changePercent || 0);
+      const bChange = Math.abs(b.changePercent || 0);
+      return bChange - aChange;
+    });
+    
+    return sortedStocks.slice(0, 5);
   }, [stocks]);
 
   // 각 주식의 실시간 데이터 가져오기
@@ -40,7 +48,7 @@ const TopNav = () => {
   const stock4Data = useRealtimeStockData(top5Stocks[3]?.stockCode || '');
   const stock5Data = useRealtimeStockData(top5Stocks[4]?.stockCode || '');
 
-  // 실시간 데이터가 포함된 상위 5개 주식 (실시간 데이터로 정렬)
+  // 실시간 데이터가 포함된 상위 5개 주식 (실시간 데이터로 업데이트 후 재정렬)
   const topStocks = useMemo(() => {
     if (!top5Stocks || top5Stocks.length === 0) return [];
     
@@ -61,12 +69,13 @@ const TopNav = () => {
       return stock;
     });
     
-    // 등락폭 절댓값 기준으로 정렬 (실시간 데이터가 있는 것만)
+    // 실시간 데이터로 업데이트된 후 다시 변동폭 절댓값 기준으로 정렬
     const sortedStocks = [...updatedStocks].sort((a, b) => {
       const aChange = Math.abs(a.changePercent || 0);
       const bChange = Math.abs(b.changePercent || 0);
       return bChange - aChange;
     });
+    
     
     return sortedStocks;
   }, [top5Stocks, stock1Data, stock2Data, stock3Data, stock4Data, stock5Data]);
@@ -81,40 +90,53 @@ const TopNav = () => {
   const handleRankChange = useCallback((currentTopStock, topStocks) => {
     const prevStock = previousTopStockRef.current;
     
+    // 장마감 상태 확인
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const day = now.getDay(); // 0=일요일, 6=토요일
+    
+    // 주말이거나 평일 15:30 이후면 장마감
+    const isWeekend = day === 0 || day === 6;
+    const isAfterClose = hour > 15 || (hour === 15 && minute >= 30);
+    const isMarketClosed = isWeekend || isAfterClose;
+    
     // 이전 주식이 있고, 실제로 다른 주식이 1등이 된 경우에만 처리
     if (prevStock && prevStock.stockCode !== currentTopStock.stockCode) {
       const previousRank = topStocks.findIndex(stock => stock.stockCode === prevStock.stockCode) + 1;
       const currentRank = 1;
 
-      // 애니메이션 시작
+      // 애니메이션 시작 (장마감이어도 애니메이션은 실행)
       setIsAnimating(true);
       setTimeout(() => {
         setIsAnimating(false);
       }, 300);
 
-      // 알림 생성
-      const newNotification = {
-        id: Date.now(),
-        previousStock: {
-          name: prevStock.stockName,
-          rank: previousRank,
-          changePercent: prevStock.changePercent,
-        },
-        currentStock: {
-          name: currentTopStock.stockName,
-          rank: currentRank,
-          changePercent: currentTopStock.changePercent,
-        },
-        type: 'rank_change',
-      };
-      
-      // setNotificationHistory 호출
-      if (setNotificationHistory) {
-        setNotificationHistory(prev => [newNotification, ...prev.slice(0, 9)]);
-      }
+      // 장마감 상태가 아닐 때만 알림 생성
+      if (!isMarketClosed) {
+        const newNotification = {
+          id: Date.now(),
+          previousStock: {
+            name: prevStock.stockName,
+            rank: previousRank,
+            changePercent: prevStock.changePercent,
+          },
+          currentStock: {
+            name: currentTopStock.stockName,
+            rank: currentRank,
+            changePercent: currentTopStock.changePercent,
+          },
+          type: 'rank_change',
+        };
+        
+        // setNotificationHistory 호출
+        if (setNotificationHistory) {
+          setNotificationHistory(prev => [newNotification, ...prev.slice(0, 9)]);
+        }
 
-      if (!showNotificationDropdown && setNotificationCount) {
-        setNotificationCount(prev => prev + 1);
+        if (!showNotificationDropdown && setNotificationCount) {
+          setNotificationCount(prev => prev + 1);
+        }
       }
     }
     

@@ -29,6 +29,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
         setVolumeData(unifiedData.volumeData || []);
         setSummaryData(unifiedData.summary || null);
         
+        
         // 실제 거래 마지막 시간 추출 (차트 데이터의 마지막 시간)
         if (unifiedData.stockData && unifiedData.stockData.length > 0) {
           const lastStockItem = unifiedData.stockData[unifiedData.stockData.length - 1];
@@ -72,6 +73,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
           } else {
             // 장 시작 전
           }
+        }
       } else {
         console.warn('⚠️ 통합 API 응답 실패 또는 데이터 없음');
         setStockData([]);
