@@ -60,10 +60,10 @@ const TopNav = () => {
       if (realtimeData?.summaryData) {
         return {
           ...stock,
-          currentPrice: realtimeData.summaryData.currentPrice || stock.currentPrice,
-          changePercent: realtimeData.summaryData.changePercent || stock.changePercent,
-          volume: realtimeData.summaryData.volume || stock.volume,
-          marketCap: realtimeData.summaryData.marketCap || stock.marketCap,
+          currentPrice: realtimeData.summaryData.currentPrice ?? stock.currentPrice,
+          changePercent: realtimeData.summaryData.changePercent ?? stock.changePercent,
+          volume: realtimeData.summaryData.volume ?? stock.volume,
+          marketCap: realtimeData.summaryData.marketCap ?? stock.marketCap,
         };
       }
       return stock;
