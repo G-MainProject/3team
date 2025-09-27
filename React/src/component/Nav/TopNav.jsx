@@ -17,7 +17,14 @@ const TopNav = () => {
     setNotificationCount,
     setNotificationHistory,
   } = useNotification();
-  const { stocks, selectedStock, setSelectedStockByCode, loading: stockLoading } = useStock();
+  const { 
+    stocks, 
+    selectedStock, 
+    setSelectedStockByCode, 
+    loading: stockLoading,
+    userHasManuallySelected,
+    setUserHasManuallySelected
+  } = useStock();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -152,13 +159,13 @@ const TopNav = () => {
     if (topStocks && topStocks.length > 0) {
       const currentTopStock = topStocks[0];
       handleRankChange(currentTopStock, topStocksRef.current);
-      
-      // 새로고침 시 실시간 데이터로 정렬된 1등 주식 자동 선택 (한 번만 실행)
-      if (!selectedStock) {
+
+      // 사용자가 직접 주식을 선택하기 전까지는 실시간 1위 주식을 계속 선택
+      if (!userHasManuallySelected) {
         setSelectedStockByCode(currentTopStock.stockCode);
       }
     }
-  }, [topStocks[0]?.stockCode, handleRankChange]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [topStocks[0]?.stockCode, handleRankChange, userHasManuallySelected, setSelectedStockByCode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -191,6 +198,7 @@ const TopNav = () => {
 
   const handleStockClick = (stock) => {
     setSelectedStockByCode(stock.stockCode);
+    setUserHasManuallySelected(true);
     navigate(location.pathname);
   };
 

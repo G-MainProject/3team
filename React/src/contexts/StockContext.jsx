@@ -8,6 +8,7 @@ export const StockProvider = ({ children }) => {
     const [stocks, setStocks] = useState([]);
     const [selectedStock, setSelectedStock] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [userHasManuallySelected, setUserHasManuallySelected] = useState(false);
 
     useEffect(() => {
         const initializeStocks = async () => {
@@ -17,14 +18,17 @@ export const StockProvider = ({ children }) => {
             );
             const initialStocks = uniqueStocks.map(stock => ({ ...stock }));
 
-            // 초기 선택된 주식 설정 (변동폭 절댓값 기준 1등 주식)
-            if (initialStocks.length > 0 && !selectedStock) {
-                const sortedStocks = [...initialStocks].sort((a, b) => Math.abs(b.changePercent || 0) - Math.abs(a.changePercent || 0));
+            // 변동폭 절대값 기준으로 주식 정렬
+            const sortedStocks = [...initialStocks].sort((a, b) => Math.abs(b.changePercent || 0) - Math.abs(a.changePercent || 0));
+
+            // 정렬된 리스트로 stocks 상태 설정
+            setStocks(sortedStocks);
+
+            // 초기 선택된 주식 설정 (1등 주식)
+            if (sortedStocks.length > 0 && !selectedStock) {
                 setSelectedStock(sortedStocks[0]);
             }
 
-            // API 호출 제거 - useRealtimeStockData에서 처리
-            setStocks(initialStocks);
             setLoading(false);
         };
 
@@ -38,7 +42,7 @@ export const StockProvider = ({ children }) => {
         }
     };
 
-    const value = { stocks, selectedStock, setSelectedStockByCode, loading };
+    const value = { stocks, selectedStock, setSelectedStockByCode, loading, userHasManuallySelected, setUserHasManuallySelected };
 
     return <StockContext.Provider value={value}>{children}</StockContext.Provider>;
 };
