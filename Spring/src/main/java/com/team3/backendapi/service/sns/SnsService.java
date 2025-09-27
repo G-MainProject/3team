@@ -2,6 +2,7 @@ package com.team3.backendapi.service.sns;
 
 import com.team3.backendapi.dto.sns.SnsPostDto;
 import com.team3.backendapi.dto.sns.SnsResponseDto;
+import com.team3.backendapi.service.StockDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,18 +20,11 @@ public class SnsService {
 
     private final RedditApiService redditApiService;
 
-    private static final Map<String, String> STOCK_NAMES = new HashMap<>();
-    
-    static {
-        STOCK_NAMES.put("005930", "삼성전자");
-        STOCK_NAMES.put("000660", "SK하이닉스");
-        STOCK_NAMES.put("035420", "NAVER");
-        STOCK_NAMES.put("207940", "삼성바이오로직스");
-        STOCK_NAMES.put("006400", "삼성SDI");
-    }
+    // JSON 파일에서 주식 정보를 읽어오는 서비스 주입
+    private final StockDataService stockDataService;
 
     public Mono<SnsResponseDto> getSnsData(String symbol) {
-        String stockName = STOCK_NAMES.getOrDefault(symbol, "알 수 없는 주식");
+        String stockName = stockDataService.getStockName(symbol);
         
         log.info("SNS 데이터 요청 시작: {} ({})", stockName, symbol);
 

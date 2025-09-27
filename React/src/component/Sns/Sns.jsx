@@ -3,6 +3,7 @@ import './Sns.css';
 import apiService from '../../services/api';
 import { firestore } from '../../services/firebase';
 import { useAuth } from '../../contexts/AuthContext';
+import sentimentReportData from '../../../../data/raws/sentiment_report.json';
 import {
 	collection,
 	query,
@@ -104,16 +105,13 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 		}
 	};
 
-	// 주식 이름 매핑
+	// 주식 이름 매핑 (JSON 데이터 사용)
 	const getStockName = (symbol) => {
-		const stockNames = {
-			'005930': '삼성전자',
-			'000660': 'SK하이닉스',
-			'035420': 'NAVER',
-			'207940': '삼성바이오로직스',
-			'006400': '삼성SDI',
-		};
-		return stockNames[symbol] || '알 수 없는 주식';
+		// JSON 데이터에서 해당 종목코드로 주식명 찾기
+		const stockData = sentimentReportData.find(stock => stock.stockCode === symbol);
+		const stockName = stockData ? stockData.stockName : '알 수 없는 주식';
+		console.log(`🏷️ 주식명 매핑: ${symbol} -> ${stockName}`);
+		return stockName;
 	};
 
 	// 이전 메시지 로드 함수 (무한 스크롤)
