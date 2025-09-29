@@ -42,6 +42,7 @@ export default function Dashboard() {
 		error: realtimeError,
 		lastUpdate: realtimeLastUpdate,
 		lastTradeTime: realtimeLastTradeTime,
+		cacheLastUpdate: realtimeCacheLastUpdate,
 		refreshData: refreshRealtimeData,
 	} = useRealtimeStockData(selectedStock?.stockCode || '005930');
 
@@ -481,19 +482,17 @@ export default function Dashboard() {
 									)}
 									{!isMarketClosed && (
 										<div className={styles['last-updated']}>
-											<i className="fas fa-sync-alt"></i>
+											<i className="fa-solid fa-clock"></i>
 											<span>
-												실시간 데이터 업데이트 중
-												{realtimeLastUpdate && (
-													<span style={{ marginLeft: '8px', fontSize: '0.9em', opacity: 0.8 }}>
-														({realtimeLastUpdate.toLocaleTimeString('ko-KR', {
-															hour: '2-digit',
-															minute: '2-digit',
-															second: '2-digit',
-															hour12: false
-														})})
-													</span>
-												)}
+												마지막 업데이트: {realtimeCacheLastUpdate ? realtimeCacheLastUpdate.toLocaleString('ko-KR', {
+													year: 'numeric',
+													month: '2-digit',
+													day: '2-digit',
+													hour: '2-digit',
+													minute: '2-digit',
+													second: '2-digit',
+													hour12: false
+												}) : '데이터 없음'}
 											</span>
 											{isRefreshing && (
 												<span className={styles['refreshing-indicator']}>
