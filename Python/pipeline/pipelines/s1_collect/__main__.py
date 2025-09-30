@@ -1,4 +1,5 @@
-﻿"""CLI entrypoint for the stage-00 data collection pipeline."""
+# -*- coding: utf-8 -*-
+"""CLI entrypoint for the stage-00 data collection pipeline."""
 
 from __future__ import annotations
 
@@ -370,4 +371,4 @@ def _download_corpcode_lookup(api_key: str) -> dict[str, str]:
         if stock_code and corp_code:
             out[stock_code] = corp_code
     return out
-
+`n

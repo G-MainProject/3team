@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Post-process top_mover_forecast.json to match display requirements.
 
 - Remove *_display keys from fundamentals dict

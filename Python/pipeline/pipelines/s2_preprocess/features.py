@@ -1,4 +1,5 @@
-﻿"""Feature engineering utilities for the silver layer."""
+# -*- coding: utf-8 -*-
+"""Feature engineering utilities for the silver layer."""
 
 from __future__ import annotations
 
@@ -92,8 +93,14 @@ def _build_features(df: pd.DataFrame, windows: Iterable[int]) -> pd.DataFrame:
     if "eps" in df.columns and "bps" in df.columns:
         with np.errstate(divide="ignore", invalid="ignore"):
             df["roe"] = (df["eps"].astype(float) / df["bps"].astype(float)).replace([np.inf, -np.inf], np.nan)
+    # 한국어 주석: 뉴스 지표는 결측을 0으로 강제하지 않고 NaN을 유지한다.
     numeric_cols = df.select_dtypes(include=["number", "bool"]).columns
-    df[numeric_cols] = df[numeric_cols].replace([np.inf, -np.inf], np.nan).fillna(0.0)
+    news_cols = [c for c in numeric_cols if str(c).startswith("news_")]
+    other_cols = [c for c in numeric_cols if c not in news_cols]
+    if other_cols:
+        df[other_cols] = df[other_cols].replace([np.inf, -np.inf], np.nan).fillna(0.0)
+    if news_cols:
+        df[news_cols] = df[news_cols].replace([np.inf, -np.inf], np.nan)
     return df
 
 

@@ -1,9 +1,9 @@
-"""Kiwoom OpenAPI+ REST 래퍼: data/raw에 JSON 응답 저장 및 실시간 조회 유틸.
+# -*- coding: utf-8 -*-
+"""Kiwoom OpenAPI+ REST ?섑띁: data/raws??JSON ?묐떟 ???諛??ㅼ떆媛?議고쉶 ?좏떥.
 
-주의: 이 파일은 환경변수(.env)를 읽어 REST 게이트웨이에 접근합니다.
-필수 .env 키: KIWOOM_BASE, KIWOOM_APPKEY, KIWOOM_SECRETKEY
-선택 .env 키: KIWOOM_API_ID, KIWOOM_TOKEN_API_ID, KIWOOM_RANK_PATH, KIWOOM_RANK_TR_ID 등
-"""
+二쇱쓽: ???뚯씪? ?섍꼍蹂??.env)瑜??쎌뼱 REST 寃뚯씠?몄썾?댁뿉 ?묎렐?⑸땲??
+?꾩닔 .env ?? KIWOOM_BASE, KIWOOM_APPKEY, KIWOOM_SECRETKEY
+?좏깮 .env ?? KIWOOM_API_ID, KIWOOM_TOKEN_API_ID, KIWOOM_RANK_PATH, KIWOOM_RANK_TR_ID ??"""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ DATE_FMT = "%Y-%m-%d"
 
 
 def _find_project_root() -> Path:
-    """환경(.env) 또는 data 폴더가 있는 최상위 프로젝트 루트 탐색."""
+    """?섍꼍(.env) ?먮뒗 data ?대뜑媛 ?덈뒗 理쒖긽???꾨줈?앺듃 猷⑦듃 ?먯깋."""
     current = Path(__file__).resolve()
     for parent in current.parents:
         if (parent / ".env").exists() or (parent / "data").exists():
@@ -87,25 +87,25 @@ def fetch_top_movers(
     pause: float = 0.2,
     direction: str = "both",
 ) -> list[dict[str, Any]]:
-    """실시간(랭킹) 상하위 종목을 Kiwoom REST API(ka10027)로 조회합니다.
+    """?ㅼ떆媛???궧) ?곹븯??醫낅ぉ??Kiwoom REST API(ka10027)濡?議고쉶?⑸땲??
 
-    기본 정렬은 상승률 상위이며(.env로 조정 가능), 서버 스펙에 따라
-    TR ID/경로를 환경변수로 재정의할 수 있습니다.
+    湲곕낯 ?뺣젹? ?곸듅瑜??곸쐞?대ŉ(.env濡?議곗젙 媛??, ?쒕쾭 ?ㅽ럺???곕씪
+    TR ID/寃쎈줈瑜??섍꼍蹂?섎줈 ?ъ젙?섑븷 ???덉뒿?덈떎.
     """
     _load_env_cache()
     base_key = "KIWOOM_MOCK_BASE" if use_mock else "KIWOOM_BASE"
     base_url = os.getenv(base_key)
     if not base_url:
-        raise RuntimeError(f"{base_key} 환경변수가 설정되지 않았습니다.")
+        raise RuntimeError(f"{base_key} ?섍꼍蹂?섍? ?ㅼ젙?섏? ?딆븯?듬땲??")
     base_url = _normalize_base(base_url)
 
     appkey = os.getenv("KIWOOM_APPKEY")
     secret = os.getenv("KIWOOM_SECRETKEY")
     if not appkey or not secret:
-        raise RuntimeError("KIWOOM_APPKEY 또는 KIWOOM_SECRETKEY가 설정되지 않았습니다.")
+        raise RuntimeError("KIWOOM_APPKEY ?먮뒗 KIWOOM_SECRETKEY媛 ?ㅼ젙?섏? ?딆븯?듬땲??")
 
     endpoint = os.getenv("KIWOOM_RANK_PATH", DEFAULT_TOP_MOVERS_ENDPOINT)
-    # 전일대비 등락률 상위 요청 기본 TR ID: ka10027
+    # ?꾩씪?鍮??깅씫瑜??곸쐞 ?붿껌 湲곕낯 TR ID: ka10027
     tr_id = os.getenv("KIWOOM_RANK_TR_ID", "ka10027")
 
     session_obj = session or requests.Session()
@@ -113,10 +113,9 @@ def fetch_top_movers(
     market_map = {"KOSPI": "001", "KOSDAQ": "101", "ALL": "000"}
     market_code = market_map.get(market.upper(), "000")
 
-    # ka10027 스펙 기준 요청 바디(기본값은 .env로 오버라이드 가능)
+    # ka10027 ?ㅽ럺 湲곗? ?붿껌 諛붾뵒(湲곕낯媛믪? .env濡??ㅻ쾭?쇱씠??媛??
     base_body = {
-        "mrkt_tp": market_code,  # 000 전체, 001 코스피, 101 코스닥
-        "sort_tp": os.getenv("KIWOOM_RANK_SORT_TP", "1"),  # 1 상승률, 2 상승폭, 3 하락률, 4 하락폭, 5 보합
+        "mrkt_tp": market_code,  # 000 ?꾩껜, 001 肄붿뒪?? 101 肄붿뒪??        "sort_tp": os.getenv("KIWOOM_RANK_SORT_TP", "1"),  # 1 ?곸듅瑜? 2 ?곸듅?? 3 ?섎씫瑜? 4 ?섎씫?? 5 蹂댄빀
         "trde_qty_cnd": os.getenv("KIWOOM_RANK_TRDE_QTY_CND", "0000"),
         "stk_cnd": os.getenv("KIWOOM_RANK_STK_CND", "0"),
         "crd_cnd": os.getenv("KIWOOM_RANK_CRD_CND", "0"),
@@ -129,14 +128,55 @@ def fetch_top_movers(
     try:
         authorization = _issue_token(session_obj, base_url, appkey, secret)
         body = dict(base_body)
-        data = _post_kiwoom(
-            session_obj,
-            base_url,
-            endpoint,
-            tr_id=tr_id,
-            authorization=authorization,
-            body=body,
-        )
+        # 엔드포인트가 rkinfo 계열이면 키를 camelCase로 변환(서버 스펙 차이 흡수)
+        if isinstance(endpoint, str) and endpoint.rstrip("/").lower().endswith("rkinfo"):
+            def cam(key: str) -> str:
+                parts = key.split("_")
+                return parts[0] + "".join(p.capitalize() for p in parts[1:])
+            # rkinfo 스펙 불확실성 대응: snake_case + camelCase 병행 전송
+            camel_pairs = { cam(k): v for k, v in body.items() }
+            body.update(camel_pairs)
+        # rkinfo 계열은 GET+query로 우선 시도(서버 스펙 차이 흡수), 실패 시 POST
+        if isinstance(endpoint, str) and endpoint.rstrip("/").lower().endswith("rkinfo"):
+            try:
+                headers = {
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "tr_id": tr_id,
+                    "api-id": (os.getenv("KIWOOM_API_ID") or os.getenv("KIWOOM_RANK_API_ID") or tr_id),
+                    "authorization": authorization,
+                }
+                data = _post(session_obj, base_url, endpoint + "?" , headers=headers, body={}, timeout=15)
+                # 위 라인은 placeholder; 바로 아래에서 GET로 다시 시도
+                raise Exception("force-get")
+            except Exception:
+                try:
+                    from urllib.parse import urlencode
+                    url = urljoin(_normalize_base(base_url), endpoint)
+                    resp = session_obj.get(url, headers={
+                        "tr_id": tr_id,
+                        "api-id": (os.getenv("KIWOOM_API_ID") or os.getenv("KIWOOM_RANK_API_ID") or tr_id),
+                        "authorization": authorization,
+                    }, params=body, timeout=15)
+                    resp.raise_for_status()
+                    data = resp.json()
+                except Exception:
+                    data = _post_kiwoom(
+                        session_obj,
+                        base_url,
+                        endpoint,
+                        tr_id=tr_id,
+                        authorization=authorization,
+                        body=body,
+                    )
+        else:
+            data = _post_kiwoom(
+                session_obj,
+                base_url,
+                endpoint,
+                tr_id=tr_id,
+                authorization=authorization,
+                body=body,
+            )
         results = _extract_top_movers(data, max_count=count)
     finally:
         if session is None:
@@ -156,20 +196,20 @@ def fetch_current_prices(
     session: requests.Session | None = None,
     pause: float = 0.2,
 ) -> dict[str, float]:
-    """현재가 스냅샷을 조회(ka10001 기반)하여 {ticker: price} 매핑 반환."""
+    """?꾩옱媛 ?ㅻ깄?룹쓣 議고쉶(ka10001 湲곕컲)?섏뿬 {ticker: price} 留ㅽ븨 諛섑솚."""
     target_date = _normalize_date_input(date)
     _load_env_cache()
 
     base_key = "KIWOOM_BASE"
     base_url = os.getenv(base_key)
     if not base_url:
-        raise RuntimeError(f"{base_key} 환경변수가 설정되지 않았습니다.")
+        raise RuntimeError(f"{base_key} ?섍꼍蹂?섍? ?ㅼ젙?섏? ?딆븯?듬땲??")
     base_url = _normalize_base(base_url)
 
     appkey = os.getenv("KIWOOM_APPKEY")
     secret = os.getenv("KIWOOM_SECRETKEY")
     if not appkey or not secret:
-        raise RuntimeError("KIWOOM_APPKEY 또는 KIWOOM_SECRETKEY 환경 변수를 확인하세요.")
+        raise RuntimeError("KIWOOM_APPKEY ?먮뒗 KIWOOM_SECRETKEY ?섍꼍 蹂?섎? ?뺤씤?섏꽭??")
 
     endpoint = os.getenv("KIWOOM_KA10001_PATH", DEFAULT_DAILY_ENDPOINT)
     tr_id = os.getenv("KIWOOM_DAILY_TR_ID", "ka10001")
@@ -234,23 +274,23 @@ def fetch_quotes(
     pause: float = 0.2,
     session: requests.Session | None = None,
 ) -> MutableMapping[str, list[Path]]:
-    """REST 엔드포인트를 호출하고 data/raw 아래에 JSON을 저장."""
+    """REST ?붾뱶?ъ씤?몃? ?몄텧?섍퀬 data/raws ?꾨옒??JSON?????"""
     start = datetime.strptime(_normalize_date_input(start_date), DATE_FMT)
     end = datetime.strptime(_normalize_date_input(end_date), DATE_FMT)
     if start > end:
-        raise ValueError("start_date가 end_date보다 큽니다.")
+        raise ValueError("start_date媛 end_date蹂대떎 ?쎈땲??")
 
     _load_env_cache()
     base_key = "KIWOOM_BASE"
     base_url = os.getenv(base_key)
     if not base_url:
-        raise RuntimeError(f"{base_key} 환경변수가 설정되지 않았습니다.")
+        raise RuntimeError(f"{base_key} ?섍꼍蹂?섍? ?ㅼ젙?섏? ?딆븯?듬땲??")
     base_url = _normalize_base(base_url)
 
     appkey = os.getenv("KIWOOM_APPKEY")
     secret = os.getenv("KIWOOM_SECRETKEY")
     if not appkey or not secret:
-        raise RuntimeError("KIWOOM_APPKEY 또는 KIWOOM_SECRETKEY가 설정되지 않았습니다.")
+        raise RuntimeError("KIWOOM_APPKEY ?먮뒗 KIWOOM_SECRETKEY媛 ?ㅼ젙?섏? ?딆븯?듬땲??")
 
     raw_root = _resolve_raw_dir(raw_dir) / "kiwoom"
     raw_root.mkdir(parents=True, exist_ok=True)
@@ -288,9 +328,9 @@ def fetch_quotes(
 
 
 def _issue_token(sess: requests.Session, base_url: str, appkey: str, secret: str) -> str:
-    """OAuth2 토큰을 발급받아 Authorization 값을 구성한다."""
+    """OAuth2 ?좏겙??諛쒓툒諛쏆븘 Authorization 媛믪쓣 援ъ꽦?쒕떎."""
     endpoint = "/oauth2/token"
-    # 토큰 호출용 api-id: 기본값은 "au10001"
+    # ?좏겙 ?몄텧??api-id: 湲곕낯媛믪? "au10001"
     token_api_id = (os.getenv("KIWOOM_TOKEN_API_ID") or os.getenv("KIWOOM_API_ID") or "au10001").strip()
     headers = {
         "Content-Type": "application/json;charset=UTF-8",
@@ -303,16 +343,16 @@ def _issue_token(sess: requests.Session, base_url: str, appkey: str, secret: str
     }
     data = _post(sess, base_url, endpoint, headers=headers, body=body)
     if data.get("return_code") not in (0, "0", None):
-        raise RuntimeError(f"토큰 발급 실패: {data}")
+        raise RuntimeError(f"?좏겙 諛쒓툒 ?ㅽ뙣: {data}")
     token = data.get("token") or data.get("access_token") or data.get("accessToken")
     token_type = data.get("token_type") or data.get("tokenType") or "Bearer"
     if not token:
-        raise RuntimeError("토큰이 응답에 없습니다.")
+        raise RuntimeError("?좏겙???묐떟???놁뒿?덈떎.")
     return f"{token_type} {token}"
 
 
 def _extract_top_movers(data: Any, *, max_count: int) -> list[dict[str, Any]]:
-    """Kiwoom 응답 구조에서 공통 필드만 추려 상하위 결과 리스트로 변환."""
+    """Kiwoom ?묐떟 援ъ“?먯꽌 怨듯넻 ?꾨뱶留?異붾젮 ?곹븯??寃곌낵 由ъ뒪?몃줈 蹂??"""
     if data is None:
         return []
     items_to_process: list[Any] = []
@@ -357,9 +397,27 @@ def _post_kiwoom(
     body: Mapping[str, object],
     timeout: int = 15,
 ):
-    """Kiwoom REST POST 호출을 수행하고 응답 코드를 로깅한다."""
-    # 데이터 호출에도 api-id가 필요한 서버 구성이 있어 포함
-    api_id_value = (os.getenv("KIWOOM_API_ID") or tr_id)
+    """Kiwoom REST POST ?몄텧???섑뻾?섍퀬 ?묐떟 肄붾뱶瑜?濡쒓퉭?쒕떎."""
+    # ?곗씠???몄텧?먮룄 api-id媛 ?꾩슂???쒕쾭 援ъ꽦???덉뼱 ?ы븿
+    # api-id 헤더 우선순위: KIWOOM_API_ID -> (tr_id별 전용) -> tr_id
+    api_id_value = os.getenv("KIWOOM_API_ID")
+    # TR/api-id 오타 보정: ka100027 -> ka10027
+    def _norm_tid(x: str | None) -> str | None:
+        try:
+            return "ka10027" if (x or "").strip().lower() == "ka100027" else x
+        except Exception:
+            return x
+    if not api_id_value:
+        t = str(tr_id).lower()
+        if t in ("ka10027", "rank", "ranking"):
+            api_id_value = os.getenv("KIWOOM_RANK_API_ID")
+        elif t in ("ka10001", "daily"):
+            api_id_value = os.getenv("KIWOOM_DAILY_API_ID")
+        elif t in ("ka10082", "week", "weekly", "chart"):
+            api_id_value = os.getenv("KIWOOM_WEEK_CHART_API_ID")
+    api_id_value = _norm_tid(api_id_value)
+    if not api_id_value:
+        api_id_value = tr_id
     headers = {
         "Content-Type": "application/json;charset=UTF-8",
         "tr_id": tr_id,
@@ -374,12 +432,12 @@ def _post_kiwoom(
         response = getattr(exc, "response", None)
         status = response.status_code if response is not None else "unknown"
         snippet = response.text.strip() if response is not None else str(exc)
-        LOGGER.error("Kiwoom %s 요청 실패 (HTTP %s): %s", tr_id, status, snippet[:200])
-        raise RuntimeError(f"Kiwoom API {tr_id} 요청 실패 (HTTP {status}). 응답 요약: {snippet[:200]}") from exc
+        LOGGER.error("Kiwoom %s ?붿껌 ?ㅽ뙣 (HTTP %s): %s", tr_id, status, snippet[:200])
+        raise RuntimeError(f"Kiwoom API {tr_id} ?붿껌 ?ㅽ뙣 (HTTP {status}). ?묐떟 ?붿빟: {snippet[:200]}") from exc
     if isinstance(data, Mapping):
         code = data.get("return_code") or data.get("rt_cd")
         if code not in (None, 0, "0"):
-            LOGGER.warning("Kiwoom %s 응답코드 경고: %s", tr_id, data)
+            LOGGER.warning("Kiwoom %s ?묐떟肄붾뱶 寃쎄퀬: %s", tr_id, data)
     return data
 
 
@@ -392,14 +450,14 @@ def _post(
     body: Mapping[str, object],
     timeout: int = 15,
 ):
-    """단순 POST 호출."""
+    """?⑥닚 POST ?몄텧."""
     url = urljoin(base_url, endpoint)
     response = sess.post(url, headers=headers, json=body, timeout=timeout)
     response.raise_for_status()
     try:
         return response.json()
     except json.JSONDecodeError:
-        LOGGER.error("Kiwoom 응답 JSON 파싱 실패: %s", response.text[:200])
+        LOGGER.error("Kiwoom ?묐떟 JSON ?뚯떛 ?ㅽ뙣: %s", response.text[:200])
         raise
 
 
@@ -411,14 +469,14 @@ def _write_json(path: Path, payload) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as fp:
         json.dump(payload, fp, ensure_ascii=False, indent=2)
-    LOGGER.info("Kiwoom 응답 저장: %s", path)
+    LOGGER.info("Kiwoom ?묐떟 ??? %s", path)
 
 
 _ENV_LOADED = False
 
 
 def _load_env_cache() -> None:
-    """.env를 한 번만 읽어 os.environ에 주입."""
+    """.env瑜???踰덈쭔 ?쎌뼱 os.environ??二쇱엯."""
     global _ENV_LOADED
     if _ENV_LOADED:
         return
@@ -439,7 +497,7 @@ def _load_env_cache() -> None:
 def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
     if raw_dir is None:
         project_root = _find_project_root()
-        raw_dir = project_root / "data" / "raw"
+        raw_dir = project_root / "data" / "raws"
     path = Path(raw_dir)
     path.mkdir(parents=True, exist_ok=True)
     return path
@@ -448,5 +506,5 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
 def _normalize_base(url: str) -> str:
     url = url.strip()
     if not url.lower().startswith(("http://", "https://")):
-        raise RuntimeError(f"Kiwoom BASE URL 형식 오류: {url}")
+        raise RuntimeError(f"Kiwoom BASE URL ?뺤떇 ?ㅻ쪟: {url}")
     return url.rstrip("/")

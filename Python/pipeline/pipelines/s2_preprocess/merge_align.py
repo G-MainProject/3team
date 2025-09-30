@@ -1,4 +1,5 @@
-﻿"""Utilities for merging raw inputs into bronze-level daily datasets."""
+# -*- coding: utf-8 -*-
+"""Utilities for merging raw inputs into bronze-level daily datasets."""
 
 from __future__ import annotations
 
@@ -100,6 +101,11 @@ def _build_single_bronze(ticker: str, config: MergeConfig) -> Path:
     if fundamental_df is not None and not fundamental_df.empty:
         frames.append(fundamental_df)
     if news_df is not None and not news_df.empty:
+        # 한국어 주석: 뉴스 날짜를 최근 거래일(가격 인덱스 기준)로 스냅하여 정렬/집계
+        try:
+            news_df = _align_news_to_trading_days(news_df, price_df.index)
+        except Exception:
+            pass
         frames.append(news_df)
 
     merged = frames[0]
@@ -196,6 +202,19 @@ def _load_pykrx_price(directory: Path) -> pd.DataFrame:
         extra = _read_json_table(extra_path)
         df = df.merge(extra, on="date", how="left")
 
+    # 한국어 주석: 병합 과정에서 volume 컬럼이 사라지거나 분리되는 경우를 보정한다.
+    if "volume" not in df.columns:
+        candidates = [c for c in ("volume", "volume_x", "volume_y", "거래량") if c in df.columns]
+        if candidates:
+            vol_series = None
+            for c in candidates:
+                s = pd.to_numeric(df[c], errors="coerce")
+                vol_series = s if vol_series is None else vol_series.fillna(s)
+            df["volume"] = vol_series
+    for c in ("volume_x", "volume_y"):
+        if c in df.columns:
+            df.drop(columns=[c], inplace=True)
+
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df = df.dropna(subset=["date"])
     df.set_index("date", inplace=True)
@@ -251,9 +270,9 @@ def _load_fundamentals(ticker: str, config: MergeConfig) -> Optional[pd.DataFram
 
     files = list(root.glob("*/fnlttMultiAcnt_*.json"))
     if not files:
-        # 보조 경로: <project>/Python/data/raw/dart 에 저장된 경우 대응
+        # 보조 경로: <project>/Python/data/raws/dart 에 저장된 경우 대응
         try:
-            alt_root = _find_project_root() / "Python" / "data" / "raw" / "dart"
+            alt_root = _find_project_root() / "Python" / "data" / "raws" / "dart"
             if alt_root.exists():
                 files = list(alt_root.glob("*/fnlttMultiAcnt_*.json"))
         except Exception:
@@ -470,7 +489,7 @@ def _load_fundamentals2(ticker: str, config: MergeConfig) -> Optional[pd.DataFra
     root = config.fundamentals_dir or config.raw_root / "dart"
     roots = [root]
     try:
-        alt = _find_project_root() / "Python" / "data" / "raw" / "dart"
+        alt = _find_project_root() / "Python" / "data" / "raws" / "dart"
         if alt.exists():
             roots.append(alt)
     except Exception:
@@ -705,8 +724,21 @@ def _load_news_features(ticker: str, config: MergeConfig) -> Optional[pd.DataFra
             selected: list[dict] = []
             for item in (rows or []):
                 try:
-                    code = str(item.get("stockCode") or item.get("ticker") or item.get("code") or "").zfill(6)
-                    if code != ticker:
+                    # 티커 정규화: 우선주/접미 문자 포함(예: 45014K) → 숫자만 추출 후 보통주 코드(끝자리 0)로 변환
+                    raw_code = str(item.get("stockCode") or item.get("ticker") or item.get("code") or "").strip()
+                    digits = "".join(ch for ch in raw_code if ch.isdigit())
+                    if not digits:
+                        continue
+                    news_base = (digits + '0') if (raw_code and not raw_code[-1].isdigit()) else digits
+                    news_base = news_base.zfill(6)
+                    def _base(code: str) -> str:
+                        ds = "".join(ch for ch in str(code) if ch.isdigit())
+                        if not ds:
+                            return str(code).zfill(6)
+                        d6 = ds.zfill(6)
+                        return d6[:-1] + '0'
+                    acceptable = {str(ticker).zfill(6), _base(str(ticker))}
+                    if news_base not in acceptable:
                         continue
                     raw_date = str(item.get("analysisDate") or item.get("date") or "").split(" ")[0]
                     dt = pd.to_datetime(raw_date, errors="coerce")
@@ -714,33 +746,39 @@ def _load_news_features(ticker: str, config: MergeConfig) -> Optional[pd.DataFra
                         continue
                     dt = dt.normalize()
                     sa = item.get("sentimentAnalysis") or {}
-                    avg = sa.get("averageScore")
-                    dist = sa.get("sentimentDistribution") or {}
-                    pos = dist.get("positive")
-                    neu = dist.get("neutral")
-                    neg = dist.get("negative")
+                    score = sa.get("averageScore")
                     try:
-                        total = float((pos or 0) + (neu or 0) + (neg or 0))
+                        score_f = float(score)
+                        # 평균 점수를 -1~1로 정규화(클램프)  # 한글 주석
+                        score_f = max(-1.0, min(1.0, score_f))
                     except Exception:
-                        total = None
+                        score_f = None
+                    # 기준: score >= 0.25 → 긍정, <= -0.25 → 부정, 그 사이 중립
+                    pos_f = neu_f = neg_f = 0.0
+                    if score_f is not None:
+                        if score_f >= 0.25:
+                            pos_f = 1.0
+                        elif score_f <= -0.25:
+                            neg_f = 1.0
+                        else:
+                            neu_f = 1.0
                     selected.append({
                         "date": dt,
-                        "news_sentiment_mean": avg,
-                        "news_count": total,
-                        "news_pos": pos,
-                        "news_neu": neu,
-                        "news_neg": neg,
+                        "score": score_f,
+                        "pos_flag": pos_f,
+                        "neu_flag": neu_f,
+                        "neg_flag": neg_f,
                     })
                 except Exception:
                     continue
             if selected:
                 sdf = pd.DataFrame(selected).dropna(subset=["date"]) 
                 grouped = sdf.groupby("date").agg(
-                    news_sentiment_mean=("news_sentiment_mean", "mean"),
-                    news_count=("news_count", "sum"),
-                    news_pos=("news_pos", "sum"),
-                    news_neu=("news_neu", "sum"),
-                    news_neg=("news_neg", "sum"),
+                    news_sentiment_mean=("score", "mean"),
+                    news_count=("score", "count"),
+                    news_pos=("pos_flag", "sum"),
+                    news_neu=("neu_flag", "sum"),
+                    news_neg=("neg_flag", "sum"),
                 )
                 frames.append(grouped)
     except Exception:
@@ -786,6 +824,61 @@ def _fill_calendar_and_missing(df: pd.DataFrame) -> pd.DataFrame:
         df["tr_value"] = df["tr_value"].fillna(0)
     df["is_trading_day"] = df["is_trading_day"].fillna(False)
     return df
+
+
+def _align_news_to_trading_days(news_df: pd.DataFrame, trading_index: pd.Index) -> pd.DataFrame:
+    """뉴스 일자를 가장 가까운 과거 거래일로 스냅하고 같은 날 데이터는 집계한다.
+
+    - 입력: news_df(index=date), columns: news_sentiment_mean/news_count/news_pos/news_neu/news_neg 등
+    - 출력: 거래일 인덱스로 정렬된 DataFrame(동일 컬럼), 집계는 mean/sum 규칙을 유지
+    """
+    if news_df is None or news_df.empty:
+        return news_df
+    df = news_df.copy()
+    # 인덱스를 datetime으로 보정
+    if "date" in df.columns:
+        try:
+            df["date"] = pd.to_datetime(df["date"]).dt.normalize()
+            df.set_index("date", inplace=True)
+        except Exception:
+            pass
+    idx = pd.to_datetime(df.index).astype("datetime64[ns]").values
+    trading = pd.to_datetime(pd.Index(trading_index)).astype("datetime64[ns]")
+    trading = trading.sort_values().unique()
+    if trading.size == 0:
+        return df
+    # 각 뉴스 날짜에 대해 trading_date <= news_date 중 최댓값을 선택
+    import numpy as _np
+    pos = trading.searchsorted(idx, side="right") - 1
+    # 유효하지 않은(상장 전 등) 케이스 제거
+    valid = pos >= 0
+    if not valid.any():
+        return df.iloc[0:0]
+    aligned_dates = trading[pos]
+    sfr = df.copy()
+    sfr = sfr.iloc[valid, :].copy()
+    sfr["_aligned_date"] = aligned_dates[valid]
+    # 집계 규칙: sentiment_mean은 평균, count/분포는 합계
+    agg: dict[str, str] = {}
+    if "news_sentiment_mean" in sfr.columns:
+        agg["news_sentiment_mean"] = "mean"
+    for c in ("news_count", "news_pos", "news_neu", "news_neg"):
+        if c in sfr.columns:
+            agg[c] = "sum"
+    grouped = sfr.groupby("_aligned_date").agg(agg) if agg else sfr
+    grouped.index.name = None
+    grouped.index = pd.to_datetime(grouped.index)
+
+    # 거래일 인덱스로 재인덱싱하고 news_* 결측은 0으로 채움(집계 부재를 0으로 간주)
+    try:
+        ti = pd.to_datetime(pd.Index(trading_index))
+        out = grouped.reindex(ti)
+    except Exception:
+        out = grouped
+    for col in list(out.columns):
+        if str(col).startswith("news_"):
+            out[col] = out[col].fillna(0.0)
+    return out.sort_index()
 
 
 def _reprt_to_date(year_series: pd.Series, code_series: pd.Series) -> pd.Series:
@@ -858,7 +951,8 @@ def _slugify(name: str) -> str:
 def _resolve_raw_root(raw_root: str | Path | None) -> Path:
     if raw_root is not None:
         return Path(raw_root)
-    return _find_project_root() / "data" / "raw"
+    # 기본 raw 루트를 data/raws로 변경
+    return _find_project_root() / "data" / "raws"
 
 
 def _resolve_bronze_root(bronze_root: str | Path | None) -> Path:
@@ -905,3 +999,7 @@ def _write_table(df: pd.DataFrame, path: Path) -> Path:
         df.to_pickle(fallback)
         LOGGER.warning('pyarrow/fastparquet 미설치로 pickle로 저장합니다: %s', fallback)
         return fallback
+
+
+
+

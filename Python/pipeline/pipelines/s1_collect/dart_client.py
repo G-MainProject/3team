@@ -1,4 +1,5 @@
-﻿"""Pull financial statement data from DART Open API and store under data/raw."""
+# -*- coding: utf-8 -*-
+"""Pull financial statement data from DART Open API and store under data/raws."""
 
 from __future__ import annotations
 
@@ -165,6 +166,38 @@ def fetch_filings(
                 has_any_rows = any(rec.get("rows") for rec in multi_records)
             except Exception:
                 has_any_rows = False
+            # 한국어 주석: CFS로 비어있으면 OFS(개별)로 동일 연도 재시도
+            if not has_any_rows:
+                try:
+                    alt_records: list[dict] = []
+                    for reprt_code in reprt_codes:
+                        payload = {
+                            "crtfc_key": api_key,
+                            "corp_code": corp_code,
+                            "bsns_year": str(year),
+                            "reprt_code": reprt_code,
+                            "fs_div": "OFS",
+                        }
+                        data = _request_json(sess, "fnlttMultiAcnt.json", params=payload)
+                        if data.get("status") == "000":
+                            alt_records.append(
+                                {
+                                    "corp_code": corp_code,
+                                    "reprt_code": reprt_code,
+                                    "fs_div": "OFS",
+                                    "year": year,
+                                    "rows": data.get("list", []),
+                                }
+                            )
+                        time.sleep(max(pause, 0))
+                    if any(rec.get("rows") for rec in alt_records):
+                        multi_records = alt_records
+                        multi_path = corp_dir / f"fnlttMultiAcnt_{year}.json"
+                        _write_json(multi_path, multi_records)
+                        saved.setdefault(corp_code, []).append(multi_path)
+                        has_any_rows = True
+                except Exception:
+                    pass
             if not has_any_rows:
                 try:
                     prev_year = int(year) - 1
@@ -286,7 +319,8 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
 
     if raw_dir is None:
         project_root = _find_project_root()
-        raw_dir = project_root / "data" / "raw"
+        raw_dir = project_root / "data" / "raws"
     path = Path(raw_dir)
     path.mkdir(parents=True, exist_ok=True)
     return path
+

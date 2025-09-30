@@ -1,4 +1,5 @@
-﻿"""뉴스 임베딩을 요약하는 간단한 텍스트 브랜치."""
+# -*- coding: utf-8 -*-
+"""뉴스 임베딩을 요약하는 간단한 텍스트 브랜치."""
 
 from __future__ import annotations
 

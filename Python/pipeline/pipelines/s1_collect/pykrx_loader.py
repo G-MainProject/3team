@@ -1,4 +1,5 @@
-﻿"""pykrx 수집 유틸리티: 원시(raw) 영역에 JSON 파일로 저장"""
+# -*- coding: utf-8 -*-
+"""pykrx 수집 유틸리티: 원시(raw) 영역에 JSON 파일로 저장"""
 
 from __future__ import annotations
 
@@ -129,7 +130,7 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
     """raw 데이터 루트를 해석하고 디렉터리를 생성한다."""
     if raw_dir is None:
         project_root = _find_project_root()
-        raw_dir = project_root / "data" / "raw"
+        raw_dir = project_root / "data" / "raws"
     path = Path(raw_dir)
     path.mkdir(parents=True, exist_ok=True)
     return path

@@ -1,4 +1,5 @@
-﻿"""Placeholder for threshold tuning utilities."""
+# -*- coding: utf-8 -*-
+"""Placeholder for threshold tuning utilities."""
 
 
 def tune_threshold(*, probabilities, labels) -> float:

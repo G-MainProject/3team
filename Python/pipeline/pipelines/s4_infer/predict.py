@@ -1,4 +1,5 @@
-﻿"""시계열 모델 추론 스크립트 (다중 기간 수익률 -> 예상 주가)."""
+# -*- coding: utf-8 -*-
+"""시계열 모델 추론 스크립트 (다중 기간 수익률 -> 예상 주가)."""
 
 from __future__ import annotations
 
@@ -65,7 +66,11 @@ def main(args: Optional[list[str]] = None) -> int:
     with torch.no_grad():
         price_tensor = torch.tensor(price_data, dtype=torch.float32, device=device)
         text_tensor = torch.tensor(text_data, dtype=torch.float32, device=device) if text_data is not None else None
-        preds = model(price_tensor, text_tensor).cpu().numpy()
+        try:
+            base_scalar = price_tensor[:, -1, opts.close_index].unsqueeze(-1)
+            preds = model(price_tensor, text_tensor, base_scalar).cpu().numpy()
+        except TypeError:
+            preds = model(price_tensor, text_tensor).cpu().numpy()
 
     # preds: returns (N, len(horizons))
     close_values = _resolve_close_values(price_data, opts.close_values, opts.close_index)

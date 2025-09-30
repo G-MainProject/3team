@@ -1,4 +1,5 @@
-﻿"""Evaluate multi-horizon predictions against actual prices."""
+# -*- coding: utf-8 -*-
+"""Evaluate multi-horizon predictions against actual prices."""
 
 from __future__ import annotations
 

@@ -1,4 +1,5 @@
-﻿"""Dataset construction utilities for the gold layer."""
+# -*- coding: utf-8 -*-
+"""Dataset construction utilities for the gold layer."""
 
 from __future__ import annotations
 

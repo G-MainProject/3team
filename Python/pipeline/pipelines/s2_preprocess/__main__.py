@@ -1,4 +1,5 @@
-﻿"""CLI entrypoint for stage-02 preprocessing (bronze -> silver -> gold)."""
+# -*- coding: utf-8 -*-
+"""CLI entrypoint for stage-02 preprocessing (bronze -> silver -> gold)."""
 
 from __future__ import annotations
 

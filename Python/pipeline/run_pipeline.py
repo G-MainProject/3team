@@ -1,4 +1,5 @@
-﻿"""CLI to execute the entire data-to-inference pipeline."""
+# -*- coding: utf-8 -*-
+"""CLI to execute the entire data-to-inference pipeline."""
 
 from __future__ import annotations
 
@@ -15,7 +16,7 @@ import csv
 import numpy as np
 from time import perf_counter  # 단계별 소요시간 측정용  # 한글 주석
 
-COLLECT_MODULE = "Python.pipeline.pipelines.s1_collect"
+COLLECT_MODULE = "Python.pipeline.pipelines.s1_collect.cli"
 PREPROCESS_MODULE = "Python.pipeline.pipelines.s2_preprocess"
 MODEL_MODULE = "Python.pipeline.pipelines.s3_model"
 INFER_MODULE = "Python.pipeline.pipelines.s4_infer.predict"
@@ -40,7 +41,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # 자동 티커 탐색
     if args.auto_tickers:
-        discovery_output = args.auto_output or (project_root / "data" / "raw" / "top_movers_auto.json")
+        # raw -> raws 경로 변경: 자동 발견 결과를 data/raws에 저장
+        discovery_output = args.auto_output or (project_root / "data" / "raws" / "top_movers_auto.json")
         discover_cmd = [
             "python",
             "-m",
@@ -94,7 +96,21 @@ def main(argv: list[str] | None = None) -> int:
         except Exception:
             corp_codes = []
         if "--with-dart" in s1_cmd:
-            if corp_codes:
+            # 한국어 주석: CSV 매핑이 모든 티커(보통주 기준) 커버 시에만 --corp-codes를 전달
+            # 일부만 커버하면 s1 단계에서 자동 매핑으로 보강할 수 있게 인자를 생략
+            try:
+                def _base(code: str) -> str:
+                    raw = str(code or "").strip()
+                    digits = "".join(ch for ch in raw if ch.isdigit())
+                    if not digits:
+                        return raw.zfill(6)
+                    d = digits.zfill(6)
+                    return d[:-1] + '0'
+                base_tickers = sorted({ _base(t) for t in tickers })
+                pass_corp = bool(corp_codes) and (len(set(corp_codes)) >= len(base_tickers))
+            except Exception:
+                pass_corp = bool(corp_codes)
+            if pass_corp:
                 s1_cmd += ["--corp-codes", *corp_codes]
             s1_cmd += [
                 "--single-accounts",
@@ -107,6 +123,43 @@ def main(argv: list[str] | None = None) -> int:
                 "재고자산",
             ]
             # corp_codes가 없으면 s1 내부의 자동 매핑(API/CSV)을 사용하도록 그대로 둔다
+        # 한글 단일 계정명 정상화: 모지바케로 깨졌을 가능성이 있어 강제 교정
+        try:
+            if "--single-accounts" in s1_cmd:
+                _idx = s1_cmd.index("--single-accounts")
+                # 7개 항목으로 고정 교체
+                s1_cmd[_idx+1:_idx+8] = [
+                    "자기자본",
+                    "자산총계",
+                    "부채총계",
+                    "자본총계",
+                    "유동자산",
+                    "유동부채",
+                    "재고자산",
+                ]
+        except Exception:
+            pass
+
+        # Kiwoom 수집 옵션 전달: .env에 KIWOOM_BASE가 있으면 자동 활성화(명시 플래그 우선)
+        try:
+            auto_kiwoom = bool(os.getenv("KIWOOM_BASE") or os.getenv("KIWOOM_MOCK_BASE"))
+        except Exception:
+            auto_kiwoom = False
+        if getattr(args, "with_kiwoom", False) or auto_kiwoom:
+            s1_cmd.append("--with-kiwoom")
+            if getattr(args, "include_kiwoom_financials", False):
+                s1_cmd.append("--include-kiwoom-financials")
+            if getattr(args, "include_kiwoom_ratios", False):
+                s1_cmd.append("--include-kiwoom-ratios")
+            if getattr(args, "kiwoom_use_mock", False) or os.getenv("KIWOOM_MOCK_BASE"):
+                s1_cmd.append("--kiwoom-use-mock")
+            if getattr(args, "include_intraday", False):
+                s1_cmd += [
+                    "--include-intraday",
+                    "--intraday-freq", str(getattr(args, "intraday_freq", "1m")),
+                    "--intraday-count", str(getattr(args, "intraday_count", 390)),
+                ]
+
         stage_times["s1_collect"] = _run_stage("s1_collect", s1_cmd, env)
 
     # Stage 2: 전처리
@@ -146,6 +199,13 @@ def main(argv: list[str] | None = None) -> int:
     s5_output = Path(args.s5_output)
     # Stage 4: 추론
     if not args.skip_s4:
+        # 한국어 주석: gold/test/close.npy가 있고 --close-values를 지정하지 않았다면 자동으로 적용
+        try:
+            auto_close = project_root / "data" / "gold" / "test" / "close.npy"
+            if getattr(args, "close_values", None) is None and auto_close.exists():
+                args.close_values = auto_close
+        except Exception:
+            pass
         infer_cmd = [
             "python",
             "-m",
@@ -177,6 +237,13 @@ def main(argv: list[str] | None = None) -> int:
             raise FileNotFoundError(f"평가에 사용할 실제 수익률 파일을 찾을 수 없습니다: {actual_returns_path}")
         if not predictions_path.exists():
             raise FileNotFoundError(f"s4_infer 결과 파일이 존재하지 않습니다: {predictions_path}")
+        # 한국어 주석: s5 단계에서도 close.npy 자동 적용 시도 (미지정인 경우)
+        try:
+            auto_close = project_root / "data" / "gold" / "test" / "close.npy"
+            if getattr(args, "close_values", None) is None and auto_close.exists():
+                args.close_values = auto_close
+        except Exception:
+            pass
         if args.close_values:
             close_values = np.load(args.close_values)
         else:
@@ -227,6 +294,9 @@ def main(argv: list[str] | None = None) -> int:
             ]
             if args.s5_horizons:
                 s5_cmd += ["--horizons", *map(str, args.s5_horizons)]
+        # 한국어 주석: 리포트 단계에도 base close 전달(있을 경우)
+        if args.close_values:
+            s5_cmd += ["--close-values", str(args.close_values)]
         stage_times["s5_evaluate"] = _run_stage("s5_evaluate", s5_cmd, env)
 
     # Final one-shot time summary
@@ -285,6 +355,14 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--s5-actual-returns", type=Path, help="s5 평가에 사용할 실제 수익률 numpy 파일 경로 (기본: infer-input 경로의 y.npy)")
     parser.add_argument("--s5-output", type=Path, default=Path("outputs/eval.json"), help="s5 평가 보고서 출력 경로")
     parser.add_argument("--s5-horizons", nargs="*", type=int, help="s5 평가 시 사용할 예측 지평 목록")
+    # Kiwoom 수집 옵션 (s1 전달)
+    parser.add_argument("--with-kiwoom", action="store_true", help="s1에서 Kiwoom REST 수집 활성화")
+    parser.add_argument("--include-kiwoom-financials", action="store_true", help="Kiwoom 재무 데이터 포함")
+    parser.add_argument("--include-kiwoom-ratios", action="store_true", help="Kiwoom 비율 데이터 포함")
+    parser.add_argument("--kiwoom-use-mock", action="store_true", help="Kiwoom 모의 서버 사용(.env 필요)")
+    parser.add_argument("--include-intraday", action="store_true", help="Kiwoom 분봉 포함")
+    parser.add_argument("--intraday-freq", default="1m", help="Kiwoom 분봉 주기")
+    parser.add_argument("--intraday-count", type=int, default=390, help="Kiwoom 분봉 개수")
     return parser
 
 
@@ -356,8 +434,6 @@ def _load_corp_codes_from_csv(project_root: Path, tickers: list[str]) -> list[st
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-
 
 
 

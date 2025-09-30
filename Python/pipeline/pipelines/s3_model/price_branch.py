@@ -1,4 +1,5 @@
-﻿"""가격 시계열용 CNN+BiLSTM 기반 브랜치 모듈."""
+# -*- coding: utf-8 -*-
+"""가격 시계열용 CNN+BiLSTM 기반 브랜치 모듈."""
 
 from __future__ import annotations
 

@@ -1,0 +1,80 @@
+    """?œêµ­??ì£¼ì„: pykrx ?˜ì§‘ ?ë³¸ JSON?ì„œ ?´ë‹¹ ? ì§œ???€?”ë©˜?¸ì„ ë¡œë“œ.
+
+    - ?Œì¼ ?¨í„´: data/raws/pykrx/<ticker>/fundamental_*.json (?¨ì¼ ?ëŠ” ?¬ëŸ¬ ë²”ìœ„)
+    - ?¤ì–‘??JSON êµ¬ì¡°(ë¦¬ìŠ¤???•ì…”?ˆë¦¬) ?€ë¹? records ?„ë³´ë¥?ìµœë????Œì‹±
+    - date_strê°€ ì£¼ì–´ì§€ë©??´ë‹¹ ? ì§œ ?ëŠ” ?´ì „ ? ì§œ ì¤?ê°€??ìµœê·¼??? íƒ
+    - ë°˜í™˜ ?¤ëŠ” pykrx ëª…ëª…(PER, PBR, EPS, BPS, DIV ??
+    """
+    try:
+        tdir = pykrx_root / str(ticker)
+        if not tdir.exists():
+            return {}
+        files = sorted([p for p in tdir.glob("fundamental_*.json") if p.is_file()])
+        if not files:
+            return {}
+        import json as _json
+        import pandas as _pd
+        frames: list[Any] = []
+        for fp in files:
+            try:
+                data = _json.loads(fp.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            recs: list[dict] = []
+            if isinstance(data, list):
+                for it in data:
+                    if isinstance(it, dict):
+                        recs.append(it)
+            elif isinstance(data, dict):
+                # ?”í•œ ???„ë³´?¤ì—??ë¦¬ìŠ¤??ì¶”ì¶œ
+                for key in ("data", "records", "items", "rows", "frame"):
+                    val = data.get(key)
+                    if isinstance(val, list):
+                        for it in val:
+                            if isinstance(it, dict):
+                                recs.append(it)
+                        break
+            if recs:
+                try:
+                    df = _pd.DataFrame(recs)
+                    # ? ì§œ ì»¬ëŸ¼ ?„ë³´ ?•ê·œ??                    for c in ("date", "DATE", "? ì§œ", "ê¸°ì??¼ì"):
+                        if c in df.columns:
+                            df[c] = _pd.to_datetime(df[c]).dt.normalize()
+                            df = df.rename(columns={c: "date"})
+                            break
+                    if "date" not in df.columns:
+                        # ?¸ë±?¤ê? ? ì§œ???˜ë„ ?ˆìŒ
+                        try:
+                            df.index = _pd.to_datetime(df.index).normalize()
+                            df = df.reset_index().rename(columns={"index": "date"})
+                        except Exception:
+                            pass
+                    frames.append(df)
+                except Exception:
+                    continue
+        if not frames:
+            return {}
+        df_all = _pd.concat(frames, ignore_index=True)
+        if df_all.empty:
+            return {}
+        if "date" in df_all.columns and date_str:
+            try:
+                target = _pd.to_datetime(str(date_str)).normalize()
+                sel = df_all.loc[df_all["date"] == target]
+                if sel.empty:
+                    sel = df_all.loc[df_all["date"] <= target].sort_values("date").tail(1)
+                row = sel.tail(1).to_dict(orient="records")[0] if not sel.empty else {}
+            except Exception:
+                row = df_all.tail(1).to_dict(orient="records")[0]
+        else:
+            row = df_all.tail(1).to_dict(orient="records")[0]
+        # ?µì‹¬ ?¤ë§Œ ì¶”ë ¤ ë°˜í™˜
+        out: dict[str, Any] = {}
+        for k in ("PER", "PBR", "EPS", "BPS", "DIV"):
+            if k in row:
+                out[k] = row.get(k)
+            elif k.lower() in row:
+                out[k] = row.get(k.lower())
+        return out
+    except Exception:
+        return {}
