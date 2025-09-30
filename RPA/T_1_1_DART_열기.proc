@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 14:25:03" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:46:58" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:43:43" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -31,7 +31,7 @@
       <Properties id="ff5ae468-424c-4c6e-ab92-b99fe4e3ff1a" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_TypeOfBrowser" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Chrome" valuelist="Chrome;Edge" />
         <Property type="Chrome" key="CHROME_BrowserType" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Chrome" key="CHROME_URL" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/'" />
@@ -46,13 +46,13 @@
         <Property type="Chrome" key="CHROME_UserLaunchOptions" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_2);]]></Script>
+      <Script><![CDATA[Global.chrome_id = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_2);]]></Script>
     </Step>
-    <Step id="S1711380676d348a2bb09d3f853b76870" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetText" dpName="ChromeSetText" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S1711380676d348a2bb09d3f853b76870" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetText" dpName="ChromeSetText" dpValue="Global.chrome_id" dpValue2="전자공시시스템 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="a8fdb703-cab4-4220-96cf-10a04f4ea2d0" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -115,11 +115,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_3);]]></Script>
     </Step>
-    <Step id="Sb7db830aa10142cfb468cc7899efb5be" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sb7db830aa10142cfb468cc7899efb5be" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="22642a1d-2725-4bab-acb0-2944c1cec167" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -196,7 +196,7 @@
 
         //------------------------------------------------
         STEP('S60ec0b35527e44e59dffa44123cdff7f', '[2] ChromeOpen');
-        RESULT = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_2);
+        Global.chrome_id = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_2);
 
         //------------------------------------------------
         STEP('S1711380676d348a2bb09d3f853b76870', '[3] ChromeSetText');
@@ -219,7 +219,7 @@
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="S920216c8539e4c8b9c0566dcffbe3ff4" group_name="b7cc2a54-ef8e-484c-b7ca-9a564197d1db_Untitled" folded="False" color="" />
+      <StepNode step_id="S920216c8539e4c8b9c0566dcffbe3ff4" group_name="b121dae9-9536-48e6-ac8b-2f545512a67a_저장할 폴더 생성" folded="False" color="" />
       <StepNode step_id="S60ec0b35527e44e59dffa44123cdff7f" group_name="8e388841-b07b-4612-b8a5-4bc4b93abeea_DART 열기" folded="False" color="" />
       <StepNode step_id="S1711380676d348a2bb09d3f853b76870" group_name="f8c3c2ab-a27a-4122-a28e-fe9dc9f1adaa_검색" folded="False" color="" />
       <StepNode step_id="Sb7db830aa10142cfb468cc7899efb5be" group_name="f8c3c2ab-a27a-4122-a28e-fe9dc9f1adaa_검색" folded="False" color="" />

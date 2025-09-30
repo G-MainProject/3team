@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 11:49:43" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:47:13" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:43:45" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -171,12 +171,12 @@
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="S0a9684281a1842b6a8bc9daf0b74c321" group_name="88b44d78-b1c8-4fde-9b2f-b16bee3be5ff_Untitled" folded="False" color="" />
+      <StepNode step_id="S0a9684281a1842b6a8bc9daf0b74c321" group_name="76bedf48-eab8-4ba4-b063-71a45d31f2d7_첨부파일 목록 가져오기" folded="False" color="" />
       <StepNode step_id="Sf54918377e094bb690ec16c7cebf26ae" group_name="" folded="False" color="" />
       <StepNode step_id="S181dd12f8fc4471986da46326493db31" group_name="2eda8228-0a31-4fdc-8efb-928e7a1ea3c9_pdf 병합" folded="False" color="" />
       <StepNode step_id="S8a204a4392c84a18a1ff14a03dd4be03" group_name="5eb94586-905c-4661-82a5-56a11753649c_이미지 추출" folded="False" color="" />
       <StepNode step_id="Sb24f97ea049246e6b8e223ded06155cd" group_name="" folded="False" color="" />
-      <StepNode step_id="S20a8dc562f8e4986954bd32517280352" group_name="e4dfd0ea-c55c-4c7f-9ef9-0682a0cb273a_Untitled" folded="False" color="" />
+      <StepNode step_id="S20a8dc562f8e4986954bd32517280352" group_name="9b8e352d-10d8-415e-9e88-7c684dbc4c61_추출 이미지 저장" folded="False" color="" />
       <StepNode step_id="S275f5918ecae47e9804feee283d382ec" group_name="" folded="False" color="" />
       <StepNode step_id="S365720df73104d74a841894287b30545" group_name="" folded="False" color="" />
     </StepNodes>

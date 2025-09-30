@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 09:07:50" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 12:45:02" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:43:42" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -55,10 +55,11 @@
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="실행시간" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.start_time = new Date();&#xD;&#xA;" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.start_time = new Date()&#xD;&#xA;&#xD;&#xA;" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.start_time = new Date();
+      <Script><![CDATA[this.start_time = new Date()
+
 ]]></Script>
     </Step>
     <Step id="S6996fff62fa142318695727acc2541bf" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="this.search_use" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
@@ -147,14 +148,14 @@
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="실행시간" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.end_time= new Date();&#xD;&#xA;&#xD;&#xA;this.start_time.setHours(this.start_time.getHours() + 1);     //재실행시간&#xD;&#xA;&#xD;&#xA;this.sec = Math.floor((this.start_time - this.end_time) / 1000); &#xD;&#xA;" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.end_time= new Date()&#xD;&#xA;&#xD;&#xA;this.start_time.setHours(this.start_time.getHours() + 1)     //재실행시간&#xD;&#xA;&#xD;&#xA;this.sec = Math.floor((this.start_time - this.end_time) / 1000)&#xD;&#xA;" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.end_time= new Date();
+      <Script><![CDATA[this.end_time= new Date()
 
-this.start_time.setHours(this.start_time.getHours() + 1);     //재실행시간
+this.start_time.setHours(this.start_time.getHours() + 1)     //재실행시간
 
-this.sec = Math.floor((this.start_time - this.end_time) / 1000); 
+this.sec = Math.floor((this.start_time - this.end_time) / 1000)
 ]]></Script>
     </Step>
     <Step id="S7f6fe37c401c4965b4cfdc5731a180f9" ver="311241220" createVer="311241220" type="Flow" name="Delay" dpName="Delay" dpValue="this.sec sec &amp; 0 msec" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
@@ -203,7 +204,8 @@ this.sec = Math.floor((this.start_time - this.end_time) / 1000);
 
             //------------------------------------------------
             STEP('S74c4b65b184b48ae8d9d5dc5f714a883', '[3] ExecuteScript');
-            this.start_time = new Date();
+            this.start_time = new Date()
+
 
 
             //------------------------------------------------
@@ -240,11 +242,11 @@ this.sec = Math.floor((this.start_time - this.end_time) / 1000);
 
             //------------------------------------------------
             STEP('S154e6af06c33468b82c80f834f1307bf', '[12] ExecuteScript');
-            this.end_time= new Date();
+            this.end_time= new Date()
 
-            this.start_time.setHours(this.start_time.getHours() + 1);     //재실행시간
+            this.start_time.setHours(this.start_time.getHours() + 1)     //재실행시간
 
-            this.sec = Math.floor((this.start_time - this.end_time) / 1000); 
+            this.sec = Math.floor((this.start_time - this.end_time) / 1000)
 
 
             //------------------------------------------------
@@ -270,7 +272,7 @@ this.sec = Math.floor((this.start_time - this.end_time) / 1000);
     <StepNodes>
       <StepNode step_id="S46ca8070027b457d9ffd22043974cfb4" group_name="de0264f3-2a6c-4e71-9e74-82335e7a5dce_종목 검색할 파일경로 입력" folded="False" color="" />
       <StepNode step_id="S12082b69508d421a9e53263482d391f3" group_name="" folded="False" color="" />
-      <StepNode step_id="S74c4b65b184b48ae8d9d5dc5f714a883" group_name="368fb580-3722-43c3-a20d-da3743b317bb_Untitled" folded="False" color="" />
+      <StepNode step_id="S74c4b65b184b48ae8d9d5dc5f714a883" group_name="d78acd9a-4669-40aa-9292-83dcb8c46df8_시작시간 가져오기" folded="False" color="" />
       <StepNode step_id="S6996fff62fa142318695727acc2541bf" group_name="77199ee7-3452-4d5f-846a-210aa394bbab_종목 검색할 파일유무 확인" folded="False" color="" />
       <StepNode step_id="S82804809ab3a4169b600f5577f25be6d" group_name="" folded="False" color="" />
       <StepNode step_id="S5d9cc987737943718985b05649cee442" group_name="" folded="False" color="" />
@@ -279,8 +281,8 @@ this.sec = Math.floor((this.start_time - this.end_time) / 1000);
       <StepNode step_id="S178d467fe64d415780f5e31382622161" group_name="" folded="False" color="" />
       <StepNode step_id="Sa961e515949c4f1c9b804aac564e1163" group_name="" folded="False" color="" />
       <StepNode step_id="Se511933f9ed7403a8a10b107944696b2" group_name="" folded="False" color="" />
-      <StepNode step_id="S154e6af06c33468b82c80f834f1307bf" group_name="cc25f380-9eb9-40ea-80f1-7dc8436ce0ca_Untitled" folded="False" color="" />
-      <StepNode step_id="S7f6fe37c401c4965b4cfdc5731a180f9" group_name="f564d42a-4d24-4907-9849-06f42fbfda9b_Untitled" folded="False" color="" />
+      <StepNode step_id="S154e6af06c33468b82c80f834f1307bf" group_name="3fa50a8b-aa69-4f3a-955d-390733cdfe2e_남은 시간 계산" folded="False" color="" />
+      <StepNode step_id="S7f6fe37c401c4965b4cfdc5731a180f9" group_name="1e23cea1-769e-4654-90ba-99300a00c73b_남은 시간동안 지연" folded="False" color="" />
       <StepNode step_id="S7eb4d50bf08441d6860e1f2f4fc2d206" group_name="" folded="False" color="" />
     </StepNodes>
   </Diagram>

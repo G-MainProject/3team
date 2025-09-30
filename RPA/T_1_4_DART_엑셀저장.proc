@@ -10,13 +10,14 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-12 14:46:52" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:47:21" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:46:25" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
   <Variables>
+    <Variable name="excel_isFileExist" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF3C79F5" showMarker="False" />
     <Variable name="Excel_header" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF377D71" showMarker="False" />
     <Variable name="DART_data" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF7AA874" showMarker="False" />
   </Variables>
@@ -34,28 +35,28 @@
       <RelatedSteps />
       <Script><![CDATA[this.DART_data = ActivityWorker.Play('Pdf', 'ExtractTextFromPdfActivity', this.activitylibraryitem_info_1);]]></Script>
     </Step>
-    <Step id="S43c436eb4ef54303b9442e78b2973056" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="RESULT" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S43c436eb4ef54303b9442e78b2973056" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="this.excel_isFileExist" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="e381b17d-8c26-43d1-8ed7-c5b365b7c6b7" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Command_Path" controlType="File" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\보고서_' + Global.Stock[Global.l] + '.xlsx'" />
-        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.excel_isFileExist" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_2);]]></Script>
+      <Script><![CDATA[this.excel_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_2);]]></Script>
     </Step>
-    <Step id="Sb44d55c91af446a397c4973b558902a6" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT != true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="Sb44d55c91af446a397c4973b558902a6" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.excel_isFileExist != true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="a9691297-7345-4818-ad75-e26eb4748ae0" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT != true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.excel_isFileExist != true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT != true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.excel_isFileExist != true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S01417c553c14448fbed077ee73a5d2da" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (RESULT != true) {]]></Script>
+      <Script><![CDATA[if (this.excel_isFileExist != true) {]]></Script>
     </Step>
     <Step id="S2b3d22ec172d4ec5aea1a6baa5952e62" ver="311241220" createVer="311241220" type="Excel" name="CreateExcel" dpName="CreateExcel" dpValue="Global.file_path + '\DART' + Global.Stock[Global.l] +'\보고서_' + Global.Stock[Global.l] + '.xlsx'" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="bd5e9097-f8b0-4e16-8242-f19eddb86336" type="Excel">
@@ -197,6 +198,7 @@ this.Excel_header[0][0] = Global.Stock[Global.l]
   </Steps>
   <JScript><![CDATA[function T_1_4_DART_엑셀저장() {
 
+    this.excel_isFileExist;
     this.Excel_header;
     this.DART_data;
 
@@ -215,11 +217,11 @@ this.Excel_header[0][0] = Global.Stock[Global.l]
 
         //------------------------------------------------
         STEP('S43c436eb4ef54303b9442e78b2973056', '[2] IsFileExist');
-        RESULT = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_2);
+        this.excel_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_2);
 
         //------------------------------------------------
         STEP('Sb44d55c91af446a397c4973b558902a6', '[3] IfThen');
-        if (RESULT != true) {
+        if (this.excel_isFileExist != true) {
 
             //------------------------------------------------
             STEP('S2b3d22ec172d4ec5aea1a6baa5952e62', '[4] CreateExcel');
@@ -286,8 +288,8 @@ this.Excel_header[0][0] = Global.Stock[Global.l]
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="Saebbdf0eb9f04562af9651e8fb27b4ae" group_name="8758e009-5daa-4e54-9cb1-efbcdd870a48_Untitled" folded="False" color="" />
-      <StepNode step_id="S43c436eb4ef54303b9442e78b2973056" group_name="4f39c335-1040-405c-8692-1bbab010e99f_Untitled" folded="False" color="" />
+      <StepNode step_id="Saebbdf0eb9f04562af9651e8fb27b4ae" group_name="af49274e-2163-46d1-aee0-9ae415ea5757_첨부파일 글씨 확인" folded="False" color="" />
+      <StepNode step_id="S43c436eb4ef54303b9442e78b2973056" group_name="6f371fdf-4b99-47c5-b6f1-5b30ae1be2cc_보고서 파일 유무확인" folded="False" color="" />
       <StepNode step_id="Sb44d55c91af446a397c4973b558902a6" group_name="" folded="False" color="" />
       <StepNode step_id="S2b3d22ec172d4ec5aea1a6baa5952e62" group_name="1e7b7312-6835-47e1-ba94-81a8dff44dc4_엑셀생성" folded="False" color="" />
       <StepNode step_id="S01417c553c14448fbed077ee73a5d2da" group_name="" folded="False" color="" />

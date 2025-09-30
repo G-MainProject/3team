@@ -10,36 +10,38 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 12:09:35" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-25 14:09:32" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:43:43" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
-  <Variables />
+  <Variables>
+    <Variable name="save_file_path" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFE49393" showMarker="False" />
+  </Variables>
   <Steps>
-    <Step id="S39d10b5de2504d469162b63135eabcd5" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="RESULT" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S39d10b5de2504d469162b63135eabcd5" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="this.save_file_path" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="62f5b31a-931d-40f7-859d-c320d9bac91e" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\'" />
-        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.save_file_path" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);]]></Script>
+      <Script><![CDATA[this.save_file_path = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);]]></Script>
     </Step>
-    <Step id="S3f0c2d081c4145a68c81a9b43dd4469d" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S3f0c2d081c4145a68c81a9b43dd4469d" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.save_file_path == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="88ec9f77-adda-403c-adbc-88819dee310b" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.save_file_path == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.save_file_path == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S4048adec0ebd4be0aa21f786f51df1cc" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (RESULT == true) {]]></Script>
+      <Script><![CDATA[if (this.save_file_path == true) {]]></Script>
     </Step>
     <Step id="Sf201b3f138ca4c35a5e60956a24bad2c" ver="311241220" createVer="311241220" type="Desktop" name="DeleteDirectory" dpName="DeleteDirectory" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="340306a0-b516-4022-8142-c41e0bc54831" type="Desktop">
@@ -93,6 +95,8 @@ for (let i = 0; i < RESULT.details.length; i++) {
   </Steps>
   <JScript><![CDATA[function T_0_조건설정() {
 
+    this.save_file_path;
+
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
     this.GotoBlockMap = {2:[4]};
@@ -104,11 +108,11 @@ for (let i = 0; i < RESULT.details.length; i++) {
 
         //------------------------------------------------
         STEP('S39d10b5de2504d469162b63135eabcd5', '[1] IsDirectoryExist');
-        RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);
+        this.save_file_path = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);
 
         //------------------------------------------------
         STEP('S3f0c2d081c4145a68c81a9b43dd4469d', '[2] IfThen');
-        if (RESULT == true) {
+        if (this.save_file_path == true) {
 
             //------------------------------------------------
             STEP('Sf201b3f138ca4c35a5e60956a24bad2c', '[3] DeleteDirectory');
@@ -149,9 +153,9 @@ for (let i = 0; i < RESULT.details.length; i++) {
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="S39d10b5de2504d469162b63135eabcd5" group_name="009b2eeb-0aaa-4016-9831-c260aebbe959_Untitled" folded="False" color="" />
+      <StepNode step_id="S39d10b5de2504d469162b63135eabcd5" group_name="2676946c-85f9-4024-815b-cb3c4eea12c7_저장폴더 유무확인" folded="False" color="" />
       <StepNode step_id="S3f0c2d081c4145a68c81a9b43dd4469d" group_name="" folded="False" color="" />
-      <StepNode step_id="Sf201b3f138ca4c35a5e60956a24bad2c" group_name="a6c45ee8-5dad-4eec-a8ad-fe9f85f8a0b3_Untitled" folded="False" color="" />
+      <StepNode step_id="Sf201b3f138ca4c35a5e60956a24bad2c" group_name="27b92561-260f-4b1e-90fd-7d9959ee959c_저장폴더 삭제" folded="False" color="" />
       <StepNode step_id="S4048adec0ebd4be0aa21f786f51df1cc" group_name="" folded="False" color="" />
       <StepNode step_id="Sd0adb78039be4ec0b6f0f821e7bd1e76" group_name="3c0de35e-b3bb-44b2-ba6e-c26469a0de90_종목추출" folded="False" color="" />
       <StepNode step_id="S3ac7619ab025438fb6907a0163daef2a" group_name="3c0de35e-b3bb-44b2-ba6e-c26469a0de90_종목추출" folded="False" color="" />

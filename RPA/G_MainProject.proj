@@ -7,13 +7,16 @@
     <LinkItem id="ae714252-f4c4-48a6-8cb3-7425d48e8133" category="NormalTask" isChanged="Y" desc="" stepCount="4" name="T_1_1_DART_열기">
       <Properties />
     </LinkItem>
-    <LinkItem id="5c816bc1-553e-4bc4-987b-22e059800553" category="NormalTask" isChanged="Y" desc="" stepCount="71" name="T_1_2_DART_데이터추출">
+    <LinkItem id="5c816bc1-553e-4bc4-987b-22e059800553" category="NormalTask" isChanged="Y" desc="" stepCount="70" name="T_1_2_DART_데이터추출">
       <Properties />
     </LinkItem>
     <LinkItem id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" category="NormalTask" isChanged="Y" desc="" stepCount="8" name="T_1_3_DART_첨부파일가공">
       <Properties />
     </LinkItem>
     <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="15" name="T_1_4_DART_엑셀저장">
+      <Properties />
+    </LinkItem>
+    <LinkItem id="52d1f205-d23d-45cf-be50-1a184d812ccc" category="NormalTask" isChanged="Y" desc="" stepCount="55" name="T_2_1_보고서작성">
       <Properties />
     </LinkItem>
   </NormalTask>
@@ -34,6 +37,7 @@
   <Asset />
   <Library />
   <Variables>
+    <Variable name="chrome_id" scope="Global" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF62B6B7" showMarker="True" />
     <Variable name="loop" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FFEBB02D" showMarker="False" />
     <Variable name="file_path" scope="Global" valueType="Any" formatType="Any" initValue="" desc="경로설정" colorValue="#FFFFB100" showMarker="False" />
     <Variable name="Naver_flag" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FFF7DB6A" showMarker="True" />

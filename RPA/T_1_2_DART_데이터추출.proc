@@ -1,4 +1,4 @@
-<Process id="5c816bc1-553e-4bc4-987b-22e059800553" type="task" workType="foreground" name="T_1_2_DART_데이터추출" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="71" Orientation="horizontal">
+<Process id="5c816bc1-553e-4bc4-987b-22e059800553" type="task" workType="foreground" name="T_1_2_DART_데이터추출" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="70" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,13 +10,17 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 14:30:56" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:47:06" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:49:54" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
   <Variables>
+    <Variable name="download_btn_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF19A7CE" showMarker="False" />
+    <Variable name="download_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFAA77FF" showMarker="False" />
+    <Variable name="popup_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFFFB100" showMarker="False" />
+    <Variable name="search_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFF7DB6A" showMarker="False" />
     <Variable name="tmp" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFE49393" showMarker="True" />
     <Variable name="DART_id" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF2DCDDF" showMarker="False" />
     <Variable name="DART_File_path" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="주소" colorValue="#FFF7DB6A" showMarker="False" />
@@ -33,11 +37,11 @@
       <RelatedSteps />
       <Script><![CDATA[Delay(500);]]></Script>
     </Step>
-    <Step id="S88e4590ac6374f2baf19fd72f90eae2b" ver="311241220" createVer="311241220" type="Chrome" name="ChromeIsExist" dpName="ChromeIsExist" dpValue="RESULT" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S88e4590ac6374f2baf19fd72f90eae2b" ver="311241220" createVer="311241220" type="Chrome" name="ChromeIsExist" dpName="ChromeIsExist" dpValue="this.search_IsVisible" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="d856237b-ec7f-4fe7-8a81-d65d85e54fbb" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="3" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -48,7 +52,7 @@
         <Property type="Chrome" key="CHROME_ExecuteQuery" controlType="PropertyItemChromeQueryEditView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'//div[@id=\'corpListContents\']/div/div[2]/table/tbody/tr/td'" />
         <Property type="Chrome" key="CHROME_QueryType" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" toggle="XPath;Selector" />
         <Property type="Chrome" key="CHROME_FullHTML" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="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" />
-        <Property type="Chrome" key="CHROME_Result" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Chrome" key="CHROME_Result" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.search_IsVisible" />
         <Property type="Chrome" key="CHROME_ChromeElements" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="[{&quot;Index&quot;:0,&quot;Tag&quot;:&quot;TD&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;end no_data2&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:1,&quot;Tag&quot;:&quot;TR&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:2,&quot;Tag&quot;:&quot;TBODY&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:3,&quot;Tag&quot;:&quot;TABLE&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;tb&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:4,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;2&quot;,&quot;IsUse&quot;:true},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;tbLInner&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:5,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;tbLWrap&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:true},{&quot;Index&quot;:6,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;1&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;listWrap&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;id&quot;,&quot;Value&quot;:&quot;corpListContents&quot;,&quot;IsUse&quot;:true}],&quot;IsUse&quot;:true},{&quot;Index&quot;:7,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;2&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;contWrap&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:8,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;2&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;searchPop wrapM&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:9,&quot;Tag&quot;:&quot;DIV&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;15&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;id&quot;,&quot;Value&quot;:&quot;winCorpInfo&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:10,&quot;Tag&quot;:&quot;BODY&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot;ext-chrome&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false},{&quot;Index&quot;:11,&quot;Tag&quot;:&quot;HTML&quot;,&quot;Data&quot;:[{&quot;Name&quot;:&quot;index&quot;,&quot;Value&quot;:&quot;&quot;,&quot;IsUse&quot;:false},{&quot;Name&quot;:&quot;class&quot;,&quot;Value&quot;:&quot; ext-strict&quot;,&quot;IsUse&quot;:false}],&quot;IsUse&quot;:false}]" />
         <Property type="Chrome" key="CHROME_SingleQueryForMultiple" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="''" />
         <Property type="Chrome" key="CHROME_PagesearchUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="True" encrypted="False" isChanged="N" value="https://dart.fss.or.kr/dsab007/main.do" />
@@ -93,21 +97,21 @@
         <Property type="Win" key="Mouse_OffsetPoint" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'0, 0'" order="12" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeIsExist', this.chromeisexist_info_2);]]></Script>
+      <Script><![CDATA[this.search_IsVisible = StepPlayer.Run('Chrome.ChromeIsExist', this.chromeisexist_info_2);]]></Script>
     </Step>
-    <Step id="S84f00a3b836e408a855fb7a7a6adacca" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S84f00a3b836e408a855fb7a7a6adacca" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="this.search_IsVisible == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="bb84a92d-a06a-4f30-8a3b-1128880e1695" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.search_IsVisible == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.search_IsVisible == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S3f5b47f24c4843d09c9606cb8ec6ca4f" type="Flow" name="Else" />
         <RelatedStep id="S581293b962bd49c689bd3c8e572005af" type="Flow" name="EndDecision" />
       </RelatedSteps>
-      <Script><![CDATA[if (RESULT == true) {]]></Script>
+      <Script><![CDATA[if (this.search_IsVisible == true) {]]></Script>
     </Step>
     <Step id="S48692e925351407c8663d29ee9d52db5" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="11cd95e2-b1ec-435f-bd2c-5fd7e335a8ca" type="Flow">
@@ -119,11 +123,11 @@
       <RelatedSteps />
       <Script><![CDATA[Global.Data_use = false]]></Script>
     </Step>
-    <Step id="Sf42b9a3685884908b7b4c68900e0b346" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClose" dpName="ChromeClose" dpValue="LATEST_BROWSER" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sf42b9a3685884908b7b4c68900e0b346" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClose" dpName="ChromeClose" dpValue="Global.chrome_id" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="63b739ce-cb7a-4c2a-a389-d7552520aa4c" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_5);]]></Script>
@@ -154,11 +158,11 @@
       </RelatedSteps>
       <Script><![CDATA[}else{]]></Script>
     </Step>
-    <Step id="S035c15194e2c43378b4303edf87b3bc1" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S035c15194e2c43378b4303edf87b3bc1" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -217,11 +221,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_9);]]></Script>
     </Step>
-    <Step id="S2b6c90c2d58d41b19757ac49db15a1d2" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S2b6c90c2d58d41b19757ac49db15a1d2" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -279,11 +283,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_10);]]></Script>
     </Step>
-    <Step id="Sd8e7fdb2db17420488e496326451dfa3" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sd8e7fdb2db17420488e496326451dfa3" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -341,11 +345,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_11);]]></Script>
     </Step>
-    <Step id="S0d068f4114494346b05ddf5d881e5751" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S0d068f4114494346b05ddf5d881e5751" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -403,11 +407,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_12);]]></Script>
     </Step>
-    <Step id="S6f5e0acb929c4a438679368674f74def" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S6f5e0acb929c4a438679368674f74def" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -466,11 +470,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_13);]]></Script>
     </Step>
-    <Step id="S8504b5e4b5e64846ae3e7e5fdecd725b" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S8504b5e4b5e64846ae3e7e5fdecd725b" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -529,11 +533,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_14);]]></Script>
     </Step>
-    <Step id="S5687ac52073149b4901c578a65fcd2a7" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S5687ac52073149b4901c578a65fcd2a7" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -591,11 +595,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_15);]]></Script>
     </Step>
-    <Step id="S2ff486eebd6141c1b646058f136a2d67" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S2ff486eebd6141c1b646058f136a2d67" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -654,11 +658,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_16);]]></Script>
     </Step>
-    <Step id="S866143104ef84733b78b25bf67b7e224" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S866143104ef84733b78b25bf67b7e224" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -717,11 +721,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_17);]]></Script>
     </Step>
-    <Step id="S2cdc6f78a513429093ccaf0f25a85e61" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S2cdc6f78a513429093ccaf0f25a85e61" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -779,11 +783,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_18);]]></Script>
     </Step>
-    <Step id="Sc23823ae50ad4668b42213fddc860269" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sc23823ae50ad4668b42213fddc860269" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -841,11 +845,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_19);]]></Script>
     </Step>
-    <Step id="S7c6372104cf54d9dba3e3388e862ef71" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S7c6372104cf54d9dba3e3388e862ef71" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -903,11 +907,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_20);]]></Script>
     </Step>
-    <Step id="S2f64f75c039c49808899e196e7a70df8" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S2f64f75c039c49808899e196e7a70df8" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -966,11 +970,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_21);]]></Script>
     </Step>
-    <Step id="Sa71db329fd0b46358ad611226588bc92" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sa71db329fd0b46358ad611226588bc92" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1029,11 +1033,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_22);]]></Script>
     </Step>
-    <Step id="S6cf493e39a7b4f64b4bf778caa0e6009" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S6cf493e39a7b4f64b4bf778caa0e6009" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1091,11 +1095,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_23);]]></Script>
     </Step>
-    <Step id="Sea4d6e76f3d341fa970b40b0c4335609" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sea4d6e76f3d341fa970b40b0c4335609" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1153,11 +1157,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_24);]]></Script>
     </Step>
-    <Step id="Sa992e82bb821497a8d03069648e2afa8" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sa992e82bb821497a8d03069648e2afa8" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1216,11 +1220,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_25);]]></Script>
     </Step>
-    <Step id="S0280687a688e4fb599bca25f7c6e5cec" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S0280687a688e4fb599bca25f7c6e5cec" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1279,11 +1283,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_26);]]></Script>
     </Step>
-    <Step id="S06f46333487f4d0891f78fce301f950f" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S06f46333487f4d0891f78fce301f950f" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1342,11 +1346,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_27);]]></Script>
     </Step>
-    <Step id="S0eaf2e0d6cbe49e29f4ff1085ae8f730" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S0eaf2e0d6cbe49e29f4ff1085ae8f730" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1404,11 +1408,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_28);]]></Script>
     </Step>
-    <Step id="S65a102c378d949768940f6196165fb2a" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S65a102c378d949768940f6196165fb2a" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1467,11 +1471,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_29);]]></Script>
     </Step>
-    <Step id="S5e111b287a414abdb6a49420ba616543" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S5e111b287a414abdb6a49420ba616543" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1530,11 +1534,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_30);]]></Script>
     </Step>
-    <Step id="S3bb7f7ebdb39441aa99375503f9c36d0" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S3bb7f7ebdb39441aa99375503f9c36d0" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1593,11 +1597,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_31);]]></Script>
     </Step>
-    <Step id="Sb799354eff6c42d48f425f716e9c61e7" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sb799354eff6c42d48f425f716e9c61e7" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1655,11 +1659,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_32);]]></Script>
     </Step>
-    <Step id="S4d366200d41f41388ce957e8460ed9eb" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S4d366200d41f41388ce957e8460ed9eb" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetCheckState" dpName="ChromeSetCheckState" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="6eba30ce-52cc-4374-954d-7b445c9da397" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1717,11 +1721,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetCheckState', this.chromesetcheckstate_info_33);]]></Script>
     </Step>
-    <Step id="Scf7664df48b74522a917196db358f2cd" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Scf7664df48b74522a917196db358f2cd" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="acbaadb0-c154-40e8-af5f-f9ba408b8cbc" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1780,11 +1784,11 @@
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_34);]]></Script>
     </Step>
-    <Step id="S202517eb905e4777a2c7a6086dbbcf18" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S202517eb905e4777a2c7a6086dbbcf18" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="8672dbb2-fa56-4a0b-a51b-89d2149ed016" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1857,7 +1861,7 @@
       <Properties id="435ae6f5-68a8-4fcd-8577-0d570aec361f" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -1948,11 +1952,11 @@ Global.Data_use = true]]></Script>
       </RelatedSteps>
       <Script><![CDATA[for (this.i = 0; this.i < this.DART_index; this.i++) {]]></Script>
     </Step>
-    <Step id="S23c6aa82887e46baa6166fdd13956980" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S23c6aa82887e46baa6166fdd13956980" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템| 공시서류검색 | 공시통합검색 - Chrome" dpImage="Target_Capture" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="32493700-176c-450e-84ea-4999bdcb27e6" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsab007/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
@@ -2069,33 +2073,33 @@ Global.Data_use = true]]></Script>
         <Property type="Win" key="Target_IsEditable" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="Win" key="Target_SizeTolerance" controlType="Size" valueType="System.Windows.Size" formatType="Size" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="30,15" />
         <Property type="Win" key="Target_TimeStamp" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2025-09-16 09:30:02.961" />
-        <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="popup_isvisible" />
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
         <Property type="Win" key="Target_Capture" controlType="Bitmap" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="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" />
         <Property type="Win" key="Target_ImageCompareBounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="96,40,20,21" />
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'10, 10.5'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsVisible', this.isvisible_info_41);]]></Script>
+      <Script><![CDATA[popup_isvisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_41);]]></Script>
     </Step>
-    <Step id="S7732bf51657248d289a76187de07ddb4" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S7732bf51657248d289a76187de07ddb4" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="popup_isvisible == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="312a1013-6aaa-49f0-b3b3-9fea51928385" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="popup_isvisible == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="popup_isvisible == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="Sb9ba4413eaf74a95a494bd7b3b4c9364" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (RESULT == true) {]]></Script>
+      <Script><![CDATA[if (popup_isvisible == true) {]]></Script>
     </Step>
-    <Step id="S91f78c2c2fbd425995a3af7d65eeab21" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="아이에스티이/주주총회소집공고/2025.03.14 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S91f78c2c2fbd425995a3af7d65eeab21" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="아이에스티이/주주총회소집공고/2025.03.14 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="4a0a108a-636d-4516-9fb0-986d40997ea1" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsaf001/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -2221,14 +2225,14 @@ Global.Data_use = true]]></Script>
         <Property type="Win" key="Target_IsEditable" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="Win" key="Target_SizeTolerance" controlType="Size" valueType="System.Windows.Size" formatType="Size" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="30,15" />
         <Property type="Win" key="Target_TimeStamp" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2025-09-10 15:44:17.527" />
-        <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.download_btn_IsVisible" />
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
         <Property type="Win" key="Target_Capture" controlType="Bitmap" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="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" />
         <Property type="Win" key="Target_ImageCompareBounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="54,40,75,20" />
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'37.5, 10'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsVisible', this.isvisible_info_45);]]></Script>
+      <Script><![CDATA[this.download_btn_IsVisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_45);]]></Script>
     </Step>
     <Step id="S4cfa3799c9ca4c4286e1a9695ba04b08" ver="311241220" createVer="311241220" type="Flow" name="Delay" dpName="Delay" dpValue="1 sec" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="113a9242-b6f2-4611-9952-33305f773846" type="Flow">
@@ -2240,25 +2244,25 @@ Global.Data_use = true]]></Script>
       <RelatedSteps />
       <Script><![CDATA[Delay(1000);]]></Script>
     </Step>
-    <Step id="S68f63a5aad204e05b9ebe11f5015e1c5" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S68f63a5aad204e05b9ebe11f5015e1c5" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="this.download_btn_IsVisible == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="aeb9231c-e575-4c91-9c4c-8b032ac52d6b" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.download_btn_IsVisible == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.download_btn_IsVisible == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S0ee3bee647df455d83b28e65e9f2b7c0" type="Flow" name="Else" />
         <RelatedStep id="S754ab3cd0b9c41258d39182d827728fb" type="Flow" name="EndDecision" />
       </RelatedSteps>
-      <Script><![CDATA[if (RESULT == true) {]]></Script>
+      <Script><![CDATA[if (this.download_btn_IsVisible == true) {]]></Script>
     </Step>
-    <Step id="S239b734ee70846a588d2687264633d27" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="삼성전자/주식등의대량보유상황보고서(일반)/2025.09.05 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S239b734ee70846a588d2687264633d27" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="삼성전자/주식등의대량보유상황보고서(일반)/2025.09.05 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="32493700-176c-450e-84ea-4999bdcb27e6" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsaf001/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
@@ -2326,11 +2330,11 @@ Global.Data_use = true]]></Script>
       </RelatedSteps>
       <Script><![CDATA[}else{]]></Script>
     </Step>
-    <Step id="Sb36cdba00ff6480ca597a6a14b28669a" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="삼성전자/최대주주등소유주식변동신고서/2025.09.05 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sb36cdba00ff6480ca597a6a14b28669a" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="삼성전자/최대주주등소유주식변동신고서/2025.09.05 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="32493700-176c-450e-84ea-4999bdcb27e6" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/dsaf001/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
@@ -2483,7 +2487,7 @@ this.DART_File_path = part.length > 1 ? part[1].trim() : null]]></Script>
       <Properties id="c519d76e-8dec-4ded-b0ab-b7554b4d7f03" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/pdf/download/main.do'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -2710,28 +2714,27 @@ if (index !== -1) {
         <Property type="Win" key="Target_IsEditable" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="Win" key="Target_SizeTolerance" controlType="Size" valueType="System.Windows.Size" formatType="Size" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="372,112" />
         <Property type="Win" key="Target_TimeStamp" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2025-09-10 15:31:59.142" />
-        <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="download_isvisible" />
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
         <Property type="Win" key="Target_Capture" controlType="Bitmap" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAYAAADDhn8LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKuSURBVHhe7dq/LqVBAMbhuSKCbXVuRCGRiCxBsP5dkatQqlRbKEQkEpGIKESwZqM4J3KMd8/RzBZP8SSf9zvzVfPrlMvLywq0CQQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCASCcnx8XIG2cn9/X4E2gUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUBQ1tbW6sDU1NTw+SsffzP6+3HOQ8vCwsKn7bv3K52b9Jvl5OSkDkxPTw+fW1rv37eB0XcwrsXFxU/b6J0a946lc5N+s5yentaBmZmZ4fOo1rvRLZ2HZGlp6dP23fuVzk36zXJ2dlYHZmdnh8/f2b/6HfzL8vLyp+279yudm/Sb5ffv33Vgbm5u+Jy2gdF36beQrKysfNrGuV/jbB//HuebH5Xz8/M68OPHj+Hzx23UV+8/7jCJ1dXV5v6v+5X2r86ld6PKxcVFhd5+/vzZ3HsrV1dXFXpbX19v7r2V6+vrCr1tbGw0997Kzc1Nhd42Nzebe2/l9va2Qm9bW1vNvbdyd3dXobft7e3m3pt/VuS/sLOz09x7Kw8PDxV6293dbe69lV+/flWgrTw+PlbobW9vr7n3Vp6enir0tr+/39x7K8/PzxV6Ozg4aO69lZeXlwq9vQfS2nsrr6+vFXo7PDxs7r2VP3/+VOjtPZDW3lt5e3ur0NvR0VFzn5+fH2q9/0o6l96NEgj/hVYgoxd4nAv9Lp2b7Jtv9S+RJ20NF1w0/AAAAABJRU5ErkJggg==" />
         <Property type="Win" key="Target_ImageCompareBounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="0,0,200,100" />
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'100, 50'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Win.IsVisible', this.isvisible_info_57);]]></Script>
+      <Script><![CDATA[download_isvisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_57);]]></Script>
     </Step>
-    <Step id="S703e4457c670452783ba309e5d0123cf" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="RESULT == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
-      <Properties id="46de2621-137f-48f5-adbb-2f7f07cd038a" type="Flow">
+    <Step id="S036a1a180df2405ca1f70dcd8e80bf9c" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="download_isvisible == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="07b42308-da3e-4350-af21-3aebdf2be39a" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="download_isvisible == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="download_isvisible == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S4002a92f39144814bcb8179c8bcdcdad" type="Flow" name="Else" />
-        <RelatedStep id="S137c6392407544d899088967350ca07c" type="Flow" name="EndDecision" />
+        <RelatedStep id="S1d0d8733d9494e9787402cbd17ac6590" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (RESULT == true) {]]></Script>
+      <Script><![CDATA[if (download_isvisible == true) {]]></Script>
     </Step>
     <Step id="Sf47735335b8e40c482e842ef664e3b3f" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.DART_flag == true" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="2b870ac4-afd5-4e1c-bc47-038b091593e4" type="Flow">
@@ -2913,21 +2916,12 @@ Global.DART_flag = false]]></Script>
       <RelatedSteps />
       <Script><![CDATA[StepPlayer.Run('Win.Click', this.click_info_64);]]></Script>
     </Step>
-    <Step id="S4002a92f39144814bcb8179c8bcdcdad" ver="311241220" createVer="311241220" type="Flow" name="Else" dpName="Else" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseOpenBlock" enabled="True" mainSet="0">
-      <Properties id="23d63503-2aeb-495b-8dcd-de87618d509e" type="Flow">
+    <Step id="S1d0d8733d9494e9787402cbd17ac6590" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="47b9f91f-f8d9-47e7-8a46-18fe67b75e8b" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S703e4457c670452783ba309e5d0123cf" type="Flow" name="Decision" />
-      </RelatedSteps>
-      <Script><![CDATA[}else{]]></Script>
-    </Step>
-    <Step id="S137c6392407544d899088967350ca07c" ver="311241220" createVer="311241220" type="Flow" name="EndDecision" dpName="End-IfElse" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
-      <Properties id="7ce4bcae-1a9f-43b9-b155-2a2517d1e41a" type="Flow">
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-      </Properties>
-      <RelatedSteps>
-        <RelatedStep id="S703e4457c670452783ba309e5d0123cf" type="Flow" name="Decision" />
+        <RelatedStep id="S036a1a180df2405ca1f70dcd8e80bf9c" type="Flow" name="DecisionThen" />
       </RelatedSteps>
       <Script><![CDATA[}]]></Script>
     </Step>
@@ -2942,7 +2936,7 @@ Global.DART_flag = false]]></Script>
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_67);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_66);]]></Script>
     </Step>
     <Step id="S1e51e20199cc46a18d4b236c15c5ed92" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="75d600c1-d9a6-4184-90b8-f6df7a4ff037" type="Win">
@@ -2955,7 +2949,7 @@ Global.DART_flag = false]]></Script>
         <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_68);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_67);]]></Script>
     </Step>
     <Step id="S3843cd1c55dc4b4d8e683d2ad159fe7c" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="fd11c7b5-4474-4e2c-b81b-ea653f7881ec" type="Flow">
@@ -2966,14 +2960,14 @@ Global.DART_flag = false]]></Script>
       </RelatedSteps>
       <Script><![CDATA[}]]></Script>
     </Step>
-    <Step id="Sa5b8abbbf964490585d9b7718af9956a" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClose" dpName="ChromeClose" dpValue="LATEST_BROWSER" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sa5b8abbbf964490585d9b7718af9956a" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClose" dpName="ChromeClose" dpValue="Global.chrome_id" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="bc00f44b-ade0-4a26-a5c0-87263c60f240" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_70);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_69);]]></Script>
     </Step>
     <Step id="S581293b962bd49c689bd3c8e572005af" ver="311241220" createVer="311241220" type="Flow" name="EndDecision" dpName="End-IfElse" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="0a0d21b0-552c-474a-bc7d-09dda647a701" type="Flow">
@@ -2987,6 +2981,10 @@ Global.DART_flag = false]]></Script>
   </Steps>
   <JScript><![CDATA[function T_1_2_DART_데이터추출() {
 
+    this.download_btn_IsVisible;
+    this.download_IsVisible;
+    this.popup_IsVisible;
+    this.search_IsVisible;
     this.tmp;
     this.DART_id;
     this.DART_File_path;
@@ -2994,9 +2992,9 @@ Global.DART_flag = false]]></Script>
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {3:[8,71],39:[69],42:[44],47:[49,51],58:[65,66],59:[63]};
-    this.GotoReverseBlockMap = {8:3,71:3,69:39,44:42,49:47,51:47,65:58,66:58,63:59};
-    this.GotoStepBlockTypeMap = {3:'Decision',8:'Else',71:'EndDecision',39:'Loop',69:'EndLoop',42:'DecisionThen',44:'EndDecisionThen',47:'Decision',49:'Else',51:'EndDecision',58:'Decision',65:'Else',66:'EndDecision',59:'DecisionThen',63:'EndDecisionThen'};
+    this.GotoBlockMap = {3:[8,70],39:[68],42:[44],47:[49,51],58:[65],59:[63]};
+    this.GotoReverseBlockMap = {8:3,70:3,68:39,44:42,49:47,51:47,65:58,63:59};
+    this.GotoStepBlockTypeMap = {3:'Decision',8:'Else',70:'EndDecision',39:'Loop',68:'EndLoop',42:'DecisionThen',44:'EndDecisionThen',47:'Decision',49:'Else',51:'EndDecision',58:'DecisionThen',65:'EndDecisionThen',59:'DecisionThen',63:'EndDecisionThen'};
 
 
     this.run = function() {
@@ -3007,11 +3005,11 @@ Global.DART_flag = false]]></Script>
 
         //------------------------------------------------
         STEP('S88e4590ac6374f2baf19fd72f90eae2b', '[2] ChromeIsExist');
-        RESULT = StepPlayer.Run('Chrome.ChromeIsExist', this.chromeisexist_info_2);
+        this.search_IsVisible = StepPlayer.Run('Chrome.ChromeIsExist', this.chromeisexist_info_2);
 
         //------------------------------------------------
         STEP('S84f00a3b836e408a855fb7a7a6adacca', '[3] IfElse');
-        if (RESULT == true) {
+        if (this.search_IsVisible == true) {
 
             //------------------------------------------------
             STEP('S48692e925351407c8663d29ee9d52db5', '[4] ExecuteScript');
@@ -3169,11 +3167,11 @@ Global.DART_flag = false]]></Script>
 
                 //------------------------------------------------
                 STEP('Sf02c71c1f2074ff28f8de002fcb31df0', '[41] IsVisible');
-                RESULT = StepPlayer.Run('Win.IsVisible', this.isvisible_info_41);
+                popup_isvisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_41);
 
                 //------------------------------------------------
                 STEP('S7732bf51657248d289a76187de07ddb4', '[42] IfThen');
-                if (RESULT == true) {
+                if (popup_isvisible == true) {
 
                     //------------------------------------------------
                     STEP('S91f78c2c2fbd425995a3af7d65eeab21', '[43] ChromeClick');
@@ -3185,7 +3183,7 @@ Global.DART_flag = false]]></Script>
 
                 //------------------------------------------------
                 STEP('Sa8bfc0967d0140bcb2963a77390e9565', '[45] IsVisible');
-                RESULT = StepPlayer.Run('Win.IsVisible', this.isvisible_info_45);
+                this.download_btn_IsVisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_45);
 
                 //------------------------------------------------
                 STEP('S4cfa3799c9ca4c4286e1a9695ba04b08', '[46] Delay');
@@ -3193,7 +3191,7 @@ Global.DART_flag = false]]></Script>
 
                 //------------------------------------------------
                 STEP('S68f63a5aad204e05b9ebe11f5015e1c5', '[47] IfElse');
-                if (RESULT == true) {
+                if (this.download_btn_IsVisible == true) {
 
                     //------------------------------------------------
                     STEP('S239b734ee70846a588d2687264633d27', '[48] ChromeClick');
@@ -3263,11 +3261,11 @@ Global.DART_flag = false]]></Script>
 
                 //------------------------------------------------
                 STEP('Se79b76f279ba4d12842bfdca9d208afb', '[57] IsVisible');
-                RESULT = StepPlayer.Run('Win.IsVisible', this.isvisible_info_57);
+                download_isvisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_57);
 
                 //------------------------------------------------
-                STEP('S703e4457c670452783ba309e5d0123cf', '[58] IfElse');
-                if (RESULT == true) {
+                STEP('S036a1a180df2405ca1f70dcd8e80bf9c', '[58] IfThen');
+                if (download_isvisible == true) {
 
                     //------------------------------------------------
                     STEP('Sf47735335b8e40c482e842ef664e3b3f', '[59] IfThen');
@@ -3295,32 +3293,28 @@ Global.DART_flag = false]]></Script>
                     StepPlayer.Run('Win.Click', this.click_info_64);
 
                 //------------------------------------------------
-                }else{
-                    STEP('S4002a92f39144814bcb8179c8bcdcdad', '[65] Else');
-
-                //------------------------------------------------
                 }
-                STEP('S137c6392407544d899088967350ca07c', '[66] End-IfElse');
+                STEP('S1d0d8733d9494e9787402cbd17ac6590', '[65] End-IfThen');
 
                 //------------------------------------------------
-                STEP('Saa0701cd4e11492599910b3390c68e4c', '[67] KeyInput');
+                STEP('Saa0701cd4e11492599910b3390c68e4c', '[66] KeyInput');
+                StepPlayer.Run('Win.KeyInput', this.keyinput_info_66);
+
+                //------------------------------------------------
+                STEP('S1e51e20199cc46a18d4b236c15c5ed92', '[67] KeyInput');
                 StepPlayer.Run('Win.KeyInput', this.keyinput_info_67);
-
-                //------------------------------------------------
-                STEP('S1e51e20199cc46a18d4b236c15c5ed92', '[68] KeyInput');
-                StepPlayer.Run('Win.KeyInput', this.keyinput_info_68);
 
             //------------------------------------------------
             }
-            STEP('S3843cd1c55dc4b4d8e683d2ad159fe7c', '[69] End-For');
+            STEP('S3843cd1c55dc4b4d8e683d2ad159fe7c', '[68] End-For');
 
             //------------------------------------------------
-            STEP('Sa5b8abbbf964490585d9b7718af9956a', '[70] ChromeClose');
-            StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_70);
+            STEP('Sa5b8abbbf964490585d9b7718af9956a', '[69] ChromeClose');
+            StepPlayer.Run('Chrome.ChromeClose', this.chromeclose_info_69);
 
         //------------------------------------------------
         }
-        STEP('S581293b962bd49c689bd3c8e572005af', '[71] End-IfElse');
+        STEP('S581293b962bd49c689bd3c8e572005af', '[70] End-IfElse');
 
 
     }
@@ -3335,7 +3329,7 @@ Global.DART_flag = false]]></Script>
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="S5fd64201d8074de4afd8db64f0d5c076" group_name="a7a274e9-dbcc-4bf7-8637-c66155b40df0_Untitled" folded="False" color="" />
+      <StepNode step_id="S5fd64201d8074de4afd8db64f0d5c076" group_name="7ca04ca6-ea5d-4c31-95a4-d52bcc72098f_검색결과 지연" folded="False" color="" />
       <StepNode step_id="S88e4590ac6374f2baf19fd72f90eae2b" group_name="e04ecb72-56e5-4c05-85ba-db67d2427af0_검색결과 유무확인" folded="False" color="" />
       <StepNode step_id="S84f00a3b836e408a855fb7a7a6adacca" group_name="" folded="False" color="" />
       <StepNode step_id="S48692e925351407c8663d29ee9d52db5" group_name="c96ffc96-b60f-48a1-8ded-be9b303df84f_RPA종료" folded="False" color="" />
@@ -3370,14 +3364,14 @@ Global.DART_flag = false]]></Script>
       <StepNode step_id="S4d366200d41f41388ce957e8460ed9eb" group_name="326de1c2-c5dc-4c25-9f84-4b38395511a1_자산유동화_조건설정" folded="False" color="" />
       <StepNode step_id="Scf7664df48b74522a917196db358f2cd" group_name="326de1c2-c5dc-4c25-9f84-4b38395511a1_자산유동화_조건설정" folded="False" color="" />
       <StepNode step_id="S202517eb905e4777a2c7a6086dbbcf18" group_name="dc643ff7-fd74-41f3-aace-26836bb534fe_조건설정" folded="False" color="" />
-      <StepNode step_id="Se40ddd4bbeb448f7a890e01554ed7798" group_name="e610ef6f-7940-4a59-bd58-51ec2f4e5202_Untitled" folded="False" color="" />
+      <StepNode step_id="Se40ddd4bbeb448f7a890e01554ed7798" group_name="dc52875e-74bc-469c-8c89-7728593f66bf_상세 조건 검색 지연" folded="False" color="" />
       <StepNode step_id="S0fda1c8701c247b3b4bf18d6ea1d8be5" group_name="4888e549-7075-44ef-b1b7-963e3fe1989a_링크 가져오기" folded="False" color="" />
       <StepNode step_id="Sf0e74b88e3f64056b93d998707bfb0f6" group_name="4888e549-7075-44ef-b1b7-963e3fe1989a_링크 가져오기" folded="False" color="" />
       <StepNode step_id="Sd54e68b3236542af9fe53abc4f53b8dc" group_name="" folded="False" color="" />
       <StepNode step_id="S23c6aa82887e46baa6166fdd13956980" group_name="f3b9f3b2-363a-4add-a9eb-f5a96fb45149_상세페이지 접속" folded="False" color="" />
       <StepNode step_id="Sf02c71c1f2074ff28f8de002fcb31df0" group_name="4986079d-2a5a-4619-bf85-93a649dc87a9_팝업창 확인" folded="False" color="" />
       <StepNode step_id="S7732bf51657248d289a76187de07ddb4" group_name="" folded="False" color="" />
-      <StepNode step_id="S91f78c2c2fbd425995a3af7d65eeab21" group_name="9dc622a3-ac5d-43fb-aaa6-33f0b3c87b80_Untitled" folded="False" color="" />
+      <StepNode step_id="S91f78c2c2fbd425995a3af7d65eeab21" group_name="030c0089-9801-4ee8-ae2d-5d5c2a3d167b_팝업창 닫기" folded="False" color="" />
       <StepNode step_id="Sb9ba4413eaf74a95a494bd7b3b4c9364" group_name="" folded="False" color="" />
       <StepNode step_id="Sa8bfc0967d0140bcb2963a77390e9565" group_name="155edb4c-3b65-494f-b8c8-3da270662512_다운로드 위치 확인" folded="False" color="" />
       <StepNode step_id="S4cfa3799c9ca4c4286e1a9695ba04b08" group_name="155edb4c-3b65-494f-b8c8-3da270662512_다운로드 위치 확인" folded="False" color="" />
@@ -3391,20 +3385,19 @@ Global.DART_flag = false]]></Script>
       <StepNode step_id="Sd52dbf31fea14592baa486cdf67a8b03" group_name="7f61b2ff-4cc3-4a05-97d5-05ef2e1fd899_파일명" folded="False" color="" />
       <StepNode step_id="S42512a56a47945a28d2e11f8dce667b5" group_name="7f61b2ff-4cc3-4a05-97d5-05ef2e1fd899_파일명" folded="False" color="" />
       <StepNode step_id="Sf458f83d08064936a3093f51fa420582" group_name="7f61b2ff-4cc3-4a05-97d5-05ef2e1fd899_파일명" folded="False" color="" />
-      <StepNode step_id="Se79b76f279ba4d12842bfdca9d208afb" group_name="bcd9e6f8-a7d4-4681-b6cb-1ba93724437d_Untitled" folded="False" color="" />
-      <StepNode step_id="S703e4457c670452783ba309e5d0123cf" group_name="" folded="False" color="" />
+      <StepNode step_id="Se79b76f279ba4d12842bfdca9d208afb" group_name="d7648154-85b5-40e7-864e-2663d8c96910_다운로드 경로 설정창 유무확인" folded="False" color="" />
+      <StepNode step_id="S036a1a180df2405ca1f70dcd8e80bf9c" group_name="" folded="False" color="" />
       <StepNode step_id="Sf47735335b8e40c482e842ef664e3b3f" group_name="" folded="False" color="" />
-      <StepNode step_id="Sa3037b3d28174bab8cff06392cd4ab74" group_name="50f30455-9495-400c-a7f5-b4d8e6a8b3b4_경로설정" folded="False" color="" />
-      <StepNode step_id="S49d2b788c03346ff96b5fe69d59b908a" group_name="50f30455-9495-400c-a7f5-b4d8e6a8b3b4_경로설정" folded="False" color="" />
-      <StepNode step_id="S57d6f350751b438694909d95cf5547f7" group_name="50f30455-9495-400c-a7f5-b4d8e6a8b3b4_경로설정" folded="False" color="" />
+      <StepNode step_id="Sa3037b3d28174bab8cff06392cd4ab74" group_name="0a18ecd5-354e-483c-baf0-e755cc258bf7_경로설정" folded="False" color="" />
+      <StepNode step_id="S49d2b788c03346ff96b5fe69d59b908a" group_name="0a18ecd5-354e-483c-baf0-e755cc258bf7_경로설정" folded="False" color="" />
+      <StepNode step_id="S57d6f350751b438694909d95cf5547f7" group_name="0a18ecd5-354e-483c-baf0-e755cc258bf7_경로설정" folded="False" color="" />
       <StepNode step_id="S02a98be601534b8c9361f2a404c15ffb" group_name="" folded="False" color="" />
-      <StepNode step_id="S1164701d567543379810aea6339a3da0" group_name="44f26402-e24d-4fc3-9c32-f3725e840fed_저장" folded="False" color="" />
-      <StepNode step_id="S4002a92f39144814bcb8179c8bcdcdad" group_name="" folded="False" color="" />
-      <StepNode step_id="S137c6392407544d899088967350ca07c" group_name="" folded="False" color="" />
+      <StepNode step_id="S1164701d567543379810aea6339a3da0" group_name="5936f8ba-f398-444a-90eb-6b7fb9220642_저장" folded="False" color="" />
+      <StepNode step_id="S1d0d8733d9494e9787402cbd17ac6590" group_name="" folded="False" color="" />
       <StepNode step_id="Saa0701cd4e11492599910b3390c68e4c" group_name="f5e246a4-f4ea-40fe-890f-7cba997cb319_창 닫기" folded="False" color="" />
       <StepNode step_id="S1e51e20199cc46a18d4b236c15c5ed92" group_name="f5e246a4-f4ea-40fe-890f-7cba997cb319_창 닫기" folded="False" color="" />
       <StepNode step_id="S3843cd1c55dc4b4d8e683d2ad159fe7c" group_name="" folded="False" color="" />
-      <StepNode step_id="Sa5b8abbbf964490585d9b7718af9956a" group_name="462be60f-96da-4aea-81d3-10a6b32ed9dd_Untitled" folded="False" color="" />
+      <StepNode step_id="Sa5b8abbbf964490585d9b7718af9956a" group_name="0c50be8e-7bbb-4108-9a8d-f22b013bfd6b_크롬 닫기" folded="False" color="" />
       <StepNode step_id="S581293b962bd49c689bd3c8e572005af" group_name="" folded="False" color="" />
     </StepNodes>
   </Diagram>
