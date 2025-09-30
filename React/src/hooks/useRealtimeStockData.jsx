@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import apiService from '../services/api';
+import { useWebSocket } from './useWebSocket';
 
 // 통합된 실시간 주식 데이터를 관리하는 커스텀 훅
 export const useRealtimeStockData = (symbol = '005930') => {
@@ -9,13 +10,8 @@ export const useRealtimeStockData = (symbol = '005930') => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
-  const [lastTradeTime, setLastTradeTime] = useState(null); // 실제 거래 마지막 시간
-  const [cacheLastUpdate, setCacheLastUpdate] = useState(null); // 캐시 데이터 마지막 업데이트 시간
-  const nextUpdateTime = useRef(null); // 다음 갱신 예정 시간
-  
-  // 로컬 스토리지 키
-  const CACHE_KEY = `stock_cache_${symbol}`;
-  const CACHE_TIME_KEY = `stock_cache_time_${symbol}`;
+  const [lastTradeTime, setLastTradeTime] = useState(null);
+  const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
 
   // 통합 데이터 로드 함수
   const loadData = useCallback(async () => {
@@ -30,19 +26,10 @@ export const useRealtimeStockData = (symbol = '005930') => {
       if (unifiedResponse.success && unifiedResponse.data) {
         const responseData = unifiedResponse.data;
         const unifiedData = responseData.data || responseData; // CachedDataResponse 또는 직접 데이터
-        const metadata = responseData.metadata || null; // 캐시 메타데이터
         
         setStockData(unifiedData.stockData || []);
         setVolumeData(unifiedData.volumeData || []);
         setSummaryData(unifiedData.summary || null);
-        
-        // 로컬 스토리지에 데이터 저장
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-          stockData: unifiedData.stockData || [],
-          volumeData: unifiedData.volumeData || [],
-          summary: unifiedData.summary || null
-        }));
-        
         
         // 실제 거래 마지막 시간 추출 (차트 데이터의 마지막 시간)
         if (unifiedData.stockData && unifiedData.stockData.length > 0) {
@@ -54,22 +41,6 @@ export const useRealtimeStockData = (symbol = '005930') => {
             const lastTradeDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
             setLastTradeTime(lastTradeDateTime);
           }
-        }
-        
-        // 캐시 메타데이터에서 실제 lastUpdated 시간 사용
-        if (metadata && metadata.lastUpdated) {
-          const cacheUpdateTime = new Date(metadata.lastUpdated);
-          setCacheLastUpdate(cacheUpdateTime);
-          
-          // 다음 갱신 시간 계산 (캐시 업데이트 시간 + 1분)
-          const nextUpdate = new Date(cacheUpdateTime.getTime() + 60000);
-          nextUpdateTime.current = nextUpdate;
-          
-          console.log('📅 캐시 업데이트 시간:', cacheUpdateTime.toLocaleString());
-          console.log('⏰ 다음 갱신 예정 시간:', nextUpdate.toLocaleString());
-          
-          // 로컬 스토리지에 캐시 시간 저장
-          localStorage.setItem(CACHE_TIME_KEY, cacheUpdateTime.toISOString());
         }
         
         // 장중/장마감 상태에 따라 적절한 시간 설정
@@ -96,6 +67,10 @@ export const useRealtimeStockData = (symbol = '005930') => {
         }
       } else {
         console.warn('⚠️ 통합 API 응답 실패 또는 데이터 없음');
+        // 503 에러인 경우 빈 데이터로 설정 (스케줄러가 데이터를 준비 중)
+        if (unifiedResponse.status === 503) {
+          console.log('📊 주식 데이터를 준비 중입니다. 잠시 후 다시 시도해주세요.');
+        }
         setStockData([]);
         setVolumeData([]);
         setSummaryData(null);
@@ -106,74 +81,64 @@ export const useRealtimeStockData = (symbol = '005930') => {
     } finally {
       setLoading(false);
     }
-  }, [symbol, CACHE_KEY, CACHE_TIME_KEY]);
+  }, [symbol]);
 
-  // 초기 데이터 로드 - 로컬 스토리지에서 복원 시도
+  // WebSocket 연결 설정
+  const { isConnected: wsConnected, subscribe } = useWebSocket(
+    `http://localhost:8080/ws`,
+    { maxReconnectAttempts: 5 }
+  );
+
+  // WebSocket 연결 상태 업데이트
   useEffect(() => {
-    // 로컬 스토리지에서 캐시된 데이터 복원 시도
-    try {
-      const cachedData = localStorage.getItem(CACHE_KEY);
-      const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+    setIsWebSocketConnected(wsConnected);
+  }, [wsConnected]);
+
+  // WebSocket 구독 설정
+  useEffect(() => {
+    if (wsConnected && subscribe) {
+      console.log('📡 WebSocket 구독 시작:', `/topic/stock/${symbol}`);
       
-      if (cachedData && cachedTime) {
-        const data = JSON.parse(cachedData);
-        const cacheTime = new Date(cachedTime);
-        
-        // 캐시된 데이터가 1분 이내인지 확인
-        const now = new Date();
-        const timeDiff = now.getTime() - cacheTime.getTime();
-        
-        if (timeDiff < 60000) { // 1분 이내
-          console.log('📦 로컬 스토리지에서 캐시된 데이터 복원');
+      const subscription = subscribe(`/topic/stock/${symbol}`, (message) => {
+        try {
+          const data = JSON.parse(message.body);
+          console.log('📨 WebSocket 실시간 데이터 수신:', data);
+          
+          // 실시간 데이터 업데이트
           setStockData(data.stockData || []);
           setVolumeData(data.volumeData || []);
           setSummaryData(data.summary || null);
-          setCacheLastUpdate(cacheTime);
-          
-          // 다음 갱신 시간 계산
-          const nextUpdate = new Date(cacheTime.getTime() + 60000);
-          nextUpdateTime.current = nextUpdate;
-          
-          setLoading(false);
-          return; // API 호출하지 않음
+          setLastUpdate(new Date());
+          setError(null);
+        } catch (error) {
+          console.error('WebSocket 메시지 파싱 오류:', error);
         }
-      }
-    } catch (error) {
-      console.warn('로컬 스토리지 데이터 복원 실패:', error);
+      });
+
+      return () => {
+        if (subscription) {
+          subscription.unsubscribe();
+        }
+      };
     }
-    
-    // 로컬 스토리지에 유효한 데이터가 없으면 API 호출
-    loadData();
-  }, [symbol]); // symbol만 의존성으로 사용
+  }, [wsConnected, subscribe, symbol]);
 
-  // 캐시 업데이트 시점을 기준으로 한 자동 갱신
+  // 초기 데이터 로드
   useEffect(() => {
-    if (!nextUpdateTime.current) return;
+    loadData();
+  }, [symbol, loadData]);
 
-    const scheduleNextUpdate = () => {
-      const now = new Date();
-      const timeUntilNext = nextUpdateTime.current.getTime() - now.getTime();
-      
-      if (timeUntilNext > 0) {
-        console.log('⏳ 다음 갱신까지 남은 시간:', Math.round(timeUntilNext / 1000), '초');
-        
-        const timeoutId = setTimeout(() => {
-          loadData();
-          scheduleNextUpdate(); // 다음 갱신 스케줄링
-        }, timeUntilNext);
-        
-        return () => clearTimeout(timeoutId);
-      } else {
-        // 이미 시간이 지났으면 즉시 갱신
+  // WebSocket이 연결되지 않은 경우에만 폴링 사용
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!wsConnected) {
+        console.log('🔄 WebSocket 미연결 - 폴링으로 데이터 갱신');
         loadData();
-        scheduleNextUpdate();
-        return () => {};
       }
-    };
+    }, 60000); // 1분마다
 
-    const cleanup = scheduleNextUpdate();
-    return cleanup;
-  }, [loadData]);
+    return () => clearInterval(interval);
+  }, [loadData, wsConnected]);
 
   // 수동 새로고침 함수
   const refreshData = useCallback(() => {
@@ -188,7 +153,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
     error,
     lastUpdate,
     lastTradeTime,
-    cacheLastUpdate,
+    isWebSocketConnected,
     refreshData,
   };
 };

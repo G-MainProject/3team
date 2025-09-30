@@ -33,7 +33,7 @@ export default function Dashboard() {
 		loading: stockLoading,
 	} = useStock();
 
-	// 통합된 실시간 주식 데이터 훅 사용 (1분마다 자동 갱신)
+	// 통합된 실시간 주식 데이터 훅 사용 (WebSocket + 폴링)
 	const {
 		stockData: realtimeStockData,
 		volumeData: realtimeVolumeData,
@@ -42,7 +42,7 @@ export default function Dashboard() {
 		error: realtimeError,
 		lastUpdate: realtimeLastUpdate,
 		lastTradeTime: realtimeLastTradeTime,
-		cacheLastUpdate: realtimeCacheLastUpdate,
+		isWebSocketConnected,
 		refreshData: refreshRealtimeData,
 	} = useRealtimeStockData(selectedStock?.stockCode || '005930');
 
@@ -480,28 +480,35 @@ export default function Dashboard() {
 											</span>
 										</div>
 									)}
-									{!isMarketClosed && (
-										<div className={styles['last-updated']}>
-											<i className="fa-solid fa-clock"></i>
-											<span>
-												마지막 업데이트: {realtimeCacheLastUpdate ? realtimeCacheLastUpdate.toLocaleString('ko-KR', {
-													year: 'numeric',
-													month: '2-digit',
-													day: '2-digit',
-													hour: '2-digit',
-													minute: '2-digit',
-													second: '2-digit',
-													hour12: false
-												}) : '데이터 없음'}
-											</span>
-											{isRefreshing && (
-												<span className={styles['refreshing-indicator']}>
-													<i className="fas fa-sync-alt fa-spin"></i>
-													갱신 중...
-												</span>
-											)}
-										</div>
-									)}
+					{!isMarketClosed && (
+						<div className={styles['last-updated']}>
+							<i className="fa-solid fa-clock"></i>
+							<span>
+								마지막 업데이트: {realtimeLastUpdate ? realtimeLastUpdate.toLocaleString('ko-KR', {
+									year: 'numeric',
+									month: '2-digit',
+									day: '2-digit',
+									hour: '2-digit',
+									minute: '2-digit',
+									second: '2-digit',
+									hour12: false
+								}) : '데이터 없음'}
+							</span>
+							{isRefreshing && (
+								<span className={styles['refreshing-indicator']}>
+									<i className="fas fa-sync-alt fa-spin"></i>
+									갱신 중...
+								</span>
+							)}
+							{/* WebSocket 연결 상태 표시 */}
+							<div className={styles['websocket-status']}>
+								<i className={`fa-solid ${isWebSocketConnected ? 'fa-wifi' : 'fa-wifi-slash'}`}></i>
+								<span className={isWebSocketConnected ? styles['connected'] : styles['disconnected']}>
+									{isWebSocketConnected ? '실시간 연결됨' : '폴링 모드'}
+								</span>
+							</div>
+						</div>
+					)}
 								</div>
 							</div>
 							<div className={styles['stock-info-section']}>

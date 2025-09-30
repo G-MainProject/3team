@@ -15,7 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/stock")
@@ -26,7 +30,7 @@ public class StockController {
 
     private final YahooFinanceApiService yahooFinanceApiService;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
     
     // Redis 연결 테스트
     @GetMapping("/test-redis")
@@ -254,7 +258,7 @@ public class StockController {
         }
     }
 
-    // 통합 주식 데이터 조회 (캐시 우선)
+    // 통합 주식 데이터 조회 (캐시 우선, 실패 시 빈 데이터 반환)
     @GetMapping("/unified/{symbol}")
     public ResponseEntity<ApiResponse<Object>> getUnifiedStockData(
             @PathVariable String symbol,
@@ -268,34 +272,39 @@ public class StockController {
                 try {
                     // ObjectMapper를 사용해서 안전하게 역직렬화
                     UnifiedStockData cachedData = objectMapper.convertValue(cachedObject, UnifiedStockData.class);
-                    log.info("캐시된 통합 주식 데이터 반환: {} - {}", symbol, interval);
+                    log.info("✅ 캐시된 통합 주식 데이터 반환: {} - {} (API 호출 없음)", symbol, interval);
                     return ResponseEntity.ok(ApiResponse.success("통합 주식 데이터를 성공적으로 조회했습니다.", cachedData));
                 } catch (Exception e) {
-                    log.warn("캐시된 통합 데이터 역직렬화 실패: {} - {}, 실시간 조회로 전환", symbol, e.getMessage());
+                    log.warn("캐시된 통합 데이터 역직렬화 실패: {} - {}", symbol, e.getMessage());
                 }
             }
             
-            // 캐시에 없거나 역직렬화 실패 시 실시간 조회
-            log.info("캐시에 없는 통합 주식 데이터 실시간 조회: {} - {}", symbol, interval);
-            
-            // 개별 데이터 조회 (각각 캐시 확인)
-            List<StockPriceDto> stockData = getCachedOrFetchStockData(symbol, interval, "realtime");
-            List<StockPriceDto> volumeData = getCachedOrFetchVolumeData(symbol, interval);
+            // 캐시에 없으면 개별 캐시/실시간으로 조립하여 반환 (503 방지)
+            log.warn("❌ 캐시에 통합 주식 데이터가 없습니다: {} - {} → 개별 데이터로 조립 시도", symbol, interval);
+
+            List<StockPriceDto> realtime = getCachedOrFetchStockData(symbol, interval, "realtime");
+            List<StockPriceDto> volume = getCachedOrFetchVolumeData(symbol, interval);
             StockSummaryDto summary = getCachedOrFetchSummary(symbol);
 
-            UnifiedStockData response = new UnifiedStockData();
-            response.setStockData(stockData);
-            response.setVolumeData(volumeData);
-            response.setSummary(summary);
+            UnifiedStockData unified = new UnifiedStockData();
+            unified.setStockData(realtime != null ? realtime : new ArrayList<>());
+            unified.setVolumeData(volume != null ? volume : new ArrayList<>());
+            unified.setSummary(summary);
 
-            // 통합 데이터를 캐시에 저장 (2분 TTL)
-            redisTemplate.opsForValue().set(cacheKey, response, java.time.Duration.ofMinutes(2));
+            // 조립 결과를 통합 캐시에 저장 (TTL 2분)
+            try {
+                redisTemplate.opsForValue().set(cacheKey, unified, java.time.Duration.ofMinutes(2));
+                log.info("✅ 통합 데이터 조립 및 캐시 저장: {} - {}", symbol, interval);
+            } catch (Exception e) {
+                log.warn("통합 캐시 저장 실패: {} - {} - {}", symbol, interval, e.getMessage());
+            }
 
-            return ResponseEntity.ok(ApiResponse.success("통합 주식 데이터를 성공적으로 조회했습니다.", response));
+            return ResponseEntity.ok(ApiResponse.success("통합 주식 데이터를 성공적으로 조회했습니다.", unified));
+                
         } catch (Exception e) {
             log.error("통합 주식 데이터 조회 실패: {} - {}", symbol, e.getMessage());
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("통합 주식 데이터 조회에 실패했습니다: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ApiResponse.error("주식 데이터를 준비 중입니다. 잠시 후 다시 시도해주세요."));
         }
     }
     
@@ -357,6 +366,30 @@ public class StockController {
             redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
         }
         return data;
+    }
+    
+    // Redis에 저장된 모든 키 조회
+    @GetMapping("/redis-keys")
+    public ResponseEntity<Object> getRedisKeys() {
+        try {
+            Set<String> keys = redisTemplate.keys("*");
+            Map<String, Object> result = new HashMap<>();
+            result.put("totalKeys", keys.size());
+            result.put("keys", keys);
+            
+            // 각 키의 TTL도 확인
+            Map<String, Long> keyTtl = new HashMap<>();
+            for (String key : keys) {
+                Long ttl = redisTemplate.getExpire(key);
+                keyTtl.put(key, ttl);
+            }
+            result.put("keyTtl", keyTtl);
+            
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Redis 키 조회 실패: " + e.getMessage());
+        }
     }
 
 }

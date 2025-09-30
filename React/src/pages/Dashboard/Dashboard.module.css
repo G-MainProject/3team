@@ -262,6 +262,23 @@
 	animation: spin 1s linear infinite;
 }
 
+.websocket-status {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 11px;
+	font-weight: 500;
+	margin-left: 8px;
+}
+
+.websocket-status .connected {
+	color: #28a745;
+}
+
+.websocket-status .disconnected {
+	color: #dc3545;
+}
+
 @keyframes pulse {
 	0%, 100% { opacity: 1; }
 	50% { opacity: 0.6; }
