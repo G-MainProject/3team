@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { StockProvider } from './contexts/StockContext';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 import { PublicRoute, PrivateRoute } from './pages/Login/ProtectedRoute';
 
 import Home from './pages/Home/Home.jsx';
@@ -20,6 +21,7 @@ function App() {
 			<AuthProvider>
 				<NotificationProvider>
 					<StockProvider>
+						<WebSocketProvider>
 						<Routes>
 							<Route path="/" element={<Home />} />
 							<Route
@@ -71,6 +73,7 @@ function App() {
 								}
 							/>
 						</Routes>
+						</WebSocketProvider>
 					</StockProvider>
 				</NotificationProvider>
 			</AuthProvider>

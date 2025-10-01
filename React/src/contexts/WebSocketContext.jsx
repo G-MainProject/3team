@@ -1,14 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 
-export const useWebSocket = (url, options = {}) => {
-  const [socket, setSocket] = useState(null);
+const WebSocketContext = createContext();
+
+const useWebSocketContext = () => {
+  const context = useContext(WebSocketContext);
+  if (!context) {
+    throw new Error('useWebSocketContext must be used within a WebSocketProvider');
+  }
+  return context;
+};
+
+export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
-  const [lastMessage, setLastMessage] = useState(null);
+  const socketRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const reconnectAttempts = useRef(0);
-  const maxReconnectAttempts = options.maxReconnectAttempts || 5;
+  const maxReconnectAttempts = 5;
   const isConnecting = useRef(false);
 
   useEffect(() => {
@@ -23,7 +32,7 @@ export const useWebSocket = (url, options = {}) => {
       try {
         // STOMP 클라이언트 생성
         const stompClient = new Client({
-          webSocketFactory: () => new SockJS(url),
+          webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
           debug: (str) => {
             // 중요한 메시지만 로그 출력
             if (str.includes('CONNECTED') || str.includes('ERROR') || str.includes('DISCONNECTED')) {
@@ -35,10 +44,9 @@ export const useWebSocket = (url, options = {}) => {
           heartbeatOutgoing: 4000,
         });
 
-        stompClient.onConnect = (frame) => {
-          console.log('🔌 WebSocket 연결 성공:', url);
+        stompClient.onConnect = () => {
           setIsConnected(true);
-          setSocket(stompClient);
+          socketRef.current = stompClient;
           reconnectAttempts.current = 0;
           isConnecting.current = false;
         };
@@ -50,28 +58,22 @@ export const useWebSocket = (url, options = {}) => {
           isConnecting.current = false;
         };
 
-        stompClient.onWebSocketClose = (event) => {
-          console.log('🔌 WebSocket 연결 종료:', event.code, event.reason);
+        stompClient.onWebSocketClose = () => {
           setIsConnected(false);
-          setSocket(null);
+          socketRef.current = null;
           isConnecting.current = false;
 
           // 자동 재연결 시도
           if (reconnectAttempts.current < maxReconnectAttempts) {
             const delay = Math.pow(2, reconnectAttempts.current) * 1000; // 지수 백오프
-            console.log(`🔄 WebSocket 재연결 시도 ${reconnectAttempts.current + 1}/${maxReconnectAttempts} (${delay}ms 후)`);
-            
             reconnectTimeoutRef.current = setTimeout(() => {
               reconnectAttempts.current++;
               connect();
             }, delay);
-          } else {
-            console.error('❌ WebSocket 최대 재연결 시도 횟수 초과');
           }
         };
 
-        stompClient.onWebSocketError = (error) => {
-          console.error('❌ WebSocket 오류:', error);
+        stompClient.onWebSocketError = () => {
           setIsConnected(false);
           isConnecting.current = false;
         };
@@ -79,47 +81,50 @@ export const useWebSocket = (url, options = {}) => {
         // 연결 시작
         stompClient.activate();
 
-      } catch (error) {
-        console.error('❌ WebSocket 연결 실패:', error);
+      } catch {
         setIsConnected(false);
         isConnecting.current = false;
       }
     };
 
+    // 컴포넌트 마운트 시에만 연결 시도
     connect();
 
     return () => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (socket) {
-        socket.deactivate();
+      if (socketRef.current) {
+        socketRef.current.deactivate();
       }
     };
-  }, [url, maxReconnectAttempts]);
+  }, []); // 의존성 배열 제거 - 컴포넌트 마운트 시에만 실행
 
   const sendMessage = (destination, message) => {
-    if (socket && isConnected) {
-      socket.publish({ destination, body: JSON.stringify(message) });
-    } else {
-      console.warn('WebSocket이 연결되지 않았습니다.');
+    if (socketRef.current && isConnected) {
+      socketRef.current.publish({ destination, body: JSON.stringify(message) });
     }
   };
 
   const subscribe = (destination, callback) => {
-    if (socket && isConnected) {
-      return socket.subscribe(destination, callback);
-    } else {
-      console.warn('WebSocket이 연결되지 않았습니다.');
-      return null;
+    if (socketRef.current && isConnected) {
+      return socketRef.current.subscribe(destination, callback);
     }
+    return null;
   };
 
-  return {
-    socket,
+  const value = {
+    socket: socketRef.current,
     isConnected,
-    lastMessage,
     sendMessage,
     subscribe
   };
+
+  return (
+    <WebSocketContext.Provider value={value}>
+      {children}
+    </WebSocketContext.Provider>
+  );
 };
+
+export { useWebSocketContext };

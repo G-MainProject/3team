@@ -189,8 +189,8 @@ public class ScheduledStockDataService {
         List<String> stockCodes = new ArrayList<>();
         
         try {
-            // sentiment_report.json 파일 경로
-            String filePath = "data/raws/sentiment_report.json";
+            // sentiment_report.json 파일 경로 (Spring 폴더에서 상위 폴더의 data/raws 접근)
+            String filePath = "../data/raws/sentiment_report.json";
             File file = new File(filePath);
             
             if (!file.exists()) {

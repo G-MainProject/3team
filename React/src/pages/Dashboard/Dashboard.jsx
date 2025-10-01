@@ -34,6 +34,8 @@ export default function Dashboard() {
 	} = useStock();
 
 	// 통합된 실시간 주식 데이터 훅 사용 (WebSocket + 폴링)
+	const currentSymbol = selectedStock?.stockCode || '005930';
+	
 	const {
 		stockData: realtimeStockData,
 		volumeData: realtimeVolumeData,
@@ -42,9 +44,8 @@ export default function Dashboard() {
 		error: realtimeError,
 		lastUpdate: realtimeLastUpdate,
 		lastTradeTime: realtimeLastTradeTime,
-		isWebSocketConnected,
 		refreshData: refreshRealtimeData,
-	} = useRealtimeStockData(selectedStock?.stockCode || '005930');
+	} = useRealtimeStockData(currentSymbol);
 
 	// 캐시 갱신 상태 관리
 	const [isRefreshing, setIsRefreshing] = useState(false);
@@ -80,17 +81,20 @@ export default function Dashboard() {
 		}
 	}, [realtimeLastTradeTime]);
 
-	// 1분마다 캐시 갱신 상태 표시 및 장마감 상태 확인
+	// WebSocket 데이터 수신과 갱신 중 상태 동기화
+	useEffect(() => {
+		// WebSocket 데이터가 수신되면 갱신 중 상태 해제
+		if (realtimeStockData && realtimeStockData.length > 0) {
+			setIsRefreshing(false);
+		}
+	}, [realtimeStockData, realtimeSummaryData, realtimeLastUpdate]);
+
+	// 1분마다 장마감 상태 확인
 	useEffect(() => {
 		checkMarketStatus(); // 초기 확인
 		
 		const interval = setInterval(() => {
-			setIsRefreshing(true);
 			checkMarketStatus(); // 장마감 상태 재확인
-			// 2초 후 로딩 상태 해제 (실제 갱신 시간과 맞춤)
-			setTimeout(() => {
-				setIsRefreshing(false);
-			}, 2000);
 		}, 60000); // 1분마다
 
 		return () => {
@@ -501,12 +505,6 @@ export default function Dashboard() {
 								</span>
 							)}
 							{/* WebSocket 연결 상태 표시 */}
-							<div className={styles['websocket-status']}>
-								<i className={`fa-solid ${isWebSocketConnected ? 'fa-wifi' : 'fa-wifi-slash'}`}></i>
-								<span className={isWebSocketConnected ? styles['connected'] : styles['disconnected']}>
-									{isWebSocketConnected ? '실시간 연결됨' : '폴링 모드'}
-								</span>
-							</div>
 						</div>
 					)}
 								</div>

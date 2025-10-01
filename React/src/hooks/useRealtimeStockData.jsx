@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import apiService from '../services/api';
-import { useWebSocket } from './useWebSocket';
+import { useWebSocketContext } from '../contexts/WebSocketContext';
 
 // 통합된 실시간 주식 데이터를 관리하는 커스텀 훅
 export const useRealtimeStockData = (symbol = '005930') => {
@@ -83,41 +83,53 @@ export const useRealtimeStockData = (symbol = '005930') => {
     }
   }, [symbol]);
 
-  // WebSocket 연결 설정
-  const { isConnected: wsConnected, subscribe } = useWebSocket(
-    `http://localhost:8080/ws`,
-    { maxReconnectAttempts: 5 }
-  );
+  // 전역 WebSocket 연결 사용
+  const { isConnected: wsConnected, subscribe } = useWebSocketContext();
 
   // WebSocket 연결 상태 업데이트
   useEffect(() => {
     setIsWebSocketConnected(wsConnected);
   }, [wsConnected]);
 
-  // WebSocket 구독 설정
+  // WebSocket 구독 설정 (중복 구독 방지)
+  const subscriptionRef = useRef(null);
+  const currentSymbolRef = useRef(null);
+  
   useEffect(() => {
     if (wsConnected && subscribe) {
-      console.log('📡 WebSocket 구독 시작:', `/topic/stock/${symbol}`);
-      
-      const subscription = subscribe(`/topic/stock/${symbol}`, (message) => {
-        try {
-          const data = JSON.parse(message.body);
-          console.log('📨 WebSocket 실시간 데이터 수신:', data);
-          
-          // 실시간 데이터 업데이트
-          setStockData(data.stockData || []);
-          setVolumeData(data.volumeData || []);
-          setSummaryData(data.summary || null);
-          setLastUpdate(new Date());
-          setError(null);
-        } catch (error) {
-          console.error('WebSocket 메시지 파싱 오류:', error);
+      // 심볼이 변경되었거나 구독이 없을 때만 새로 구독
+      if (currentSymbolRef.current !== symbol || !subscriptionRef.current) {
+        // 기존 구독이 있으면 먼저 해제
+        if (subscriptionRef.current) {
+          subscriptionRef.current.unsubscribe();
+          subscriptionRef.current = null;
         }
-      });
+        
+        
+        const subscription = subscribe(`/topic/stock/${symbol}`, (message) => {
+          try {
+            const data = JSON.parse(message.body);
+            
+            // 실시간 데이터 업데이트
+            setStockData(data.stockData || []);
+            setVolumeData(data.volumeData || []);
+            setSummaryData(data.summary || null);
+            setLastUpdate(new Date());
+            setError(null);
+            setLoading(false);
+          } catch (error) {
+            console.error('WebSocket 메시지 파싱 오류:', error);
+          }
+        });
+
+        subscriptionRef.current = subscription;
+        currentSymbolRef.current = symbol;
+      }
 
       return () => {
-        if (subscription) {
-          subscription.unsubscribe();
+        if (subscriptionRef.current) {
+          subscriptionRef.current.unsubscribe();
+          subscriptionRef.current = null;
         }
       };
     }
