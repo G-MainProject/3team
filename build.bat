@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 echo ========================================
-echo          3TEAM PROJECT BUILD
+echo         3TEAM PROJECT BUILD
 echo ========================================
 echo.
 
@@ -14,6 +14,14 @@ echo.
 
 echo [2/4] Building React frontend...
 cd React
+echo Installing React dependencies...
+call npm install
+if %errorlevel% neq 0 (
+    echo ❌ npm install failed!
+    pause
+    exit /b 1
+)
+echo Building React project...
 call npm run build
 if %errorlevel% neq 0 (
     echo ❌ React build failed!
