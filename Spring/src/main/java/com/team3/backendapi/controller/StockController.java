@@ -109,7 +109,7 @@ public class StockController {
                 List<StockPriceDto> data = yahooFinanceApiService.getRealtimeStockData(symbol, interval);
                 
                 if (data != null && !data.isEmpty()) {
-                    // 조회한 데이터를 캐시에 저장 (2분 TTL)
+                    // 조회한 데이터를 캐시에 저장 (2분 TTL - 스케줄러 1분 간격 대비 안전 마진)
                     metadata = new CacheMetadata("realtime", symbol, interval);
                     redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
                     redisTemplate.opsForValue().set(metadataKey, metadata, java.time.Duration.ofMinutes(2));
@@ -174,7 +174,7 @@ public class StockController {
                 StockSummaryDto summary = yahooFinanceApiService.getStockSummary(symbol);
                 
                 if (summary != null) {
-                    // 조회한 데이터를 캐시에 저장 (2분 TTL)
+                    // 조회한 데이터를 캐시에 저장 (2분 TTL - 스케줄러 1분 간격 대비 안전 마진)
                     try {
                         metadata = new CacheMetadata("stock", symbol, null);
                         redisTemplate.opsForValue().set(cacheKey, summary, java.time.Duration.ofMinutes(2));
@@ -242,7 +242,7 @@ public class StockController {
                 List<StockPriceDto> data = yahooFinanceApiService.getVolumeData(symbol, interval);
                 
                 if (data != null && !data.isEmpty()) {
-                    // 조회한 데이터를 캐시에 저장 (2분 TTL)
+                    // 조회한 데이터를 캐시에 저장 (2분 TTL - 스케줄러 1분 간격 대비 안전 마진)
                     metadata = new CacheMetadata("volume", symbol, interval);
                     redisTemplate.opsForValue().set(cacheKey, data, java.time.Duration.ofMinutes(2));
                     redisTemplate.opsForValue().set(metadataKey, metadata, java.time.Duration.ofMinutes(2));
@@ -291,7 +291,7 @@ public class StockController {
             unified.setVolumeData(volume != null ? volume : new ArrayList<>());
             unified.setSummary(summary);
 
-            // 조립 결과를 통합 캐시에 저장 (TTL 2분)
+            // 조립 결과를 통합 캐시에 저장 (TTL 2분 - 스케줄러 1분 간격 대비 안전 마진)
             try {
                 redisTemplate.opsForValue().set(cacheKey, unified, java.time.Duration.ofMinutes(2));
                 log.info("✅ 통합 데이터 조립 및 캐시 저장: {} - {}", symbol, interval);

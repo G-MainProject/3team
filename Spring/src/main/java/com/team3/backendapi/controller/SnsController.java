@@ -78,12 +78,12 @@ public class SnsController {
                     data.getTweets() != null ? data.getTweets().size() : 0,
                     data.getRedditPosts() != null ? data.getRedditPosts().size() : 0))
                 .map(snsData -> {
-                    // Redis에 전체 SNS 데이터 캐시 (30분 = 1800초)
-                    redisTemplate.opsForValue().set(cacheKey, snsData, 1800, java.util.concurrent.TimeUnit.SECONDS);
+                    // Redis에 전체 SNS 데이터 캐시 (10분 = 600초 - 스케줄러 5분 간격 대비 안전 마진)
+                    redisTemplate.opsForValue().set(cacheKey, snsData, 600, java.util.concurrent.TimeUnit.SECONDS);
                     
                     // 메타데이터도 함께 캐시
                     CacheMetadata newMetadata = new CacheMetadata("sns", symbol, null);
-                    redisTemplate.opsForValue().set(metadataKey, newMetadata, 1800, java.util.concurrent.TimeUnit.SECONDS);
+                    redisTemplate.opsForValue().set(metadataKey, newMetadata, 600, java.util.concurrent.TimeUnit.SECONDS);
                     
                     CachedDataResponse<SnsResponseDto> response = new CachedDataResponse<>(snsData, newMetadata);
                     return ResponseEntity.ok(ApiResponse.success("SNS 데이터를 성공적으로 조회했습니다.", response));
