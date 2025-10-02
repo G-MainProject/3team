@@ -5,6 +5,33 @@
 		<link rel="icon" type="image/png" sizes="32x32" href="/src/assets/images/logoS.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>SIGNAL</title>
+		<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+		<script>
+			tailwind.config = {
+				darkMode: "class",
+				theme: {
+					extend: {
+						colors: {
+							primary: "#007bff",
+							"background-light": "#F9FAFB",
+							"background-dark": "#111827",
+							"text-light": "#1F2937",
+							"text-dark": "#F9FAFB",
+							"card-light": "#FFFFFF",
+							"card-dark": "#1F2937",
+							"border-light": "#E5E7EB",
+							"border-dark": "#374151"
+						},
+						fontFamily: {
+							display: ["Inter", "sans-serif"],
+						},
+						borderRadius: {
+							DEFAULT: "0.5rem",
+						},
+					},
+				},
+			};
+		</script>
 	</head>
 	<body>
 		<div id="root"></div>

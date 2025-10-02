@@ -1,0 +1,591 @@
+.mypageContainer {
+    min-height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #edf0f5;
+}
+
+/* HomeNav는 마이페이지에서도 원래 스타일 유지 */
+.mypageContainer .homeNavContainer {
+    position: relative;
+    z-index: 1000;
+}
+
+.mypageContent {
+    width: 100%;
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mypageLogo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.mypageLogo img {
+    width: 40%;
+    max-width: 200px;
+}
+
+.mypageForm {
+    width: 500px;
+    padding: 50px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.mypageForm > p {
+    margin-top: auto;
+    width: 100%;
+    height: 100px;
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    color: #333;
+}
+
+.mypageForm > h1 {
+    width: 100%;
+    height: 30px;
+    font-size: 15px;
+    font-weight: normal;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-bottom: 30px;
+    color: #666;
+}
+
+.mypageFormGroup {
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.mypageFormGroup > label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.mypageFormGroup > input, .infoId > input {
+    margin-top: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 100%;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 15px;
+    transition: border-color 0.1s ease;
+    background-color: #fff;
+}
+
+.mypageFormGroup > input:focus, .infoId > input:focus {
+    outline: none;
+    border-color: #007BFF;
+}
+
+.mypageFormGroup > input:disabled, .infoId > input:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.infoId {
+    margin-top: 5px;
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 50px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    transition: border-color 0.1s ease;
+}
+
+.infoId:focus-within {
+    border-color: #007BFF;
+}
+
+.infoId > input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    padding: 0 10px;
+    font-size: 15px;
+    background-color: transparent;
+    outline: none;
+    margin: 0;
+}
+
+.emailGroup {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.mypageFormGroup > .emailGroup > input,
+.mypageFormGroup > .emailGroup > select {
+    width: 31%;
+    height: 50px;
+    margin-right: 1%;
+    margin-top: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 15px;
+    transition: border-color 0.1s ease;
+    background-color: #fff;
+}
+
+.mypageFormGroup > .emailGroup > input:focus,
+.mypageFormGroup > .emailGroup > select:focus {
+    outline: none;
+    border-color: #007BFF;
+}
+
+.mypageFormGroup > .emailGroup > input:disabled,
+.mypageFormGroup > .emailGroup > select:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.mypageFormGroup > .emailGroup > select {
+    margin-right: 0;
+}
+
+.mypageFormGroup > .emailGroup > p {
+    width: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    color: #333;
+}
+
+.genderGroup {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.genderButton {
+    flex: 1;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background-color: #fff;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.1s ease, transform 0.1s ease;
+    padding: 0 8px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.genderButton:hover:not(:disabled) {
+    border-color: #007BFF;
+    background-color: #f8f9fa;
+}
+
+.genderButton:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.genderButtonActive {
+    background-color: #007BFF;
+    color: #fff;
+    border-color: #007BFF;
+}
+
+.genderButtonActive:hover:not(:disabled) {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+input[type="date"] {
+    margin-top: 5px;
+    padding: 0 15px;
+    width: 100%;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 15px;
+    transition: border-color 0.1s ease;
+    background-color: #fff;
+}
+
+input[type="date"]:focus {
+    outline: none;
+    border-color: #007BFF;
+}
+
+input[type="date"]:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 4px;
+    margin: 16px 0;
+    border-left: 4px solid #f44336;
+    font-size: 14px;
+}
+
+.helpText {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.2;
+}
+
+.jcc {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin-top: 40px;
+    margin-bottom: 0;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.editButton {
+    width: 100%;
+    background-color: #007BFF;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+.editButton:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.saveButton {
+    flex: 1;
+    background-color: #007BFF;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+.saveButton:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.saveButton:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.cancelButton {
+    flex: 1;
+    background-color: #6c757d;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+.cancelButton:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input, textarea, select {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .mypageContainer {
+        padding: 20px;
+    }
+    
+    .mypageForm {
+        width: 100%;
+        max-width: 400px;
+        padding: 30px;
+    }
+    
+    .mypageLogo img {
+        width: 60%;
+    }
+    
+    .mypageForm > p {
+        font-size: 24px;
+        height: 80px;
+    }
+    
+    .buttonGroup {
+        flex-direction: column;
+    }
+}
+
+/* footer style */
+.mypageContainer :global(.footer-container) {
+    width: 100%;
+    min-height: auto;
+    margin-top: 300px;
+    background: #fff;
+}
+
+.mypageContainer :global(.footer-content) {
+    padding: 0;
+}
+
+/* 비밀번호 필드 스타일 */
+.infoPw,
+.infoPwRe,
+.passwordGroup,
+.passwordContainer {
+    position: relative;
+}
+
+.password, .passwordRe {
+    background: #fff;
+    padding: 0.5rem 15px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.1s ease;
+    margin-top: 5px;
+    margin-bottom: 0;
+    height: 50px;
+    box-sizing: border-box;
+}
+
+.password:focus, .passwordRe:focus {
+    border-color: #007BFF;
+}
+
+.infoPw i,
+.infoPwRe i,
+.passwordGroup i,
+.passwordContainer i {
+    font-size: 20px;
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
+
+.infoPw i {
+    bottom: 43px;
+}
+
+.infoPwRe i {
+    bottom: 25px;
+}
+
+.passwordGroup i {
+    bottom: 15px;
+}
+
+.passwordContainer i {
+    bottom: 15px;
+}
+
+.verificationPasswordContainer {
+    position: relative;
+}
+
+.verificationPasswordContainer i {
+    font-size: 20px;
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    bottom: 25px;
+}
+
+.verificationPasswordContainer i:hover {
+    color: #333;
+}
+
+.deletePasswordContainer {
+    position: relative;
+}
+
+.deletePasswordContainer i {
+    font-size: 20px;
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    bottom: 25px;
+}
+
+.deletePasswordContainer i:hover {
+    color: #333;
+}
+
+.infoPw i:hover,
+.infoPwRe i:hover,
+.passwordGroup i:hover,
+.passwordContainer i:hover {
+    color: #333;
+}
+
+/* 버튼 컨테이너 스타일 */
+.buttonContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+/* 회원탈퇴 관련 스타일 */
+.deleteAccountButton {
+    background-color: transparent;
+    color: #dc3545;
+    border: none;
+    padding: 8px 0px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.deleteAccountButton:hover {
+    color: #a71e2c;
+    text-decoration: none;
+    text-decoration: underline;
+}
+
+.deleteButton {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.deleteButton:hover {
+    background-color: #c82333;
+}
+
+.warningText {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* 모달 스타일 */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.modalContent h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.modalContent p {
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.modalButtons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.modalButtons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.modalButtons .cancelButton {
+    background-color: #6c757d;
+    color: white;
+}
+
+.modalButtons .cancelButton:hover {
+    background-color: #5a6268;
+}

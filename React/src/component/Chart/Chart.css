@@ -4,6 +4,10 @@
 	box-sizing: border-box;
 }
 
+.recharts-wrapper {
+	padding: 15px 15px 15px 0;
+}
+
 .recharts-surface {
 	outline: none;
 }

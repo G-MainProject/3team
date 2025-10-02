@@ -1,5 +1,6 @@
 .home-nav-container {
     width: 100%;
+    display: flex;
     flex-direction: column;
     justify-content: center;
 }
@@ -24,14 +25,14 @@
     width: auto;
 }
 
-.home-nav-download {
+.home-nav-actions {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
 .home-login-button {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: transparent;
     color: #011526;
     font-weight: 600;
     padding: 8px 16px;
@@ -42,6 +43,50 @@
 }
 
 .home-login-button:hover {
-    background-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+}
+
+.home-logout-button {
+    background-color: transparent;
+    color: #011526;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.home-logout-button:hover {
+    transform: translateY(-1px);
+}
+
+.home-signup-button {
+    background-color: transparent;
+    color: #011526;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.home-signup-button:hover {
+    transform: translateY(-1px);
+}
+
+.home-dashboard-button {
+    background-color: transparent;
+    color: #011526;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.home-dashboard-button:hover {
     transform: translateY(-1px);
 }

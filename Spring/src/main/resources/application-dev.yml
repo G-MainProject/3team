@@ -1,0 +1,21 @@
+# 개발 환경용 설정
+spring:
+  profiles:
+    active: dev
+
+# SNS API 설정 (개발용)
+reddit:
+  api:
+    client-id: ${REDDIT_CLIENT_ID:}  # 환경변수에서 읽어오거나 빈 값
+    client-secret: ${REDDIT_CLIENT_SECRET:}  # 환경변수에서 읽어오거나 빈 값
+    base-url: https://oauth.reddit.com
+    user-agent: StockAnalysisBot/1.0
+    timeout: 10000  # 10초 타임아웃
+
+# 로깅 설정 (개발용)
+logging:
+  level:
+    com.team3.backendapi: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.scheduling: DEBUG
+    com.team3.backendapi.service.sns: DEBUG  # SNS 서비스 로깅 추가

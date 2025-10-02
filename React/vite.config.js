@@ -3,5 +3,17 @@ import react from '@vitejs/plugin-react-swc'
 
 // https://vite.dev/config/
 export default defineConfig({
+  envDir: '..',
   plugins: [react()],
+  server: {
+    fs: {
+      allow: ['..']
+    }
+  },
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['sockjs-client', '@stomp/stompjs']
+  }
 })

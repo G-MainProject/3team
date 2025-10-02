@@ -32,6 +32,11 @@ a {
     color: inherit;
 }
 
-ul, ol {
-    list-style: none;
-}
+@keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    .animate-spin-slow {
+      animation: spin 1.5s linear infinite;
+    }

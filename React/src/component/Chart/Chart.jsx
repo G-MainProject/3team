@@ -90,10 +90,10 @@ const Chart = ({
 				<LineChart
 					data={data}
 					margin={{
-						top: 5,
-						right: simpleMode ? 5 : 20,
-						left: simpleMode ? 5 : 50,
-						bottom: simpleMode ? 5 : 20,
+						top: 10,
+						right: 20,
+						left: 10,
+						bottom: 10,
 					}}
 				>
 					<CartesianGrid strokeDasharray="3 3" stroke="#e9ecef" />

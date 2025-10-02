@@ -1,0 +1,40 @@
+# fly.toml
+
+app = '3team'
+primary_region = 'icn'
+[build]
+  [build.args]
+    VITE_FIREBASE_API_KEY = "dummy"
+    VITE_FIREBASE_APP_ID = "dummy"
+    VITE_FIREBASE_AUTH_DOMAIN = "dummy"
+    VITE_FIREBASE_MESSAGING_SENDER_ID = "dummy"
+    VITE_FIREBASE_PROJECT_ID = "dummy"
+    VITE_FIREBASE_STORAGE_BUCKET = "dummy"
+    VITE_API_URL = "dummy"
+
+[env]
+  DART_API_KEY = "dummy"
+  GOOGLE_API_KEY = "dummy"
+  REDDIT_CLIENT_ID = "dummy"
+  REDDIT_CLIENT_SECRET = "dummy"
+  KIWOOM_BASE = "dummy"
+  KIWOOM_APPKEY = "dummy"
+  KIWOOM_SECRETKEY = "dummy"
+  NAVER_CLIENT_ID = "dummy"
+  NAVER_CLIENT_SECRET = "dummy"
+  # React에서 사용할 변수들은 API로 전달해야 합니다.
+  # 여기서는 Spring이 읽을 수 있도록만 설정합니다.
+  VITE_FIREBASE_API_KEY = "dummy" 
+  VITE_FIREBASE_APP_ID = "dummy"
+  VITE_FIREBASE_AUTH_DOMAIN = "dummy"
+  VITE_FIREBASE_MESSAGING_SENDER_ID = "dummy"
+  VITE_FIREBASE_PROJECT_ID = "dummy"
+  VITE_FIREBASE_STORAGE_BUCKET = "dummy"
+  VITE_API_URL = "dummy"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0

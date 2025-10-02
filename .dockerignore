@@ -1,0 +1,90 @@
+# flyctl launch added from .gitignore
+**/.env
+
+# flyctl launch added from Python/Gemini_Api/.gitignore
+# Python cache files
+Python/Gemini_Api/**/__pycache__
+Python/Gemini_Api/**/*.pyc
+
+# Environment variables
+Python/Gemini_Api/**/.env
+
+# flyctl launch added from Python/env/.gitignore
+# Created by venv; see https://docs.python.org/3/library/venv.html
+Python/env/**/*
+
+# flyctl launch added from React/.gitignore
+# Logs
+React/**/logs
+React/**/*.log
+React/**/npm-debug.log*
+React/**/yarn-debug.log*
+React/**/yarn-error.log*
+React/**/pnpm-debug.log*
+React/**/lerna-debug.log*
+
+React/**/node_modules
+React/**/dist
+React/**/dist-ssr
+React/**/*.local
+
+# Editor directories and files
+React/**/.vscode/*
+!React/**/.vscode/extensions.json
+React/**/.idea
+React/**/.DS_Store
+React/**/*.suo
+React/**/*.ntvs*
+React/**/*.njsproj
+React/**/*.sln
+React/**/*.sw?
+
+# flyctl launch added from Spring/.gitignore
+Spring/**/HELP.md
+Spring/**/target
+!Spring/**/.mvn/wrapper/maven-wrapper.jar
+!Spring/**/**/src/main/**/target
+!Spring/**/**/src/test/**/target
+
+### STS ###
+Spring/**/.apt_generated
+Spring/**/.classpath
+Spring/**/.factorypath
+Spring/**/.project
+Spring/**/.settings
+Spring/**/.springBeans
+Spring/**/.sts4-cache
+
+### IntelliJ IDEA ###
+Spring/**/.idea
+Spring/**/*.iws
+Spring/**/*.iml
+Spring/**/*.ipr
+
+### NetBeans ###
+Spring/nbproject/private
+Spring/nbbuild
+Spring/dist
+Spring/nbdist
+Spring/.nb-gradle
+Spring/**/build
+!Spring/**/**/src/main/**/build
+!Spring/**/**/src/test/**/build
+
+### VS Code ###
+Spring/**/.vscode
+
+### Logs ###
+Spring/**/logs
+Spring/**/*.log
+
+### Database ###
+Spring/**/*.db
+Spring/**/*.sqlite
+Spring/**/*.sqlite3
+
+### OS ###
+Spring/**/.DS_Store
+Spring/**/Thumbs.db
+
+fly.toml

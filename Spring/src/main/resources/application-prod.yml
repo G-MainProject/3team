@@ -1,0 +1,23 @@
+# 운영 환경용 설정
+spring:
+  profiles:
+    active: prod
+
+# SNS API 설정 (운영용)
+reddit:
+  api:
+    client-id: ${REDDIT_CLIENT_ID}  # 환경변수 필수
+    client-secret: ${REDDIT_CLIENT_SECRET}  # 환경변수 필수
+    base-url: https://oauth.reddit.com
+    user-agent: StockAnalysisBot/1.0
+    timeout: 15000  # 15초 타임아웃
+
+# 로깅 설정 (운영용)
+logging:
+  level:
+    com.team3.backendapi: INFO
+    org.springframework.web: WARN
+    org.springframework.scheduling: INFO
+    com.team3.backendapi.service.sns: INFO  # SNS 서비스 로깅
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
