@@ -1,4 +1,4 @@
-<Process id="ae714252-f4c4-48a6-8cb3-7425d48e8133" type="task" workType="foreground" name="T_2_1_DART_열기" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="7" Orientation="horizontal">
+<Process id="ae714252-f4c4-48a6-8cb3-7425d48e8133" type="task" workType="foreground" name="T_1_1_DART_열기" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="4" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,7 +10,7 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 14:25:03" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-15 14:19:42" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:43:43" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -18,52 +18,20 @@
   <LinkItems />
   <Variables />
   <Steps>
-    <Step id="S08d393d6cb17469993b52ac4ee658cfd" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="RESULT" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
-      <Properties id="a12298c9-c01f-4cf7-87a5-476e06cdd2e8" type="Desktop">
-        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
-        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
-      </Properties>
-      <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);]]></Script>
-    </Step>
-    <Step id="Sd1508d90ce554df59db58fd857c2c2fb" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="RESULT != true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
-      <Properties id="1bb3cc78-4930-4056-9915-f726ef6c1b8b" type="Flow">
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="RESULT != true" order="1" />
-        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT != true" order="3" />
-        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-      </Properties>
-      <RelatedSteps>
-        <RelatedStep id="S1e11e8f74c8e4d90afa85517ec0919fb" type="Flow" name="EndDecisionThen" />
-      </RelatedSteps>
-      <Script><![CDATA[if (RESULT != true) {]]></Script>
-    </Step>
-    <Step id="S920216c8539e4c8b9c0566dcffbe3ff4" ver="311241220" createVer="311241220" type="Desktop" name="CreateDirectory" dpName="CreateDirectory" dpValue="C:\3team\RPA\데이터추출\DART' + Global.Stock[Global.l] +'\pdf" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S920216c8539e4c8b9c0566dcffbe3ff4" ver="311241220" createVer="311241220" type="Desktop" name="CreateDirectory" dpName="CreateDirectory" dpValue="Global.file_path + '\DART' + Global.Stock[Global.l] +'\pdf'" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="199e3817-4e5a-43dc-ba60-3ea8a5031408" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_3);]]></Script>
-    </Step>
-    <Step id="S1e11e8f74c8e4d90afa85517ec0919fb" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
-      <Properties id="6f0f1fc5-b577-4026-b0bd-b5487968d738" type="Flow">
-        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-      </Properties>
-      <RelatedSteps>
-        <RelatedStep id="Sd1508d90ce554df59db58fd857c2c2fb" type="Flow" name="DecisionThen" />
-      </RelatedSteps>
-      <Script><![CDATA[}]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_1);]]></Script>
     </Step>
     <Step id="S60ec0b35527e44e59dffa44123cdff7f" ver="311241220" createVer="311241220" type="Chrome" name="ChromeOpen" dpName="ChromeOpen" dpValue="https://dart.fss.or.kr/" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="ff5ae468-424c-4c6e-ab92-b99fe4e3ff1a" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_TypeOfBrowser" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Chrome" valuelist="Chrome;Edge" />
         <Property type="Chrome" key="CHROME_BrowserType" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Chrome" key="CHROME_URL" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/'" />
@@ -71,20 +39,20 @@
         <Property type="Chrome" key="CHROME_Maximize" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="60" />
         <Property type="Chrome" key="CHROME_ExtensionList" controlType="PropertyItemChromeInstalledExtensionsView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_DownloadPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:\\3team\\RPA\\데이터추출\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
+        <Property type="Chrome" key="CHROME_DownloadPath" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\pdf'" />
         <Property type="Chrome" key="CHROME_WindowsAccountPermissions" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Chrome" key="CHROME_UserAgent" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="CHROME_DisableAutomationControl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
         <Property type="Chrome" key="CHROME_UserLaunchOptions" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[RESULT = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_5);]]></Script>
+      <Script><![CDATA[Global.chrome_id = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_2);]]></Script>
     </Step>
-    <Step id="S1711380676d348a2bb09d3f853b76870" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetText" dpName="ChromeSetText" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S1711380676d348a2bb09d3f853b76870" ver="311241220" createVer="311241220" type="Chrome" name="ChromeSetText" dpName="ChromeSetText" dpValue="Global.chrome_id" dpValue2="전자공시시스템 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="a8fdb703-cab4-4220-96cf-10a04f4ea2d0" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -145,13 +113,13 @@
         <Property type="Win" key="Mouse_OffsetPoint" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'0, 0'" order="12" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_6);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_3);]]></Script>
     </Step>
-    <Step id="Sb7db830aa10142cfb468cc7899efb5be" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="LATEST_BROWSER" dpValue2="전자공시시스템 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sb7db830aa10142cfb468cc7899efb5be" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="전자공시시스템 - Chrome" dpImage="Target_Capture" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="22642a1d-2725-4bab-acb0-2944c1cec167" type="Chrome">
         <Property type="Chrome" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Chrome" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LATEST_BROWSER" />
+        <Property type="Chrome" key="CHROME_Browser" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.chrome_id" />
         <Property type="Chrome" key="CHROME_WaitTimeSec" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
         <Property type="Chrome" key="CHROME_PageUrl" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'https://dart.fss.or.kr/'" />
         <Property type="Chrome" key="CHROME_UsePageUrl" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="False" />
@@ -208,47 +176,35 @@
         <Property type="Win" key="Mouse_OffsetPoint" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'0, 0'" order="12" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_7);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_4);]]></Script>
     </Step>
   </Steps>
-  <JScript><![CDATA[function T_2_1_DART_열기() {
+  <JScript><![CDATA[function T_1_1_DART_열기() {
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {2:[4]};
-    this.GotoReverseBlockMap = {4:2};
-    this.GotoStepBlockTypeMap = {2:'DecisionThen',4:'EndDecisionThen'};
+    this.GotoBlockMap = {};
+    this.GotoReverseBlockMap = {};
+    this.GotoStepBlockTypeMap = {};
 
 
     this.run = function() {
 
         //------------------------------------------------
-        STEP('S08d393d6cb17469993b52ac4ee658cfd', '[1] IsDirectoryExist');
-        RESULT = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);
+        STEP('S920216c8539e4c8b9c0566dcffbe3ff4', '[1] CreateDirectory');
+        StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_1);
 
         //------------------------------------------------
-        STEP('Sd1508d90ce554df59db58fd857c2c2fb', '[2] IfThen');
-        if (RESULT != true) {
-
-            //------------------------------------------------
-            STEP('S920216c8539e4c8b9c0566dcffbe3ff4', '[3] CreateDirectory');
-            StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_3);
+        STEP('S60ec0b35527e44e59dffa44123cdff7f', '[2] ChromeOpen');
+        Global.chrome_id = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_2);
 
         //------------------------------------------------
-        }
-        STEP('S1e11e8f74c8e4d90afa85517ec0919fb', '[4] End-IfThen');
+        STEP('S1711380676d348a2bb09d3f853b76870', '[3] ChromeSetText');
+        StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_3);
 
         //------------------------------------------------
-        STEP('S60ec0b35527e44e59dffa44123cdff7f', '[5] ChromeOpen');
-        RESULT = StepPlayer.Run('Chrome.ChromeOpen', this.chromeopen_info_5);
-
-        //------------------------------------------------
-        STEP('S1711380676d348a2bb09d3f853b76870', '[6] ChromeSetText');
-        StepPlayer.Run('Chrome.ChromeSetText', this.chromesettext_info_6);
-
-        //------------------------------------------------
-        STEP('Sb7db830aa10142cfb468cc7899efb5be', '[7] ChromeClick');
-        StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_7);
+        STEP('Sb7db830aa10142cfb468cc7899efb5be', '[4] ChromeClick');
+        StepPlayer.Run('Chrome.ChromeClick', this.chromeclick_info_4);
 
 
     }
@@ -263,10 +219,7 @@
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
-      <StepNode step_id="S08d393d6cb17469993b52ac4ee658cfd" group_name="fea7c988-12e2-409a-9c98-a20d303ac0a2_Untitled" folded="False" color="" />
-      <StepNode step_id="Sd1508d90ce554df59db58fd857c2c2fb" group_name="" folded="False" color="" />
-      <StepNode step_id="S920216c8539e4c8b9c0566dcffbe3ff4" group_name="9eb614be-0770-4338-be3c-602300475802_Untitled" folded="False" color="" />
-      <StepNode step_id="S1e11e8f74c8e4d90afa85517ec0919fb" group_name="" folded="False" color="" />
+      <StepNode step_id="S920216c8539e4c8b9c0566dcffbe3ff4" group_name="b121dae9-9536-48e6-ac8b-2f545512a67a_저장할 폴더 생성" folded="False" color="" />
       <StepNode step_id="S60ec0b35527e44e59dffa44123cdff7f" group_name="8e388841-b07b-4612-b8a5-4bc4b93abeea_DART 열기" folded="False" color="" />
       <StepNode step_id="S1711380676d348a2bb09d3f853b76870" group_name="f8c3c2ab-a27a-4122-a28e-fe9dc9f1adaa_검색" folded="False" color="" />
       <StepNode step_id="Sb7db830aa10142cfb468cc7899efb5be" group_name="f8c3c2ab-a27a-4122-a28e-fe9dc9f1adaa_검색" folded="False" color="" />

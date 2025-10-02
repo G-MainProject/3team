@@ -1,43 +1,28 @@
-<Project id="b166f530-e456-424a-8f54-8cd605cd7a77" namespace="" name="G_MainProject" category="project" workType="foreground" version="1.00" lastPublishedDate="" lastPublishedBy="" createdDate="2025-09-03 09:07:50" createdBy="" latestProcess="T_test" designerVersion="3.1.125.00701" DesignedBy="">
+<Project id="b166f530-e456-424a-8f54-8cd605cd7a77" namespace="" name="G_MainProject" category="project" workType="foreground" version="1.00" lastPublishedDate="" lastPublishedBy="" createdDate="2025-09-03 09:07:50" createdBy="" latestProcess="P_0_G_MainProject" designerVersion="3.1.125.00701" DesignedBy="">
   <SharedTask isExpended="false" />
   <NormalTask isExpended="true">
-    <LinkItem id="7ad6bcdf-87bd-4850-a588-95a494eb580c" category="NormalTask" isChanged="Y" desc="" stepCount="12" name="T_0_조건설정">
+    <LinkItem id="7ad6bcdf-87bd-4850-a588-95a494eb580c" category="NormalTask" isChanged="Y" desc="" stepCount="6" name="T_0_조건설정">
       <Properties />
     </LinkItem>
-    <LinkItem id="9a951d40-4931-4718-94e0-e584415da70f" category="NormalTask" isChanged="Y" desc="" stepCount="12" name="T_1_1_네이버증권_열기">
+    <LinkItem id="ae714252-f4c4-48a6-8cb3-7425d48e8133" category="NormalTask" isChanged="Y" desc="" stepCount="4" name="T_1_1_DART_열기">
       <Properties />
     </LinkItem>
-    <LinkItem id="23ec8941-a34e-4ad5-9c85-2685840f35d5" category="NormalTask" isChanged="Y" desc="" stepCount="25" name="T_1_2_네이버증권_데이터추출">
+    <LinkItem id="5c816bc1-553e-4bc4-987b-22e059800553" category="NormalTask" isChanged="Y" desc="" stepCount="70" name="T_1_2_DART_데이터추출">
       <Properties />
     </LinkItem>
-    <LinkItem id="92673322-e20a-4ea8-b4a6-5eae6767e161" category="NormalTask" isChanged="Y" desc="" stepCount="26" name="T_1_2_네이버증권_첨부파일저장">
+    <LinkItem id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" category="NormalTask" isChanged="Y" desc="" stepCount="8" name="T_1_3_DART_첨부파일가공">
       <Properties />
     </LinkItem>
-    <LinkItem id="744979c8-0a12-4d2a-83a0-f7aa8c5d5a83" category="NormalTask" isChanged="Y" desc="" stepCount="13" name="T_1_3_네이버증권_엑셀저장">
+    <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="15" name="T_1_4_DART_엑셀저장">
       <Properties />
     </LinkItem>
-    <LinkItem id="1e9e284c-4709-478d-87bd-1351a1ed1b40" category="NormalTask" isChanged="Y" desc="" stepCount="10" name="T_1_4_네이버증권_PDF가공">
-      <Properties />
-    </LinkItem>
-    <LinkItem id="ae714252-f4c4-48a6-8cb3-7425d48e8133" category="NormalTask" isChanged="Y" desc="" stepCount="7" name="T_2_1_DART_열기">
-      <Properties />
-    </LinkItem>
-    <LinkItem id="5c816bc1-553e-4bc4-987b-22e059800553" category="NormalTask" isChanged="Y" desc="" stepCount="71" name="T_2_2_DART_데이터추출">
-      <Properties />
-    </LinkItem>
-    <LinkItem id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" category="NormalTask" isChanged="Y" desc="" stepCount="8" name="T_2_3_DART_첨부파일가공">
-      <Properties />
-    </LinkItem>
-    <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="15" name="T_2_4_DART_엑셀저장">
+    <LinkItem id="52d1f205-d23d-45cf-be50-1a184d812ccc" category="NormalTask" isChanged="Y" desc="" stepCount="55" name="T_2_1_보고서작성">
       <Properties />
     </LinkItem>
   </NormalTask>
   <Event isExpended="false" />
   <Process isExpended="true">
-    <LinkItem id="70df1108-4c69-4917-b47f-a570fe456190" category="Process" isChanged="Y" desc="default process" stepCount="5" name="P_0_G_MainProject">
-      <Properties />
-    </LinkItem>
-    <LinkItem id="af47bc2c-8feb-43f5-801e-fb32d8fc9ac4" category="Process" isChanged="Y" desc="" stepCount="7" name="P_1_네이버증권">
+    <LinkItem id="70df1108-4c69-4917-b47f-a570fe456190" category="Process" isChanged="Y" desc="default process" stepCount="14" name="P_0_G_MainProject">
       <Properties />
     </LinkItem>
     <LinkItem id="667af7e0-2f32-477c-9407-c0ef19d8e2e7" category="Process" isChanged="Y" desc="" stepCount="6" name="P_2_DART">
@@ -52,7 +37,10 @@
   <Asset />
   <Library />
   <Variables>
-    <Variable name="Naver_flag" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FFF7DB6A" showMarker="False" />
+    <Variable name="chrome_id" scope="Global" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF62B6B7" showMarker="True" />
+    <Variable name="loop" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FFEBB02D" showMarker="False" />
+    <Variable name="file_path" scope="Global" valueType="Any" formatType="Any" initValue="" desc="경로설정" colorValue="#FFFFB100" showMarker="False" />
+    <Variable name="Naver_flag" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FFF7DB6A" showMarker="True" />
     <Variable name="Data_use" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FF76B600" showMarker="False" />
     <Variable name="l" scope="Global" valueType="Any" formatType="Any" initValue="" desc="for문" colorValue="#FFF7DB6A" showMarker="False" />
     <Variable name="DART_File_name" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="이름" colorValue="#FFCB1C8D" showMarker="False" />
