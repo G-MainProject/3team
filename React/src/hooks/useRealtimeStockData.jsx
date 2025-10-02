@@ -14,10 +14,11 @@ export const useRealtimeStockData = (symbol = '005930') => {
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // 데이터 기반으로 lastUpdate 설정하는 헬퍼 함수
+  // 데이터 기반으로 lastUpdate 설정하는 헬퍼 함수 (timestamp 우선 사용)
   const setLastUpdateFromData = useCallback((stockData) => {
     if (stockData && stockData.length > 0) {
       const lastStockItem = stockData[stockData.length - 1];
+      
       if (lastStockItem && lastStockItem.timestamp) {
         // timestamp가 있으면 해당 시간 사용 (가장 정확)
         setLastUpdate(new Date(lastStockItem.timestamp));
@@ -55,14 +56,23 @@ export const useRealtimeStockData = (symbol = '005930') => {
         setVolumeData(unifiedData.volumeData || []);
         setSummaryData(unifiedData.summary || null);
         
-        // 실제 거래 마지막 시간 추출 (차트 데이터의 마지막 시간)
+        // 실제 거래 마지막 시간 추출 (timestamp 우선 사용)
         if (unifiedData.stockData && unifiedData.stockData.length > 0) {
           const lastStockItem = unifiedData.stockData[unifiedData.stockData.length - 1];
-          if (lastStockItem && lastStockItem.time) {
-            // HH:mm 형식의 시간을 오늘 날짜와 결합
+          
+          let lastTradeDateTime = null;
+          
+          // timestamp가 있으면 우선 사용 (더 정확)
+          if (lastStockItem && lastStockItem.timestamp) {
+            lastTradeDateTime = new Date(lastStockItem.timestamp);
+          } else if (lastStockItem && lastStockItem.time) {
+            // timestamp가 없으면 time 사용
             const today = new Date();
             const [hours, minutes] = lastStockItem.time.split(':').map(Number);
-            const lastTradeDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+            lastTradeDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+          }
+          
+          if (lastTradeDateTime) {
             setLastTradeTime(lastTradeDateTime);
           }
         }
@@ -96,12 +106,16 @@ export const useRealtimeStockData = (symbol = '005930') => {
     setIsWebSocketConnected(wsConnected);
   }, [wsConnected]);
 
-  // WebSocket 구독 설정 (중복 구독 방지)
+  // 장마감 상태 관리
+  const [isMarketClosed, setIsMarketClosed] = useState(false);
+  const [wasMarketClosed, setWasMarketClosed] = useState(false);
+
+  // WebSocket 구독 설정 (중복 구독 방지, 장마감 시 제외)
   const subscriptionRef = useRef(null);
   const currentSymbolRef = useRef(null);
   
   useEffect(() => {
-    if (wsConnected && subscribe) {
+    if (wsConnected && subscribe && !isMarketClosed) {
       // 심볼이 변경되었거나 구독이 없을 때만 새로 구독
       if (currentSymbolRef.current !== symbol || !subscriptionRef.current) {
         // 기존 구독이 있으면 먼저 해제
@@ -110,9 +124,15 @@ export const useRealtimeStockData = (symbol = '005930') => {
           subscriptionRef.current = null;
         }
         
-        
+        console.log('🔌 WebSocket 구독 시작:', symbol);
         const subscription = subscribe(`/topic/stock/${symbol}`, (message) => {
           try {
+            // 장마감 상태 재확인 (구독 중에 장이 마감될 수 있음)
+            if (isMarketClosed) {
+              console.log('📴 장마감 - WebSocket 데이터 무시');
+              return;
+            }
+            
             // WebSocket 데이터 수신 시 갱신 중 상태 시작
             setIsRefreshing(true);
             
@@ -145,29 +165,69 @@ export const useRealtimeStockData = (symbol = '005930') => {
 
       return () => {
         if (subscriptionRef.current) {
+          console.log('🔌 WebSocket 구독 해제:', symbol);
           subscriptionRef.current.unsubscribe();
           subscriptionRef.current = null;
         }
       };
+    } else if (isMarketClosed) {
+      // 장마감 시 기존 구독 해제
+      if (subscriptionRef.current) {
+        console.log('📴 장마감 - WebSocket 구독 해제');
+        subscriptionRef.current.unsubscribe();
+        subscriptionRef.current = null;
+      }
     }
-  }, [wsConnected, subscribe, symbol, setLastUpdateFromData]);
+  }, [wsConnected, subscribe, symbol, setLastUpdateFromData, isMarketClosed]);
 
   // 초기 데이터 로드
   useEffect(() => {
     loadData();
   }, [symbol, loadData]);
 
-  // WebSocket이 연결되지 않은 경우에만 폴링 사용
+  // 장마감 상태 확인 함수
+  const checkMarketStatus = useCallback(() => {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const day = now.getDay(); // 0=일요일, 6=토요일
+    
+    // 주말이면 장마감
+    if (day === 0 || day === 6) {
+      return true;
+    }
+    
+    // 현재 시간이 15:30 이후면 장마감
+    return hour > 15 || (hour === 15 && minute >= 30);
+  }, []);
+
+  // 장마감 상태 업데이트
+  useEffect(() => {
+    const currentMarketStatus = checkMarketStatus();
+    setIsMarketClosed(currentMarketStatus);
+    
+    // 장이 마감에서 시작으로 변경된 경우 (다음날 장 시작)
+    if (wasMarketClosed && !currentMarketStatus) {
+      console.log('🌅 장 시작 - 실시간 갱신 재개');
+      loadData(); // 즉시 데이터 갱신
+    }
+    
+    setWasMarketClosed(currentMarketStatus);
+  }, [checkMarketStatus, wasMarketClosed, loadData]);
+
+  // WebSocket이 연결되지 않은 경우에만 폴링 사용 (장마감 시 제외)
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!wsConnected) {
+      if (!wsConnected && !isMarketClosed) {
         console.log('🔄 WebSocket 미연결 - 폴링으로 데이터 갱신');
         loadData();
+      } else if (isMarketClosed) {
+        console.log('📴 장마감 - 폴링 중단');
       }
     }, 60000); // 1분마다
 
     return () => clearInterval(interval);
-  }, [loadData, wsConnected]);
+  }, [loadData, wsConnected, isMarketClosed]);
 
   // 수동 새로고침 함수
   const refreshData = useCallback(() => {
@@ -184,6 +244,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
     lastTradeTime,
     isWebSocketConnected,
     isRefreshing,
+    isMarketClosed,
     refreshData,
   };
 };

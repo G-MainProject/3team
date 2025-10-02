@@ -15,7 +15,8 @@ import './UnifiedStockChart.css';
 const UnifiedStockChart = ({ 
 	stockData, 
 	volumeData, 
-	simpleMode = false 
+	simpleMode = false,
+	isMarketClosed = false
 }) => {
 
 	if (!stockData || stockData.length === 0) {
@@ -184,11 +185,12 @@ const UnifiedStockChart = ({
 						yAxisId="price"
 						type="monotone"
 						dataKey="price"
-						name="실시간 주가"
-						stroke="#1976d2"
+						name={isMarketClosed ? "마지막 거래 주가" : "실시간 주가"}
+						stroke={isMarketClosed ? "#6c757d" : "#1976d2"}
 						strokeWidth={3}
-						dot={{ fill: '#1976d2', strokeWidth: 2, r: 4 }}
-						activeDot={{ r: 6, stroke: '#1976d2', strokeWidth: 2, fill: '#fff' }}
+						strokeDasharray={isMarketClosed ? "5 5" : "0"}
+						dot={{ fill: isMarketClosed ? '#6c757d' : '#1976d2', strokeWidth: 2, r: 4 }}
+						activeDot={{ r: 6, stroke: isMarketClosed ? '#6c757d' : '#1976d2', strokeWidth: 2, fill: '#fff' }}
 					/>
 				</ComposedChart>
 			</ResponsiveContainer>

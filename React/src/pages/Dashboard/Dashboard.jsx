@@ -45,56 +45,9 @@ export default function Dashboard() {
 		lastUpdate: realtimeLastUpdate,
 		lastTradeTime: realtimeLastTradeTime,
 		isRefreshing: realtimeIsRefreshing,
+		isMarketClosed,
 		refreshData: refreshRealtimeData,
 	} = useRealtimeStockData(currentSymbol);
-
-	// 장마감 상태 관리
-	const [isMarketClosed, setIsMarketClosed] = useState(false);
-
-	// 장마감 상태 확인 함수
-	const checkMarketStatus = useCallback(() => {
-		const now = new Date();
-		const hour = now.getHours();
-		const minute = now.getMinutes();
-		const day = now.getDay(); // 0=일요일, 6=토요일
-		
-		// 주말이면 장마감
-		if (day === 0 || day === 6) {
-			setIsMarketClosed(true);
-			return;
-		}
-		
-		// 실제 거래 마지막 시간을 기준으로 판단
-		if (realtimeLastTradeTime) {
-			const lastTradeHour = realtimeLastTradeTime.getHours();
-			const lastTradeMinute = realtimeLastTradeTime.getMinutes();
-			
-			// 마지막 거래가 15:30 이후이거나, 현재 시간이 15:30 이후면 장마감
-			const isDataAfterClose = lastTradeHour > 15 || (lastTradeHour === 15 && lastTradeMinute >= 30);
-			const isCurrentAfterClose = hour > 15 || (hour === 15 && minute >= 30);
-			
-			setIsMarketClosed(isDataAfterClose || isCurrentAfterClose);
-		} else {
-			// 데이터가 없으면 현재 시간 기준으로 판단
-			const isClosed = hour > 15 || (hour === 15 && minute >= 30);
-			setIsMarketClosed(isClosed);
-		}
-	}, [realtimeLastTradeTime]);
-
-	// WebSocket 데이터 수신과 갱신 중 상태 동기화는 useRealtimeStockData 훅에서 처리
-
-	// 1분마다 장마감 상태 확인
-	useEffect(() => {
-		checkMarketStatus(); // 초기 확인
-		
-		const interval = setInterval(() => {
-			checkMarketStatus(); // 장마감 상태 재확인
-		}, 60000); // 1분마다
-
-		return () => {
-			clearInterval(interval);
-		};
-	}, [checkMarketStatus]);
 
 	// 에러 발생 시에만 로그 출력
 	useEffect(() => {
@@ -217,36 +170,130 @@ export default function Dashboard() {
 		setChartInterval(e.target.value);
 	}, []);
 
-	// 실시간 데이터를 차트 형식으로 변환 (성능 최적화)
+	// 실시간 데이터를 차트 형식으로 변환 (정확히 15개 데이터, 시간 순서대로 정렬)
 	const stockData = useMemo(() => {
 		if (!realtimeStockData || realtimeStockData.length === 0) return [];
 		
-		return realtimeStockData.map((item, index) => ({
-			time: item.time || new Date(Date.now() - (realtimeStockData.length - index - 1) * 60000).toLocaleTimeString('ko-KR', {
+		// 원본 데이터를 복사하고 시간 순서대로 정렬
+		const sortedData = [...realtimeStockData].sort((a, b) => {
+			// timestamp가 있으면 timestamp로 정렬
+			if (a.timestamp && b.timestamp) {
+				return new Date(a.timestamp) - new Date(b.timestamp);
+			}
+			// timestamp가 없으면 time으로 정렬
+			if (a.time && b.time) {
+				return a.time.localeCompare(b.time);
+			}
+			return 0;
+		});
+		
+		// 정확히 15개 데이터로 맞추기
+		let limitedData;
+		if (sortedData.length >= 15) {
+			// 15개 이상이면 최신 15개 사용
+			limitedData = sortedData.slice(-15);
+		} else {
+			// 15개 미만이면 부족한 만큼 마지막 데이터로 채우기
+			limitedData = [...sortedData];
+			const lastItem = sortedData[sortedData.length - 1];
+			while (limitedData.length < 15) {
+				limitedData.unshift({ ...lastItem }); // 앞쪽에 복사본 추가
+			}
+		}
+		
+		return limitedData.map((item, index) => {
+			// 시간 생성 로직: 마지막 데이터를 현재 시간으로, 이전 데이터들은 1분씩 빼기
+			const now = new Date();
+			const dataTime = new Date(now.getTime() - (limitedData.length - index - 1) * 60000);
+			const timeString = dataTime.toLocaleTimeString('ko-KR', {
 				hour: '2-digit',
 				minute: '2-digit',
 				hour12: false,
-			}),
-			price: item.price || 0,
-			open: item.open || item.price || 0,
-			high: item.high || item.price || 0,
-			low: item.low || item.price || 0,
-			close: item.close || item.price || 0,
-		}));
-	}, [realtimeStockData]);
+			});
+			
+			return {
+				time: timeString,
+				price: item.price || 0,
+				open: item.open || item.price || 0,
+				high: item.high || item.price || 0,
+				low: item.low || item.price || 0,
+				close: item.close || item.price || 0,
+			};
+		});
+	}, [realtimeStockData, selectedStock]);
 
 	const volumeData = useMemo(() => {
-		if (!realtimeVolumeData || realtimeVolumeData.length === 0) return [];
+		// 주가 데이터와 동일한 시간 구조를 사용하여 거래량 데이터 생성 (정확히 15개)
+		if (!realtimeStockData || realtimeStockData.length === 0) return [];
 		
-		return realtimeVolumeData.map((item, index) => ({
-			time: item.time || new Date(Date.now() - (realtimeVolumeData.length - index - 1) * 60000).toLocaleTimeString('ko-KR', {
+		// 주가 데이터와 동일한 정렬 및 제한 로직 적용
+		const sortedData = [...realtimeStockData].sort((a, b) => {
+			if (a.timestamp && b.timestamp) {
+				return new Date(a.timestamp) - new Date(b.timestamp);
+			}
+			if (a.time && b.time) {
+				return a.time.localeCompare(b.time);
+			}
+			return 0;
+		});
+		
+		// 거래량 데이터도 동일하게 정렬
+		const sortedVolumeData = realtimeVolumeData ? [...realtimeVolumeData].sort((a, b) => {
+			if (a.timestamp && b.timestamp) {
+				return new Date(a.timestamp) - new Date(b.timestamp);
+			}
+			if (a.time && b.time) {
+				return a.time.localeCompare(b.time);
+			}
+			return 0;
+		}) : [];
+		
+		// 정확히 15개 데이터로 맞추기 (주가와 동일한 로직)
+		let limitedData;
+		if (sortedData.length >= 15) {
+			limitedData = sortedData.slice(-15);
+		} else {
+			limitedData = [...sortedData];
+			const lastItem = sortedData[sortedData.length - 1];
+			while (limitedData.length < 15) {
+				limitedData.unshift({ ...lastItem });
+			}
+		}
+		
+		// 거래량 데이터도 동일하게 제한
+		let limitedVolumeData;
+		if (sortedVolumeData.length >= 15) {
+			limitedVolumeData = sortedVolumeData.slice(-15);
+		} else if (sortedVolumeData.length > 0) {
+			limitedVolumeData = [...sortedVolumeData];
+			const lastVolumeItem = sortedVolumeData[sortedVolumeData.length - 1];
+			while (limitedVolumeData.length < 15) {
+				limitedVolumeData.unshift({ ...lastVolumeItem });
+			}
+		} else {
+			// 거래량 데이터가 없으면 0으로 채움
+			limitedVolumeData = Array(15).fill({ volume: 0 });
+		}
+		
+		return limitedData.map((item, index) => {
+			// 시간 생성 로직: 마지막 데이터를 현재 시간으로, 이전 데이터들은 1분씩 빼기
+			const now = new Date();
+			const dataTime = new Date(now.getTime() - (limitedData.length - index - 1) * 60000);
+			const timeString = dataTime.toLocaleTimeString('ko-KR', {
 				hour: '2-digit',
 				minute: '2-digit',
 				hour12: false,
-			}),
-			volume: item.volume || 0,
-		}));
-	}, [realtimeVolumeData]);
+			});
+			
+			// 인덱스 기준으로 거래량 데이터 매칭 (단순하고 안정적)
+			const volumeItem = limitedVolumeData[index] || { volume: 0 };
+			
+			return {
+				time: timeString,
+				volume: volumeItem.volume || 0,
+			};
+		});
+	}, [realtimeStockData, realtimeVolumeData]);
 
 	// 주식 요약 정보 (통합된 실시간 데이터 우선 사용)
 	const stockSummary = useMemo(() => {
@@ -561,11 +608,20 @@ export default function Dashboard() {
 											</button>
 										</div>
 									) : (
-										<div className={styles['unified-chart-wrapper']}>
+										<div className={`${styles['unified-chart-wrapper']} ${isMarketClosed ? styles['market-closed-chart'] : ''}`}>
+											{isMarketClosed && (
+												<div className={styles['market-closed-overlay']}>
+													<div className={styles['market-closed-message']}>
+														<i className="fas fa-clock"></i>
+														<span>장마감 - 마지막 거래 데이터</span>
+													</div>
+												</div>
+											)}
 											<UnifiedStockChart
 												stockData={stockData}
 												volumeData={volumeData}
 												simpleMode={false}
+												isMarketClosed={isMarketClosed}
 											/>
 										</div>
 									)}
