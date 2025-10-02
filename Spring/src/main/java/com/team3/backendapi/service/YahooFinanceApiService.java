@@ -36,8 +36,8 @@ public class YahooFinanceApiService {
     public List<StockPriceDto> getRealtimeStockData(String symbol, String interval) {
         try {
             String yahooSymbol = getYahooSymbol(symbol);
-            // 사전/사후거래 포함 (includePrePost=true)
-            String url = "https://query1.finance.yahoo.com/v8/finance/chart/" + yahooSymbol + "?interval=" + interval + "&range=1d&includePrePost=true";
+            // 사전/사후거래 포함 (includePrePost=true), 7시간 데이터 요청
+            String url = "https://query1.finance.yahoo.com/v8/finance/chart/" + yahooSymbol + "?interval=" + interval + "&range=7h&includePrePost=true";
             
             HttpEntity<String> entity = new HttpEntity<>(createYahooHeaders());
             ResponseEntity<Map> response = restTemplate.exchange(
@@ -252,9 +252,9 @@ public class YahooFinanceApiService {
                 return new ArrayList<>();
             }
             
-            // 2단계: 데이터 유효성 검증 및 변환
+            // 2단계: 데이터 유효성 검증 및 변환 (7시간 = 420분 데이터)
             int dataSize = Math.min(closes.size(), timestamps.size());
-            int startIndex = Math.max(0, dataSize - 15);
+            int startIndex = Math.max(0, dataSize - 420);
             
             for (int i = startIndex; i < dataSize; i++) {
                 Double closePrice = closes.get(i);
@@ -431,7 +431,7 @@ public class YahooFinanceApiService {
         }
     }
 
-    // Yahoo Finance API 응답을 거래량 데이터로 변환
+    // Yahoo Finance API 응답을 거래량 데이터로 변환 (원본 시간 유지)
     private List<StockPriceDto> convertYahooDataToVolumeDto(Map<String, Object> yahooResponse, String interval, String symbol) {
         List<StockPriceDto> result = new ArrayList<>();
         
@@ -498,12 +498,12 @@ public class YahooFinanceApiService {
                 return new ArrayList<>();
             }
             
-            // 최근 15개 데이터 포인트 생성
-            int startIndex = Math.max(0, volumes.size() - 15);
+            // 최근 420개 데이터 포인트 생성 (7시간 = 420분, 원본 시간 유지)
+            int startIndex = Math.max(0, volumes.size() - 420);
             
             for (int i = startIndex; i < volumes.size(); i++) {
                 Object volumeObj = volumes.get(i);
-                if (volumeObj != null) {
+                if (volumeObj != null && i < timestamps.size()) {
                     LocalDateTime dateTime = LocalDateTime.ofInstant(
                         Instant.ofEpochSecond(timestamps.get(i)), 
                         zoneId
@@ -528,12 +528,7 @@ public class YahooFinanceApiService {
             }
             
         } catch (Exception e) {
-            // 변환 실패 시 빈 배열 반환
-        }
-        
-        // 데이터가 비어있으면 빈 리스트 반환
-        if (result.isEmpty()) {
-            return new ArrayList<>();
+            log.error("거래량 데이터 변환 실패: {}", e.getMessage());
         }
         
         return result;

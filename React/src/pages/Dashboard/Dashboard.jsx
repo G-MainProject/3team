@@ -165,14 +165,32 @@ export default function Dashboard() {
 	// 차트 간격 설정 상태
 	const [chartInterval, setChartInterval] = useState('1m'); // 1m, 5m, 15m, 30m, 1h
 
-	// 차트 간격 변경 핸들러 (성능 최적화)
-	const handleIntervalChange = useCallback((e) => {
-		setChartInterval(e.target.value);
+	// 차트 간격 변경 핸들러 (버튼 클릭)
+	const handleIntervalChange = useCallback((interval) => {
+		setChartInterval(interval);
 	}, []);
 
-	// 실시간 데이터를 차트 형식으로 변환 (정확히 15개 데이터, 시간 순서대로 정렬)
+	// 실시간 데이터를 차트 형식으로 변환 (간격에 따라 조정)
 	const stockData = useMemo(() => {
 		if (!realtimeStockData || realtimeStockData.length === 0) return [];
+		
+		// 간격에 따른 데이터 개수 설정 (차트 표시용)
+		const getDataCount = (interval) => {
+			switch (interval) {
+				case '1m': return 15;  // 15개
+				case '5m': return 15;  // 15개 (5분 간격)
+				case '15m': return 12; // 12개 (15분 간격)
+				case '30m': return 8;  // 8개 (30분 간격)
+				case '1h': return 6;   // 6개 (1시간 간격)
+				default: return 15;
+			}
+		};
+		
+		const dataCount = getDataCount(chartInterval);
+		const intervalMinutes = parseInt(chartInterval.replace('m', '').replace('h', '')) * (chartInterval.includes('h') ? 60 : 1);
+		
+		// 충분한 원본 데이터 확보 (7시간 = 420분 데이터)
+		const minDataCount = Math.max(420, dataCount * intervalMinutes);
 		
 		// 원본 데이터를 복사하고 시간 순서대로 정렬
 		const sortedData = [...realtimeStockData].sort((a, b) => {
@@ -187,44 +205,121 @@ export default function Dashboard() {
 			return 0;
 		});
 		
-		// 정확히 15개 데이터로 맞추기
-		let limitedData;
-		if (sortedData.length >= 15) {
-			// 15개 이상이면 최신 15개 사용
-			limitedData = sortedData.slice(-15);
+		// 충분한 원본 데이터 확보
+		let sourceData;
+		if (sortedData.length >= minDataCount) {
+			// 충분한 데이터가 있으면 최신 데이터 사용
+			sourceData = sortedData.slice(-minDataCount);
 		} else {
-			// 15개 미만이면 부족한 만큼 마지막 데이터로 채우기
-			limitedData = [...sortedData];
+			// 부족한 데이터는 마지막 데이터로 채우기
+			sourceData = [...sortedData];
 			const lastItem = sortedData[sortedData.length - 1];
-			while (limitedData.length < 15) {
-				limitedData.unshift({ ...lastItem }); // 앞쪽에 복사본 추가
+			while (sourceData.length < minDataCount) {
+				sourceData.unshift({ ...lastItem });
 			}
 		}
 		
+		// 간격에 맞는 데이터 개수로 제한 (차트 표시용)
+		let limitedData;
+		if (sourceData.length >= dataCount) {
+			limitedData = sourceData.slice(-dataCount);
+		} else {
+			limitedData = sourceData;
+		}
+		
 		return limitedData.map((item, index) => {
-			// 시간 생성 로직: 마지막 데이터를 현재 시간으로, 이전 데이터들은 1분씩 빼기
+			// 시간 생성 로직: 장중 시간(9:00-15:30)에 맞춰 시간 계산
 			const now = new Date();
-			const dataTime = new Date(now.getTime() - (limitedData.length - index - 1) * 60000);
-			const timeString = dataTime.toLocaleTimeString('ko-KR', {
+			const currentHour = now.getHours();
+			const currentMinute = now.getMinutes();
+			
+			// 현재 시간이 장중이 아니면 마지막 장중 시간(15:30)을 기준으로 계산
+			let baseTime;
+			if (currentHour < 9 || (currentHour === 9 && currentMinute < 0) || currentHour >= 15 || (currentHour === 15 && currentMinute >= 30)) {
+				// 장외 시간이면 마지막 장중 시간(15:30)을 기준으로 계산
+				const today = new Date();
+				baseTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 15, 30);
+			} else {
+				// 장중 시간이면 현재 시간을 기준으로 계산
+				baseTime = now;
+			}
+			
+			const dataTime = new Date(baseTime.getTime() - (limitedData.length - index - 1) * intervalMinutes * 60000);
+			
+			// 간격에 맞게 시간을 정규화 (차트 표시 시간 기준)
+			const normalizedTime = new Date(dataTime);
+			if (chartInterval === '1h') {
+				// 1시간 간격: 14:00 표시라면 13:00:00부터 14:00:00까지
+				normalizedTime.setMinutes(0, 0, 0);
+			} else if (chartInterval === '30m') {
+				// 30분 간격: 14:30 표시라면 14:00:00부터 14:30:00까지
+				const minute = normalizedTime.getMinutes();
+				if (minute < 30) {
+					normalizedTime.setMinutes(0, 0, 0);
+				} else {
+					normalizedTime.setMinutes(30, 0, 0);
+				}
+			} else if (chartInterval === '15m') {
+				// 15분 간격: 14:15 표시라면 14:00:00부터 14:15:00까지
+				const minute = normalizedTime.getMinutes();
+				if (minute < 15) normalizedTime.setMinutes(0, 0, 0);
+				else if (minute < 30) normalizedTime.setMinutes(15, 0, 0);
+				else if (minute < 45) normalizedTime.setMinutes(30, 0, 0);
+				else normalizedTime.setMinutes(45, 0, 0);
+			} else if (chartInterval === '5m') {
+				// 5분 간격: 14:05 표시라면 14:00:00부터 14:05:00까지
+				const minute = normalizedTime.getMinutes();
+				const normalizedMinute = Math.floor(minute / 5) * 5;
+				normalizedTime.setMinutes(normalizedMinute, 0, 0);
+			} else if (chartInterval === '1m') {
+				// 1분 간격: 14:18 표시라면 14:17:00부터 14:18:00까지
+				normalizedTime.setSeconds(0, 0);
+			}
+			
+			// 표시 시간은 정규화된 시간 그대로 사용
+			let displayTime = normalizedTime;
+			
+			const timeString = displayTime.toLocaleTimeString('ko-KR', {
 				hour: '2-digit',
 				minute: '2-digit',
 				hour12: false,
 			});
 			
+			// 장외 시간 데이터는 0으로 표시
+			const hour = normalizedTime.getHours();
+			const minute = normalizedTime.getMinutes();
+			const isMarketTime = (hour >= 9 && hour < 15) || (hour === 15 && minute <= 30);
+			
 			return {
 				time: timeString,
-				price: item.price || 0,
-				open: item.open || item.price || 0,
-				high: item.high || item.price || 0,
-				low: item.low || item.price || 0,
-				close: item.close || item.price || 0,
+				price: isMarketTime ? (item.price || 0) : 0,
+				open: isMarketTime ? (item.open || item.price || 0) : 0,
+				high: isMarketTime ? (item.high || item.price || 0) : 0,
+				low: isMarketTime ? (item.low || item.price || 0) : 0,
+				close: isMarketTime ? (item.close || item.price || 0) : 0,
 			};
 		});
-	}, [realtimeStockData, selectedStock]);
+	}, [realtimeStockData, chartInterval]);
+
 
 	const volumeData = useMemo(() => {
-		// 주가 데이터와 동일한 시간 구조를 사용하여 거래량 데이터 생성 (정확히 15개)
+		// 주가 데이터와 동일한 시간 구조를 사용하여 거래량 데이터 생성 (간격에 따라 조정)
 		if (!realtimeStockData || realtimeStockData.length === 0) return [];
+		
+		// 간격에 따른 데이터 개수 설정 (차트 표시용)
+		const getDataCount = (interval) => {
+			switch (interval) {
+				case '1m': return 15;  // 15개
+				case '5m': return 15;  // 15개 (5분 간격)
+				case '15m': return 12; // 12개 (15분 간격)
+				case '30m': return 8;  // 8개 (30분 간격)
+				case '1h': return 6;   // 6개 (1시간 간격)
+				default: return 15;
+			}
+		};
+		
+		const dataCount = getDataCount(chartInterval);
+		const intervalMinutes = parseInt(chartInterval.replace('m', '').replace('h', '')) * (chartInterval.includes('h') ? 60 : 1);
 		
 		// 주가 데이터와 동일한 정렬 및 제한 로직 적용
 		const sortedData = [...realtimeStockData].sort((a, b) => {
@@ -248,52 +343,166 @@ export default function Dashboard() {
 			return 0;
 		}) : [];
 		
-		// 정확히 15개 데이터로 맞추기 (주가와 동일한 로직)
+		// 간격에 맞는 데이터 개수로 제한 (주가와 동일)
 		let limitedData;
-		if (sortedData.length >= 15) {
-			limitedData = sortedData.slice(-15);
+		if (sortedData.length >= dataCount) {
+			limitedData = sortedData.slice(-dataCount);
 		} else {
 			limitedData = [...sortedData];
 			const lastItem = sortedData[sortedData.length - 1];
-			while (limitedData.length < 15) {
+			while (limitedData.length < dataCount) {
 				limitedData.unshift({ ...lastItem });
 			}
 		}
 		
-		// 거래량 데이터도 동일하게 제한
+		// 거래량 데이터도 충분히 확보 (1분은 실시간, 나머지는 과거 데이터 고정)
 		let limitedVolumeData;
-		if (sortedVolumeData.length >= 15) {
-			limitedVolumeData = sortedVolumeData.slice(-15);
-		} else if (sortedVolumeData.length > 0) {
-			limitedVolumeData = [...sortedVolumeData];
-			const lastVolumeItem = sortedVolumeData[sortedVolumeData.length - 1];
-			while (limitedVolumeData.length < 15) {
-				limitedVolumeData.unshift({ ...lastVolumeItem });
+		
+		// 거래량 데이터 필터링 (volume이 0이어도 유효한 데이터로 간주)
+		const validVolumeData = sortedVolumeData.filter(item => item && (item.volume !== undefined && item.volume !== null));
+		
+		if (chartInterval === '1m') {
+			// 1분 간격: 7시간(420분) 데이터 사용
+			if (validVolumeData.length >= 420) {
+				limitedVolumeData = validVolumeData.slice(-420);
+			} else if (validVolumeData.length > 0) {
+				limitedVolumeData = [...validVolumeData];
+				while (limitedVolumeData.length < 420) {
+					const sourceIndex = limitedVolumeData.length % validVolumeData.length;
+					const sourceItem = validVolumeData[sourceIndex];
+					limitedVolumeData.push({ 
+						...sourceItem,
+						volume: sourceItem.volume
+					});
+				}
+			} else {
+				limitedVolumeData = Array(420).fill(null).map(() => ({ volume: 0 }));
 			}
 		} else {
-			// 거래량 데이터가 없으면 0으로 채움
-			limitedVolumeData = Array(15).fill({ volume: 0 });
+			// 5분, 15분, 30분, 1시간 간격: 7시간(420분) 데이터 사용
+			if (validVolumeData.length >= 420) {
+				limitedVolumeData = validVolumeData.slice(-420);
+			} else if (validVolumeData.length > 0) {
+				limitedVolumeData = [...validVolumeData];
+				while (limitedVolumeData.length < 420) {
+					const sourceIndex = limitedVolumeData.length % validVolumeData.length;
+					const sourceItem = validVolumeData[sourceIndex];
+					limitedVolumeData.push({ 
+						...sourceItem,
+						volume: sourceItem.volume
+					});
+				}
+			} else {
+				limitedVolumeData = Array(420).fill(null).map(() => ({ volume: 0 }));
+			}
 		}
 		
+		
 		return limitedData.map((item, index) => {
-			// 시간 생성 로직: 마지막 데이터를 현재 시간으로, 이전 데이터들은 1분씩 빼기
+			// 시간 생성 로직: 장중 시간(9:00-15:30)에 맞춰 시간 계산
 			const now = new Date();
-			const dataTime = new Date(now.getTime() - (limitedData.length - index - 1) * 60000);
-			const timeString = dataTime.toLocaleTimeString('ko-KR', {
+			const currentHour = now.getHours();
+			const currentMinute = now.getMinutes();
+			
+			// 현재 시간이 장중이 아니면 마지막 장중 시간(15:30)을 기준으로 계산
+			let baseTime;
+			if (currentHour < 9 || (currentHour === 9 && currentMinute < 0) || currentHour >= 15 || (currentHour === 15 && currentMinute >= 30)) {
+				// 장외 시간이면 마지막 장중 시간(15:30)을 기준으로 계산
+				const today = new Date();
+				baseTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 15, 30);
+			} else {
+				// 장중 시간이면 현재 시간을 기준으로 계산
+				baseTime = now;
+			}
+			
+			const dataTime = new Date(baseTime.getTime() - (limitedData.length - index - 1) * intervalMinutes * 60000);
+			
+			// 간격에 맞게 시간을 정규화 (차트 표시 시간 기준)
+			const normalizedTime = new Date(dataTime);
+			if (chartInterval === '1h') {
+				// 1시간 간격: 14:00 표시라면 13:00:00부터 14:00:00까지
+				normalizedTime.setMinutes(0, 0, 0);
+			} else if (chartInterval === '30m') {
+				// 30분 간격: 14:30 표시라면 14:00:00부터 14:30:00까지
+				const minute = normalizedTime.getMinutes();
+				if (minute < 30) {
+					normalizedTime.setMinutes(0, 0, 0);
+				} else {
+					normalizedTime.setMinutes(30, 0, 0);
+				}
+			} else if (chartInterval === '15m') {
+				// 15분 간격: 14:15 표시라면 14:00:00부터 14:15:00까지
+				const minute = normalizedTime.getMinutes();
+				if (minute < 15) normalizedTime.setMinutes(0, 0, 0);
+				else if (minute < 30) normalizedTime.setMinutes(15, 0, 0);
+				else if (minute < 45) normalizedTime.setMinutes(30, 0, 0);
+				else normalizedTime.setMinutes(45, 0, 0);
+			} else if (chartInterval === '5m') {
+				// 5분 간격: 14:05 표시라면 14:00:00부터 14:05:00까지
+				const minute = normalizedTime.getMinutes();
+				const normalizedMinute = Math.floor(minute / 5) * 5;
+				normalizedTime.setMinutes(normalizedMinute, 0, 0);
+			} else if (chartInterval === '1m') {
+				// 1분 간격: 14:18 표시라면 14:17:00부터 14:18:00까지
+				normalizedTime.setSeconds(0, 0);
+			}
+			
+			// 표시 시간은 정규화된 시간 그대로 사용
+			let displayTime = normalizedTime;
+			
+			const timeString = displayTime.toLocaleTimeString('ko-KR', {
 				hour: '2-digit',
 				minute: '2-digit',
 				hour12: false,
 			});
 			
-			// 인덱스 기준으로 거래량 데이터 매칭 (단순하고 안정적)
-			const volumeItem = limitedVolumeData[index] || { volume: 0 };
+		// 간격에 따라 거래량 집계 (정확한 시간 구간 기반)
+		let totalVolume = 0;
+		
+		// 모든 간격에 대해 동일한 시간 기반 집계 로직 적용
+		// 정규화된 시간을 기준으로 해당 구간의 모든 1분 데이터 집계
+		// 예: 1분 간격 13:48라면 13:47:00부터 13:48:00까지
+		// 예: 5분 간격 14:05라면 14:00:00부터 14:05:00까지
+		// 예: 1시간 간격 14:00라면 13:00:00부터 14:00:00까지
+		const startTime = new Date(normalizedTime.getTime() - intervalMinutes * 60000);
+		const endTime = new Date(normalizedTime);
+		
+		
+		// 1분 간격 원본 데이터에서 해당 구간의 거래량 집계
+		for (let i = 0; i < limitedVolumeData.length; i++) {
+			const volumeItem = limitedVolumeData[i];
+			if (volumeItem && volumeItem.volume !== undefined && volumeItem.volume !== null) {
+				// 시간 비교를 위해 volumeItem의 시간을 Date 객체로 변환
+				let itemTime;
+				if (volumeItem.time) {
+					// time이 "HH:MM" 형식인 경우 현재 날짜와 결합
+					const today = new Date();
+					const [hours, minutes] = volumeItem.time.split(':');
+					itemTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 
+										parseInt(hours), parseInt(minutes), 0); // 초를 0으로 설정
+				} else if (volumeItem.timestamp) {
+					itemTime = new Date(volumeItem.timestamp);
+				} else {
+					continue;
+				}
+				
+				// 정확한 구간 내에 있는지 확인 (startTime <= itemTime < endTime)
+				// 예: 1분 간격 13:48 표시라면 13:47:00 <= itemTime < 13:48:00
+				// 예: 5분 간격 14:05 표시라면 14:00:00 <= itemTime < 14:05:00
+				// 예: 1시간 간격 14:00 표시라면 13:00:00 <= itemTime < 14:00:00
+				if (itemTime >= startTime && itemTime < endTime) {
+					totalVolume += (volumeItem.volume || 0);
+				}
+			}
+		}
 			
 			return {
 				time: timeString,
-				volume: volumeItem.volume || 0,
+				volume: totalVolume,
 			};
 		});
-	}, [realtimeStockData, realtimeVolumeData]);
+	}, [realtimeStockData, realtimeVolumeData, chartInterval]);
+
 
 	// 주식 요약 정보 (통합된 실시간 데이터 우선 사용)
 	const stockSummary = useMemo(() => {
@@ -556,19 +765,39 @@ export default function Dashboard() {
 									<div className={styles['chart-header']}>
 										<h3>실시간 주가 및 거래량</h3>
 										<div className={styles['chart-interval-selector']}>
-											<label htmlFor="interval-select">차트 간격:</label>
-											<select
-												id="interval-select"
-												value={chartInterval}
-												onChange={handleIntervalChange}
-												className={styles['interval-select']}
-											>
-												<option value="1m">1분</option>
-												<option value="5m">5분</option>
-												<option value="15m">15분</option>
-												<option value="30m">30분</option>
-												<option value="1h">1시간</option>
-											</select>
+											{/* <span className={styles['interval-label']}>차트 간격:</span> */}
+											<div className={styles['interval-buttons']}>
+												<button
+													className={`${styles['interval-btn']} ${chartInterval === '1m' ? styles['active'] : ''}`}
+													onClick={() => handleIntervalChange('1m')}
+												>
+													1분
+												</button>
+												<button
+													className={`${styles['interval-btn']} ${chartInterval === '5m' ? styles['active'] : ''}`}
+													onClick={() => handleIntervalChange('5m')}
+												>
+													5분
+												</button>
+												<button
+													className={`${styles['interval-btn']} ${chartInterval === '15m' ? styles['active'] : ''}`}
+													onClick={() => handleIntervalChange('15m')}
+												>
+													15분
+												</button>
+												<button
+													className={`${styles['interval-btn']} ${chartInterval === '30m' ? styles['active'] : ''}`}
+													onClick={() => handleIntervalChange('30m')}
+												>
+													30분
+												</button>
+												<button
+													className={`${styles['interval-btn']} ${chartInterval === '1h' ? styles['active'] : ''}`}
+													onClick={() => handleIntervalChange('1h')}
+												>
+													1시간
+												</button>
+											</div>
 										</div>
 									</div>
 									{realtimeLoading || realtimeIsRefreshing ? (
