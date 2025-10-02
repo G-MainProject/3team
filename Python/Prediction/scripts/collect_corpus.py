@@ -112,7 +112,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        help="결과 CSV 경로 (기본: data/raw_corpus_<날짜>.csv)",
+        help="결과 CSV 경로 (기본: data/raws_corpus_<날짜>.csv)",
     )
     return parser.parse_args()
 
