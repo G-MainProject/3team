@@ -14,38 +14,79 @@ export const useRealtimeStockData = (symbol = '005930') => {
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // 데이터 기반으로 lastUpdate 설정하는 헬퍼 함수 (timestamp 우선 사용)
-  const setLastUpdateFromData = useCallback((stockData) => {
+  // 데이터 기반으로 lastUpdate 설정하는 헬퍼 함수 (주식 데이터 우선)
+  const setLastUpdateFromData = useCallback((stockData, volumeData = null) => {
+    // 주식 데이터를 우선으로 하되, 없으면 거래량 데이터 사용
+    let latestItem = null;
+    let latestTime = null;
+    
+    // 주식 데이터에서 최신 시간 찾기 (우선순위 1)
     if (stockData && stockData.length > 0) {
       const lastStockItem = stockData[stockData.length - 1];
-      
-      if (lastStockItem && lastStockItem.timestamp) {
-        // timestamp가 있으면 해당 시간 사용 (가장 정확)
-        setLastUpdate(new Date(lastStockItem.timestamp));
-      } else if (lastStockItem && lastStockItem.time) {
-        // time만 있으면 오늘 날짜와 결합하여 사용
-        const today = new Date();
-        const [hours, minutes] = lastStockItem.time.split(':').map(Number);
-        const dataUpdateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
-        setLastUpdate(dataUpdateTime);
-      } else {
-        // 시간 정보가 없으면 null로 설정 (새로고침 시간 사용 안함)
-        setLastUpdate(null);
+      if (lastStockItem) {
+        let stockTime = null;
+        if (lastStockItem.timestamp) {
+          stockTime = new Date(lastStockItem.timestamp);
+        } else if (lastStockItem.time) {
+          const today = new Date();
+          const [hours, minutes] = lastStockItem.time.split(':').map(Number);
+          stockTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+        }
+        
+        if (stockTime) {
+          latestTime = stockTime;
+          latestItem = lastStockItem;
+        }
       }
+    }
+    
+    // 주식 데이터가 없으면 거래량 데이터에서 최신 시간 찾기 (우선순위 2)
+    if (!latestTime && volumeData && volumeData.length > 0) {
+      const lastVolumeItem = volumeData[volumeData.length - 1];
+      if (lastVolumeItem) {
+        let volumeTime = null;
+        if (lastVolumeItem.timestamp) {
+          volumeTime = new Date(lastVolumeItem.timestamp);
+        } else if (lastVolumeItem.time) {
+          const today = new Date();
+          const [hours, minutes] = lastVolumeItem.time.split(':').map(Number);
+          volumeTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+        }
+        
+        if (volumeTime) {
+          latestTime = volumeTime;
+          latestItem = lastVolumeItem;
+        }
+      }
+    }
+    
+    // lastUpdate 설정
+    if (latestTime) {
+      setLastUpdate(latestTime);
     } else {
       setLastUpdate(null);
+    }
+    
+    // lastTradeTime 설정 (주식 데이터의 마지막 거래 시간 우선)
+    if (latestItem && latestItem.marketCloseTime) {
+      const marketCloseTime = new Date(latestItem.marketCloseTime);
+      setLastTradeTime(marketCloseTime);
+    } else if (latestTime) {
+      setLastTradeTime(latestTime);
+    } else {
+      setLastTradeTime(null);
     }
   }, []);
 
   // 통합 데이터 로드 함수
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (interval = '1m') => {
     try {
       setLoading(true);
       setError(null);
       setIsRefreshing(true);
 
       // 통합 API 사용 (주가, 거래량, 요약 정보를 한 번에)
-      const unifiedResponse = await apiService.getUnifiedStockData(symbol, '1m');
+      const unifiedResponse = await apiService.getUnifiedStockData(symbol, interval);
 
       // 통합 API 응답 구조 처리 (CachedDataResponse 구조)
       if (unifiedResponse.success && unifiedResponse.data) {
@@ -78,7 +119,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
         }
         
         // 데이터 기반으로 lastUpdate 설정 (장마감 로직 무시)
-        setLastUpdateFromData(unifiedData.stockData);
+        setLastUpdateFromData(unifiedData.stockData, unifiedData.volumeData);
       } else {
         console.warn('⚠️ 통합 API 응답 실패 또는 데이터 없음');
         // 503 에러인 경우 빈 데이터로 설정 (스케줄러가 데이터를 준비 중)
@@ -144,7 +185,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
             setSummaryData(data.summary || null);
             
             // 데이터 기반으로 lastUpdate 설정
-            setLastUpdateFromData(data.stockData);
+            setLastUpdateFromData(data.stockData, data.volumeData);
             
             setError(null);
             setLoading(false);
@@ -185,11 +226,9 @@ export const useRealtimeStockData = (symbol = '005930') => {
     loadData();
   }, [symbol, loadData]);
 
-  // 장마감 상태 확인 함수
+  // 장마감 상태 확인 함수 (각 주식의 실제 마지막 거래 시간 기준)
   const checkMarketStatus = useCallback(() => {
     const now = new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
     const day = now.getDay(); // 0=일요일, 6=토요일
     
     // 주말이면 장마감
@@ -197,9 +236,32 @@ export const useRealtimeStockData = (symbol = '005930') => {
       return true;
     }
     
-    // 현재 시간이 15:30 이후면 장마감
+    // 각 주식의 실제 마지막 거래 시간을 기준으로 판단
+    if (stockData && stockData.length > 0) {
+      const lastStockItem = stockData[stockData.length - 1];
+      
+      if (lastStockItem) {
+        // API에서 가져온 장마감 시간이 있으면 그 기준으로 판단
+        if (lastStockItem.marketCloseTime) {
+          const marketCloseTime = new Date(lastStockItem.marketCloseTime);
+          return now >= marketCloseTime;
+        }
+        
+        // 장마감 시간이 없으면 해당 주식의 마지막 거래 시간 기준으로 판단
+        if (lastStockItem.timestamp) {
+          const lastTradeTime = new Date(lastStockItem.timestamp);
+          // 해당 주식의 마지막 거래 시간이 현재 시간보다 30분 이상 지났으면 장마감으로 판단
+          const timeDiff = now.getTime() - lastTradeTime.getTime();
+          return timeDiff > 30 * 60 * 1000; // 30분
+        }
+      }
+    }
+    
+    // 데이터가 없으면 현재 시간 기준으로 판단 (15:30)
+    const hour = now.getHours();
+    const minute = now.getMinutes();
     return hour > 15 || (hour === 15 && minute >= 30);
-  }, []);
+  }, [stockData]);
 
   // 장마감 상태 업데이트
   useEffect(() => {

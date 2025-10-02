@@ -8,6 +8,7 @@ public class StockPriceDto {
     private int price;
     private int volume;
     private LocalDateTime timestamp;
+    private LocalDateTime marketCloseTime;
 
     public StockPriceDto() {}
 
@@ -48,5 +49,13 @@ public class StockPriceDto {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public LocalDateTime getMarketCloseTime() {
+        return marketCloseTime;
+    }
+
+    public void setMarketCloseTime(LocalDateTime marketCloseTime) {
+        this.marketCloseTime = marketCloseTime;
     }
 }

@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 @Service
 @Slf4j
@@ -185,11 +184,13 @@ public class YahooFinanceApiService {
             
             Map<String, Object> resultData = results.get(0);
 
-            // 메타에서 타임존 확인 (없으면 Asia/Seoul 사용)
+            // 메타에서 타임존 및 장마감 시간 확인
             ZoneId zoneId = ZoneId.of("Asia/Seoul");
+            LocalDateTime marketCloseTime = null;
             try {
                 Map<String, Object> meta = (Map<String, Object>) resultData.get("meta");
                 if (meta != null) {
+                    // 타임존 설정
                     Object tzObj = meta.get("timezone");
                     if (tzObj instanceof String) {
                         String tz = (String) tzObj;
@@ -197,8 +198,20 @@ public class YahooFinanceApiService {
                             zoneId = ZoneId.of(tz);
                         }
                     }
+                    
+                    // 장마감 시간 추출
+                    Object marketCloseObj = meta.get("regularMarketTime");
+                    if (marketCloseObj instanceof Long) {
+                        long marketCloseTimestamp = (Long) marketCloseObj;
+                        marketCloseTime = LocalDateTime.ofInstant(
+                            Instant.ofEpochSecond(marketCloseTimestamp), 
+                            zoneId
+                        );
+                    }
                 }
-            } catch (Exception ignore) {}
+            } catch (Exception e) {
+                log.warn("메타 데이터 파싱 실패: {}", e.getMessage());
+            }
             log.info("ResultData 키들: {}", resultData.keySet());
             
             // 안전한 타임스탬프 변환
@@ -281,11 +294,14 @@ public class YahooFinanceApiService {
                         if (volume < 0) volume = 0; // 음수 거래량 방지
                     }
                     
-                    result.add(new StockPriceDto(
+                    StockPriceDto stockPriceDto = new StockPriceDto(
                         dateTime.format(DateTimeFormatter.ofPattern("HH:mm")),
                         closePrice.intValue(),
                         volume
-                    ));
+                    );
+                    stockPriceDto.setTimestamp(dateTime);
+                    stockPriceDto.setMarketCloseTime(marketCloseTime);
+                    result.add(stockPriceDto);
                 }
             }
             
@@ -448,11 +464,13 @@ public class YahooFinanceApiService {
             
             Map<String, Object> resultData = results.get(0);
 
-            // 메타에서 타임존 확인 (없으면 Asia/Seoul 사용)
+            // 메타에서 타임존 및 장마감 시간 확인
             ZoneId zoneId = ZoneId.of("Asia/Seoul");
+            LocalDateTime marketCloseTime = null;
             try {
                 Map<String, Object> meta = (Map<String, Object>) resultData.get("meta");
                 if (meta != null) {
+                    // 타임존 설정
                     Object tzObj = meta.get("timezone");
                     if (tzObj instanceof String) {
                         String tz = (String) tzObj;
@@ -460,8 +478,20 @@ public class YahooFinanceApiService {
                             zoneId = ZoneId.of(tz);
                         }
                     }
+                    
+                    // 장마감 시간 추출
+                    Object marketCloseObj = meta.get("regularMarketTime");
+                    if (marketCloseObj instanceof Long) {
+                        long marketCloseTimestamp = (Long) marketCloseObj;
+                        marketCloseTime = LocalDateTime.ofInstant(
+                            Instant.ofEpochSecond(marketCloseTimestamp), 
+                            zoneId
+                        );
+                    }
                 }
-            } catch (Exception ignore) {}
+            } catch (Exception e) {
+                log.warn("메타 데이터 파싱 실패 (거래량): {}", e.getMessage());
+            }
             
             // 안전한 타임스탬프 변환
             List<?> timestampsRaw = (List<?>) resultData.get("timestamp");
@@ -519,11 +549,14 @@ public class YahooFinanceApiService {
                         volume = ((Number) volumeObj).intValue();
                     }
                     
-                    result.add(new StockPriceDto(
+                    StockPriceDto volumeDto = new StockPriceDto(
                         dateTime.format(DateTimeFormatter.ofPattern("HH:mm")),
                         0, // 가격은 0으로 설정 (거래량만 필요)
                         volume
-                    ));
+                    );
+                    volumeDto.setTimestamp(dateTime);
+                    volumeDto.setMarketCloseTime(marketCloseTime);
+                    result.add(volumeDto);
                 }
             }
             
@@ -629,17 +662,6 @@ public class YahooFinanceApiService {
 
     // 모의 데이터 생성 메서드들 제거됨 - 에러 처리로 대체
 
-    // 간격 문자열을 분 단위로 변환
-    private int getMinuteInterval(String interval) {
-        switch (interval) {
-            case "1m": return 1;
-            case "5m": return 5;
-            case "15m": return 15;
-            case "30m": return 30;
-            case "1h": return 60;
-            default: return 1;
-        }
-    }
 
     // 모의 데이터 생성 메서드들 제거됨 - 에러 처리로 대체
 

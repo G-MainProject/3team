@@ -91,20 +91,18 @@ public class ScheduledStockDataService {
                         log.warn("❌ 실시간 주가 데이터 수집 실패: {} - {}", stockCode, e.getMessage());
                     }
                     
-                    // 3. 거래량 데이터 수집 (현재 시간 기준으로 조정)
+                    // 3. 거래량 데이터 수집 (실제 거래 시간 그대로 사용)
                     try {
                         List<StockPriceDto> volumeData = yahooFinanceApiService.getVolumeData(stockCode, "1m");
                         if (volumeData != null && !volumeData.isEmpty()) {
-                            // 현재 시간 기준으로 거래량 데이터 시간 조정
-                            List<StockPriceDto> adjustedVolumeData = adjustVolumeDataToCurrentTime(volumeData);
-                            
+                            // 실제 거래 시간을 그대로 사용 (시간 조정 제거)
                             String volumeCacheKey = "volume:" + stockCode + ":1m";
                             String metadataKey = "metadata:volume:" + stockCode + ":1m";
                             CacheMetadata metadata = new CacheMetadata("volume", stockCode, "1m");
                             
-                            redisTemplate.opsForValue().set(volumeCacheKey, adjustedVolumeData, Duration.ofMinutes(5));
+                            redisTemplate.opsForValue().set(volumeCacheKey, volumeData, Duration.ofMinutes(5));
                             redisTemplate.opsForValue().set(metadataKey, metadata, Duration.ofMinutes(5));
-                            log.info("✅ 거래량 데이터 수집 완료 (시간 조정): {} - {}개 데이터", stockCode, adjustedVolumeData.size());
+                            log.info("✅ 거래량 데이터 수집 완료 (실제 거래 시간): {} - {}개 데이터", stockCode, volumeData.size());
                         } else {
                             log.warn("⚠️ 거래량 데이터가 비어있음: {}", stockCode);
                         }
@@ -228,34 +226,4 @@ public class ScheduledStockDataService {
         return List.of("005930"); // 삼성전자만 기본으로 설정
     }
     
-    // 거래량 데이터를 현재 시간 기준으로 조정하는 메서드
-    private List<StockPriceDto> adjustVolumeDataToCurrentTime(List<StockPriceDto> originalData) {
-        List<StockPriceDto> adjustedData = new ArrayList<>();
-        LocalDateTime now = LocalDateTime.now();
-        
-        // 최근 7시간(420분) 데이터를 현재 시간 기준으로 조정
-        for (int i = 0; i < originalData.size(); i++) {
-            StockPriceDto original = originalData.get(i);
-            
-            // 현재 시간에서 역산하여 시간 계산 (최신 데이터가 이전 분)
-            LocalDateTime adjustedTime = now.minusMinutes(originalData.size() - i);
-            String adjustedTimeString = adjustedTime.format(DateTimeFormatter.ofPattern("HH:mm"));
-            
-            // 조정된 시간으로 새로운 StockPriceDto 생성
-            StockPriceDto adjusted = new StockPriceDto(
-                adjustedTimeString,
-                original.getPrice(),
-                original.getVolume()
-            );
-            
-            adjustedData.add(adjusted);
-        }
-        
-        log.info("거래량 데이터 시간 조정 완료: {}개 데이터 ({} ~ {})", 
-                adjustedData.size(), 
-                adjustedData.get(0).getTime(),
-                adjustedData.get(adjustedData.size() - 1).getTime());
-        
-        return adjustedData;
-    }
 }
