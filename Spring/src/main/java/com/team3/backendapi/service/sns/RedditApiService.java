@@ -1,7 +1,8 @@
 package com.team3.backendapi.service.sns;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team3.backendapi.dto.sns.SnsPostDto;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -95,9 +95,9 @@ public class RedditApiService {
                             .uri(uriBuilder -> uriBuilder
                                     .path("/search.json")
                                     .queryParam("q", query)
-                                    .queryParam("sort", "new")
-                                    .queryParam("limit", 20)
-                                    .queryParam("t", "week")
+                                    .queryParam("sort", "relevance")
+                                    .queryParam("limit", 50)
+                                    .queryParam("t", "month")
                                     .build())
                             .header("Authorization", "Bearer " + accessToken)
                             .header("User-Agent", userAgent)
@@ -147,261 +147,91 @@ public class RedditApiService {
     }
 
     private String buildQuery(String symbol, String stockName) {
-        // 동적으로 검색 키워드 생성
+        // sentiment_report.json에서 실제 데이터를 읽어와서 검색 키워드 생성
         StringBuilder searchTerms = new StringBuilder();
         searchTerms.append("(").append(symbol).append(" OR ").append(stockName);
         
-        // 주식명에서 영문명 추출 시도 (괄호 안의 영문명)
-        String englishName = extractEnglishName(stockName);
-        if (englishName != null && !englishName.isEmpty()) {
-            searchTerms.append(" OR ").append(englishName);
-        }
-        
-        // 주식명의 영문 변환 시도
-        String romanizedName = romanizeKorean(stockName);
-        if (romanizedName != null && !romanizedName.isEmpty() && !romanizedName.equals(stockName)) {
-            searchTerms.append(" OR ").append(romanizedName);
+        // sentiment_report.json에서 해당 종목의 키워드 정보 가져오기
+        try {
+            List<String> keywords = getKeywordsFromSentimentReport(symbol);
+            if (keywords != null && !keywords.isEmpty()) {
+                for (String keyword : keywords) {
+                    if (keyword != null && !keyword.trim().isEmpty()) {
+                        searchTerms.append(" OR ").append(keyword.trim());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("sentiment_report.json에서 키워드를 가져오는 중 오류 발생: {}", e.getMessage());
         }
         
         searchTerms.append(")");
         
-        // 관련 서브레딧들
-        String subreddits = "subreddit:stocks OR subreddit:investing OR subreddit:SecurityAnalysis OR subreddit:ValueInvesting OR subreddit:StockMarket OR subreddit:korea OR subreddit:KoreanInvesting";
-        
-        String finalQuery = String.format("%s (%s)", searchTerms.toString(), subreddits);
+        // 서브레딧 제한 없이 전체 Reddit에서 검색 (더 많은 결과를 위해)
+        String finalQuery = searchTerms.toString();
         
         log.info("동적 검색 쿼리 생성: {} -> {}", symbol, finalQuery);
         return finalQuery;
     }
     
-    // 주식명에서 영문명 추출 (예: "삼성전자(Samsung Electronics)" -> "Samsung Electronics")
-    private String extractEnglishName(String stockName) {
-        if (stockName == null) return null;
-        
-        int openParen = stockName.indexOf('(');
-        int closeParen = stockName.indexOf(')');
-        
-        if (openParen != -1 && closeParen != -1 && closeParen > openParen) {
-            return stockName.substring(openParen + 1, closeParen).trim();
+    // sentiment_report.json에서 해당 종목의 키워드 정보 가져오기
+    private List<String> getKeywordsFromSentimentReport(String symbol) {
+        try {
+            // sentiment_report.json 파일 경로
+            String filePath = "../data/raws/sentiment_report.json";
+            File file = new File(filePath);
+            
+            if (!file.exists()) {
+                log.warn("sentiment_report.json 파일을 찾을 수 없습니다: {}", filePath);
+                return new ArrayList<>();
+            }
+            
+            // JSON 파일 읽기
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Map<String, Object>> data = objectMapper.readValue(file, new TypeReference<List<Map<String, Object>>>() {});
+            
+            // 해당 종목 코드로 데이터 찾기
+            for (Map<String, Object> item : data) {
+                String stockCode = (String) item.get("stockCode");
+                if (symbol.equals(stockCode)) {
+                    Map<String, Object> keywordAnalysis = (Map<String, Object>) item.get("keywordAnalysis");
+                    if (keywordAnalysis != null) {
+                        Map<String, Object> wordCloud = (Map<String, Object>) keywordAnalysis.get("wordCloud");
+                        if (wordCloud != null) {
+                            List<String> keywords = new ArrayList<>();
+                            // 상위 10개 키워드만 가져오기 (너무 많으면 검색이 비효율적)
+                            wordCloud.entrySet().stream()
+                                .sorted((e1, e2) -> {
+                                    Object v1 = e1.getValue();
+                                    Object v2 = e2.getValue();
+                                    if (v1 instanceof Number && v2 instanceof Number) {
+                                        double d1 = ((Number) v1).doubleValue();
+                                        double d2 = ((Number) v2).doubleValue();
+                                        return Double.compare(d2, d1); // 내림차순 정렬
+                                    }
+                                    return 0;
+                                })
+                                .limit(10)
+                                .forEach(entry -> keywords.add(entry.getKey()));
+                            
+                            log.info("종목 {}의 키워드 {}개를 sentiment_report.json에서 가져왔습니다: {}", 
+                                symbol, keywords.size(), keywords);
+                            return keywords;
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            log.warn("종목 코드 {}에 해당하는 데이터를 sentiment_report.json에서 찾을 수 없습니다.", symbol);
+            return new ArrayList<>();
+            
+        } catch (Exception e) {
+            log.error("sentiment_report.json 파일 읽기 실패: {}", e.getMessage());
+            return new ArrayList<>();
         }
-        
-        return null;
     }
     
-    // 한글을 로마자로 변환 (간단한 매핑)
-    private String romanizeKorean(String korean) {
-        if (korean == null) return null;
-        
-        // 간단한 한글-로마자 매핑 (주요 기업명)
-        switch (korean) {
-            case "삼성전자":
-                return "Samsung Electronics";
-            case "SK하이닉스":
-                return "SK Hynix";
-            case "네이버":
-                return "Naver";
-            case "삼성바이오로직스":
-                return "Samsung Biologics";
-            case "삼성SDI":
-                return "Samsung SDI";
-            case "우진":
-                return "Woojin";
-            case "LG전자":
-                return "LG Electronics";
-            case "현대차":
-                return "Hyundai Motor";
-            case "기아":
-                return "Kia";
-            case "카카오":
-                return "Kakao";
-            case "LG화학":
-                return "LG Chem";
-            case "POSCO":
-                return "POSCO";
-            case "한국전력":
-                return "KEPCO";
-            case "KB금융":
-                return "KB Financial";
-            case "신한지주":
-                return "Shinhan Financial";
-            case "하나금융":
-                return "Hana Financial";
-            case "LG에너지솔루션":
-                return "LG Energy Solution";
-            case "SK텔레콤":
-                return "SK Telecom";
-            case "KT":
-                return "KT";
-            case "LG":
-                return "LG";
-            case "CJ":
-                return "CJ";
-            case "롯데":
-                return "Lotte";
-            case "두산":
-                return "Doosan";
-            case "한화":
-                return "Hanwha";
-            case "GS":
-                return "GS";
-            case "현대중공업":
-                return "Hyundai Heavy Industries";
-            case "대한항공":
-                return "Korean Air";
-            case "아시아나항공":
-                return "Asiana Airlines";
-            case "한진":
-                return "Hanjin";
-            case "SK":
-                return "SK";
-            case "넷마블":
-                return "Netmarble";
-            case "NC소프트":
-                return "NCsoft";
-            case "크래프톤":
-                return "Krafton";
-            case "펄어비스":
-                return "Pearl Abyss";
-            case "위메이드":
-                return "Wemade";
-            case "컴투스":
-                return "Com2uS";
-            case "데브시스터즈":
-                return "Devsisters";
-            case "스마일게이트":
-                return "Smilegate";
-            case "넥슨":
-                return "Nexon";
-            case "에이치엠엠":
-                return "HMM";
-            case "팬오션":
-                return "Pan Ocean";
-            case "현대글로비스":
-                return "Hyundai Glovis";
-            case "CJ대한통운":
-                return "CJ Logistics";
-            case "한진해운":
-                return "Hanjin Shipping";
-            case "현대상선":
-                return "Hyundai Merchant Marine";
-            case "SK해운":
-                return "SK Shipping";
-            case "대한해운":
-                return "Korea Line";
-            case "팬오션글로벌":
-                return "Pan Ocean Global";
-            case "현대오일뱅크":
-                return "Hyundai Oilbank";
-            case "SK이노베이션":
-                return "SK Innovation";
-            case "GS칼텍스":
-                return "GS Caltex";
-            case "S-Oil":
-                return "S-Oil";
-            case "현대모비스":
-                return "Hyundai Mobis";
-            case "만도":
-                return "Mando";
-            case "한라":
-                return "Halla";
-            case "현대위아":
-                return "Hyundai Wia";
-            case "현대백화점":
-                return "Hyundai Department Store";
-            case "롯데쇼핑":
-                return "Lotte Shopping";
-            case "신세계":
-                return "Shinsegae";
-            case "이마트":
-                return "E-Mart";
-            case "GS리테일":
-                return "GS Retail";
-            case "BGF리테일":
-                return "BGF Retail";
-            case "현대홈쇼핑":
-                return "Hyundai Home Shopping";
-            case "CJ ENM":
-                return "CJ ENM";
-            case "SBS":
-                return "SBS";
-            case "MBC":
-                return "MBC";
-            case "KBS":
-                return "KBS";
-            case "JTBC":
-                return "JTBC";
-            case "tvN":
-                return "tvN";
-            case "OCN":
-                return "OCN";
-            case "채널A":
-                return "Channel A";
-            case "MBN":
-                return "MBN";
-            case "YTN":
-                return "YTN";
-            case "연합뉴스":
-                return "Yonhap News";
-            case "조선일보":
-                return "Chosun Ilbo";
-            case "동아일보":
-                return "Dong-A Ilbo";
-            case "한국경제신문":
-                return "Hankyung";
-            case "매일경제신문":
-                return "Maeil Business";
-            case "서울경제신문":
-                return "Seoul Economic Daily";
-            case "한겨레":
-                return "Hankyoreh";
-            case "경향신문":
-                return "Kyunghyang";
-            case "중앙일보":
-                return "JoongAng Ilbo";
-            case "한국일보":
-                return "Hankook Ilbo";
-            case "세계일보":
-                return "Segye Ilbo";
-            case "문화일보":
-                return "Munhwa Ilbo";
-            case "국민일보":
-                return "Kookmin Ilbo";
-            case "내일신문":
-                return "Naeil";
-            case "헤럴드경제":
-                return "Herald Business";
-            case "이데일리":
-                return "Edaily";
-            case "뉴스1":
-                return "News1";
-            case "뉴시스":
-                return "Newsis";
-            case "뉴스타파":
-                return "Newstapa";
-            case "프레시안":
-                return "Pressian";
-            case "오마이뉴스":
-                return "OhmyNews";
-            case "미디어오늘":
-                return "Media Today";
-            case "데일리안":
-                return "Dailyan";
-            case "노컷뉴스":
-                return "NoCut News";
-            case "시사IN":
-                return "Sisa IN";
-            case "주간조선":
-                return "Weekly Chosun";
-            case "주간동아":
-                return "Weekly Dong-A";
-            case "주간한국":
-                return "Weekly Korea";
-            case "주간경향":
-                return "Weekly Kyunghyang";
-            default:
-                return null;
-        }
-    }
 
 
     private List<SnsPostDto> parseRedditResponse(String response) {

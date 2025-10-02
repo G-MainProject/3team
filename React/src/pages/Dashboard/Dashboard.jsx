@@ -44,11 +44,11 @@ export default function Dashboard() {
 		error: realtimeError,
 		lastUpdate: realtimeLastUpdate,
 		lastTradeTime: realtimeLastTradeTime,
+		isRefreshing: realtimeIsRefreshing,
 		refreshData: refreshRealtimeData,
 	} = useRealtimeStockData(currentSymbol);
 
-	// 캐시 갱신 상태 관리
-	const [isRefreshing, setIsRefreshing] = useState(false);
+	// 장마감 상태 관리
 	const [isMarketClosed, setIsMarketClosed] = useState(false);
 
 	// 장마감 상태 확인 함수
@@ -81,13 +81,7 @@ export default function Dashboard() {
 		}
 	}, [realtimeLastTradeTime]);
 
-	// WebSocket 데이터 수신과 갱신 중 상태 동기화
-	useEffect(() => {
-		// WebSocket 데이터가 수신되면 갱신 중 상태 해제
-		if (realtimeStockData && realtimeStockData.length > 0) {
-			setIsRefreshing(false);
-		}
-	}, [realtimeStockData, realtimeSummaryData, realtimeLastUpdate]);
+	// WebSocket 데이터 수신과 갱신 중 상태 동기화는 useRealtimeStockData 훅에서 처리
 
 	// 1분마다 장마감 상태 확인
 	useEffect(() => {
@@ -498,7 +492,7 @@ export default function Dashboard() {
 									hour12: false
 								}) : '데이터 없음'}
 							</span>
-							{isRefreshing && (
+							{realtimeIsRefreshing && (
 								<span className={styles['refreshing-indicator']}>
 									<i className="fas fa-sync-alt fa-spin"></i>
 									갱신 중...
@@ -530,7 +524,7 @@ export default function Dashboard() {
 											</select>
 										</div>
 									</div>
-									{realtimeLoading || isRefreshing ? (
+									{realtimeLoading || realtimeIsRefreshing ? (
 										<div className={styles['chart-loading']}>
 											<i className="fas fa-sync-alt fa-spin"></i>
 											{realtimeLoading ? '데이터를 불러오는 중...' : '데이터를 갱신하는 중...'}

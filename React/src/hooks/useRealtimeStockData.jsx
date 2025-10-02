@@ -12,12 +12,36 @@ export const useRealtimeStockData = (symbol = '005930') => {
   const [lastUpdate, setLastUpdate] = useState(null);
   const [lastTradeTime, setLastTradeTime] = useState(null);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // 데이터 기반으로 lastUpdate 설정하는 헬퍼 함수
+  const setLastUpdateFromData = useCallback((stockData) => {
+    if (stockData && stockData.length > 0) {
+      const lastStockItem = stockData[stockData.length - 1];
+      if (lastStockItem && lastStockItem.timestamp) {
+        // timestamp가 있으면 해당 시간 사용 (가장 정확)
+        setLastUpdate(new Date(lastStockItem.timestamp));
+      } else if (lastStockItem && lastStockItem.time) {
+        // time만 있으면 오늘 날짜와 결합하여 사용
+        const today = new Date();
+        const [hours, minutes] = lastStockItem.time.split(':').map(Number);
+        const dataUpdateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+        setLastUpdate(dataUpdateTime);
+      } else {
+        // 시간 정보가 없으면 null로 설정 (새로고침 시간 사용 안함)
+        setLastUpdate(null);
+      }
+    } else {
+      setLastUpdate(null);
+    }
+  }, []);
 
   // 통합 데이터 로드 함수
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
+      setIsRefreshing(true);
 
       // 통합 API 사용 (주가, 거래량, 요약 정보를 한 번에)
       const unifiedResponse = await apiService.getUnifiedStockData(symbol, '1m');
@@ -43,28 +67,8 @@ export const useRealtimeStockData = (symbol = '005930') => {
           }
         }
         
-        // 장중/장마감 상태에 따라 적절한 시간 설정
-        const currentTime = new Date();
-        
-        // 한국 시간대를 올바르게 계산
-        const koreaTime = new Date(currentTime.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
-        const hour = koreaTime.getHours();
-        const minute = koreaTime.getMinutes();
-        const day = koreaTime.getDay(); // 0=일요일, 6=토요일
-        
-        // 주말이면 장마감
-        const isWeekend = day === 0 || day === 6;
-        
-        // 평일 15:30 이후면 장마감 (현재 시간 기준으로 판단)
-        const isAfterClose = hour > 15 || (hour === 15 && minute >= 30);
-        
-        if (isWeekend || isAfterClose) {
-          // 장마감 후: 실제 거래 마지막 시간 사용
-          setLastUpdate(null); // lastUpdate는 null로 설정
-        } else {
-          // 장중 또는 장 시작 전: 현재 시간을 lastUpdate로 설정
-          setLastUpdate(currentTime);
-        }
+        // 데이터 기반으로 lastUpdate 설정 (장마감 로직 무시)
+        setLastUpdateFromData(unifiedData.stockData);
       } else {
         console.warn('⚠️ 통합 API 응답 실패 또는 데이터 없음');
         // 503 에러인 경우 빈 데이터로 설정 (스케줄러가 데이터를 준비 중)
@@ -80,8 +84,9 @@ export const useRealtimeStockData = (symbol = '005930') => {
       setError(err.message);
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
-  }, [symbol]);
+  }, [symbol, setLastUpdateFromData]);
 
   // 전역 WebSocket 연결 사용
   const { isConnected: wsConnected, subscribe } = useWebSocketContext();
@@ -108,17 +113,29 @@ export const useRealtimeStockData = (symbol = '005930') => {
         
         const subscription = subscribe(`/topic/stock/${symbol}`, (message) => {
           try {
+            // WebSocket 데이터 수신 시 갱신 중 상태 시작
+            setIsRefreshing(true);
+            
             const data = JSON.parse(message.body);
             
             // 실시간 데이터 업데이트
             setStockData(data.stockData || []);
             setVolumeData(data.volumeData || []);
             setSummaryData(data.summary || null);
-            setLastUpdate(new Date());
+            
+            // 데이터 기반으로 lastUpdate 설정
+            setLastUpdateFromData(data.stockData);
+            
             setError(null);
             setLoading(false);
+            
+            // 갱신 완료 후 약간의 지연을 두고 갱신 중 상태 해제
+            setTimeout(() => {
+              setIsRefreshing(false);
+            }, 1000); // 1초 후 갱신 중 상태 해제
           } catch (error) {
             console.error('WebSocket 메시지 파싱 오류:', error);
+            setIsRefreshing(false);
           }
         });
 
@@ -133,7 +150,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
         }
       };
     }
-  }, [wsConnected, subscribe, symbol]);
+  }, [wsConnected, subscribe, symbol, setLastUpdateFromData]);
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -166,6 +183,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
     lastUpdate,
     lastTradeTime,
     isWebSocketConnected,
+    isRefreshing,
     refreshData,
   };
 };
