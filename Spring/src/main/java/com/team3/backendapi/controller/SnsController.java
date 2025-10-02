@@ -41,14 +41,13 @@ public class SnsController {
         
         Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
         Object metadataObject = redisTemplate.opsForValue().get(metadataKey);
-        List<SnsPostDto> cachedRedditPosts = null;
         CacheMetadata metadata = null;
         
         if (cachedObject != null) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
-                cachedRedditPosts = objectMapper.convertValue(cachedObject, new TypeReference<List<SnsPostDto>>() {});
+                SnsResponseDto snsData = objectMapper.convertValue(cachedObject, SnsResponseDto.class);
                 
                 if (metadataObject != null) {
                     metadata = objectMapper.convertValue(metadataObject, CacheMetadata.class);
@@ -56,50 +55,46 @@ public class SnsController {
                     metadata = new CacheMetadata("sns", symbol, null);
                 }
                 
-                log.info("캐시된 SNS 데이터 반환: {} - {}개 Reddit 포스트", symbol, cachedRedditPosts.size());
+                log.info("캐시된 SNS 데이터 사용: {} - Twitter: {}개, Reddit: {}개", 
+                    snsData.getStockName(),
+                    snsData.getTweets() != null ? snsData.getTweets().size() : 0,
+                    snsData.getRedditPosts() != null ? snsData.getRedditPosts().size() : 0);
+                
+                CachedDataResponse<SnsResponseDto> response = new CachedDataResponse<>(snsData, metadata);
+                return Mono.just(ResponseEntity.ok(ApiResponse.success("SNS 데이터를 성공적으로 조회했습니다.", response)));
             } catch (Exception e) {
                 log.warn("캐시된 SNS 데이터 변환 실패: {} - {}", symbol, e.getMessage());
-                cachedRedditPosts = null;
-                metadata = null;
+                // 캐시 파싱 실패 시 캐시 삭제하고 새로 조회
+                redisTemplate.delete(cacheKey);
+                redisTemplate.delete(metadataKey);
+                // 캐시 실패 시 새로 조회하도록 else 블록으로 이동
             }
         }
         
-        if (cachedRedditPosts != null) {
-            // 캐시된 데이터 사용
-            String stockName = getStockNameFromFile(symbol);
-            List<SnsPostDto> dummyTweets = getDummyTweets(symbol, stockName);
-            
-            SnsResponseDto snsData = new SnsResponseDto(
-                dummyTweets,
-                cachedRedditPosts,
-                stockName,
-                symbol
-            );
-            
-            final CacheMetadata finalMetadata = metadata;
-            CachedDataResponse<SnsResponseDto> response = new CachedDataResponse<>(snsData, finalMetadata);
-            return Mono.just(ResponseEntity.ok(ApiResponse.success("SNS 데이터를 성공적으로 조회했습니다.", response)));
-        } else {
-            // 캐시에 없으면 실시간 조회
-            log.info("캐시에 없는 SNS 데이터 실시간 조회: {}", symbol);
-            return snsService.getSnsData(symbol)
-                    .doOnNext(data -> log.info("SNS 데이터 생성 완료: tweets={}, reddit={}", 
-                        data.getTweets() != null ? data.getTweets().size() : 0,
-                        data.getRedditPosts() != null ? data.getRedditPosts().size() : 0))
-                    .map(snsData -> {
-                        final CacheMetadata finalMetadata = new CacheMetadata("sns", symbol, null);
-                        CachedDataResponse<SnsResponseDto> response = new CachedDataResponse<>(snsData, finalMetadata);
-                        return ResponseEntity.ok(ApiResponse.success("SNS 데이터를 성공적으로 조회했습니다.", response));
-                    })
-                    .doOnNext(response -> log.info("SNS API 응답 전송 완료"))
-                    .onErrorReturn(ResponseEntity.internalServerError().build());
-        }
+        // 캐시에 없거나 캐시 파싱 실패 시 실시간 조회
+        log.info("SNS 데이터 실시간 조회: {}", symbol);
+        return snsService.getSnsData(symbol)
+                .doOnNext(data -> log.info("SNS 데이터 생성 완료: tweets={}, reddit={}", 
+                    data.getTweets() != null ? data.getTweets().size() : 0,
+                    data.getRedditPosts() != null ? data.getRedditPosts().size() : 0))
+                .map(snsData -> {
+                    // Redis에 전체 SNS 데이터 캐시 (30분 = 1800초)
+                    redisTemplate.opsForValue().set(cacheKey, snsData, 1800, java.util.concurrent.TimeUnit.SECONDS);
+                    
+                    // 메타데이터도 함께 캐시
+                    CacheMetadata newMetadata = new CacheMetadata("sns", symbol, null);
+                    redisTemplate.opsForValue().set(metadataKey, newMetadata, 1800, java.util.concurrent.TimeUnit.SECONDS);
+                    
+                    CachedDataResponse<SnsResponseDto> response = new CachedDataResponse<>(snsData, newMetadata);
+                    return ResponseEntity.ok(ApiResponse.success("SNS 데이터를 성공적으로 조회했습니다.", response));
+                })
+                .onErrorReturn(ResponseEntity.internalServerError().build());
     }
     
     private String getStockNameFromFile(String symbol) {
         try {
             // sentiment_report.json 파일에서 주식 이름 조회
-            String filePath = "data/raws/sentiment_report.json";
+            String filePath = "../data/raws/sentiment_report.json";
             File file = new File(filePath);
             
             if (!file.exists()) {
@@ -125,15 +120,6 @@ public class SnsController {
         }
     }
     
-    private List<SnsPostDto> getDummyTweets(String symbol, String stockName) {
-        // 기존 SnsService의 getDummyTweets 로직을 여기로 이동
-        // 간단한 더미 데이터 반환
-        return List.of(
-            new SnsPostDto("1", "@StockNews", 
-                stockName + " 관련 최신 뉴스가 업데이트되었습니다.", 
-                "1시간 전", 500, 50, 0, "twitter", "https://twitter.com/StockNews/status/1234567890")
-        );
-    }
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {

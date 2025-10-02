@@ -26,11 +26,8 @@ public class SnsService {
     public Mono<SnsResponseDto> getSnsData(String symbol) {
         String stockName = stockDataService.getStockName(symbol);
         
-        log.info("SNS 데이터 요청 시작: {} ({})", stockName, symbol);
-
         // Reddit 데이터와 더미 Twitter 데이터를 가져오기
         Mono<List<SnsPostDto>> redditMono = redditApiService.getRedditPostsBySymbol(symbol, stockName)
-                .doOnNext(redditPosts -> log.info("Reddit 데이터 수집 완료: {}개", redditPosts.size()))
                 .doOnError(error -> log.error("Reddit 데이터 수집 실패: {}", error.getMessage()));
 
         // 더미 Twitter 데이터 생성
@@ -38,13 +35,11 @@ public class SnsService {
 
         return redditMono
                 .map(redditPosts -> {
-                    log.info("SNS 데이터 조합 중: tweets={}개, reddit={}개", 
-                        dummyTweets.size(), redditPosts.size());
-                    return new SnsResponseDto(dummyTweets, redditPosts, stockName, symbol);
+                    SnsResponseDto response = new SnsResponseDto(dummyTweets, redditPosts, stockName, symbol);
+                    // 마지막 업데이트 시간을 현재 시간으로 설정 (실제 데이터 업데이트 시간)
+                    response.setLastUpdate(java.time.LocalDateTime.now());
+                    return response;
                 })
-                .doOnSuccess(response -> 
-                    log.info("SNS 데이터 로드 완료: {} - Twitter: {}개, Reddit: {}개", 
-                        stockName, response.getTweets().size(), response.getRedditPosts().size()))
                 .doOnError(error -> 
                     log.error("SNS 데이터 로드 실패: {} - {}", symbol, error.getMessage()));
     }

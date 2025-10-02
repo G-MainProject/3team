@@ -2,6 +2,7 @@
     {
         "stockName": "코오롱모빌리티그룹",
         "stockCode": "450140",
+        "stockNameEn": "Kolon Mobility Group",
         "analysisDate": "2025-09-24 15:50:32",
         "sentimentAnalysis": {
             "averageScore": 0.7867,
@@ -469,6 +470,7 @@
     {
         "stockName": "코오롱모빌리티그룹우",
         "stockCode": "45014K",
+        "stockNameEn": "Kolon Mobility Group Preferred",
         "analysisDate": "2025-09-24 15:51:10",
         "sentimentAnalysis": {
             "averageScore": 0.6423,
@@ -876,6 +878,7 @@
     {
         "stockName": "우진",
         "stockCode": "105840",
+        "stockNameEn": "Woojin",
         "analysisDate": "2025-09-24 15:52:02",
         "sentimentAnalysis": {
             "averageScore": 0.2117,
@@ -1532,6 +1535,7 @@
     {
         "stockName": "주성코퍼레이션",
         "stockCode": "109070",
+        "stockNameEn": "Jusung Corporation",
         "analysisDate": "2025-09-24 15:52:41",
         "sentimentAnalysis": {
             "averageScore": 0.87,

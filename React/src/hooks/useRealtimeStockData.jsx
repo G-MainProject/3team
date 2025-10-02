@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import apiService from '../services/api';
-import { useWebSocketContext } from '../contexts/WebSocketContext';
+import { useWebSocketContext } from './useWebSocketContext';
 
 // 통합된 실시간 주식 데이터를 관리하는 커스텀 훅
 export const useRealtimeStockData = (symbol = '005930') => {

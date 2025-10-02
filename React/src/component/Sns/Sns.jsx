@@ -16,7 +16,6 @@ import {
 	limit,
 	getDocs,
 	startAfter,
-	where,
 } from 'firebase/firestore';
 
 const Sns = ({ selectedSymbol = '005930' }) => {
@@ -48,7 +47,6 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 	// Reddit 데이터 가져오기 함수
 	const fetchRedditData = useCallback(async () => {
 		try {
-			console.log('🔄 Reddit 데이터 요청 중 - 심볼:', selectedSymbol);
 			const response = await apiService.getSnsData(selectedSymbol);
 			
 			// 새로운 API 응답 구조 처리
@@ -60,16 +58,10 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 				// 캐시 메타데이터에서 lastUpdate 시간 추출 (반드시 캐시 시간 사용)
 				if (metadata && metadata.lastUpdated) {
 					setLastUpdated(new Date(metadata.lastUpdated));
-					console.log('✅ Reddit 데이터 로드 완료 (캐시 시간 사용):', data.redditPosts?.length || 0, '개, 캐시 시간:', metadata.lastUpdated);
-				} else {
-					// 캐시 메타데이터가 없으면 현재 시간을 사용하지 않고 기존 시간 유지
-					console.log('⚠️ 캐시 메타데이터 없음, 기존 시간 유지');
 				}
-				console.log('✅ Reddit 데이터 로드 완료:', data.redditPosts?.length || 0, '개');
 			} else {
 				setRedditPosts([]);
 				// 데이터가 없어도 기존 lastUpdated 시간은 유지
-				console.log('⚠️ 데이터 없음, 기존 시간 유지');
 			}
 		} catch (err) {
 			console.error('Reddit 데이터 요청 오류:', err);
@@ -110,7 +102,6 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 		// JSON 데이터에서 해당 종목코드로 주식명 찾기
 		const stockData = sentimentReportData.find(stock => stock.stockCode === symbol);
 		const stockName = stockData ? stockData.stockName : '알 수 없는 주식';
-		console.log(`🏷️ 주식명 매핑: ${symbol} -> ${stockName}`);
 		return stockName;
 	};
 
@@ -331,7 +322,6 @@ const Sns = ({ selectedSymbol = '005930' }) => {
 		}
 		try {
 			await deleteDoc(doc(firestore, 'messages', messageId));
-			console.log('메시지가 삭제되었습니다.');
 		} catch (error) {
 			console.error('메시지 삭제 실패:', error);
 			alert('메시지 삭제에 실패했습니다.');

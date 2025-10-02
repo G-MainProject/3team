@@ -31,7 +31,7 @@ public class WebClientConfig {
         return WebClient.builder()
                 .baseUrl(redditBaseUrl)
                 .clientConnector(new org.springframework.http.client.reactive.ReactorClientHttpConnector(httpClient))
-                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024))
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024)) // 10MB로 증가
                 .build();
     }
 }

@@ -39,14 +39,6 @@ public class RedditApiService {
         // 하드코딩된 Reddit API 키 사용 (테스트용)
         clientId = "JIq0Fy3dFM8srHgo_UJadg";
         clientSecret = "u08v6NPMr-13DMZWKQqxny4i4iYYMg";
-        log.info("Reddit API 키 하드코딩 사용: Client ID={}, Secret={}", 
-            clientId.substring(0, 10) + "...", 
-            clientSecret.substring(0, 10) + "...");
-        
-        log.info("Reddit API 서비스 초기화 - 캐시 클리어됨");
-        log.info("Reddit API 초기화 - Client ID: '{}', Client Secret: '{}'", 
-            clientId != null ? clientId.substring(0, Math.min(clientId.length(), 10)) + "..." : "null",
-            clientSecret != null ? clientSecret.substring(0, Math.min(clientSecret.length(), 10)) + "..." : "null");
     }
     
     @Value("${reddit.api.user-agent:StockAnalysisBot/1.0}")
@@ -72,22 +64,15 @@ public class RedditApiService {
     }
 
     public Mono<List<SnsPostDto>> getRedditPostsBySymbol(String symbol, String stockName) {
-        // 캐시 비활성화 (테스트용)
-        log.info("Reddit API 호출 시작 - 캐시 무시");
-
         if (clientId == null || clientId.isEmpty() || clientSecret == null || clientSecret.isEmpty()) {
             log.warn("Reddit API 자격 증명이 설정되지 않았습니다. 더미 데이터를 반환합니다.");
-            log.warn("Client ID: '{}', Client Secret: '{}'", clientId, clientSecret);
             List<SnsPostDto> dummyPosts = getDummyRedditPosts(symbol, stockName);
             cache.put(symbol, new CacheData(dummyPosts));
             return Mono.just(dummyPosts);
         }
-        
-        log.info("Reddit API 자격 증명 확인됨. 실제 API 호출을 시작합니다.");
 
         // Reddit API 호출
         String query = buildQuery(symbol, stockName);
-        log.info("Reddit API 호출 시작: query={}", query);
         
         return getRedditAccessToken()
                 .flatMap(accessToken -> 
@@ -96,17 +81,15 @@ public class RedditApiService {
                                     .path("/search.json")
                                     .queryParam("q", query)
                                     .queryParam("sort", "relevance")
-                                    .queryParam("limit", 50)
-                                    .queryParam("t", "month")
+                                    .queryParam("limit", 10)
+                                    .queryParam("t", "week")
                                     .build())
                             .header("Authorization", "Bearer " + accessToken)
                             .header("User-Agent", userAgent)
                             .retrieve()
                             .bodyToMono(String.class)
-                            .doOnNext(response -> log.info("Reddit API 응답: {}", response))
                             .map(this::parseRedditResponse)
                             .doOnNext(posts -> {
-                                log.info("파싱된 Reddit 게시물 수: {}", posts.size());
                                 // API 성공 시 캐시에 저장
                                 cache.put(symbol, new CacheData(posts));
                             })
@@ -133,7 +116,6 @@ public class RedditApiService {
                 .bodyValue("grant_type=client_credentials")
                 .retrieve()
                 .bodyToMono(String.class)
-                .doOnNext(response -> log.info("Reddit 액세스 토큰 응답: {}", response))
                 .map(response -> {
                     try {
                         com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
@@ -147,17 +129,29 @@ public class RedditApiService {
     }
 
     private String buildQuery(String symbol, String stockName) {
-        // sentiment_report.json에서 실제 데이터를 읽어와서 검색 키워드 생성
+        // 주식 관련 서브레딧에서만 검색하도록 제한
         StringBuilder searchTerms = new StringBuilder();
-        searchTerms.append("(").append(symbol).append(" OR ").append(stockName);
         
-        // sentiment_report.json에서 해당 종목의 키워드 정보 가져오기
+        // 1. 기업명과 종목코드를 우선적으로 사용 (정확한 매칭)
+        searchTerms.append("(").append(symbol).append(" OR \"").append(stockName).append("\"");
+        
+        // 2. JSON에서 영어 이름 가져오기 (Reddit에서 더 많이 사용될 수 있음)
+        String englishName = getEnglishNameFromJson(symbol);
+        if (englishName != null && !englishName.isEmpty()) {
+            searchTerms.append(" OR \"").append(englishName).append("\"");
+        }
+        
+        // 3. sentiment_report.json에서 구체적인 키워드만 선별적으로 사용
         try {
             List<String> keywords = getKeywordsFromSentimentReport(symbol);
             if (keywords != null && !keywords.isEmpty()) {
+                // 구체적이고 특화된 키워드만 선별
                 for (String keyword : keywords) {
                     if (keyword != null && !keyword.trim().isEmpty()) {
-                        searchTerms.append(" OR ").append(keyword.trim());
+                        // 구체적이고 특화된 키워드만 사용 (일반적인 키워드 제외)
+                        if (isSpecificKeyword(keyword)) {
+                            searchTerms.append(" OR \"").append(keyword.trim()).append("\"");
+                        }
                     }
                 }
             }
@@ -167,12 +161,78 @@ public class RedditApiService {
         
         searchTerms.append(")");
         
-        // 서브레딧 제한 없이 전체 Reddit에서 검색 (더 많은 결과를 위해)
-        String finalQuery = searchTerms.toString();
+        // 주식 관련 서브레딧으로 제한
+        String subreddits = "subreddit:stocks OR subreddit:investing OR subreddit:SecurityAnalysis OR subreddit:ValueInvesting OR subreddit:StockMarket OR subreddit:korea OR subreddit:KoreanInvesting";
         
-        log.info("동적 검색 쿼리 생성: {} -> {}", symbol, finalQuery);
+        String finalQuery = String.format("%s (%s)", searchTerms.toString(), subreddits);
+        
         return finalQuery;
     }
+    
+    // JSON에서 영어 이름 가져오기
+    private String getEnglishNameFromJson(String symbol) {
+        try {
+            String filePath = "../data/raws/sentiment_report.json";
+            File file = new File(filePath);
+            
+            if (!file.exists()) {
+                log.warn("sentiment_report.json 파일을 찾을 수 없습니다: {}", filePath);
+                return null;
+            }
+            
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Map<String, Object>> data = objectMapper.readValue(file, new TypeReference<List<Map<String, Object>>>() {});
+            
+            for (Map<String, Object> item : data) {
+                String stockCode = (String) item.get("stockCode");
+                if (symbol.equals(stockCode)) {
+                    String englishName = (String) item.get("stockNameEn");
+                    if (englishName != null && !englishName.trim().isEmpty()) {
+                        return englishName;
+                    }
+                    break;
+                }
+            }
+            
+            log.warn("종목 코드 {}에 해당하는 영어 이름을 sentiment_report.json에서 찾을 수 없습니다.", symbol);
+            return null;
+            
+        } catch (Exception e) {
+            log.error("sentiment_report.json에서 영어 이름 읽기 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+    
+    // 구체적이고 특화된 키워드인지 확인 (일반적인 키워드 제외)
+    private boolean isSpecificKeyword(String keyword) {
+        // 일반적인 키워드들 (제외할 키워드)
+        String[] genericKeywords = {
+            "사업", "재해", "기업", "기술", "친환경", "주가", "투자", "선박", "종목", "수소", "국제", "평가",
+            "LNG", "환경", "경제", "시장", "분석", "전망", "성장", "개발", "회사", "업체", "기관", "단체"
+        };
+        
+        for (String generic : genericKeywords) {
+            if (keyword.contains(generic)) {
+                return false; // 일반적인 키워드는 제외
+            }
+        }
+        
+        // 구체적인 키워드들 (포함할 키워드)
+        String[] specificKeywords = {
+            "우진", "코오롱", "모빌리티", "화인", "베스틸", "주성", "코퍼레이션",
+            "삼성", "SK", "하이닉스", "네이버", "LG", "현대", "기아", "카카오"
+        };
+        
+        for (String specific : specificKeywords) {
+            if (keyword.contains(specific)) {
+                return true; // 구체적인 키워드는 포함
+            }
+        }
+        
+        // 길이가 3자 이상이고 구체적인 내용을 담고 있는 키워드
+        return keyword.length() >= 3 && !keyword.matches(".*[0-9]+.*");
+    }
+    
     
     // sentiment_report.json에서 해당 종목의 키워드 정보 가져오기
     private List<String> getKeywordsFromSentimentReport(String symbol) {
@@ -180,7 +240,6 @@ public class RedditApiService {
             // sentiment_report.json 파일 경로
             String filePath = "../data/raws/sentiment_report.json";
             File file = new File(filePath);
-            
             if (!file.exists()) {
                 log.warn("sentiment_report.json 파일을 찾을 수 없습니다: {}", filePath);
                 return new ArrayList<>();
@@ -193,6 +252,7 @@ public class RedditApiService {
             // 해당 종목 코드로 데이터 찾기
             for (Map<String, Object> item : data) {
                 String stockCode = (String) item.get("stockCode");
+                
                 if (symbol.equals(stockCode)) {
                     Map<String, Object> keywordAnalysis = (Map<String, Object>) item.get("keywordAnalysis");
                     if (keywordAnalysis != null) {
@@ -214,8 +274,6 @@ public class RedditApiService {
                                 .limit(10)
                                 .forEach(entry -> keywords.add(entry.getKey()));
                             
-                            log.info("종목 {}의 키워드 {}개를 sentiment_report.json에서 가져왔습니다: {}", 
-                                symbol, keywords.size(), keywords);
                             return keywords;
                         }
                     }
@@ -248,13 +306,13 @@ public class RedditApiService {
                     if (child.has("data")) {
                         com.fasterxml.jackson.databind.JsonNode data = child.get("data");
                         
-                        String postId = data.get("id").asText();
-                        String title = data.get("title").asText();
+                        String postId = data.has("id") ? data.get("id").asText() : "unknown";
+                        String title = data.has("title") ? data.get("title").asText() : "제목 없음";
                         String selftext = data.has("selftext") ? data.get("selftext").asText() : "";
                         String content = title + (selftext.isEmpty() ? "" : "\n\n" + selftext);
                         
-                        String author = "u/" + data.get("author").asText();
-                        String subreddit = "r/" + data.get("subreddit").asText();
+                        String author = data.has("author") ? "u/" + data.get("author").asText() : "u/unknown";
+                        String subreddit = data.has("subreddit") ? "r/" + data.get("subreddit").asText() : "r/unknown";
                         String authorWithSub = author + " (" + subreddit + ")";
                         
                         // Reddit 링크 생성
@@ -272,9 +330,9 @@ public class RedditApiService {
                         posts.add(new SnsPostDto(postId, authorWithSub, content, timeAgo, score, 0, numComments, "reddit", redditUrl));
                     }
                 }
+            } else {
+                log.warn("Reddit API 응답에 예상된 구조가 없습니다.");
             }
-            
-            log.info("Reddit API에서 {}개의 게시물을 파싱했습니다.", posts.size());
             return posts;
             
         } catch (Exception e) {

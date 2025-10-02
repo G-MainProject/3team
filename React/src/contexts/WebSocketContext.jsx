@@ -1,16 +1,8 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
+import { WebSocketContext } from './WebSocketContext';
 
-const WebSocketContext = createContext();
-
-const useWebSocketContext = () => {
-  const context = useContext(WebSocketContext);
-  if (!context) {
-    throw new Error('useWebSocketContext must be used within a WebSocketProvider');
-  }
-  return context;
-};
 
 export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -33,15 +25,12 @@ export const WebSocketProvider = ({ children }) => {
         // STOMP 클라이언트 생성
         const stompClient = new Client({
           webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
-          debug: (str) => {
-            // 중요한 메시지만 로그 출력
-            if (str.includes('CONNECTED') || str.includes('ERROR') || str.includes('DISCONNECTED')) {
-              console.log('STOMP:', str);
-            }
+          debug: () => {
+            // STOMP 메시지 처리 (디버깅 로그 제거됨)
           },
-          reconnectDelay: 5000,
-          heartbeatIncoming: 4000,
-          heartbeatOutgoing: 4000,
+          reconnectDelay: 10000, // 재연결 지연 시간 증가 (10초)
+          heartbeatIncoming: 0, // 하트비트 비활성화
+          heartbeatOutgoing: 0, // 하트비트 비활성화
         });
 
         stompClient.onConnect = () => {
@@ -63,9 +52,9 @@ export const WebSocketProvider = ({ children }) => {
           socketRef.current = null;
           isConnecting.current = false;
 
-          // 자동 재연결 시도
+          // 자동 재연결 시도 (더 보수적으로)
           if (reconnectAttempts.current < maxReconnectAttempts) {
-            const delay = Math.pow(2, reconnectAttempts.current) * 1000; // 지수 백오프
+            const delay = Math.min(Math.pow(2, reconnectAttempts.current) * 2000, 30000); // 최대 30초
             reconnectTimeoutRef.current = setTimeout(() => {
               reconnectAttempts.current++;
               connect();
@@ -98,7 +87,7 @@ export const WebSocketProvider = ({ children }) => {
         socketRef.current.deactivate();
       }
     };
-  }, []); // 의존성 배열 제거 - 컴포넌트 마운트 시에만 실행
+  }, []); // 의존성 배열 비우기 - 마운트 시에만 실행
 
   const sendMessage = (destination, message) => {
     if (socketRef.current && isConnected) {
@@ -127,4 +116,4 @@ export const WebSocketProvider = ({ children }) => {
   );
 };
 
-export { useWebSocketContext };
+export default WebSocketProvider;
