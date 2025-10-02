@@ -7,7 +7,7 @@ import argparse
 import os  # 환경변수 사용을 위해 os 모듈 추가
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 import csv
 from importlib import import_module
 from pathlib import Path
@@ -26,11 +26,38 @@ if __package__ in (None, ""):
         except ModuleNotFoundError:
             return import_module(f"python.pipeline.pipelines.s1_collect.{name}")
 
+    # Ensure .env is loaded with UTF-8-SIG (BOM-safe)
+    try:
+        from Python.pipeline.utils.env import load_dotenv_utf8sig, sanitize_environ_bom
+    except Exception:
+        def load_dotenv_utf8sig() -> None:  # type: ignore
+            return None
+        def sanitize_environ_bom() -> None:  # type: ignore
+            return None
+    try:
+        load_dotenv_utf8sig()
+        sanitize_environ_bom()
+    except Exception:
+        pass
+
     dart_client = _stage_import("dart_client")
     pykrx_loader = _stage_import("pykrx_loader")
     # 공통 유틸리티 임포트
     kiwoom_api = _stage_import("kiwoom_client")
 else:
+    try:
+        from Python.pipeline.utils.env import load_dotenv_utf8sig, sanitize_environ_bom
+    except Exception:
+        def load_dotenv_utf8sig() -> None:  # type: ignore
+            return None
+        def sanitize_environ_bom() -> None:  # type: ignore
+            return None
+    try:
+        load_dotenv_utf8sig()
+        sanitize_environ_bom()
+    except Exception:
+        pass
+
     from . import dart_client, pykrx_loader
     from . import kiwoom_client as kiwoom_api
 
@@ -39,7 +66,20 @@ else:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = _build_parser()
-    args = parser.parse_args(argv)
+    # Keep flags required at argparse level, but inject dynamic defaults
+    # (start-date = 10 years ago, end-date = today) when absent.
+    if argv is None:
+        raw_argv = list(sys.argv[1:])
+    else:
+        raw_argv = list(argv)
+    if "--start-date" not in raw_argv or "--end-date" not in raw_argv:
+        today = datetime.now().strftime("%Y-%m-%d")
+        start_default = (datetime.now() - timedelta(days=365*10)).strftime("%Y-%m-%d")
+        if "--start-date" not in raw_argv:
+            raw_argv += ["--start-date", start_default]
+        if "--end-date" not in raw_argv:
+            raw_argv += ["--end-date", today]
+    args = parser.parse_args(raw_argv)
 
     summaries: Dict[str, Mapping[str, list[Path]]] = {}
 
@@ -226,12 +266,6 @@ def _auto_resolve_corp_codes(tickers: Sequence[str] | None) -> list[str]:
         return [mapping[t] for t in want if t in mapping]
     except Exception:
         return []
-
-
-if __name__ == "__main__":  # pragma: no cover
-    raise SystemExit(main())
-
-
 def _auto_resolve_corp_codes_base(tickers: Sequence[str] | None) -> list[str]:
     """Resolve corp_code by normalizing any ticker to base stock_code (last digit '0').
 
@@ -371,4 +405,7 @@ def _download_corpcode_lookup(api_key: str) -> dict[str, str]:
         if stock_code and corp_code:
             out[stock_code] = corp_code
     return out
-`n
+
+
+if __name__ == "__main__":  # pragma: no cover
+    raise SystemExit(main())

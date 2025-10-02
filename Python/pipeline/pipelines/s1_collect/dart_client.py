@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """Pull financial statement data from DART Open API and store under data/raws."""
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ DEFAULT_FS_DIV = "CFS"
 
 
 def _find_project_root() -> Path:
-    """환경파일(.env)과 data 디렉터리를 기준으로 프로젝트 루트를 찾는다."""
+    """?섍꼍?뚯씪(.env)怨?data ?붾젆?곕━瑜?湲곗??쇰줈 ?꾨줈?앺듃 猷⑦듃瑜?李얜뒗??"""
 
     current = Path(__file__).resolve()
     for parent in current.parents:
@@ -28,8 +28,7 @@ def _find_project_root() -> Path:
     return current.parents[4]
 
 
-# DART 재무제표 API를 호출해 raw/dart 이하에 JSON으로 저장한다
-
+# DART ?щТ?쒗몴 API瑜??몄텧??raw/dart ?댄븯??JSON?쇰줈 ??ν븳??
 def fetch_filings(
     *,
     corp_codes: Iterable[str],
@@ -43,15 +42,15 @@ def fetch_filings(
 ) -> Mapping[str, list[Path]]:
     """Fetch multi-account and optional single-account statements per company."""
 
-    _load_env_cache()
+    _ensure_env_loaded()
     api_key = os.getenv("DART_API_KEY")
     if not api_key:
-        raise RuntimeError("DART_API_KEY 환경변수가 설정되어 있어야 합니다.")
+        raise RuntimeError("DART_API_KEY ?섍꼍蹂?섍? ?ㅼ젙?섏뼱 ?덉뼱???⑸땲??")
 
     raw_root = _resolve_raw_dir(raw_dir) / "dart"
     raw_root.mkdir(parents=True, exist_ok=True)
 
-    # .env 기반 오버라이드: DART_REPRT_CODES, DART_FS_DIV
+    # .env 湲곕컲 ?ㅻ쾭?쇱씠?? DART_REPRT_CODES, DART_FS_DIV
     env_codes = os.getenv("DART_REPRT_CODES")
     parsed_env_codes: tuple[str, ...] | None = None
     if env_codes:
@@ -69,11 +68,11 @@ def fetch_filings(
         except Exception:
             pass
 
-    # 최종 reprt_codes 결정: 함수 인자 > .env > 기본값
+    # 최종 reprt_codes 결정: 인자 > .env > 기본
     reprt_codes = tuple(reprt_codes or parsed_env_codes or DEFAULT_REPRT_CODES)
     corp_codes = tuple(dict.fromkeys(str(code).strip() for code in corp_codes if str(code).strip()))
     if not corp_codes:
-        raise ValueError("corp_codes에 유효한 값이 없습니다.")
+        raise ValueError("corp_codes???좏슚??媛믪씠 ?놁뒿?덈떎.")
 
     sess = session or requests.Session()
     saved: MutableMapping[str, list[Path]] = {}
@@ -108,7 +107,7 @@ def fetch_filings(
                 )
                 if status != "000":
                     LOGGER.warning(
-                        "fnlttMultiAcnt 실패 - corp:%s reprt:%s status:%s message:%s",
+                        "fnlttMultiAcnt failed - corp:%s reprt:%s status:%s message:%s",
                         corp_code,
                         reprt_code,
                         status,
@@ -124,13 +123,13 @@ def fetch_filings(
                         "rows": data.get("list", []),
                     }
                 )
-                time.sleep(max(pause, 0))  # 호출 제한을 피하기 위한 슬립
+                time.sleep(max(pause, 0))  # ?몄텧 ?쒗븳???쇳븯湲??꾪븳 ?щ┰
 
             multi_path = corp_dir / f"fnlttMultiAcnt_{year}.json"
             _write_json(multi_path, multi_records)
             saved.setdefault(corp_code, []).append(multi_path)
 
-            # 추가: 전년도 보고서도 항상 수집하여 TTM(최근 4분기) 구성 보장
+            # 異붽?: ?꾨뀈??蹂닿퀬?쒕룄 ??긽 ?섏쭛?섏뿬 TTM(理쒓렐 4遺꾧린) 援ъ꽦 蹂댁옣
             try:
                 prev_year = int(year) - 1
             except Exception:
@@ -161,12 +160,12 @@ def fetch_filings(
                 multi_prev_path = corp_dir / f"fnlttMultiAcnt_{prev_year}.json"
                 _write_json(multi_prev_path, multi_prev)
                 saved.setdefault(corp_code, []).append(multi_prev_path)
-            # 폴백: 올해 데이터가 전혀 없으면 직전 연도 한 번 더 시도
+            # ?대갚: ?ы빐 ?곗씠?곌? ?꾪? ?놁쑝硫?吏곸쟾 ?곕룄 ??踰????쒕룄
             try:
                 has_any_rows = any(rec.get("rows") for rec in multi_records)
             except Exception:
                 has_any_rows = False
-            # 한국어 주석: CFS로 비어있으면 OFS(개별)로 동일 연도 재시도
+            # CFS가 비어있으면 OFS(개별)로 대체 시도
             if not has_any_rows:
                 try:
                     alt_records: list[dict] = []
@@ -245,7 +244,7 @@ def fetch_filings(
                         status = data.get("status")
                         if status != "000":
                             LOGGER.warning(
-                                "fnlttSinglAcntAll 실패 - corp:%s reprt:%s account:%s status:%s",
+                                "fnlttSinglAcntAll failed - corp:%s reprt:%s account:%s status:%s",
                                 corp_code,
                                 reprt_code,
                                 account_name,
@@ -274,7 +273,7 @@ def fetch_filings(
 
 
 def _request_json(sess: requests.Session, endpoint: str, *, params: Mapping[str, str]):
-    """공통 HTTP GET 래퍼."""
+    """怨듯넻 HTTP GET ?섑띁."""
 
     url = f"{BASE_URL}/{endpoint}"
     response = sess.get(url, params=params, timeout=30)
@@ -283,19 +282,39 @@ def _request_json(sess: requests.Session, endpoint: str, *, params: Mapping[str,
 
 
 def _write_json(path: Path, payload) -> None:
-    """JSON 응답을 pretty 포맷으로 저장."""
+    """JSON ?묐떟??pretty ?щ㎎?쇰줈 ???"""
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as fp:
         json.dump(payload, fp, ensure_ascii=False, indent=2)
-    LOGGER.info("DART 데이터 저장: %s", path)
+    LOGGER.info("DART file saved: %s", path)
 
 
 _ENV_LOADED = False
 
 
-def _load_env_cache() -> None:
-    """한 번만 .env를 읽어 환경변수에 반영한다."""
+def _ensure_env_loaded() -> None:
+    """Load .env with UTF-8-SIG and sanitize BOM (idempotent)."""
+    global _ENV_LOADED
+    if _ENV_LOADED:
+        return
+    try:
+        from Python.pipeline.utils.env import load_dotenv_utf8sig, sanitize_environ_bom
+    except Exception:
+        def load_dotenv_utf8sig() -> None:  # type: ignore
+            return None
+        def sanitize_environ_bom() -> None:  # type: ignore
+            return None
+    try:
+        load_dotenv_utf8sig()
+        sanitize_environ_bom()
+    except Exception:
+        pass
+    _ENV_LOADED = True
+
+
+def _load_env_utf8() -> None:
+    """??踰덈쭔 .env瑜??쎌뼱 ?섍꼍蹂?섏뿉 諛섏쁺?쒕떎."""
 
     global _ENV_LOADED
     if _ENV_LOADED:
@@ -315,7 +334,7 @@ def _load_env_cache() -> None:
 
 
 def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
-    """raw/dart 경로를 계산한다."""
+    """raw/dart 寃쎈줈瑜?怨꾩궛?쒕떎."""
 
     if raw_dir is None:
         project_root = _find_project_root()
@@ -323,4 +342,6 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
     path = Path(raw_dir)
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
 

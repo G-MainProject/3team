@@ -5,15 +5,12 @@
       "name": "Pipeline (Auto Kiwoom)",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/Python/pipeline/run_pipeline.py",
+      "program": "${workspaceFolder}/scripts/run_s1_to_s5.py",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "envFile": "${workspaceFolder}/.env",
       "args": [
-        "--auto-tickers",
-        "--auto-source", "kiwoom",
-        "--auto-market", "KOSPI",
-        "--auto-count", "5",
+        "--top-movers", "data/raws/top_movers_auto.json"
       ]
     }
   ]

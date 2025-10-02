@@ -195,7 +195,12 @@ def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tu
     selected_horizons = [h for h in base_horizons if best_h is None or h <= int(best_h)]
     if not selected_horizons:
         selected_horizons = base_horizons[:1]
-    horizons = selected_horizons
+    # Optional override to force full horizon set (e.g., include 1y even with low coverage)
+    force_full = os.getenv("FORCE_FULL_HORIZONS") or os.getenv("FORCE_1Y") or os.getenv("FORCE_HORIZONS")
+    if force_full:
+        horizons = base_horizons
+    else:
+        horizons = selected_horizons
     max_horizon = max(horizons)
 
     for file in files:

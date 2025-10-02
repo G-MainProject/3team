@@ -61,113 +61,77 @@
 -   `fix: 로그인 API 연동 오류 수정`
 -   `docs: README.md 프로젝트 구조 업데이트`
 
-## 🐍 Python: 주식 시세 API 호출
+# 파이프라인 가이드 (Appendix)
 
-이 스크립트는 키움증권 API를 사용하여 특정 종목의 현재 시세를 조회하고, 결과를 JSON 파일로 저장합니다.
+본 문서는 기존 README 내용을 유지한 채, 파이프라인 관련 설명을 추가로 정리한 부록입니다. 
 
-### 📁 폴더 구조
+## 폴더 구조(요약)
 
-```
-3team/
-├─ data/                       # JSON 파일 및 종목 정보(CSV) 저장
-└─ Python/
-   └─ Sentiment/
-      ├─ Apps/price_to_json.py # 메인 실행 스크립트
-      └─ Libs/
-         ├─ kiwoom_client.py   # API 요청 처리
-         ├─ env.py             # 환경변수 관리 (API 키 등)
-         ├─ io_utils.py        # 파일 입출력 유틸리티
-         └─ symbols.py         # 종목 코드 <-> 종목명 변환
-```
+- `Python/pipeline`
+  - `pipelines/s0_discover`: 상/하위 변동 종목(top_movers) 탐색
+  - `pipelines/s1_collect`: 데이터 수집(Kiwoom/DART/pykrx 백업), RAW 저장 규약 유지
+  - `pipelines/s2_preprocess`: 병합/정렬(merge_align), 특성(features), 데이터셋(build_datasets)
+  - `pipelines/s3_model`: 학습 엔트리(`__main__.py`), CNN price-branch, fusion head
+  - `pipelines/s4_infer`: 추론 스크립트(`predict.py`) – 멀티 호라이즌 예측(1d/1w/1m/6m/1y)
+  - `pipelines/s5_evaluate`: 리포트 생성(`top_mover_report_clean.py`)
+  - `artifacts/models`: 모델 가중치(`model_best.pth`, `model_last.pth`) 및 `scaler.pkl`
+  - `utils`: `.env`(UTF‑8‑SIG) 로더 등 공통 유틸
+- `data`
+  - `raws/kiwoom/<종목>/ka10001_YYYYMMDD_YYYYMMDD.json`: 일별 시세 RAW
+  - `raws/dart/<corp_code>/fnltt*.json`: 재무제표 RAW
+  - `bronze/<ticker>.parquet`: 일별 병합 테이블
+  - `silver/<ticker>.parquet`: 정제/특성 일부 반영 테이블
+  - `gold/train|val|test/{X.npy,y.npy,close.npy}`: 학습용 시퀀스/라벨/종가, `gold/horizons.json`
+  - `outputs/{preds.json, top_mover_forecast.json}`: 예측/리포트
+- `scripts`
+  - `run_s1_to_s5.py`: s1→s5 원샷 실행, 단계별 시간 요약 출력
+- `.vscode`: 워크스페이스 설정
 
-### ⚙️ 사전 준비
+## 예측 모델(개요)
 
-프로젝트에 필요한 라이브러리를 설치합니다.
+- 구조: CNN 기반 `price_branch`(1D 합성곱) + 선택적 `text_branch` → `FusionClassifier`(fusion head)
+- 출력: 멀티-호라이즌 수익률(H=5: 1d/1w/1m/6m/1y). 가격은 `close*(1+return)`으로 환산
+- 손실/지표: MSE(호라이즌 평균, 선택적 가중치), MAE 및 호라이즌별 MAE
+- 전처리: `StandardScaler`를 train split으로 fit 후 전체 split 적용
+- 안정성: 추론 시 체크포인트 출력 차원을 자동 감지해 모델과 정합(4/5 타깃 혼용 로딩 안전)
 
-```bash
-pip install requests python-dotenv
-```
+## 동작 플로우
 
-### ▶️ 실행 방법
+1) s0: 상·하위 변동 종목 탐색(`top_movers_auto.json`)
+2) s1: 수집
+- Kiwoom RAW 저장 경로 표준화: `raws/kiwoom/<종목>/ka10001_*.json`
+- DART 재무 데이터(미존재 status:013은 정상 경고)
+3) s2: 전처리(merge → features → gold)
+- `horizons.json` 기록. 러너에서 s2 실행 시 1y(250d)를 항상 포함하도록 강제 주입되어 5개 고정
+4) s3: 학습 – `model_best.pth`/`model_last.pth` 저장, test MAE 및 per-horizon MAE 출력
+5) s4: 추론 – `preds.json`에 `returns/prices/horizons/current_close` 저장
+6) s5: 리포트 – `top_mover_forecast.json` 생성, 콘솔에 s5 로그 및 전체 타임 서머리 출력
 
-프로젝트 최상위 폴더(`c:/코드/3team`)에서 아래 명령어를 실행하세요.
+## 사용법
 
-**1. 종목 코드로 조회**
+- 전체 실행 예시
+  - `python scripts/run_s1_to_s5.py --tickers 005930 000660 --start-date 2015-01-01 --end-date 2025-10-02`
+  - 또는 `python scripts/run_s1_to_s5.py --top-movers data/raws/top_movers_auto.json`
+- 단계 제어
+  - `--skip-s1|--skip-s2|--skip-s3|--skip-s4|--skip-s5`: 단계별 생략
+  - `--no-kiwoom`, `--no-dart`: 수집 소스 비활성화
+  - `--infer-model <pth>`: s3 생략 시 사용할 체크포인트 지정
+- 출력/검증
+  - 예측: `data/outputs/preds.json`의 `horizons`에 "1d","1w","1m","6m","1y"
+  - 리포트: `data/outputs/top_mover_forecast.json`
+  - 실행 요약: 콘솔 `[run_s1_to_s5] time summary (seconds)`
 
-```bash
-python -m Python.Sentiment.Apps.price_to_json 005930
-```
+## 사용 라이브러리(핵심)
 
-**2. 종목명으로 조회**
+- 러너/파이프라인: Python 3.10+ (개발 환경 3.13)
+- 수치/데이터: numpy, pandas, pyarrow(Parquet), pickle, json
+- 학습/추론: torch(PyTorch)
+- 수집: requests(Kiwoom/DART), pykrx(백업)
+- 유틸/CLI: argparse, pathlib, logging
+- 인코딩/환경: UTF‑8/UTF‑8‑SIG(.env), Windows 콘솔 PYTHONIOENCODING=utf-8 적용
 
-`--name` 또는 `-n` 옵션을 사용합니다.
+## 트러블슈팅 요약
 
-```bash
-python -m Python.Sentiment.Apps.price_to_json --name 삼성전자
-```
-
-> **참고**: 종목명으로 조회 시 `data/symbols_krx.csv` 파일을 참조하여 코드로 변환합니다. 만약 검색된 종목이 여러 개일 경우, 후보 목록을 보여주고 프로그램을 종료합니다.
-
-### ✅ 실행 결과
-
-**1. 터미널 출력**
-
-실행 완료 시 저장된 파일 경로와 함께 주요 시세 정보가 출력됩니다.
-
-```
-[저장 완료] data/stock_005930_20250905_142228.json
-- 체결시각: 14:22:28  현재가: 85,000  전일대비: +1,200  등락률: +1.43%
-```
-
-**2. JSON 파일 생성**
-
-`data` 폴더에 `stock_{종목코드}_{현재시간}.json` 형식의 파일이 생성됩니다.
-
-```json
-{
-  "stck_cntg_hour": "142228",
-  "stck_prpr": "85000",
-  "prdy_vrss": "1200",
-  "prdy_ctrt": "1.43"
-}
-```
-
-**Top Movers 실행 가이드**
-
-- 기본 실행: `python Python/Sentiment/Apps/top_movers.py --source ka10019 --direction both`
-- 저장 포맷: TSV(탭). 경로 `data/top_movers_{direction}_{YYYYMMDD_HHMMSS}.txt`
-- 컬럼: `code  name  side  price  change_abs  change_pct`
-- 모의/운영: `--mock` 사용 시 모의(일부 TR만 지원), 미사용 시 운영 도메인
-- 디버그: `--debug` 추가 시 원본 응답 JSON을 `data/debug_ka10019_*.json`으로 저장
-
-**ka10019 필수 옵션(기본값 포함)**
-
-- `--mrkt-tp`: 시장구분. 기본 `000`(전체). 예: `001` 코스피, `101` 코스닥, `201` 코스피200
-- `--tm-tp`: 시간구분. 기본 `1`(분전). `2`(일전)
-- `--tm`: 시간 값. 기본 `5`(분/일)
-- `--trde-qty-tp`: 거래량 구분. 기본 `00000`(전체)
-- `--stk-cnd`: 종목조건. 기본 `0`(전체)
-- `--crd-cnd`: 신용조건. 기본 `0`(전체)
-- `--pric-cnd`: 가격조건. 기본 `0`(전체)
-- `--updown-incls`: 상하한 포함. 기본 `1`(포함)
-- `--stex-tp`: 거래소구분. 기본 `1`(KRX)
-- `--direction`: 정렬/필터. 기본 `both`(급등·급락을 각각 호출해 합산 후 절대등락률로 정렬)
-- `--flu-tp`: 등락구분(1 급등, 2 급락). 기본 공백이면 자동 설정. `both`일 때는 무시되고 1/2 두 번 호출
-
-**환경 변수(.env)**
-
-- `KIWOOM_BASE`: 운영 도메인. 예 `https://api.kiwoom.com`
-- `KIWOOM_APPKEY`, `KIWOOM_SECRETKEY`: 인증키
-- `KIWOOM_KA10019_PATH`(선택): 문서 경로와 다를 경우 지정. 기본 `/api/dostk/stkinfo`
-
-**percode 폴백(개별 종목 수집)**
-
-- 실행: `python Python/Sentiment/Apps/top_movers.py --source percode --codes "005930,000660 035420" --direction both`
-- 또는: `--universe-file data/my_codes.txt`(한 줄당 6자리 코드)
-- 대량 수집: `--max-workers`와 `--max-codes`로 동시성·상한 조절
-
-**심볼 CSV 생성(선택)**
-
-- 실행: `python Python/Sentiment/Apps/build_symbols_from_dart.py`
-- 필요: `.env`에 `DART_API_KEY`
-- 결과: `data/symbols_krx.csv`(이름↔코드 매핑)
+- s2 “Price directory not found” → RAW 경로가 `raws/kiwoom/<종목>/ka10001_*.json`인지 확인
+- DART status:013 → 데이터 미존재 안내로 정상(파이프라인 진행)
+- 체크포인트 차원 불일치 → s4가 자동 정합 처리(추론 오류 없이 로딩)

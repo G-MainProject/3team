@@ -15,6 +15,20 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Ensure .env is loaded (UTF-8-SIG) for KIWOOM_* when running scripts directly
+try:
+    from Python.pipeline.utils.env import load_dotenv_utf8sig, sanitize_environ_bom
+except Exception:
+    def load_dotenv_utf8sig() -> None:  # type: ignore
+        return None
+    def sanitize_environ_bom() -> None:  # type: ignore
+        return None
+try:
+    load_dotenv_utf8sig()
+    sanitize_environ_bom()
+except Exception:
+    pass
+
 
 def run_cmd(cmd: list[str]) -> int:
     return subprocess.call(cmd)
