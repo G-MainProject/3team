@@ -48,10 +48,14 @@ ex)
 **주식 데이터:**
 {stock_data_string}
 
+// 프롬프트 쓸 때 우선순위 필요
+
+
 **수행 작업:**
 1. 주요 동향 분석: 데이터 기간 동안의 전반적인 가격 및 거래량 추세를 설명해 줘.
 2. 기술적 분석: 5일 이동평균선을 계산하고 종가와 비교 분석해 줘.
 3. 향후 시나리오: 이 분석을 기반으로 단기적으로 나타날 수 있는 긍정적 시나리오와 부정적 시나리오를 각각 제시해 줘.
+4. 결론: 투자의견을 매수/매도로 제시해 줘.
 """
 
 # 원하는 설정을 포함하여 모델을 생성합니다.
@@ -69,7 +73,7 @@ generation_config = genai.types.GenerationConfig(
 
 # 모델을 사용하여 콘텐츠를 생성합니다.
 response = model.generate_content(
-    # "How does AI work?",
+    # "How does AI work?",h
     prompt,
     generation_config=generation_config
 )

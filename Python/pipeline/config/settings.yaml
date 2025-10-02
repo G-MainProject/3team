@@ -1,0 +1,42 @@
+﻿# Default pipeline configuration
+
+paths:
+  data_root: ../../data
+  raw: ../../data/raws
+  bronze: ../../data/bronze
+  silver: ../../data/silver
+  gold: ../../data/gold
+  artifacts: ../artifacts
+
+training:
+  batch_size: 64
+  learning_rate: 0.001
+  epochs: 50
+
+features:
+  price_windows: [5, 10, 20, 60]
+  indicators: ["rsi", "macd", "bollinger", "obv"]
+  ta:
+    bollinger:
+      window: 20
+      k: 2
+    macd:
+      fast: 12
+      slow: 26
+      signal: 9
+    rsi:
+      window: 14
+    obv:
+      ema_window: 10
+
+inference:
+  threshold: 0.5
+
+dataset:
+  label_threshold: 0.0035
+  sequence_length: 30
+  horizons: [1, 5, 20, 120, 250]
+  split:
+    train: 0.7
+    val: 0.15
+    test: 0.15

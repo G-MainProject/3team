@@ -10,5 +10,45 @@
         <EndPoint />
       </RunInterval>
     </WorkProcDebug>
+    <WorkProcDebug id="92673322-e20a-4ea8-b4a6-5eae6767e161" name="T_2_첨부파일저장">
+      <BreakPoints />
+      <FavoriteVariables />
+      <RunInterval>
+        <StartPoint />
+        <EndPoint />
+      </RunInterval>
+    </WorkProcDebug>
+    <WorkProcDebug id="668635f4-aa88-4f9f-ba95-2432e670c2df" name="T_1_3_네이버증권_엑셀저장">
+      <BreakPoints />
+      <FavoriteVariables />
+      <RunInterval>
+        <StartPoint />
+        <EndPoint />
+      </RunInterval>
+    </WorkProcDebug>
+    <WorkProcDebug id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" name="T_2_4_DART_엑셀저장">
+      <BreakPoints />
+      <FavoriteVariables />
+      <RunInterval>
+        <StartPoint />
+        <EndPoint />
+      </RunInterval>
+    </WorkProcDebug>
+    <WorkProcDebug id="5c816bc1-553e-4bc4-987b-22e059800553" name="T_2_2_DART_데이터추출">
+      <BreakPoints />
+      <FavoriteVariables />
+      <RunInterval>
+        <StartPoint />
+        <EndPoint />
+      </RunInterval>
+    </WorkProcDebug>
+    <WorkProcDebug id="744979c8-0a12-4d2a-83a0-f7aa8c5d5a83" name="T_1_3_네이버증권_엑셀저장">
+      <BreakPoints />
+      <FavoriteVariables />
+      <RunInterval>
+        <StartPoint />
+        <EndPoint />
+      </RunInterval>
+    </WorkProcDebug>
   </WorkProcDebugList>
 </DebugData>
