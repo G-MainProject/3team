@@ -175,7 +175,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--tickers", nargs="*", default=[], help="기본으로 사용할 종목 코드 목록")
     parser.add_argument("--start-date", required=True, help="조회 시작일 (YYYY-MM-DD)")
     parser.add_argument("--end-date", required=True, help="조회 종료일 (YYYY-MM-DD)")
-    parser.add_argument("--raw-dir", type=Path, default=None, help="저장 루트 (기본: data/raw)")
+    parser.add_argument("--raw-dir", type=Path, default=None, help="저장 루트 (기본: data/raws)")
 
     parser.add_argument("--include-minute", action="store_true", help="pykrx 분봉 수집 여부")
     parser.add_argument("--minute-freq", default="1m", help="pykrx 분봉 주기")

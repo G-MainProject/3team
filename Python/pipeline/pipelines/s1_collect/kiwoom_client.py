@@ -32,6 +32,8 @@ DEFAULT_INTRADAY_ENDPOINT = "/api/dostk/stkinfo"
 DEFAULT_FINANCIAL_ENDPOINT = "/api/dostk/stkinfo"
 DEFAULT_RATIO_ENDPOINT = "/api/dostk/stkinfo"
 DEFAULT_TOP_MOVERS_ENDPOINT = "/api/dostk/rank"
+# Optional metadata endpoint (e.g., shares outstanding)
+DEFAULT_META_ENDPOINT = "/api/dostk/meta"
 
 
 def _find_project_root() -> Path:
@@ -298,6 +300,36 @@ def fetch_quotes(
             saved.setdefault(str(ticker).zfill(6), []).append(daily_path)
             time.sleep(max(pause, 0))
 
+            # Optional: meta (e.g., shares_outstanding) to enable market_cap computation
+            try:
+                meta_endpoint = os.getenv("KIWOOM_META_PATH", "").strip()
+                meta_trid = os.getenv("KIWOOM_META_TR_ID", "ka_shares").strip()
+                if meta_endpoint:
+                    meta_body = {
+                        "ticker": _tk,
+                        "from_date": _st,
+                        "to_date": _en,
+                    }
+                    meta_data = _post_kiwoom(
+                        sess,
+                        base_url,
+                        meta_endpoint,
+                        tr_id=meta_trid or "ka_shares",
+                        authorization=authorization,
+                        body=meta_body,
+                    )
+                    meta_path = _dir / _filename(
+                        "meta",
+                        _tk,
+                        datetime.fromisoformat(_normalize_date_input(start_date)),
+                        datetime.fromisoformat(_normalize_date_input(end_date)),
+                    )
+                    _write_json(meta_path, {"api_id": meta_trid or "ka_shares", "request": meta_body, "response": meta_data})
+                    saved[str(ticker).zfill(6)].append(meta_path)
+                    time.sleep(max(pause, 0))
+            except Exception:
+                pass
+
             # Intraday (optional)
             if include_intraday:
                 intraday_endpoint = os.getenv("KIWOOM_INTRADAY_PATH", DEFAULT_INTRADAY_ENDPOINT)
@@ -522,8 +554,15 @@ def _ensure_env_loaded() -> None:
 def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
     if raw_dir is None:
         project_root = _find_project_root()
-        raw_dir = project_root / "data" / "raws"
-    path = Path(raw_dir)
+        path = project_root / "data" / "raws"
+    else:
+        path = Path(raw_dir)
+        # Normalize legacy 'data/raw' -> 'data/raws'
+        try:
+            if path.name == "raw":
+                path = path.with_name("raws")
+        except Exception:
+            pass
     path.mkdir(parents=True, exist_ok=True)
     return path
 

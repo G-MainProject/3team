@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-"""pykrx 수집 유틸리티: 원시(raw) 영역에 JSON 파일로 저장"""
+﻿# -*- coding: utf-8 -*-
+"""pykrx ?섏쭛 ?좏떥由ы떚: ?먯떆(raw) ?곸뿭??JSON ?뚯씪濡????""
 
 from __future__ import annotations
 
@@ -13,24 +13,24 @@ try:
     from pykrx import stock  # type: ignore
 except ImportError as exc:  # pragma: no cover
     raise ImportError(
-        "pykrx가 설치되어 있지 않습니다. `pip install pykrx pandas`로 먼저 설치하세요."
+        "pykrx媛 ?ㅼ튂?섏뼱 ?덉? ?딆뒿?덈떎. `pip install pykrx pandas`濡?癒쇱? ?ㅼ튂?섏꽭??"
     ) from exc
 
 try:
     import pandas as pd
 except ImportError as exc:  # pragma: no cover
     raise ImportError(
-        "pandas가 설치되어 있지 않습니다. `pip install pandas`로 먼저 설치하세요."
+        "pandas媛 ?ㅼ튂?섏뼱 ?덉? ?딆뒿?덈떎. `pip install pandas`濡?癒쇱? ?ㅼ튂?섏꽭??"
     ) from exc
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_INVESTORS = ("개인", "외국인", "기관합계")
+DEFAULT_INVESTORS = ("媛쒖씤", "?멸뎅??, "湲곌??⑷퀎")
 DEFAULT_INDEX_CODES = ("1001", "2001")  # KOSPI, KOSDAQ
 DATE_FMT = "%Y-%m-%d"
 
 
 def _find_project_root() -> Path:
-    """환경(.env) 또는 data 폴더가 포함된 프로젝트 루트를 찾는다."""
+    """?섍꼍(.env) ?먮뒗 data ?대뜑媛 ?ы븿???꾨줈?앺듃 猷⑦듃瑜?李얜뒗??"""
     current = Path(__file__).resolve()
     for parent in current.parents:
         if (parent / ".env").exists():
@@ -54,12 +54,12 @@ def run(
     index_codes: Iterable[str] | None = None,
     adjusted: bool = True,
 ) -> Mapping[str, list[Path]]:
-    """pykrx에서 일별/보조 데이터 수집 후 data/raw에 저장"""
+    """pykrx?먯꽌 ?쇰퀎/蹂댁“ ?곗씠???섏쭛 ??data/raw?????""
 
     start = _parse_date(start_date)
     end = _parse_date(end_date)
     if start > end:
-        raise ValueError("start_date가 end_date보다 빠릅니다.")
+        raise ValueError("start_date媛 end_date蹂대떎 鍮좊쫭?덈떎.")
 
     raw_root = _resolve_raw_dir(raw_dir)
     pykrx_root = raw_root / "pykrx"
@@ -77,33 +77,32 @@ def run(
         "index_ohlcv": [],
     }
 
-    # 티커별 수집
+    # ?곗빱蹂??섏쭛
     for ticker in tickers:
         ticker_dir = pykrx_root / ticker
         ticker_dir.mkdir(parents=True, exist_ok=True)
 
-        # 일별 OHLCV
+        # ?쇰퀎 OHLCV
         daily_path = ticker_dir / _filename("ohlcv_daily", ticker, start, end)
         df_daily = stock.get_market_ohlcv_by_date(start_date, end_date, ticker, adjusted=adjusted)
         results["daily_ohlcv"].append(_save_dataframe(df_daily, daily_path, index_name="date"))
 
-        # 분봉(옵션)
+        # 遺꾨큺(?듭뀡)
         if include_minute:
             minute_path = ticker_dir / _filename(f"ohlcv_{minute_freq}", ticker, start, end)
             df_minute = stock.get_market_ohlcv_by_date(start_date, end_date, ticker, freq=minute_freq)
             results["minute_ohlcv"].append(_save_dataframe(df_minute, minute_path, index_name="datetime"))
 
-        # 시가총액
+        # ?쒓?珥앹븸
         cap_path = ticker_dir / _filename("market_cap", ticker, start, end)
         df_cap = stock.get_market_cap_by_date(start_date, end_date, ticker)
         results["market_cap"].append(_save_dataframe(df_cap, cap_path, index_name="date"))
 
-        # 펀더멘털
-        fundamental_path = ticker_dir / _filename("fundamental", ticker, start, end)
+        # ??붾찘??        fundamental_path = ticker_dir / _filename("fundamental", ticker, start, end)
         df_fund = stock.get_market_fundamental(start_date, end_date, ticker)
         results["fundamental"].append(_save_dataframe(df_fund, fundamental_path, index_name="date"))
 
-        # 투자자별 거래대금(옵션)
+        # ?ъ옄?먮퀎 嫄곕옒?湲??듭뀡)
         if include_trading_value:
             for investor in investors:
                 trading_path = ticker_dir / _filename(
@@ -115,7 +114,7 @@ def run(
                 df_trade = _fetch_trading_value(start_date, end_date, ticker, investor)
                 results["trading_value"].append(_save_dataframe(df_trade, trading_path, index_name="date"))
 
-    # 지수 데이터 수집
+    # 吏???곗씠???섏쭛
     index_dir = pykrx_root / "index"
     index_dir.mkdir(parents=True, exist_ok=True)
     for code in index_codes:
@@ -127,7 +126,7 @@ def run(
 
 
 def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
-    """raw 데이터 루트를 해석하고 디렉터리를 생성한다."""
+    """raw ?곗씠??猷⑦듃瑜??댁꽍?섍퀬 ?붾젆?곕━瑜??앹꽦?쒕떎."""
     if raw_dir is None:
         project_root = _find_project_root()
         raw_dir = project_root / "data" / "raws"
@@ -137,24 +136,24 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
 
 
 def _parse_date(value: str) -> datetime:
-    """YYYY-MM-DD 문자열을 파싱해 datetime으로 변환한다."""
+    """YYYY-MM-DD 臾몄옄?댁쓣 ?뚯떛??datetime?쇰줈 蹂?섑븳??"""
     return datetime.strptime(value, DATE_FMT)
 
 
 def _filename(prefix: str, key: str, start: datetime, end: datetime) -> str:
-    """일관된 파일명을 생성한다."""
+    """?쇨????뚯씪紐낆쓣 ?앹꽦?쒕떎."""
     return f"{prefix}_{key}_{start.strftime('%Y%m%d')}_{end.strftime('%Y%m%d')}.json"
 
 
 def _sanitize_for_path(value: str) -> str:
-    """경로에 안전하게 쓸 수 있도록 문자열을 정제한다."""
+    """寃쎈줈???덉쟾?섍쾶 ?????덈룄濡?臾몄옄?댁쓣 ?뺤젣?쒕떎."""
     return "".join(ch for ch in value if ch.isalnum() or ch in ("-", "_")) or "unknown"
 
 
 def _save_dataframe(df: "pd.DataFrame", path: Path, *, index_name: str) -> Path:
-    """DataFrame을 JSON 페이로드(meta+data)로 저장한다."""
+    """DataFrame??JSON ?섏씠濡쒕뱶(meta+data)濡???ν븳??"""
     if df is None or df.empty:
-        LOGGER.warning("pykrx 데이터가 비어 있어 파일만 생성합니다: %s", path.name)
+        LOGGER.warning("pykrx ?곗씠?곌? 鍮꾩뼱 ?덉뼱 ?뚯씪留??앹꽦?⑸땲?? %s", path.name)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps({"meta": {}, "data": []}, ensure_ascii=False, indent=2), encoding="utf-8")
         return path
@@ -167,7 +166,7 @@ def _save_dataframe(df: "pd.DataFrame", path: Path, *, index_name: str) -> Path:
         try:
             df[index_name] = pd.to_datetime(df[index_name]).dt.strftime(DATE_FMT)
         except Exception:  # pragma: no cover
-            LOGGER.debug("%s 컬럼 날짜 형식 변환 실패", index_name, exc_info=True)
+            LOGGER.debug("%s 而щ읆 ?좎쭨 ?뺤떇 蹂???ㅽ뙣", index_name, exc_info=True)
 
     df.rename(columns=_COLUMN_MAP, inplace=True)
 
@@ -182,12 +181,12 @@ def _save_dataframe(df: "pd.DataFrame", path: Path, *, index_name: str) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as fp:
         json.dump(payload, fp, ensure_ascii=False, indent=2)
-    LOGGER.info("pykrx 결과 저장: %s", path)
+    LOGGER.info("pykrx 寃곌낵 ??? %s", path)
     return path
 
 
 def _fetch_trading_value(start_date: str, end_date: str, ticker: str, investor: str):
-    """투자자별 거래대금 API의 인자명을 유연하게 처리한다."""
+    """?ъ옄?먮퀎 嫄곕옒?湲?API???몄옄紐낆쓣 ?좎뿰?섍쾶 泥섎━?쒕떎."""
     candidates = (
         {"ticker": ticker, "investor": investor},
         {"ticker": ticker, "invst": investor},
@@ -203,17 +202,18 @@ def _fetch_trading_value(start_date: str, end_date: str, ticker: str, investor: 
 
 
 _COLUMN_MAP: Mapping[str, str] = {
-    "시가": "open",
-    "고가": "high",
-    "저가": "low",
-    "종가": "close",
-    "거래량": "volume",
-    "거래대금": "value",
-    "시가총액": "market_cap",
-    "상장주식수": "shares_outstanding",
+    "?쒓?": "open",
+    "怨좉?": "high",
+    "?媛": "low",
+    "醫낃?": "close",
+    "嫄곕옒??: "volume",
+    "嫄곕옒?湲?: "value",
+    "?쒓?珥앹븸": "market_cap",
+    "?곸옣二쇱떇??: "shares_outstanding",
     "PER": "per",
     "PBR": "pbr",
     "EPS": "eps",
     "BPS": "bps",
     "DIV": "dividend",
 }
+

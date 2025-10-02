@@ -1,503 +1,380 @@
 {
-	"date": "20250925",
-	"market": "KOSPI",
-	"generated_at": null,
-	"price_source": null,
-	"count": 6,
-	"horizons": ["1d", "1w", "1m", "6m", "1y"],
-	"entries": [
-		{
-			"ticker": "133820",
-			"name": "화인베스틸",
-			"source": "kiwoom",
-			"current_price": 25000.0,
-			"change_pct": 15.0,
-			"horizons": [
-				{
-					"horizon": "1d",
-					"predicted_price": 2600.0,
-					"actual_price": 2550.0,
-					"abs_error": 50.0,
-					"predicted_interval": [2550.0, 2650.0],
-					"predicted_return": 0.04,
-					"actual_return": 0.02,
-					"return_abs_error": 0.02
-				}
-			],
-			"indicators": {
-				"bb_percent_b": 0.8,
-				"bb_bandwidth": 0.2,
-				"bb_upper": 26000.0,
-				"bb_lower": 24000.0,
-				"bb_mid": 25000.0,
-				"macd": 200.0,
-				"macd_signal": 180.0,
-				"macd_hist": 20.0,
-				"rsi": 70.0,
-				"obv": 100000.0,
-				"obv_ema": 90000.0
-			},
-			"fundamentals": {
-				"per": 10.0,
-				"pbr": 1.5,
-				"roe": 0.15,
-				"roa": 0.1,
-				"market_cap": 250000000000.0,
-				"shares_outstanding": 10000000.0
-			},
-			"time_series": {
-				"price_history": [
-					{
-						"time": "09:00",
-						"price": 24800,
-						"open": 24800,
-						"high": 25000,
-						"low": 24650,
-						"close": 24800,
-						"volume": 120000
-					},
-					{
-						"time": "09:30",
-						"price": 25100,
-						"open": 24800,
-						"high": 25310,
-						"low": 24945,
-						"close": 25100,
-						"volume": 150000
-					}
-				],
-				"indicators_history": {
-					"rsi": [62.2, 63.2],
-					"obv": [120000, 135000],
-					"macd": [144, 146],
-					"signal": [135.5, 137],
-					"histogram": [8.5, 9],
-					"bollinger_upper": [25200, 25210],
-					"bollinger_middle": [25000, 25005],
-					"bollinger_lower": [24800, 24810]
-				}
-			},
-			"financials": {
-				"yearly": [
-					{
-						"year": "2022",
-						"revenue": 3022300000000,
-						"operatingProfit": 433800000000,
-						"netProfit": 556500000000
-					},
-					{
-						"year": "2023",
-						"revenue": 2589400000000,
-						"operatingProfit": 65700000000,
-						"netProfit": 154900000000
-					}
-				],
-				"ratios": {
-					"debt_ratio": { "value": 25.2, "change": 1.2 },
-					"current_ratio": { "value": 1.8, "change": 0.1 },
-					"quick_ratio": { "value": 1.2, "change": -0.1 },
-					"equity_ratio": { "value": 79.8, "change": 0.3 }
-				},
-				"summary": {
-					"revenue": { "value": 100000000000, "change": 12.5 },
-					"operating_profit": { "value": 20000000000, "change": 8.3 },
-					"net_profit": { "value": 15000000000, "change": 15.2 }
-				}
-			}
-		},
-		{
-			      "ticker": "109070",
-			      "name": "주성코퍼레이션",			"source": "kiwoom",
-			"current_price": 12345.0,
-			"change_pct": -2.5,
-			"horizons": [
-				{
-					"horizon": "1d",
-					"predicted_price": 12000.0,
-					"actual_price": 12100.0,
-					"abs_error": 100.0,
-					"predicted_interval": [11900.0, 12100.0],
-					"predicted_return": -0.028,
-					"actual_return": -0.02,
-					"return_abs_error": 0.008
-				}
-			],
-			"indicators": {
-				"bb_percent_b": 0.3,
-				"bb_bandwidth": 0.15,
-				"bb_upper": 13000.0,
-				"bb_lower": 11000.0,
-				"bb_mid": 12000.0,
-				"macd": -50.0,
-				"macd_signal": -40.0,
-				"macd_hist": -10.0,
-				"rsi": 40.0,
-				"obv": -50000.0,
-				"obv_ema": -45000.0
-			},
-			"fundamentals": {
-				"per": 20.0,
-				"pbr": 2.0,
-				"roe": 0.1,
-				"roa": 0.05,
-				"market_cap": 123450000000.0,
-				"shares_outstanding": 10000000.0
-			},
-			"time_series": {
-				"price_history": [
-					{
-						"time": "09:00",
-						"price": 12800,
-						"open": 12800,
-						"high": 13000,
-						"low": 12650,
-						"close": 12800,
-						"volume": 220000
-					},
-					{
-						"time": "09:30",
-						"price": 12500,
-						"open": 12800,
-						"high": 12810,
-						"low": 12445,
-						"close": 12500,
-						"volume": 250000
-					}
-				],
-				"indicators_history": {
-					"rsi": [42.2, 43.2],
-					"obv": [-120000, -135000],
-					"macd": [-144, -146],
-					"signal": [-135.5, -137],
-					"histogram": [-8.5, -9],
-					"bollinger_upper": [13200, 13210],
-					"bollinger_middle": [12000, 12005],
-					"bollinger_lower": [11800, 11810]
-				}
-			},
-			"financials": {
-				"yearly": [
-					{
-						"year": "2022",
-						"revenue": 3022300000000,
-						"operatingProfit": 433800000000,
-						"netProfit": 556500000000
-					},
-					{
-						"year": "2023",
-						"revenue": 2589400000000,
-						"operatingProfit": 65700000000,
-						"netProfit": 154900000000
-					}
-				],
-				"ratios": {
-					"debt_ratio": { "value": 25.2, "change": 1.2 },
-					"current_ratio": { "value": 1.8, "change": 0.1 },
-					"quick_ratio": { "value": 1.2, "change": -0.1 },
-					"equity_ratio": { "value": 79.8, "change": 0.3 }
-				},
-				"summary": {
-					"revenue": { "value": 100000000000, "change": 12.5 },
-					"operating_profit": { "value": 20000000000, "change": 8.3 },
-					"net_profit": { "value": 15000000000, "change": 15.2 }
-				}
-			}
-		},
-		{
-			"ticker": "105840",
-			"name": "우진",
-			"source": "kiwoom",
-			"current_price": 8800.0,
-			"change_pct": 5.5,
-			"horizons": [
-				{
-					"horizon": "1d",
-					"predicted_price": 9000.0,
-					"actual_price": 8900.0,
-					"abs_error": 100.0,
-					"predicted_interval": [8850.0, 9150.0],
-					"predicted_return": 0.022,
-					"actual_return": 0.011,
-					"return_abs_error": 0.011
-				}
-			],
-			"indicators": {
-				"bb_percent_b": 0.9,
-				"bb_bandwidth": 0.1,
-				"bb_upper": 9000.0,
-				"bb_lower": 8000.0,
-				"bb_mid": 8500.0,
-				"macd": 100.0,
-				"macd_signal": 80.0,
-				"macd_hist": 20.0,
-				"rsi": 75.0,
-				"obv": 200000.0,
-				"obv_ema": 180000.0
-			},
-			"fundamentals": {
-				"per": 12.0,
-				"pbr": 1.2,
-				"roe": 0.1,
-				"roa": 0.08,
-				"market_cap": 88000000000.0,
-				"shares_outstanding": 10000000.0
-			},
-			"time_series": {
-				"price_history": [
-					{
-						"time": "09:00",
-						"price": 8700,
-						"open": 8700,
-						"high": 8800,
-						"low": 8650,
-						"close": 8700,
-						"volume": 320000
-					},
-					{
-						"time": "09:30",
-						"price": 8800,
-						"open": 8700,
-						"high": 8810,
-						"low": 8645,
-						"close": 8800,
-						"volume": 350000
-					}
-				],
-				"indicators_history": {
-					"rsi": [72.2, 73.2],
-					"obv": [220000, 235000],
-					"macd": [154, 156],
-					"signal": [145.5, 147],
-					"histogram": [8.5, 9],
-					"bollinger_upper": [8900, 8910],
-					"bollinger_middle": [8500, 8505],
-					"bollinger_lower": [8100, 8110]
-				}
-			},
-			"financials": {
-				"yearly": [
-					{
-						"year": "2022",
-						"revenue": 3022300000000,
-						"operatingProfit": 433800000000,
-						"netProfit": 556500000000
-					},
-					{
-						"year": "2023",
-						"revenue": 2589400000000,
-						"operatingProfit": 65700000000,
-						"netProfit": 154900000000
-					}
-				],
-				"ratios": {
-					"debt_ratio": { "value": 25.2, "change": 1.2 },
-					"current_ratio": { "value": 1.8, "change": 0.1 },
-					"quick_ratio": { "value": 1.2, "change": -0.1 },
-					"equity_ratio": { "value": 79.8, "change": 0.3 }
-				},
-				"summary": {
-					"revenue": { "value": 100000000000, "change": 12.5 },
-					"operating_profit": { "value": 20000000000, "change": 8.3 },
-					"net_profit": { "value": 15000000000, "change": 15.2 }
-				}
-			}
-		},
-		{
-			"ticker": "450140",
-			"name": "코오롱모빌리티그룹",
-			"source": "kiwoom",
-			"current_price": 3400.0,
-			"change_pct": -1.2,
-			"horizons": [
-				{
-					"horizon": "1d",
-					"predicted_price": 3450.0,
-					"actual_price": 3420.0,
-					"abs_error": 30.0,
-					"predicted_interval": [3400.0, 3500.0],
-					"predicted_return": 0.014,
-					"actual_return": 0.005,
-					"return_abs_error": 0.009
-				}
-			],
-			"indicators": {
-				"bb_percent_b": 0.6,
-				"bb_bandwidth": 0.05,
-				"bb_upper": 3500.0,
-				"bb_lower": 3300.0,
-				"bb_mid": 3400.0,
-				"macd": 10.0,
-				"macd_signal": 8.0,
-				"macd_hist": 2.0,
-				"rsi": 55.0,
-				"obv": 500000.0,
-				"obv_ema": 450000.0
-			},
-			"fundamentals": {
-				"per": 15.0,
-				"pbr": 0.8,
-				"roe": 0.05,
-				"roa": 0.03,
-				"market_cap": 340000000000.0,
-				"shares_outstanding": 100000000.0
-			},
-			"time_series": {
-				"price_history": [
-					{
-						"time": "09:00",
-						"price": 3380,
-						"open": 3380,
-						"high": 3400,
-						"low": 3350,
-						"close": 3380,
-						"volume": 420000
-					},
-					{
-						"time": "09:30",
-						"price": 3410,
-						"open": 3380,
-						"high": 3430,
-						"low": 3395,
-						"close": 3410,
-						"volume": 450000
-					}
-				],
-				"indicators_history": {
-					"rsi": [52.2, 53.2],
-					"obv": [420000, 435000],
-					"macd": [14, 16],
-					"signal": [13.5, 14],
-					"histogram": [0.5, 2],
-					"bollinger_upper": [3420, 3421],
-					"bollinger_middle": [3400, 3405],
-					"bollinger_lower": [3380, 3381]
-				}
-			},
-			"financials": {
-				"yearly": [
-					{
-						"year": "2022",
-						"revenue": 3022300000000,
-						"operatingProfit": 433800000000,
-						"netProfit": 556500000000
-					},
-					{
-						"year": "2023",
-						"revenue": 2589400000000,
-						"operatingProfit": 65700000000,
-						"netProfit": 154900000000
-					}
-				],
-				"ratios": {
-					"debt_ratio": { "value": 25.2, "change": 1.2 },
-					"current_ratio": { "value": 1.8, "change": 0.1 },
-					"quick_ratio": { "value": 1.2, "change": -0.1 },
-					"equity_ratio": { "value": 79.8, "change": 0.3 }
-				},
-				"summary": {
-					"revenue": { "value": 100000000000, "change": 12.5 },
-					"operating_profit": { "value": 20000000000, "change": 8.3 },
-					"net_profit": { "value": 15000000000, "change": 15.2 }
-				}
-			}
-		},
-		{
-			      "ticker": "45014K",
-			      "name": "코오롱모빌리티그룹우",			"source": "kiwoom",
-			"current_price": 1700.0,
-			"change_pct": 3.3,
-			"horizons": [
-				{
-					"horizon": "1d",
-					"predicted_price": 1750.0,
-					"actual_price": 1720.0,
-					"abs_error": 30.0,
-					"predicted_interval": [1700.0, 1800.0],
-					"predicted_return": 0.029,
-					"actual_return": 0.011,
-					"return_abs_error": 0.018
-				}
-			],
-			"indicators": {
-				"bb_percent_b": 0.7,
-				"bb_bandwidth": 0.08,
-				"bb_upper": 1800.0,
-				"bb_lower": 1600.0,
-				"bb_mid": 1700.0,
-				"macd": 5.0,
-				"macd_signal": 4.0,
-				"macd_hist": 1.0,
-				"rsi": 60.0,
-				"obv": 300000.0,
-				"obv_ema": 280000.0
-			},
-			"fundamentals": {
-				"per": 8.0,
-				"pbr": 0.5,
-				"roe": 0.06,
-				"roa": 0.04,
-				"market_cap": 17000000000.0,
-				"shares_outstanding": 10000000.0
-			},
-			"time_series": {
-				"price_history": [
-					{
-						"time": "09:00",
-						"price": 1680,
-						"open": 1680,
-						"high": 1700,
-						"low": 1650,
-						"close": 1680,
-						"volume": 120000
-					},
-					{
-						"time": "09:30",
-						"price": 1710,
-						"open": 1680,
-						"high": 1730,
-						"low": 1695,
-						"close": 1710,
-						"volume": 150000
-					}
-				],
-				"indicators_history": {
-					"rsi": [58.2, 59.2],
-					"obv": [120000, 135000],
-					"macd": [4, 6],
-					"signal": [3.5, 4],
-					"histogram": [0.5, 2],
-					"bollinger_upper": [1720, 1721],
-					"bollinger_middle": [1700, 1705],
-					"bollinger_lower": [1680, 1681]
-				}
-			},
-			"financials": {
-				"yearly": [
-					{
-						"year": "2022",
-						"revenue": 3022300000000,
-						"operatingProfit": 433800000000,
-						"netProfit": 556500000000
-					},
-					{
-						"year": "2023",
-						"revenue": 2589400000000,
-						"operatingProfit": 65700000000,
-						"netProfit": 154900000000
-					}
-				],
-				"ratios": {
-					"debt_ratio": { "value": 25.2, "change": 1.2 },
-					"current_ratio": { "value": 1.8, "change": 0.1 },
-					"quick_ratio": { "value": 1.2, "change": -0.1 },
-					"equity_ratio": { "value": 79.8, "change": 0.3 }
-				},
-				"summary": {
-					"revenue": { "value": 100000000000, "change": 12.5 },
-					"operating_profit": { "value": 20000000000, "change": 8.3 },
-					"net_profit": { "value": 15000000000, "change": 15.2 }
-				}
-			}
-		}
-	]
+  "date": "20251002",
+  "market": "KOSPI",
+  "generated_at": "2025-10-02T17:32:14.911986+09:00",
+  "timezone": "Asia/Seoul (GMT+9)",
+  "count": 5,
+  "horizons": [
+    "1d",
+    "1w",
+    "1m",
+    "6m",
+    "1y"
+  ],
+  "entries": [
+    {
+      "ticker": "003535",
+      "name": "한화투자증권우",
+      "source": "kiwoom",
+      "current_price": 14100.0,
+      "change_pct": 29.95,
+      "horizons": [
+        {
+          "horizon": "1d",
+          "predicted_price": 6430.387330055237,
+          "actual_price": 6440.0,
+          "abs_error": 9.612669944763184,
+          "predicted_interval": [
+            6420.774660110474,
+            6440.0
+          ],
+          "predicted_return": -0.007656257599592209,
+          "actual_return": -0.006172839506172867,
+          "return_abs_error": 0.001483418093419342
+        },
+        {
+          "horizon": "1w",
+          "predicted_price": 6465.763263702393,
+          "actual_price": 6849.999999999999,
+          "abs_error": 384.2367362976065,
+          "predicted_interval": [
+            6081.526527404786,
+            6849.999999999999
+          ],
+          "predicted_return": -0.0021970346570014954,
+          "actual_return": 0.057098765432098686,
+          "return_abs_error": 0.05929580008910018
+        },
+        {
+          "horizon": "1m",
+          "predicted_price": 6436.39217376709,
+          "actual_price": 8300.0,
+          "abs_error": 1863.6078262329102,
+          "predicted_interval": [
+            4572.78434753418,
+            8300.0
+          ],
+          "predicted_return": -0.006729617714881897,
+          "actual_return": 0.2808641975308641,
+          "return_abs_error": 0.287593815245746
+        },
+        {
+          "horizon": "6m",
+          "predicted_price": 5407.645454406738,
+          "actual_price": 5600.0,
+          "abs_error": 192.35454559326172,
+          "predicted_interval": [
+            5215.290908813477,
+            5600.0
+          ],
+          "predicted_return": -0.16548682749271393,
+          "actual_return": -0.13580246913580252,
+          "return_abs_error": 0.02968435835691141
+        },
+        {
+          "horizon": "1y",
+          "predicted_price": 4797.987928390503,
+          "actual_price": 14370.0,
+          "abs_error": 9572.012071609497,
+          "predicted_interval": [
+            0.0,
+            14370.0
+          ],
+          "predicted_return": -0.2595697343349457,
+          "actual_return": 1.2175925925925926,
+          "return_abs_error": 1.4771623269275382
+        }
+      ],
+      "indicators": {
+        "bb_percent_b": 0.5731964589378136,
+        "bb_bandwidth": 0.0976757385315345,
+        "bb_upper": 6748.2228508559465,
+        "bb_mid": 6434.0,
+        "bb_lower": 6119.7771491440535,
+        "macd": -20.361600552248092,
+        "macd_signal": -27.984552257788977,
+        "macd_hist": 7.622951705540885,
+        "rsi": 44.23076923076923,
+        "obv": 128244419.0,
+        "obv_ema": 128237193.97800982
+      },
+      "fundamentals": {
+        "roe": 0.0,
+        "per": 0.0,
+        "pbr": 0.0,
+        "roa": "-",
+        "debt_ratio": "-",
+        "current_ratio": "-",
+        "quick_ratio": "-",
+        "equity_ratio": "-"
+      }
+    },
+    {
+      "ticker": "402340",
+      "name": "SK스퀘어",
+      "source": "kiwoom",
+      "current_price": 238000.0,
+      "change_pct": 15.82,
+      "horizons": [
+        {
+          "horizon": "1d",
+          "predicted_price": 86373.49086999893,
+          "actual_price": 88400.0,
+          "abs_error": 2026.5091300010681,
+          "predicted_interval": [
+            84346.98173999786,
+            88400.0
+          ],
+          "predicted_return": -0.007201235741376877,
+          "actual_return": 0.016091954022988464,
+          "return_abs_error": 0.02329318976436534
+        },
+        {
+          "horizon": "1w",
+          "predicted_price": 88650.16293525696,
+          "actual_price": 90000.0,
+          "abs_error": 1349.837064743042,
+          "predicted_interval": [
+            87300.32587051392,
+            90000.0
+          ],
+          "predicted_return": 0.018967442214488983,
+          "actual_return": 0.034482758620689724,
+          "return_abs_error": 0.015515316406200741
+        },
+        {
+          "horizon": "1m",
+          "predicted_price": 87182.253241539,
+          "actual_price": 78300.0,
+          "abs_error": 8882.253241539001,
+          "predicted_interval": [
+            78300.0,
+            96064.506483078
+          ],
+          "predicted_return": 0.0020948871970176697,
+          "actual_return": -0.09999999999999998,
+          "return_abs_error": 0.10209488719701765
+        },
+        {
+          "horizon": "6m",
+          "predicted_price": 77729.80964183807,
+          "actual_price": 91600.0,
+          "abs_error": 13870.190358161926,
+          "predicted_interval": [
+            63859.61928367615,
+            91600.0
+          ],
+          "predicted_return": -0.10655391216278076,
+          "actual_return": 0.05287356321839076,
+          "return_abs_error": 0.15942747538117152
+        },
+        {
+          "horizon": "1y",
+          "predicted_price": 75878.3311843872,
+          "actual_price": 241000.0,
+          "abs_error": 165121.6688156128,
+          "predicted_interval": [
+            0.0,
+            241000.0
+          ],
+          "predicted_return": -0.12783527374267578,
+          "actual_return": 1.7701149425287355,
+          "return_abs_error": 1.8979502162714113
+        }
+      ],
+      "indicators": {
+        "bb_percent_b": 0.8799794311767616,
+        "bb_bandwidth": 0.16353878547341405,
+        "bb_upper": 88607.73095906367,
+        "bb_mid": 81910.0,
+        "bb_lower": 75212.26904093633,
+        "macd": 1901.6139131770324,
+        "macd_signal": 1206.7898242200463,
+        "macd_hist": 694.8240889569861,
+        "rsi": 54.73684210526316,
+        "obv": 4129684.0,
+        "obv_ema": 3655837.781813863
+      },
+      "fundamentals": {
+        "roe": 0.0,
+        "per": 0.0,
+        "pbr": 0.7799999713897705,
+        "roa": "-",
+        "debt_ratio": "-",
+        "current_ratio": "-",
+        "quick_ratio": "-",
+        "equity_ratio": "-"
+      }
+    },
+    {
+      "ticker": "373220",
+      "name": "LG에너지솔루션",
+      "source": "kiwoom",
+      "current_price": 399000.0,
+      "change_pct": 14.82,
+      "status": "not_found_in_labels",
+      "horizons": [],
+      "indicators": null,
+      "fundamentals": {
+        "roe": "-",
+        "roa": "-",
+        "per": "-",
+        "pbr": "-",
+        "debt_ratio": "-",
+        "current_ratio": "-",
+        "quick_ratio": "-",
+        "equity_ratio": "-"
+      }
+    },
+    {
+      "ticker": "243880",
+      "name": "TIGER 200IT레버리지",
+      "source": "kiwoom",
+      "current_price": 53550.0,
+      "change_pct": 13.45,
+      "status": "not_found_in_labels",
+      "horizons": [],
+      "indicators": null,
+      "fundamentals": {
+        "roe": "-",
+        "roa": "-",
+        "per": "-",
+        "pbr": "-",
+        "debt_ratio": "-",
+        "current_ratio": "-",
+        "quick_ratio": "-",
+        "equity_ratio": "-"
+      }
+    },
+    {
+      "ticker": "001515",
+      "name": "SK증권우",
+      "source": "kiwoom",
+      "current_price": 2600.0,
+      "change_pct": 12.07,
+      "horizons": [
+        {
+          "horizon": "1d",
+          "predicted_price": 1943.7935659885406,
+          "actual_price": 1888.0,
+          "abs_error": 55.79356598854065,
+          "predicted_interval": [
+            1888.0,
+            1999.5871319770813
+          ],
+          "predicted_return": 0.00506383553147316,
+          "actual_return": -0.02378490175801451,
+          "return_abs_error": 0.02884873728948767
+        },
+        {
+          "horizon": "1w",
+          "predicted_price": 1936.751623392105,
+          "actual_price": 1818.0,
+          "abs_error": 118.7516233921051,
+          "predicted_interval": [
+            1818.0,
+            2055.50324678421
+          ],
+          "predicted_return": 0.001422792673110962,
+          "actual_return": -0.05997931747673213,
+          "return_abs_error": 0.06140211014984309
+        },
+        {
+          "horizon": "1m",
+          "predicted_price": 1995.8729090690613,
+          "actual_price": 1730.0,
+          "abs_error": 265.8729090690613,
+          "predicted_interval": [
+            1730.0,
+            2261.7458181381226
+          ],
+          "predicted_return": 0.031992219388484955,
+          "actual_return": -0.10548086866597728,
+          "return_abs_error": 0.13747308805446223
+        },
+        {
+          "horizon": "6m",
+          "predicted_price": 1862.3239570856094,
+          "actual_price": 1638.0,
+          "abs_error": 224.32395708560944,
+          "predicted_interval": [
+            1638.0,
+            2086.647914171219
+          ],
+          "predicted_return": -0.03706102818250656,
+          "actual_return": -0.1530506721820062,
+          "return_abs_error": 0.11598964399949963
+        },
+        {
+          "horizon": "1y",
+          "predicted_price": 1992.2124545574188,
+          "actual_price": 2710.0,
+          "abs_error": 717.7875454425812,
+          "predicted_interval": [
+            1274.4249091148376,
+            2710.0
+          ],
+          "predicted_return": 0.030099518597126007,
+          "actual_return": 0.4012409513960704,
+          "return_abs_error": 0.3711414327989444
+        }
+      ],
+      "indicators": {
+        "bb_percent_b": 0.614021734063215,
+        "bb_bandwidth": 0.06279965860903935,
+        "bb_upper": 1980.545522222004,
+        "bb_mid": 1920.25,
+        "bb_lower": 1859.954477777996,
+        "macd": -16.319134314558596,
+        "macd_signal": -19.690099501968017,
+        "macd_hist": 3.3709651874094213,
+        "rsi": 59.11602209944751,
+        "obv": 152715690.0,
+        "obv_ema": 152692155.91141543
+      },
+      "fundamentals": {
+        "roe": 0.0,
+        "per": 0.0,
+        "pbr": 0.0,
+        "roa": "-",
+        "debt_ratio": "-",
+        "current_ratio": "-",
+        "quick_ratio": "-",
+        "equity_ratio": "-"
+      }
+    }
+  ],
+  "meta": {
+    "fields_ko": {
+      "top_level": {
+        "date": "탐색 기준일(YYYYMMDD)",
+        "market": "시장(KOSPI/KOSDAQ/ALL)",
+        "generated_at": "리포트 생성 시각(ISO8601, KST)",
+        "timezone": "시간대 정보",
+        "count": "종목 개수",
+        "horizons": "예측 범위(예: 1d, 1w, 1m, 6m, 1y)",
+        "entries": "종목별 예측/지표/펀더멘털"
+      },
+      "entry": {
+        "ticker": "종목 코드(6자리)",
+        "name": "종목명",
+        "source": "탐색 출처(pykrx/kiwoom/기타)",
+        "current_price": "현재가(선택)",
+        "change_pct": "변동률(%)",
+        "horizons": "기간별 예측 행",
+        "indicators": "기술적 지표 스냅샷",
+        "fundamentals": "핵심 재무지표 요약('-'은 결측)"
+      },
+      "horizon_row": {
+        "horizon": "예측 기간 라벨",
+        "predicted_price": "예측 종가",
+        "actual_price": "실제 종가",
+        "abs_error": "절대 오차(가격)",
+        "predicted_interval": "예측 구간 [하, 상]",
+        "predicted_return": "예측 수익률(배수)",
+        "actual_return": "실제 수익률(배수)",
+        "return_abs_error": "절대 오차(수익률)"
+      }
+    }
+  }
 }
