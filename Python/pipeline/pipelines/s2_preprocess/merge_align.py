@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass
+import csv
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -209,6 +210,15 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
         "close": "close",
         "volume": "volume",
         "tr_value": "tr_value",
+        "market_cap": "market_cap",
+        "shares_outstanding": "shares_outstanding",
+        # Kiwoom ka10001 alias keys
+        "mac": "market_cap",  # market cap (alias provided by gateway)
+        "mktcap": "market_cap",
+        "tot_mkt_val": "market_cap",
+        "list_shrs": "shares_outstanding",
+        "shrs_out": "shares_outstanding",
+        "shares": "shares_outstanding",
     }
     df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns}, inplace=True)
     if "date" not in df.columns:
@@ -223,13 +233,332 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
     df.sort_index(inplace=True)
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    # Try to enrich from optional kiwoom meta (shares_outstanding)
+    meta = _latest_file(directory, "meta")
+    if meta is not None:
+        try:
+            meta_payload = _read_json(meta)
+            meta_rows = None
+            if isinstance(meta_payload, dict):
+                # Common containers
+                for key in ("response", "data", "body"):
+                    if key in meta_payload and isinstance(meta_payload[key], list):
+                        meta_rows = meta_payload[key]
+                        break
+                if meta_rows is None:
+                    # flat list under some other key
+                    for v in meta_payload.values():
+                        if isinstance(v, list):
+                            meta_rows = v; break
+            elif isinstance(meta_payload, list):
+                meta_rows = meta_payload
+            if meta_rows:
+                mdf = pd.DataFrame(meta_rows)
+                # Normalize columns
+                # expected keys: date, shares_outstanding (but tolerate variations)
+                if "date" not in mdf.columns:
+                    cand = next((c for c in ("trd_date","basDt","dt","Date","DATE") if c in mdf.columns), None)
+                    if cand:
+                        mdf.rename(columns={cand: "date"}, inplace=True)
+                so_col = next((c for c in ("shares_outstanding","shrs_out","list_shrs","shares") if c in mdf.columns), None)
+                if so_col:
+                    if "date" in mdf.columns:
+                        mdf["date"] = pd.to_datetime(mdf["date"], errors="coerce")
+                        mdf = mdf.dropna(subset=["date"]).copy()
+                        mdf.set_index("date", inplace=True)
+                        mdf.sort_index(inplace=True)
+                        df["shares_outstanding"] = df["shares_outstanding"].combine_first(pd.to_numeric(mdf[so_col], errors="coerce")) if "shares_outstanding" in df.columns else pd.to_numeric(mdf[so_col], errors="coerce").reindex(df.index)
+                    else:
+                        # no date info: treat as constant snapshot
+                        try:
+                            const_val = float(pd.to_numeric(mdf[so_col], errors="coerce").dropna().iloc[-1])
+                            df["shares_outstanding"] = df.get("shares_outstanding").combine_first(pd.Series(const_val, index=df.index)) if "shares_outstanding" in df.columns else const_val
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+
+    # Compute market_cap if possible
+    if "market_cap" not in df.columns or df["market_cap"].isna().all():
+        try:
+            if "close" in df.columns and "shares_outstanding" in df.columns:
+                cap = pd.to_numeric(df["close"], errors="coerce") * pd.to_numeric(df["shares_outstanding"], errors="coerce")
+                df["market_cap"] = df.get("market_cap").combine_first(cap) if "market_cap" in df.columns else cap
+        except Exception:
+            pass
+
     return df
 
 
 def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
-    # Placeholder: rely on DART-derived features already in pykrx fundamental file if any
-    # Here we simply return an empty DataFrame to keep pipeline consistent
-    return pd.DataFrame()
+    """Load fundamentals from DART raws if available, with robust fallbacks.
+
+    Strategy
+    - Prefer DART multi-account (balance sheet) latest values per corp_code.
+      Extract: equity, assets, liabilities, current assets/liabilities, inventories.
+    - If DART missing, derive minimal fundamentals from pykrx:
+        fund_equity ≈ market_cap / pbr (if pbr>0)
+        fund_net_income_ttm ≈ market_cap / per (if per>0)
+    - Align to price trading-day index by repeating last-known snapshot.
+    """
+
+    # Ensure price index to align outputs
+    try:
+        price_df = _load_price_frame(ticker, cfg)
+        idx = price_df.index
+    except Exception:
+        return pd.DataFrame()
+
+    values: dict[str, float] = {}
+
+    # Helper: base ticker (common stock) for corp_code lookup
+    def _base(code: object) -> str:
+        raw = str(code or "").strip()
+        digits = "".join(ch for ch in raw if ch.isdigit())
+        if not digits:
+            return raw.zfill(6)
+        d = digits.zfill(6)
+        return d[:-1] + "0"
+
+    # Helper: parse numbers like "1,234" or "-" safely
+    def _num(x: object) -> float:
+        try:
+            if x is None:
+                return float("nan")
+            if isinstance(x, (int, float)):
+                return float(x)
+            s = str(x).strip()
+            if not s or s in ("-", "--"):
+                return float("nan")
+            # Handle parentheses negatives and commas
+            neg = False
+            if s.startswith("(") and s.endswith(")"):
+                neg = True
+                s = s[1:-1]
+            s = s.replace(",", "")
+            val = float(s)
+            return -val if neg else val
+        except Exception:
+            return float("nan")
+
+    # Map ticker -> corp_code via data/dart_corpcode.csv
+    corp_code: str | None = None
+    try:
+        root = _find_project_root()
+        csv_path = root / "data" / "dart_corpcode.csv"
+        if csv_path.exists():
+            base = _base(ticker)
+            with csv_path.open("r", encoding="utf-8-sig", errors="ignore") as fp:
+                rdr = csv.DictReader(fp)
+                headers = { (h or "").strip().lower(): h for h in (rdr.fieldnames or []) }
+                t_col = headers.get("ticker") or headers.get("stock_code") or headers.get("code") or headers.get("symbol")
+                c_col = headers.get("corp_code") or headers.get("corpcode") or headers.get("corpcode_id") or headers.get("corp")
+                for row in rdr:
+                    tk = str(row.get(t_col, "") if t_col else next(iter(row.values()), "")).strip()
+                    tk = ("".join(ch for ch in tk if ch.isdigit())).zfill(6) if tk else ""
+                    if tk and tk[:-1] + "0" == base:
+                        corp_code = str(row.get(c_col, "") if c_col else "").strip()
+                        if corp_code:
+                            break
+    except Exception:
+        corp_code = None
+
+    # Fallback: scan dart raws to discover corp_code by stock_code
+    if corp_code is None:
+        try:
+            dart_root = cfg.raw_root / "dart"
+            base = _base(ticker)
+            if dart_root.exists():
+                for corp_dir in dart_root.iterdir():
+                    if not corp_dir.is_dir():
+                        continue
+                    sample = _latest_file(corp_dir, "fnlttMultiAcnt_")
+                    if not sample:
+                        continue
+                    try:
+                        pl = _read_json(sample)
+                        found = False
+                        for rec in (pl or []):
+                            for row in (rec.get("rows") or []):
+                                sc = str(row.get("stock_code") or "").strip()
+                                if sc and sc.zfill(6)[:-1] + "0" == base:
+                                    corp_code = corp_dir.name
+                                    found = True
+                                    break
+                            if found:
+                                break
+                        if found:
+                            break
+                    except Exception:
+                        continue
+        except Exception:
+            pass
+
+    # Try DART multi-account snapshot
+    try:
+        if corp_code:
+            dart_dir = cfg.raw_root / "dart" / corp_code
+            multi = _latest_file(dart_dir, "fnlttMultiAcnt_") if dart_dir.exists() else None
+        else:
+            multi = None
+    except Exception:
+        multi = None
+
+    if multi is not None and multi.exists():
+        try:
+            # Load all available multi-account files for current and previous years
+            dart_dir = multi.parent
+            multi_files = sorted(dart_dir.glob("fnlttMultiAcnt_*.json"))
+            prefer = {"11014": 0, "11013": 1, "11012": 2, "11011": 3}
+
+            # Collect BS accounts (latest first by reprt_code preference)
+            # Accept common synonyms/variants per account
+            mapping_variants: dict[str, list[str]] = {
+                "fund_equity": ["자본총계", "총자본", "자본 총계"],
+                "fund_assets": ["자산총계", "총자산", "자산 총계"],
+                "fund_liabilities": ["부채총계", "총부채", "부채 총계"],
+                "fund_current_assets": ["유동자산", "유동 자산", "유동자산총계"],
+                "fund_current_liabilities": ["유동부채", "유동 부채", "유동부채총계"],
+                "fund_inventories": ["재고자산", "재고 자산"],
+            }
+            def _match_account(name: str) -> str | None:
+                nm0 = (name or "").strip()
+                nm = nm0.replace(" ", "")
+                for dest, keys in mapping_variants.items():
+                    for k in keys:
+                        kk = k.replace(" ", "")
+                        if nm == kk or nm.startswith(kk) or kk in nm:
+                            return dest
+                return None
+            seen_bs: set[str] = set()
+
+            # For TTM: gather YTD net income by (year, reprt_code)
+            net_ytd: dict[tuple[int, str], float] = {}
+
+            def _is_net_income(name: str) -> bool:
+                n = (name or "").replace(" ", "").strip()
+                return ("당기" in n and "이익" in n)  # handles '당기순이익(손실)'
+
+            for mf in multi_files:
+                try:
+                    payload = _read_json(mf)
+                except Exception:
+                    continue
+                # payload: list of {reprt_code, year, rows:[...]}
+                for rec in (payload or []):
+                    try:
+                        y = int(rec.get("year") or rec.get("bsns_year") or 0)
+                    except Exception:
+                        y = 0
+                    rc = str(rec.get("reprt_code", ""))
+                    pri = prefer.get(rc, 9)
+                    for row in (rec.get("rows") or []):
+                        nm = str(row.get("account_nm", "")).strip()
+                        val = _num(row.get("thstrm_amount"))
+                        # Balance sheet snapshots (latest preferred)
+                        if pri <= 3 and nm:
+                            dest = _match_account(nm)
+                            if dest and dest not in seen_bs and pd.notna(val):
+                                values[dest] = float(val)
+                                seen_bs.add(dest)
+                        # Net income YTD for TTM
+                        if _is_net_income(nm) and pd.notna(val) and y:
+                            # Store highest precedence (lowest pri) per (year, rc)
+                            key = (y, rc)
+                            if key not in net_ytd or pri < prefer.get(key[1], 9):
+                                net_ytd[key] = float(val)
+
+            # Fallback: if equity missing but assets and liabilities present
+            if ("fund_equity" not in values) and ("fund_assets" in values) and ("fund_liabilities" in values):
+                try:
+                    ae = float(values.get("fund_assets", float("nan")))
+                    lb = float(values.get("fund_liabilities", float("nan")))
+                    if pd.notna(ae) and pd.notna(lb):
+                        values["fund_equity"] = ae - lb
+                except Exception:
+                    pass
+
+            # Derive quarterly net income and TTM from YTD and FY
+            def _quarters_from_ytd(year: int) -> dict[int, float]:
+                q: dict[int, float] = {}
+                ytd_q1 = net_ytd.get((year, "11011"))
+                ytd_q2 = net_ytd.get((year, "11012"))
+                ytd_q3 = net_ytd.get((year, "11013"))
+                fy = net_ytd.get((year, "11014"))
+                if ytd_q1 is not None:
+                    q[1] = ytd_q1
+                if ytd_q2 is not None:
+                    base = ytd_q1 if ytd_q1 is not None else 0.0
+                    q[2] = ytd_q2 - base
+                if ytd_q3 is not None:
+                    base = ytd_q2 if ytd_q2 is not None else (ytd_q1 or 0.0)
+                    q[3] = ytd_q3 - base
+                if fy is not None:
+                    base = ytd_q3 if ytd_q3 is not None else (ytd_q2 or ytd_q1 or 0.0)
+                    q[4] = fy - base
+                return q
+
+            years = sorted({y for (y, _rc) in net_ytd.keys()})
+            if years:
+                latest_year = max(years)
+                q_latest = _quarters_from_ytd(latest_year)
+                q_prev = _quarters_from_ytd(latest_year - 1) if (latest_year - 1) in years else {}
+                # Determine latest reported quarter available this year
+                latest_q = max(q_latest.keys()) if q_latest else None
+                if latest_q is None and (latest_year in years) and (latest_year, "11014") in net_ytd:
+                    # Annual only
+                    values["fund_net_income_ttm"] = float(net_ytd[(latest_year, "11014")])
+                elif latest_q is not None:
+                    seq = [(latest_year - 1, 2), (latest_year - 1, 3), (latest_year - 1, 4),
+                           (latest_year, 1), (latest_year, 2), (latest_year, 3), (latest_year, 4)]
+                    # up to latest_q of latest_year
+                    upto = [(y, q) for (y, q) in seq if (y < latest_year) or (y == latest_year and q <= latest_q)]
+                    quarters: list[float] = []
+                    for y, q in upto:
+                        v = (q_latest if y == latest_year else q_prev).get(q)
+                        if v is not None and pd.notna(v):
+                            quarters.append(float(v))
+                    if len(quarters) >= 4:
+                        values["fund_net_income_ttm"] = sum(quarters[-4:])
+        except Exception:
+            pass
+
+    # Fallbacks from pykrx-derived fields (per/pbr/market_cap)
+    try:
+        mc = float(price_df["market_cap"].dropna().iloc[-1]) if "market_cap" in price_df.columns else float("nan")
+    except Exception:
+        mc = float("nan")
+    try:
+        pbr = float(price_df["pbr"].dropna().iloc[-1]) if "pbr" in price_df.columns else float("nan")
+    except Exception:
+        pbr = float("nan")
+    try:
+        per = float(price_df["per"].dropna().iloc[-1]) if "per" in price_df.columns else float("nan")
+    except Exception:
+        per = float("nan")
+
+    if ("fund_equity" not in values) and pd.notna(mc) and pd.notna(pbr) and pbr not in (0.0,):
+        try:
+            values["fund_equity"] = float(mc) / float(pbr)
+        except Exception:
+            pass
+    if ("fund_net_income_ttm" not in values) and pd.notna(mc) and pd.notna(per) and per not in (0.0,):
+        try:
+            values["fund_net_income_ttm"] = float(mc) / float(per)
+        except Exception:
+            pass
+
+    if not values:
+        return pd.DataFrame()
+
+    out = pd.DataFrame(index=idx)
+    for k, v in values.items():
+        try:
+            out[k] = float(v)
+        except Exception:
+            out[k] = np.nan
+    return out
 
 
 def _load_news_features(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
@@ -383,4 +712,3 @@ def _write_table(df: pd.DataFrame, path: Path) -> Path:
         df.to_pickle(fb)
         LOGGER.warning("Parquet unavailable; wrote pickle: %s", fb)
         return fb
-

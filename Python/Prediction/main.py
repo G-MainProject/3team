@@ -31,18 +31,31 @@ SENTIMENT_NEG_THRESHOLD = -0.03
 
 
 # top_movers_auto.json에서 추출한 기본 검색어 목록을 읽어온다.
-def _load_default_search_targets() -> tuple[list[str], dict[str, str]]:
+def _load_default_search_targets() -> tuple[list[str], dict[str, str], str | None]:
     script_dir = Path(__file__).resolve().parent
     repo_root = script_dir.parent.parent
-    data_path = repo_root / "data" / "row" / "top_movers_auto.json"
+    candidate_paths = [
+        repo_root / "data" / "raws" / "top_movers_auto.json",
+    ]
 
-    try:
-        with data_path.open("r", encoding="utf-8") as fp:
-            payload = json.load(fp)
-    except FileNotFoundError:
-        return [], {}
-    except (json.JSONDecodeError, OSError):
-        return [], {}
+    payload: dict | None = None
+    for data_path in candidate_paths:
+        if not data_path.exists():
+            continue
+        try:
+            with data_path.open("r", encoding="utf-8") as fp:
+                payload = json.load(fp)
+            break
+        except FileNotFoundError:
+            continue
+        except (json.JSONDecodeError, OSError):
+            return [], {}, None
+
+    if payload is None:
+        return [], {}, None
+
+    market_value = payload.get("market")
+    market = market_value.strip() if isinstance(market_value, str) else None
 
     names: list[str] = []
     name_to_stock_code: dict[str, str] = {}
@@ -69,13 +82,14 @@ def _load_default_search_targets() -> tuple[list[str], dict[str, str]]:
                 stock_code_candidate = raw_stock_code.strip()
                 if stock_code_candidate:
                     name_to_stock_code[candidate] = stock_code_candidate
-    return names, name_to_stock_code
+    return names, name_to_stock_code, market
 
 
-DEFAULT_SEARCH_WORDS, DEFAULT_STOCK_CODE_MAP = _load_default_search_targets()
+DEFAULT_SEARCH_WORDS, DEFAULT_STOCK_CODE_MAP, DEFAULT_MARKET = _load_default_search_targets()
 if not DEFAULT_SEARCH_WORDS:
     DEFAULT_SEARCH_WORDS = [DEFAULT_SEARCH_WORD_FALLBACK]
     DEFAULT_STOCK_CODE_MAP = {}
+    DEFAULT_MARKET = None
 DEFAULT_SEARCH_WORD = DEFAULT_SEARCH_WORDS[0]
 
 
@@ -137,7 +151,13 @@ def get_news_content(link: str, search_word: str = "") -> str:
     except requests.exceptions.RequestException:
         return FAIL_MESSAGE
 
-    soup = BeautifulSoup(response.content, "html.parser")
+    if not response.encoding or response.encoding.lower() == "iso-8859-1":
+        apparent = response.apparent_encoding
+        if apparent:
+            response.encoding = apparent
+    html_text = response.text
+
+    soup = BeautifulSoup(html_text, "html.parser")
     content = None
     for selector in selectors:
         content = soup.select_one(selector)
@@ -298,9 +318,11 @@ def generate_comprehensive_report(
     news_list: list[dict[str, str]],
     resources_dir: str,
     stock_code: str | None = None,
+    market: str | None = None,
 ) -> dict:
     """감성/키워드 분석 결과를 포함한 리포트를 생성한다."""
     print(f"[Start] Analysis for '{stock_name}'")
+    market = market or DEFAULT_MARKET
 
     print("1) Sentiment analysis..")
     senti_path = os.path.join(resources_dir, "finance_data.csv")
@@ -366,6 +388,7 @@ def generate_comprehensive_report(
     print("3) Building report..")
     report = {
         "stockName": stock_name,
+        **({"market": market} if market else {}),
         "stockCode": stock_code,
         "analysisDate": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "sentimentAnalysis": {
@@ -425,7 +448,7 @@ def main() -> None:
 
     script_dir = Path(__file__).resolve().parent
     repo_root = script_dir.parent.parent
-    data_dir = repo_root / "data/raw"
+    data_dir = repo_root / "data/raws"
     data_dir.mkdir(parents=True, exist_ok=True)
 
     dotenv_path = repo_root / ".env"
@@ -473,6 +496,7 @@ def main() -> None:
             news_data,
             resources_dir=str(script_dir),
             stock_code=stock_code,
+            market=DEFAULT_MARKET,
         )
 
         aggregated_reports.append(report)
