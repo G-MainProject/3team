@@ -8,7 +8,7 @@
     overflow: hidden;
 }
 
-.footer-container::before {
+/* .footer-container::before {
     content: '';
     position: absolute;
     top: 0;
@@ -19,7 +19,7 @@
         radial-gradient(circle at 20% 90%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
         radial-gradient(circle at 80% 90%, rgba(37, 99, 235, 0.3) 0%, transparent 50%),
         radial-gradient(circle at 40% 85%, rgba(96, 165, 250, 0.2) 0%, transparent 50%);
-}
+} */
 
 .footer-content {
     width: 100%;

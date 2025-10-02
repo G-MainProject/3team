@@ -6,8 +6,10 @@ import brity from '../../assets/images/brity.png';
 import ocr from '../../assets/images/ocr.jpg';
 import emotion from '../../assets/images/emotion.jpg';
 import HomeNav from '../../component/Nav/HomeNav';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Home() {
+    const { isAuthenticated } = useAuth();
     const [activeIdx, setActiveIdx] = useState(-1);
     const [isScrolling, setIsScrolling] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);

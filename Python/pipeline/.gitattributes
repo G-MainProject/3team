@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+# Normalize common text formats
+*.py text
+*.json text
+*.yml text
+*.yaml text
+*.md text
+*.txt text
+

@@ -1,0 +1,503 @@
+{
+	"date": "20250925",
+	"market": "KOSPI",
+	"generated_at": null,
+	"price_source": null,
+	"count": 6,
+	"horizons": ["1d", "1w", "1m", "6m", "1y"],
+	"entries": [
+		{
+			"ticker": "133820",
+			"name": "화인베스틸",
+			"source": "kiwoom",
+			"current_price": 25000.0,
+			"change_pct": 15.0,
+			"horizons": [
+				{
+					"horizon": "1d",
+					"predicted_price": 2600.0,
+					"actual_price": 2550.0,
+					"abs_error": 50.0,
+					"predicted_interval": [2550.0, 2650.0],
+					"predicted_return": 0.04,
+					"actual_return": 0.02,
+					"return_abs_error": 0.02
+				}
+			],
+			"indicators": {
+				"bb_percent_b": 0.8,
+				"bb_bandwidth": 0.2,
+				"bb_upper": 26000.0,
+				"bb_lower": 24000.0,
+				"bb_mid": 25000.0,
+				"macd": 200.0,
+				"macd_signal": 180.0,
+				"macd_hist": 20.0,
+				"rsi": 70.0,
+				"obv": 100000.0,
+				"obv_ema": 90000.0
+			},
+			"fundamentals": {
+				"per": 10.0,
+				"pbr": 1.5,
+				"roe": 0.15,
+				"roa": 0.1,
+				"market_cap": 250000000000.0,
+				"shares_outstanding": 10000000.0
+			},
+			"time_series": {
+				"price_history": [
+					{
+						"time": "09:00",
+						"price": 24800,
+						"open": 24800,
+						"high": 25000,
+						"low": 24650,
+						"close": 24800,
+						"volume": 120000
+					},
+					{
+						"time": "09:30",
+						"price": 25100,
+						"open": 24800,
+						"high": 25310,
+						"low": 24945,
+						"close": 25100,
+						"volume": 150000
+					}
+				],
+				"indicators_history": {
+					"rsi": [62.2, 63.2],
+					"obv": [120000, 135000],
+					"macd": [144, 146],
+					"signal": [135.5, 137],
+					"histogram": [8.5, 9],
+					"bollinger_upper": [25200, 25210],
+					"bollinger_middle": [25000, 25005],
+					"bollinger_lower": [24800, 24810]
+				}
+			},
+			"financials": {
+				"yearly": [
+					{
+						"year": "2022",
+						"revenue": 3022300000000,
+						"operatingProfit": 433800000000,
+						"netProfit": 556500000000
+					},
+					{
+						"year": "2023",
+						"revenue": 2589400000000,
+						"operatingProfit": 65700000000,
+						"netProfit": 154900000000
+					}
+				],
+				"ratios": {
+					"debt_ratio": { "value": 25.2, "change": 1.2 },
+					"current_ratio": { "value": 1.8, "change": 0.1 },
+					"quick_ratio": { "value": 1.2, "change": -0.1 },
+					"equity_ratio": { "value": 79.8, "change": 0.3 }
+				},
+				"summary": {
+					"revenue": { "value": 100000000000, "change": 12.5 },
+					"operating_profit": { "value": 20000000000, "change": 8.3 },
+					"net_profit": { "value": 15000000000, "change": 15.2 }
+				}
+			}
+		},
+		{
+			      "ticker": "109070",
+			      "name": "주성코퍼레이션",			"source": "kiwoom",
+			"current_price": 12345.0,
+			"change_pct": -2.5,
+			"horizons": [
+				{
+					"horizon": "1d",
+					"predicted_price": 12000.0,
+					"actual_price": 12100.0,
+					"abs_error": 100.0,
+					"predicted_interval": [11900.0, 12100.0],
+					"predicted_return": -0.028,
+					"actual_return": -0.02,
+					"return_abs_error": 0.008
+				}
+			],
+			"indicators": {
+				"bb_percent_b": 0.3,
+				"bb_bandwidth": 0.15,
+				"bb_upper": 13000.0,
+				"bb_lower": 11000.0,
+				"bb_mid": 12000.0,
+				"macd": -50.0,
+				"macd_signal": -40.0,
+				"macd_hist": -10.0,
+				"rsi": 40.0,
+				"obv": -50000.0,
+				"obv_ema": -45000.0
+			},
+			"fundamentals": {
+				"per": 20.0,
+				"pbr": 2.0,
+				"roe": 0.1,
+				"roa": 0.05,
+				"market_cap": 123450000000.0,
+				"shares_outstanding": 10000000.0
+			},
+			"time_series": {
+				"price_history": [
+					{
+						"time": "09:00",
+						"price": 12800,
+						"open": 12800,
+						"high": 13000,
+						"low": 12650,
+						"close": 12800,
+						"volume": 220000
+					},
+					{
+						"time": "09:30",
+						"price": 12500,
+						"open": 12800,
+						"high": 12810,
+						"low": 12445,
+						"close": 12500,
+						"volume": 250000
+					}
+				],
+				"indicators_history": {
+					"rsi": [42.2, 43.2],
+					"obv": [-120000, -135000],
+					"macd": [-144, -146],
+					"signal": [-135.5, -137],
+					"histogram": [-8.5, -9],
+					"bollinger_upper": [13200, 13210],
+					"bollinger_middle": [12000, 12005],
+					"bollinger_lower": [11800, 11810]
+				}
+			},
+			"financials": {
+				"yearly": [
+					{
+						"year": "2022",
+						"revenue": 3022300000000,
+						"operatingProfit": 433800000000,
+						"netProfit": 556500000000
+					},
+					{
+						"year": "2023",
+						"revenue": 2589400000000,
+						"operatingProfit": 65700000000,
+						"netProfit": 154900000000
+					}
+				],
+				"ratios": {
+					"debt_ratio": { "value": 25.2, "change": 1.2 },
+					"current_ratio": { "value": 1.8, "change": 0.1 },
+					"quick_ratio": { "value": 1.2, "change": -0.1 },
+					"equity_ratio": { "value": 79.8, "change": 0.3 }
+				},
+				"summary": {
+					"revenue": { "value": 100000000000, "change": 12.5 },
+					"operating_profit": { "value": 20000000000, "change": 8.3 },
+					"net_profit": { "value": 15000000000, "change": 15.2 }
+				}
+			}
+		},
+		{
+			"ticker": "105840",
+			"name": "우진",
+			"source": "kiwoom",
+			"current_price": 8800.0,
+			"change_pct": 5.5,
+			"horizons": [
+				{
+					"horizon": "1d",
+					"predicted_price": 9000.0,
+					"actual_price": 8900.0,
+					"abs_error": 100.0,
+					"predicted_interval": [8850.0, 9150.0],
+					"predicted_return": 0.022,
+					"actual_return": 0.011,
+					"return_abs_error": 0.011
+				}
+			],
+			"indicators": {
+				"bb_percent_b": 0.9,
+				"bb_bandwidth": 0.1,
+				"bb_upper": 9000.0,
+				"bb_lower": 8000.0,
+				"bb_mid": 8500.0,
+				"macd": 100.0,
+				"macd_signal": 80.0,
+				"macd_hist": 20.0,
+				"rsi": 75.0,
+				"obv": 200000.0,
+				"obv_ema": 180000.0
+			},
+			"fundamentals": {
+				"per": 12.0,
+				"pbr": 1.2,
+				"roe": 0.1,
+				"roa": 0.08,
+				"market_cap": 88000000000.0,
+				"shares_outstanding": 10000000.0
+			},
+			"time_series": {
+				"price_history": [
+					{
+						"time": "09:00",
+						"price": 8700,
+						"open": 8700,
+						"high": 8800,
+						"low": 8650,
+						"close": 8700,
+						"volume": 320000
+					},
+					{
+						"time": "09:30",
+						"price": 8800,
+						"open": 8700,
+						"high": 8810,
+						"low": 8645,
+						"close": 8800,
+						"volume": 350000
+					}
+				],
+				"indicators_history": {
+					"rsi": [72.2, 73.2],
+					"obv": [220000, 235000],
+					"macd": [154, 156],
+					"signal": [145.5, 147],
+					"histogram": [8.5, 9],
+					"bollinger_upper": [8900, 8910],
+					"bollinger_middle": [8500, 8505],
+					"bollinger_lower": [8100, 8110]
+				}
+			},
+			"financials": {
+				"yearly": [
+					{
+						"year": "2022",
+						"revenue": 3022300000000,
+						"operatingProfit": 433800000000,
+						"netProfit": 556500000000
+					},
+					{
+						"year": "2023",
+						"revenue": 2589400000000,
+						"operatingProfit": 65700000000,
+						"netProfit": 154900000000
+					}
+				],
+				"ratios": {
+					"debt_ratio": { "value": 25.2, "change": 1.2 },
+					"current_ratio": { "value": 1.8, "change": 0.1 },
+					"quick_ratio": { "value": 1.2, "change": -0.1 },
+					"equity_ratio": { "value": 79.8, "change": 0.3 }
+				},
+				"summary": {
+					"revenue": { "value": 100000000000, "change": 12.5 },
+					"operating_profit": { "value": 20000000000, "change": 8.3 },
+					"net_profit": { "value": 15000000000, "change": 15.2 }
+				}
+			}
+		},
+		{
+			"ticker": "450140",
+			"name": "코오롱모빌리티그룹",
+			"source": "kiwoom",
+			"current_price": 3400.0,
+			"change_pct": -1.2,
+			"horizons": [
+				{
+					"horizon": "1d",
+					"predicted_price": 3450.0,
+					"actual_price": 3420.0,
+					"abs_error": 30.0,
+					"predicted_interval": [3400.0, 3500.0],
+					"predicted_return": 0.014,
+					"actual_return": 0.005,
+					"return_abs_error": 0.009
+				}
+			],
+			"indicators": {
+				"bb_percent_b": 0.6,
+				"bb_bandwidth": 0.05,
+				"bb_upper": 3500.0,
+				"bb_lower": 3300.0,
+				"bb_mid": 3400.0,
+				"macd": 10.0,
+				"macd_signal": 8.0,
+				"macd_hist": 2.0,
+				"rsi": 55.0,
+				"obv": 500000.0,
+				"obv_ema": 450000.0
+			},
+			"fundamentals": {
+				"per": 15.0,
+				"pbr": 0.8,
+				"roe": 0.05,
+				"roa": 0.03,
+				"market_cap": 340000000000.0,
+				"shares_outstanding": 100000000.0
+			},
+			"time_series": {
+				"price_history": [
+					{
+						"time": "09:00",
+						"price": 3380,
+						"open": 3380,
+						"high": 3400,
+						"low": 3350,
+						"close": 3380,
+						"volume": 420000
+					},
+					{
+						"time": "09:30",
+						"price": 3410,
+						"open": 3380,
+						"high": 3430,
+						"low": 3395,
+						"close": 3410,
+						"volume": 450000
+					}
+				],
+				"indicators_history": {
+					"rsi": [52.2, 53.2],
+					"obv": [420000, 435000],
+					"macd": [14, 16],
+					"signal": [13.5, 14],
+					"histogram": [0.5, 2],
+					"bollinger_upper": [3420, 3421],
+					"bollinger_middle": [3400, 3405],
+					"bollinger_lower": [3380, 3381]
+				}
+			},
+			"financials": {
+				"yearly": [
+					{
+						"year": "2022",
+						"revenue": 3022300000000,
+						"operatingProfit": 433800000000,
+						"netProfit": 556500000000
+					},
+					{
+						"year": "2023",
+						"revenue": 2589400000000,
+						"operatingProfit": 65700000000,
+						"netProfit": 154900000000
+					}
+				],
+				"ratios": {
+					"debt_ratio": { "value": 25.2, "change": 1.2 },
+					"current_ratio": { "value": 1.8, "change": 0.1 },
+					"quick_ratio": { "value": 1.2, "change": -0.1 },
+					"equity_ratio": { "value": 79.8, "change": 0.3 }
+				},
+				"summary": {
+					"revenue": { "value": 100000000000, "change": 12.5 },
+					"operating_profit": { "value": 20000000000, "change": 8.3 },
+					"net_profit": { "value": 15000000000, "change": 15.2 }
+				}
+			}
+		},
+		{
+			      "ticker": "45014K",
+			      "name": "코오롱모빌리티그룹우",			"source": "kiwoom",
+			"current_price": 1700.0,
+			"change_pct": 3.3,
+			"horizons": [
+				{
+					"horizon": "1d",
+					"predicted_price": 1750.0,
+					"actual_price": 1720.0,
+					"abs_error": 30.0,
+					"predicted_interval": [1700.0, 1800.0],
+					"predicted_return": 0.029,
+					"actual_return": 0.011,
+					"return_abs_error": 0.018
+				}
+			],
+			"indicators": {
+				"bb_percent_b": 0.7,
+				"bb_bandwidth": 0.08,
+				"bb_upper": 1800.0,
+				"bb_lower": 1600.0,
+				"bb_mid": 1700.0,
+				"macd": 5.0,
+				"macd_signal": 4.0,
+				"macd_hist": 1.0,
+				"rsi": 60.0,
+				"obv": 300000.0,
+				"obv_ema": 280000.0
+			},
+			"fundamentals": {
+				"per": 8.0,
+				"pbr": 0.5,
+				"roe": 0.06,
+				"roa": 0.04,
+				"market_cap": 17000000000.0,
+				"shares_outstanding": 10000000.0
+			},
+			"time_series": {
+				"price_history": [
+					{
+						"time": "09:00",
+						"price": 1680,
+						"open": 1680,
+						"high": 1700,
+						"low": 1650,
+						"close": 1680,
+						"volume": 120000
+					},
+					{
+						"time": "09:30",
+						"price": 1710,
+						"open": 1680,
+						"high": 1730,
+						"low": 1695,
+						"close": 1710,
+						"volume": 150000
+					}
+				],
+				"indicators_history": {
+					"rsi": [58.2, 59.2],
+					"obv": [120000, 135000],
+					"macd": [4, 6],
+					"signal": [3.5, 4],
+					"histogram": [0.5, 2],
+					"bollinger_upper": [1720, 1721],
+					"bollinger_middle": [1700, 1705],
+					"bollinger_lower": [1680, 1681]
+				}
+			},
+			"financials": {
+				"yearly": [
+					{
+						"year": "2022",
+						"revenue": 3022300000000,
+						"operatingProfit": 433800000000,
+						"netProfit": 556500000000
+					},
+					{
+						"year": "2023",
+						"revenue": 2589400000000,
+						"operatingProfit": 65700000000,
+						"netProfit": 154900000000
+					}
+				],
+				"ratios": {
+					"debt_ratio": { "value": 25.2, "change": 1.2 },
+					"current_ratio": { "value": 1.8, "change": 0.1 },
+					"quick_ratio": { "value": 1.2, "change": -0.1 },
+					"equity_ratio": { "value": 79.8, "change": 0.3 }
+				},
+				"summary": {
+					"revenue": { "value": 100000000000, "change": 12.5 },
+					"operating_profit": { "value": 20000000000, "change": 8.3 },
+					"net_profit": { "value": 15000000000, "change": 15.2 }
+				}
+			}
+		}
+	]
+}

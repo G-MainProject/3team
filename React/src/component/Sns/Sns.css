@@ -1,0 +1,520 @@
+.sns-container {
+	grid-area: right-nav;
+	width: 100%;
+	background-color: #fff;
+	border-radius: 8px;
+	overflow-y: auto;
+	/* 높이는 JavaScript로 동적 조정 */
+}
+
+.sns-content {
+	padding: 20px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+/* SNS 헤더 */
+.sns-header {
+	margin-bottom: 20px;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #e9ecef;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.sns-header-right {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+
+.sns-header h3 {
+	margin: 0;
+	color: #495057;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.sns-header h3 span {
+	color: #007bff;
+}
+
+.sns-header ul {
+	display: flex;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	gap: 8px;
+}
+
+.sns-header li {
+	margin: 0;
+}
+
+.social-btn {
+	background: none;
+	border: 1px solid #dee2e6;
+	border-radius: 20px;
+	padding: 6px 12px;
+	font-size: 12px;
+	font-weight: 500;
+	color: #6c757d;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+	background-color: #f8f9fa;
+	border-color: #adb5bd;
+}
+
+.social-btn.active {
+	background-color: #007bff;
+	border-color: #007bff;
+	color: white;
+}
+
+/* 로딩 상태 */
+.loading-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 200px;
+	color: #6c757d;
+}
+
+.loading-spinner {
+	width: 30px;
+	height: 30px;
+	border: 3px solid #e9ecef;
+	border-top: 3px solid #007bff;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	margin-bottom: 10px;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* 갱신 중 표시 */
+.refresh-indicator {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #007bff;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.refresh-spinner {
+	width: 16px;
+	height: 16px;
+	border: 2px solid #e9ecef;
+	border-top: 2px solid #007bff;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	flex-shrink: 0;
+}
+
+.last-updated {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: #6c757d;
+	font-size: 12px;
+	font-weight: 400;
+	white-space: nowrap;
+	min-width: fit-content;
+	margin: 0;
+	padding: 0;
+}
+
+.last-updated i {
+	font-size: 11px;
+	opacity: 0.7;
+	flex-shrink: 0;
+}
+
+.refreshing-indicator {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	color: #007bff;
+	font-size: 11px;
+	font-weight: 500;
+	margin-left: 8px;
+	animation: pulse 1.5s ease-in-out infinite;
+}
+
+.refreshing-indicator i {
+	font-size: 10px;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.6; }
+}
+
+/* 소셜미디어 피드 */
+.social-feed {
+	flex: 1;
+	overflow-y: auto;
+	
+	/* 스크롤바 완전 제거 */
+	/* For modern browsers like Chrome, Safari, Edge */
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* For Firefox */
+	scrollbar-width: none;
+
+	/* For older browsers like IE/Edge */
+	-ms-overflow-style: none;
+}
+
+/* SIGNAL 탭 전용 카카오톡 스타일 배경 */
+/* .social-feed.signal-feed {
+	background-color: #f7f7f7;
+} */
+
+/* 기존 Reddit 스타일 (원래대로 복원) */
+.social-item {
+	padding: 15px;
+	border-bottom: 1px solid #f1f3f4;
+	transition: all 0.2s ease;
+	cursor: pointer !important;
+}
+
+.social-item:hover {
+	background-color: #f8f9fa;
+}
+
+.social-item:last-child {
+	border-bottom: none;
+}
+
+.social-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.social-author {
+	color: #007bff;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.social-time {
+	color: #6c757d;
+	font-size: 12px;
+}
+
+.social-content {
+	color: #14171a;
+	font-size: 14px;
+	line-height: 1.4;
+	margin-bottom: 10px;
+	/* 2줄 이상일 때 텍스트 축약 */
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-word;
+}
+
+/* Reddit 스타일 (기존 유지) */
+.social-item.reddit-item {
+	display: block;
+	padding: 15px;
+	border-bottom: 1px solid #f1f3f4;
+	background-color: #fff;
+	cursor: pointer;
+}
+
+.social-item.reddit-item:hover {
+	background-color: #f8f9fa;
+}
+
+.social-stats {
+	display: flex;
+	gap: 15px;
+	font-size: 12px;
+	color: #6c757d;
+}
+
+.social-likes,
+.social-engagement {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	cursor: pointer;
+	transition: color 0.2s ease;
+}
+
+.social-likes:hover {
+	color: #e0245e;
+}
+
+.social-engagement:hover {
+	color: #17bf63;
+}
+
+.social-likes i,
+.social-engagement i {
+	font-size: 12px;
+}
+
+/* 데이터 없음 상태 */
+.no-data {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 200px;
+	color: #6c757d;
+	font-size: 14px;
+}
+
+/* 에러 메시지 */
+.error-message {
+	background-color: #fff3cd;
+	border: 1px solid #ffeaa7;
+	border-radius: 6px;
+	padding: 12px;
+	margin-bottom: 15px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #856404;
+	font-size: 13px;
+}
+
+.error-message i {
+	color: #f39c12;
+	font-size: 14px;
+}
+
+.sns-status {
+	margin-top: 20px;
+	padding-top: 20px;
+	height: 40px;
+	border-top: 1px solid #e9ecef;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.last-updated i {
+	font-size: 10px;
+}
+
+/* 메시지 입력 폼 스타일 */
+.message-input-form {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid #e9ecef;
+}
+
+.message-input-form form {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}
+
+.message-input-form input {
+	flex: 1;
+	padding: 0 16px;
+	border: 2px solid #e9ecef;
+	border-radius: 25px;
+	font-size: 14px;
+	color: #495057;
+	background-color: #f8f9fa;
+	transition: all 0.1s;
+	outline: none;
+	height: 40px;
+}
+
+.message-input-form input:focus {
+	border-color: #007bff;
+	background-color: #fff;
+}
+
+.message-input-form input:disabled {
+	background-color: #e9ecef;
+	color: #6c757d;
+	cursor: not-allowed;
+}
+
+.message-input-form input::placeholder {
+	color: #adb5bd;
+	font-style: italic;
+}
+
+.message-input-form button {
+	padding: 0 20px;
+	background: #007bff;
+	color: white;
+	border: none;
+	border-radius: 25px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.1s ease;
+	min-width: 80px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.message-input-form button i {
+	font-size: 12px;
+}
+
+.message-input-form button:hover:not(:disabled) {
+	background: #0056b3;
+}
+
+.message-input-form button:active:not(:disabled) {
+	background: #004085;
+}
+
+.message-input-form button:disabled {
+	background: #e9ecef;
+	color: #6c757d;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
+
+/* 카카오톡 스타일 메시지 아이템 (SIGNAL 전용) */
+.message-item {
+	display: flex;
+	margin-bottom: 10px;
+	transition: all 0.2s ease;
+}
+
+.message-item.last-message {
+	margin-bottom: 0 !important;
+}
+
+/* 내 메시지 (오른쪽 배치) */
+.message-item.my-message {
+	justify-content: flex-end;
+}
+
+.message-item.my-message .message-bubble {
+	background-color: #eff6ff;
+	color: #000;
+	border-radius: 10px 10px 2px 10px;
+	max-width: 70%;
+	word-wrap: break-word;
+}
+
+/* 다른 사람 메시지 (왼쪽 배치) */
+.message-item:not(.my-message) {
+	justify-content: flex-start;
+}
+
+.message-item:not(.my-message) .message-bubble {
+	background-color: #f3f4f6;
+	color: #000;
+	border-radius: 10px 10px 10px 2px;
+	max-width: 70%;
+	word-wrap: break-word;
+}
+
+/* 메시지 말풍선 */
+.message-bubble {
+	position: relative;
+	padding: 8px 12px;
+	font-size: 14px;
+	line-height: 1.4;
+	word-break: break-word;
+	display: inline-block;
+}
+
+/* 메시지 헤더 (이름과 시간) */
+.message-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 4px;
+}
+
+/* 내 메시지의 헤더는 margin-top 없음 */
+.message-item.my-message .message-header {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/* 내 메시지의 텍스트에 margin-bottom 추가 */
+.message-item.my-message .message-text {
+	margin-bottom: 4px;
+}
+
+.message-author {
+	color: #3c1e1e;
+	font-weight: 500;
+	font-size: 12px;
+	margin-right: 8px;
+}
+
+.message-time {
+	color: #666;
+	font-size: 11px;
+}
+
+/* 메시지 내용 */
+.message-text {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.4;
+	word-break: break-word;
+}
+
+/* 메시지 헤더 오른쪽 영역 */
+.message-header-right {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* 메시지 삭제 버튼 */
+.message-delete-btn {
+	background: none;
+	border: none;
+	color: #dc3545;
+	cursor: pointer;
+	margin-left: 4px;
+	border-radius: 4px;
+	font-size: 8px;
+	transition: all 0.1s ease;
+}
+
+.message-delete-btn:hover {
+	filter: brightness(0.7);
+}
+
+.message-delete-btn i {
+	font-size: 10px;
+}
+
+/* 30분 이상 지난 오래된 메시지 */
+.message-item.old-message .message-bubble {
+	opacity: 0.5;
+}
