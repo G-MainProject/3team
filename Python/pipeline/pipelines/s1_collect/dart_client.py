@@ -1,5 +1,14 @@
-﻿# -*- coding: utf-8 -*-
-"""Pull financial statement data from DART Open API and store under data/raws."""
+# -*- coding: utf-8 -*-
+"""DART Open API 클라이언트
+
+재무제표 데이터를 수집해 `data/raws/dart/<corp_code>/...json`에 저장합니다.
+
+특징
+- UTF-8-SIG(.env) 로딩 및 BOM 정리로 인코딩 문제 최소화
+- 보고서 코드/연결구분은 .env로 오버라이드 가능(`DART_REPRT_CODES`, `DART_FS_DIV`)
+- CFS가 비어 있으면 OFS 대체 시도, 또 없으면 직전 연도 조회
+- 단일 계정(fnlttSinglAcntAll)도 옵션으로 함께 저장
+"""
 
 from __future__ import annotations
 
@@ -14,12 +23,12 @@ import requests
 
 LOGGER = logging.getLogger(__name__)
 BASE_URL = "https://opendart.fss.or.kr/api"
-DEFAULT_REPRT_CODES = ("11011", "11012", "11013", "11014")
-DEFAULT_FS_DIV = "CFS"
+DEFAULT_REPRT_CODES = ("11011", "11012", "11013", "11014")  # 1Q, 반기, 3Q, 사업보고서
+DEFAULT_FS_DIV = "CFS"  # 연결
 
 
 def _find_project_root() -> Path:
-    """?섍꼍?뚯씪(.env)怨?data ?붾젆?곕━瑜?湲곗??쇰줈 ?꾨줈?앺듃 猷⑦듃瑜?李얜뒗??"""
+    """.env 또는 data 디렉터리를 기준으로 프로젝트 루트를 추정."""
 
     current = Path(__file__).resolve()
     for parent in current.parents:
@@ -28,7 +37,6 @@ def _find_project_root() -> Path:
     return current.parents[4]
 
 
-# DART ?щТ?쒗몴 API瑜??몄텧??raw/dart ?댄븯??JSON?쇰줈 ??ν븳??
 def fetch_filings(
     *,
     corp_codes: Iterable[str],
@@ -40,39 +48,46 @@ def fetch_filings(
     single_accounts: Sequence[str] | None = None,
     session: requests.Session | None = None,
 ) -> Mapping[str, list[Path]]:
-    """Fetch multi-account and optional single-account statements per company."""
+    """회사별 재무제표(다중/단일 계정)를 수집하여 파일로 저장.
+
+    Parameters
+    - corp_codes: DART 법인번호 목록
+    - year: 사업연도(예: 2024)
+    - raw_dir: 저장 루트(기본: <project>/data/raws)
+    - reprt_codes: 보고서 코드들(기본: .env→기본값)
+    - fs_div: CFS(연결)/OFS(별도)
+    - pause: 호출 간 대기(초)
+    - single_accounts: 단일 계정명 리스트(옵션)
+    - session: 외부 세션 주입(옵션)
+    """
 
     _ensure_env_loaded()
     api_key = os.getenv("DART_API_KEY")
     if not api_key:
-        raise RuntimeError("DART_API_KEY ?섍꼍蹂?섍? ?ㅼ젙?섏뼱 ?덉뼱???⑸땲??")
+        raise RuntimeError("DART_API_KEY 환경변수가 설정되어 있지 않습니다.")
 
     raw_root = _resolve_raw_dir(raw_dir) / "dart"
     raw_root.mkdir(parents=True, exist_ok=True)
 
-    # .env 湲곕컲 ?ㅻ쾭?쇱씠?? DART_REPRT_CODES, DART_FS_DIV
+    # .env 오버라이드 처리
     env_codes = os.getenv("DART_REPRT_CODES")
     parsed_env_codes: tuple[str, ...] | None = None
     if env_codes:
         try:
             parts = [p.strip() for p in env_codes.replace(";", ",").split(",") if p.strip()]
-            parts = [p for p in parts if p.isdigit()]
-            if parts:
-                parsed_env_codes = tuple(parts)
+            parts = tuple(p for p in parts if p.isdigit())
+            parsed_env_codes = parts or None
         except Exception:
             parsed_env_codes = None
-    env_fs_div = os.getenv("DART_FS_DIV")
+    env_fs_div = (os.getenv("DART_FS_DIV") or "").strip().upper()
     if env_fs_div:
-        try:
-            fs_div = str(env_fs_div).strip().upper() or fs_div
-        except Exception:
-            pass
+        fs_div = env_fs_div
 
-    # 최종 reprt_codes 결정: 인자 > .env > 기본
+    # 우선순위: 인자 > .env > 기본값
     reprt_codes = tuple(reprt_codes or parsed_env_codes or DEFAULT_REPRT_CODES)
     corp_codes = tuple(dict.fromkeys(str(code).strip() for code in corp_codes if str(code).strip()))
     if not corp_codes:
-        raise ValueError("corp_codes???좏슚??媛믪씠 ?놁뒿?덈떎.")
+        raise ValueError("corp_codes 인자가 비어 있습니다.")
 
     sess = session or requests.Session()
     saved: MutableMapping[str, list[Path]] = {}
@@ -82,7 +97,8 @@ def fetch_filings(
             corp_dir = raw_root / corp_code
             corp_dir.mkdir(parents=True, exist_ok=True)
 
-            multi_records = []
+            # 1) 다중 계정(fnlttMultiAcnt)
+            multi_records: list[dict] = []
             for reprt_code in reprt_codes:
                 payload = {
                     "crtfc_key": api_key,
@@ -93,115 +109,75 @@ def fetch_filings(
                 }
                 data = _request_json(sess, "fnlttMultiAcnt.json", params=payload)
                 status = data.get("status")
-                try:
-                    rows_cnt = len(data.get("list", []) or [])
-                except Exception:
-                    rows_cnt = 0
+                rows = list(data.get("list", []) or [])
                 LOGGER.info(
-                    "DART fnlttMultiAcnt corp:%s reprt:%s status:%s rows:%s%s",
+                    "DART fnlttMultiAcnt corp=%s reprt=%s fs=%s year=%s status=%s rows=%d%s",
                     corp_code,
                     reprt_code,
+                    fs_div,
+                    year,
                     status,
-                    rows_cnt,
+                    len(rows),
                     f" message:{data.get('message')}" if data.get("message") else "",
                 )
                 if status != "000":
                     LOGGER.warning(
-                        "fnlttMultiAcnt failed - corp:%s reprt:%s status:%s message:%s",
+                        "fnlttMultiAcnt 실패 corp=%s reprt=%s status=%s message=%s",
                         corp_code,
                         reprt_code,
                         status,
                         data.get("message"),
                     )
-                    continue
-                multi_records.append(
-                    {
-                        "corp_code": corp_code,
-                        "reprt_code": reprt_code,
-                        "fs_div": fs_div,
-                        "year": year,
-                        "rows": data.get("list", []),
-                    }
-                )
-                time.sleep(max(pause, 0))  # ?몄텧 ?쒗븳???쇳븯湲??꾪븳 ?щ┰
-
-            multi_path = corp_dir / f"fnlttMultiAcnt_{year}.json"
-            _write_json(multi_path, multi_records)
-            saved.setdefault(corp_code, []).append(multi_path)
-
-            # 異붽?: ?꾨뀈??蹂닿퀬?쒕룄 ??긽 ?섏쭛?섏뿬 TTM(理쒓렐 4遺꾧린) 援ъ꽦 蹂댁옣
-            try:
-                prev_year = int(year) - 1
-            except Exception:
-                prev_year = year
-            multi_prev: list[dict] = []
-            for reprt_code in reprt_codes:
-                payload = {
-                    "crtfc_key": api_key,
-                    "corp_code": corp_code,
-                    "bsns_year": str(prev_year),
-                    "reprt_code": reprt_code,
-                    "fs_div": fs_div,
-                }
-                data = _request_json(sess, "fnlttMultiAcnt.json", params=payload)
-                status = data.get("status")
-                if status == "000":
-                    multi_prev.append(
+                else:
+                    multi_records.append(
                         {
                             "corp_code": corp_code,
                             "reprt_code": reprt_code,
                             "fs_div": fs_div,
-                            "year": prev_year,
-                            "rows": data.get("list", []),
+                            "year": year,
+                            "rows": rows,
                         }
                     )
-                time.sleep(max(pause, 0))
-            if multi_prev:
-                multi_prev_path = corp_dir / f"fnlttMultiAcnt_{prev_year}.json"
-                _write_json(multi_prev_path, multi_prev)
-                saved.setdefault(corp_code, []).append(multi_prev_path)
-            # ?대갚: ?ы빐 ?곗씠?곌? ?꾪? ?놁쑝硫?吏곸쟾 ?곕룄 ??踰????쒕룄
-            try:
-                has_any_rows = any(rec.get("rows") for rec in multi_records)
-            except Exception:
-                has_any_rows = False
-            # CFS가 비어있으면 OFS(개별)로 대체 시도
-            if not has_any_rows:
-                try:
-                    alt_records: list[dict] = []
-                    for reprt_code in reprt_codes:
-                        payload = {
-                            "crtfc_key": api_key,
-                            "corp_code": corp_code,
-                            "bsns_year": str(year),
-                            "reprt_code": reprt_code,
-                            "fs_div": "OFS",
-                        }
-                        data = _request_json(sess, "fnlttMultiAcnt.json", params=payload)
-                        if data.get("status") == "000":
-                            alt_records.append(
-                                {
-                                    "corp_code": corp_code,
-                                    "reprt_code": reprt_code,
-                                    "fs_div": "OFS",
-                                    "year": year,
-                                    "rows": data.get("list", []),
-                                }
-                            )
-                        time.sleep(max(pause, 0))
-                    if any(rec.get("rows") for rec in alt_records):
-                        multi_records = alt_records
-                        multi_path = corp_dir / f"fnlttMultiAcnt_{year}.json"
-                        _write_json(multi_path, multi_records)
-                        saved.setdefault(corp_code, []).append(multi_path)
-                        has_any_rows = True
-                except Exception:
-                    pass
-            if not has_any_rows:
-                try:
-                    prev_year = int(year) - 1
-                except Exception:
-                    prev_year = year
+                time.sleep(max(pause, 0.0))
+
+            # 저장(있다면)
+            if multi_records:
+                multi_path = corp_dir / f"fnlttMultiAcnt_{year}.json"
+                _write_json(multi_path, multi_records)
+                saved.setdefault(corp_code, []).append(multi_path)
+
+            # 1-보강) CFS가 비면 OFS 재시도
+            if not any(rec.get("rows") for rec in multi_records):
+                alt_records: list[dict] = []
+                for reprt_code in reprt_codes:
+                    payload = {
+                        "crtfc_key": api_key,
+                        "corp_code": corp_code,
+                        "bsns_year": str(year),
+                        "reprt_code": reprt_code,
+                        "fs_div": "OFS",
+                    }
+                    data = _request_json(sess, "fnlttMultiAcnt.json", params=payload)
+                    if data.get("status") == "000":
+                        alt_records.append(
+                            {
+                                "corp_code": corp_code,
+                                "reprt_code": reprt_code,
+                                "fs_div": "OFS",
+                                "year": year,
+                                "rows": list(data.get("list", []) or []),
+                            }
+                        )
+                    time.sleep(max(pause, 0.0))
+                if any(rec.get("rows") for rec in alt_records):
+                    multi_records = alt_records
+                    multi_path = corp_dir / f"fnlttMultiAcnt_{year}.json"
+                    _write_json(multi_path, multi_records)
+                    saved.setdefault(corp_code, []).append(multi_path)
+
+            # 1-보강) 직전 연도 조회
+            if not any(rec.get("rows") for rec in multi_records):
+                prev_year = int(year) - 1
                 multi_prev: list[dict] = []
                 for reprt_code in reprt_codes:
                     payload = {
@@ -219,17 +195,18 @@ def fetch_filings(
                                 "reprt_code": reprt_code,
                                 "fs_div": fs_div,
                                 "year": prev_year,
-                                "rows": data.get("list", []),
+                                "rows": list(data.get("list", []) or []),
                             }
                         )
-                    time.sleep(max(pause, 0))
+                    time.sleep(max(pause, 0.0))
                 if multi_prev:
                     multi_prev_path = corp_dir / f"fnlttMultiAcnt_{prev_year}.json"
                     _write_json(multi_prev_path, multi_prev)
                     saved.setdefault(corp_code, []).append(multi_prev_path)
 
+            # 2) 단일 계정(fnlttSinglAcntAll)
             if single_accounts:
-                single_payloads = []
+                single_payloads: list[dict] = []
                 for reprt_code in reprt_codes:
                     for account_name in single_accounts:
                         payload = {
@@ -244,27 +221,27 @@ def fetch_filings(
                         status = data.get("status")
                         if status != "000":
                             LOGGER.warning(
-                                "fnlttSinglAcntAll failed - corp:%s reprt:%s account:%s status:%s",
+                                "fnlttSinglAcntAll 실패 corp=%s reprt=%s account=%s status=%s",
                                 corp_code,
                                 reprt_code,
                                 account_name,
                                 status,
                             )
-                            continue
-                        single_payloads.append(
-                            {
-                                "corp_code": corp_code,
-                                "reprt_code": reprt_code,
-                                "account_nm": account_name,
-                                "rows": data.get("list", []),
-                            }
-                        )
-                        time.sleep(max(pause, 0))
+                        else:
+                            single_payloads.append(
+                                {
+                                    "corp_code": corp_code,
+                                    "reprt_code": reprt_code,
+                                    "account_nm": account_name,
+                                    "rows": list(data.get("list", []) or []),
+                                }
+                            )
+                        time.sleep(max(pause, 0.0))
 
                 if single_payloads:
                     single_path = corp_dir / f"fnlttSinglAcntAll_{year}.json"
                     _write_json(single_path, single_payloads)
-                    saved[corp_code].append(single_path)
+                    saved.setdefault(corp_code, []).append(single_path)
     finally:
         if session is None:
             sess.close()
@@ -273,7 +250,7 @@ def fetch_filings(
 
 
 def _request_json(sess: requests.Session, endpoint: str, *, params: Mapping[str, str]):
-    """怨듯넻 HTTP GET ?섑띁."""
+    """공통 HTTP GET 래퍼."""
 
     url = f"{BASE_URL}/{endpoint}"
     response = sess.get(url, params=params, timeout=30)
@@ -282,19 +259,19 @@ def _request_json(sess: requests.Session, endpoint: str, *, params: Mapping[str,
 
 
 def _write_json(path: Path, payload) -> None:
-    """JSON ?묐떟??pretty ?щ㎎?쇰줈 ???"""
+    """응답을 UTF-8(JSON pretty)로 저장."""
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as fp:
         json.dump(payload, fp, ensure_ascii=False, indent=2)
-    LOGGER.info("DART file saved: %s", path)
+    LOGGER.info("DART 파일 저장: %s", path)
 
 
 _ENV_LOADED = False
 
 
 def _ensure_env_loaded() -> None:
-    """Load .env with UTF-8-SIG and sanitize BOM (idempotent)."""
+    """.env(UTF-8-SIG) 로딩 및 BOM 정리. 재진입 안전."""
     global _ENV_LOADED
     if _ENV_LOADED:
         return
@@ -313,28 +290,8 @@ def _ensure_env_loaded() -> None:
     _ENV_LOADED = True
 
 
-def _load_env_utf8() -> None:
-    """??踰덈쭔 .env瑜??쎌뼱 ?섍꼍蹂?섏뿉 諛섏쁺?쒕떎."""
-
-    global _ENV_LOADED
-    if _ENV_LOADED:
-        return
-    project_root = _find_project_root()
-    env_path = project_root / ".env"
-    if env_path.exists():
-        for line in env_path.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if "=" not in line:
-                continue
-            key, value = line.split("=", 1)
-            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
-    _ENV_LOADED = True
-
-
 def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
-    """raw/dart 寃쎈줈瑜?怨꾩궛?쒕떎."""
+    """`data/raws` 루트 경로를 반환하고 보장 생성."""
 
     if raw_dir is None:
         project_root = _find_project_root()
@@ -342,6 +299,4 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
     path = Path(raw_dir)
     path.mkdir(parents=True, exist_ok=True)
     return path
-
-
 

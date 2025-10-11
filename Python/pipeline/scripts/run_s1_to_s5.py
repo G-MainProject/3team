@@ -166,15 +166,17 @@ def main(argv: list[str] | None = None) -> int:
         enable_kiwoom = not args.no_kiwoom
         if enable_kiwoom:
             s1.append("--with-kiwoom")
+            # Default: also collect Kiwoom financials/ratios (raw responses)
+            s1.append("--include-kiwoom-financials")
+            s1.append("--include-kiwoom-ratios")
         # Enable DART by default if key exists, unless explicitly disabled
         use_dart = (not args.no_dart) and bool(os.getenv("DART_API_KEY"))
         if (not args.no_dart) and not use_dart:
             print("[run_s1_to_s5] DART disabled: missing DART_API_KEY", file=sys.stderr)
         if use_dart:
             s1.append("--with-dart")
-        # Avoid pykrx when either Kiwoom or DART collection is enabled
-        if enable_kiwoom or use_dart:
-            s1.append("--skip-pykrx")
+        # 기본: pykrx도 함께 수집하여 fundamentals(per/pbr/eps/bps 등) 보강
+        # (이전에는 Kiwoom/DART 사용 시 pykrx를 스킵했으나, 지표 보강을 위해 포함)
         print("[run_s1_to_s5] s1 collect:", " ".join(s1))
         rc = _run_env(s1, {"DART_AUTO": "1" if use_dart else "0"})
         stage_times["s1"] = perf_counter() - t0
@@ -331,4 +333,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

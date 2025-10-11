@@ -6,7 +6,8 @@ Stores raw JSON responses under data/raws/kiwoom for downstream preprocessing.
 Environment variables (.env, UTF-8-SIG friendly):
   - KIWOOM_BASE, KIWOOM_APPKEY, KIWOOM_SECRETKEY
   - Optional: KIWOOM_API_ID, KIWOOM_TOKEN_API_ID, KIWOOM_RANK_PATH, KIWOOM_RANK_TR_ID
-  - Optional: KIWOOM_KA10001_PATH, KIWOOM_DAILY_TR_ID
+  - Daily: KIWOOM_DAILY_API_ID, KIWOOM_DAILY_PATH
+  - Chart: KIWOOM_DAILY_CHART_API_ID, KIWOOM_DAILY_CHART_PATH
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ import logging
 import math
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Mapping, MutableMapping, Sequence
 from urllib.parse import urljoin, urlencode
@@ -83,6 +84,218 @@ def _coerce_float(value: object) -> float:
         except ValueError:
             return math.nan
 
+
+
+def _normalize_ymd(value: object) -> str | None:
+    "Normalize various date strings (YYYYMMDD/ISO) to ISO format."
+    if value is None:
+        return None
+    text_value = str(value).strip()
+    if not text_value:
+        return None
+    digits = ''.join(ch for ch in text_value if ch.isdigit())
+    if len(digits) < 8:
+        return None
+    try:
+        dt = datetime.strptime(digits[:8], "%Y%m%d")
+    except ValueError:
+        return None
+    return dt.strftime("%Y-%m-%d")
+
+
+def _get_with_variants(mapping: Mapping[str, Any], key: str) -> Any:
+    "Lookup helper that tolerates dash/underscore/name casing variations."
+    candidates = {
+        key,
+        key.replace('-', '_'),
+        key.replace('_', '-'),
+        key.lower(),
+        key.upper(),
+    }
+    for candidate in candidates:
+        if candidate in mapping:
+            return mapping[candidate]
+    lower = key.lower()
+    for actual in mapping:
+        if isinstance(actual, str) and actual.lower() == lower:
+            return mapping[actual]
+    return None
+
+
+def _unwrap_response(payload: Any) -> Mapping[str, Any]:
+    "Return the innermost mapping payload (unwraps response containers)."
+    if isinstance(payload, Mapping):
+        inner = payload.get('response')
+        if isinstance(inner, Mapping):
+            return inner
+        return payload
+    return {}
+
+
+def _extract_list(payload: Any, keys: Sequence[str]) -> list[dict[str, Any]]:
+    mapping = _unwrap_response(payload)
+    for key in keys:
+        value = _get_with_variants(mapping, key)
+        if isinstance(value, list):
+            return [item for item in value if isinstance(item, Mapping)]
+    return []
+
+
+def _extract_scalar(payload: Any, keys: Sequence[str]) -> Any:
+    mapping = _unwrap_response(payload)
+    for key in keys:
+        value = _get_with_variants(mapping, key)
+        if value is not None:
+            return value
+    return None
+
+
+def _fetch_daily_chart_series(
+    sess,
+    base_url: str,
+    *,
+    endpoint: str,
+    tr_id: str,
+    authorization: str,
+    ticker: str,
+    start_date: str,
+    end_date: str,
+    adjust_type: str,
+    pause: float,
+    max_pages: int = 64,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    "Fetch daily candle data via Kiwoom chart API (ka10081)."
+    start_iso = _normalize_date_input(start_date)
+    end_iso = _normalize_date_input(end_date)
+    start_digits = start_iso.replace('-', '')
+    end_digits = end_iso.replace('-', '')
+    base_dt = end_digits
+    adjust_flag = (adjust_type or '1').strip() or '1'
+
+    aggregated: list[dict[str, Any]] = []
+    continuation: list[dict[str, Any]] = []
+    earliest_seen: str | None = None
+
+    cont_flag: str | None = None
+    next_key: str | None = None
+    base_digits = end_digits
+
+    for _ in range(max_pages):
+        body = {
+            'stk_cd': ticker,
+            'base_dt': base_digits,
+            'upd_stkpc_tp': adjust_flag,
+        }
+        data = _post_kiwoom(
+            sess,
+            base_url,
+            endpoint,
+            tr_id=tr_id,
+            authorization=authorization,
+            body=body,
+            cont_yn=cont_flag,
+            next_key=next_key,
+        )
+        rows = _extract_list(data, (
+            'stk_dt_pole_chart_qry',
+            'output',
+            'items',
+            'data',
+            'body',
+        ))
+        earliest_batch: str | None = None
+        if rows:
+            aggregated.extend(rows)
+            for row in rows:
+                row_iso = _normalize_ymd(
+                    row.get('dt')
+                    or row.get('date')
+                    or row.get('base_dt')
+                    or row.get('trade_date')
+                )
+                if not row_iso:
+                    continue
+                digits = row_iso.replace('-', '')
+                if earliest_seen is None or digits < earliest_seen:
+                    earliest_seen = digits
+                if earliest_batch is None or digits < earliest_batch:
+                    earliest_batch = digits
+        cont_resp = _extract_scalar(data, ('cont_yn', 'contYn', 'cont-yn'))
+        next_resp = _extract_scalar(data, ('next_key', 'nextKey', 'next-key'))
+        continuation.append({
+            'cont_yn': cont_resp,
+            'next_key': next_resp,
+        })
+        reached_goal = bool(earliest_seen and earliest_seen <= start_digits)
+        if earliest_batch:
+            try:
+                dt_obj = datetime.strptime(earliest_batch, '%Y%m%d')
+                base_digits = (dt_obj - timedelta(days=1)).strftime('%Y%m%d')
+            except Exception:
+                base_digits = earliest_batch
+        if reached_goal:
+            break
+        if (
+            cont_resp is not None
+            and str(cont_resp).strip().upper() == 'Y'
+            and next_resp not in (None, '')
+        ):
+            cont_flag = 'Y'
+            next_key = str(next_resp)
+        else:
+            cont_flag = None
+            next_key = None
+        if not earliest_batch:
+            break
+        if base_digits <= start_digits:
+            break
+        time.sleep(max(pause, 0))
+        continue
+
+    by_date: dict[str, dict[str, Any]] = {}
+    for row in aggregated:
+        row_iso = _normalize_ymd(
+            row.get('dt')
+            or row.get('date')
+            or row.get('base_dt')
+            or row.get('trade_date')
+        )
+        if not row_iso:
+            continue
+        digits = row_iso.replace('-', '')
+        if digits < start_digits or digits > end_digits:
+            continue
+
+        record: dict[str, Any] = {'date': row_iso}
+
+        def _add_float(target: str, *candidates: str) -> None:
+            for candidate in candidates:
+                value = row.get(candidate)
+                if value is None:
+                    continue
+                number = _coerce_float(value)
+                if math.isnan(number):
+                    continue
+                record[target] = number
+                return
+
+        _add_float('open', 'open_pric', 'open_price', 'open', 'opn_prc')
+        _add_float('high', 'high_pric', 'high_price', 'high', 'hg_prc')
+        _add_float('low', 'low_pric', 'low_price', 'low', 'lw_prc')
+        _add_float('close', 'cur_prc', 'close', 'cl_prc')
+        _add_float('volume', 'trde_qty', 'volume', 'tot_trdvol')
+        _add_float('tr_value', 'trde_prica', 'trade_price', 'trade_value', 'tot_trdprc')
+        _add_float('change', 'pred_pre', 'change', 'cmpprevdd_prc')
+        _add_float('turnover_rate', 'trde_tern_rt', 'turnover_rate')
+
+        if digits in by_date:
+            existing = by_date[digits]
+            existing.update({k: v for k, v in record.items() if k != 'date'})
+        else:
+            by_date[digits] = record
+
+    normalized = [by_date[key] for key in sorted(by_date.keys())]
+    return normalized, aggregated, continuation
 
 def fetch_top_movers(
     *,
@@ -188,8 +401,8 @@ def fetch_current_prices(
     if not appkey or not secret:
         raise RuntimeError("KIWOOM_APPKEY or KIWOOM_SECRETKEY is missing")
 
-    endpoint = os.getenv("KIWOOM_KA10001_PATH", DEFAULT_DAILY_ENDPOINT)
-    tr_id = os.getenv("KIWOOM_DAILY_TR_ID", "ka10001")
+    endpoint = os.getenv("KIWOOM_DAILY_PATH", DEFAULT_DAILY_ENDPOINT)
+    tr_id = os.getenv("KIWOOM_DAILY_API_ID", "ka10001")
     sess = session or requests.Session()
     out: dict[str, float] = {}
     try:
@@ -240,7 +453,12 @@ def fetch_quotes(
     end_time: str = "153000",
     pause: float = 0.2,
 ) -> Mapping[str, list[Path]]:
-    """Fetch daily (and optional intraday) quotes and save to raw_dir/kiwoom."""
+    """Fetch daily (and optional intraday) quotes and save to raw_dir/kiwoom.
+
+    Also optionally fetch raw financials/ratios payloads from the same Kiwoom
+    endpoint/TR (ka10001, /api/dostk/stkinfo) and persist the entire responses
+    without normalization when include_financials/include_ratios is enabled.
+    """
     _ensure_env_loaded()
     base_key = "KIWOOM_BASE"
     base_url = os.getenv(base_key)
@@ -256,8 +474,8 @@ def fetch_quotes(
     raw_root = _resolve_raw_dir(raw_dir) / "kiwoom"
     raw_root.mkdir(parents=True, exist_ok=True)
 
-    daily_endpoint = os.getenv("KIWOOM_KA10001_PATH", DEFAULT_DAILY_ENDPOINT)
-    daily_trid = os.getenv("KIWOOM_DAILY_TR_ID", "ka10001")
+    daily_endpoint = os.getenv("KIWOOM_DAILY_PATH", DEFAULT_DAILY_ENDPOINT)
+    daily_trid = os.getenv("KIWOOM_DAILY_API_ID", "ka10001")
 
     sess = session or requests.Session()
     saved: MutableMapping[str, list[Path]] = {}
@@ -287,7 +505,48 @@ def fetch_quotes(
                 authorization=authorization,
                 body=daily_body,
             )
-            # Save under per-ticker directory with ka10001 prefix to match s2 loader
+            chart_endpoint = os.getenv("KIWOOM_DAILY_CHART_PATH") or "/api/dostk/chart"
+            chart_trid = (
+                os.getenv("KIWOOM_DAILY_CHART_TR_ID")
+                or os.getenv("KIWOOM_DAILY_CHART_API_ID")
+                or "ka10081"
+            )
+            chart_adjust = (
+                os.getenv("KIWOOM_DAILY_CHART_ADJUST")
+                or os.getenv("KIWOOM_DAILY_UPD_STKPC_TP")
+                or "1"
+            )
+            try:
+                chart_output, chart_rows, cont_history = _fetch_daily_chart_series(
+                    sess,
+                    base_url,
+                    endpoint=chart_endpoint,
+                    tr_id=chart_trid,
+                    authorization=authorization,
+                    ticker=_tk,
+                    start_date=_st,
+                    end_date=_en,
+                    adjust_type=chart_adjust,
+                    pause=pause,
+                )
+            except Exception as exc:
+                LOGGER.warning("Kiwoom chart fetch failed for %s: %s", _tk, exc)
+                chart_output, chart_rows, cont_history = [], [], []
+
+            if isinstance(data, Mapping):
+                response_payload: dict[str, Any] = dict(data)
+            else:
+                response_payload = {"raw": data}
+            if chart_rows:
+                response_payload["stk_dt_pole_chart_qry"] = chart_rows
+            if chart_output:
+                response_payload["output"] = chart_output
+            if cont_history:
+                response_payload["continuation"] = cont_history
+                response_payload["chart_tr_id"] = chart_trid
+                response_payload["chart_endpoint"] = chart_endpoint
+                response_payload["chart_adjust_type"] = chart_adjust
+
             _dir = raw_root / _tk
             _dir.mkdir(parents=True, exist_ok=True)
             daily_path = _dir / _filename(
@@ -296,9 +555,85 @@ def fetch_quotes(
                 datetime.fromisoformat(_normalize_date_input(start_date)),
                 datetime.fromisoformat(_normalize_date_input(end_date)),
             )
-            _write_json(daily_path, {"api_id": daily_trid, "request": daily_body, "response": data})
+            request_payload = dict(daily_body)
+            request_payload.update(
+                {
+                    "chart_tr_id": chart_trid,
+                    "chart_endpoint": chart_endpoint,
+                    "chart_adjust_type": chart_adjust,
+                }
+            )
+            api_id_for_file = chart_trid if chart_output or chart_rows else daily_trid
+            _write_json(
+                daily_path,
+                {
+                    "api_id": api_id_for_file,
+                    "request": request_payload,
+                    "response": response_payload,
+                },
+            )
             saved.setdefault(str(ticker).zfill(6), []).append(daily_path)
             time.sleep(max(pause, 0))
+
+            # Optional: financials/raw (same endpoint/TR as daily per user config)
+            if include_financials:
+                try:
+                    fin_body = {
+                        "ticker": _tk,
+                        "stk_cd": _tk,
+                        "stock_code": _tk,
+                        "from_date": _st,
+                        "to_date": _en,
+                    }
+                    fin_data = _post_kiwoom(
+                        sess,
+                        base_url,
+                        daily_endpoint,
+                        tr_id=daily_trid,
+                        authorization=authorization,
+                        body=fin_body,
+                    )
+                    fin_path = _dir / _filename(
+                        "financials",
+                        _tk,
+                        datetime.fromisoformat(_normalize_date_input(start_date)),
+                        datetime.fromisoformat(_normalize_date_input(end_date)),
+                    )
+                    _write_json(fin_path, {"api_id": daily_trid, "request": fin_body, "response": fin_data})
+                    saved[str(ticker).zfill(6)].append(fin_path)
+                    time.sleep(max(pause, 0))
+                except Exception as exc:
+                    LOGGER.warning("Kiwoom financials fetch failed for %s: %s", _tk, exc)
+
+            # Optional: ratios/raw (same endpoint/TR as daily per user config)
+            if include_ratios:
+                try:
+                    ratio_body = {
+                        "ticker": _tk,
+                        "stk_cd": _tk,
+                        "stock_code": _tk,
+                        "from_date": _st,
+                        "to_date": _en,
+                    }
+                    ratio_data = _post_kiwoom(
+                        sess,
+                        base_url,
+                        daily_endpoint,
+                        tr_id=daily_trid,
+                        authorization=authorization,
+                        body=ratio_body,
+                    )
+                    ratio_path = _dir / _filename(
+                        "ratios",
+                        _tk,
+                        datetime.fromisoformat(_normalize_date_input(start_date)),
+                        datetime.fromisoformat(_normalize_date_input(end_date)),
+                    )
+                    _write_json(ratio_path, {"api_id": daily_trid, "request": ratio_body, "response": ratio_data})
+                    saved[str(ticker).zfill(6)].append(ratio_path)
+                    time.sleep(max(pause, 0))
+                except Exception as exc:
+                    LOGGER.warning("Kiwoom ratios fetch failed for %s: %s", _tk, exc)
 
             # Optional: meta (e.g., shares_outstanding) to enable market_cap computation
             try:
@@ -436,35 +771,47 @@ def _post_kiwoom(
     tr_id: str,
     authorization: str,
     body: Mapping[str, object],
+    cont_yn: str | None = None,
+    next_key: str | None = None,
     timeout: int = 15,
 ):
     """Perform Kiwoom REST POST with proper headers and error handling."""
-    # api-id header priority: KIWOOM_API_ID -> TR-specific -> tr_id
-    api_id_value = os.getenv("KIWOOM_API_ID")
+    # Prefer TR-specific API IDs; fall back to global override if provided.
+    fallback_api_id = os.getenv("KIWOOM_API_ID")
+    api_id_value = None
+
     def _norm_tid(x: str | None) -> str | None:
         try:
             return "ka10027" if (x or "").strip().lower() == "ka100027" else x
         except Exception:
             return x
+
+    t = str(tr_id).lower()
+    if t in ("ka10027", "rank", "ranking"):
+        api_id_value = os.getenv("KIWOOM_RANK_API_ID")
+    elif t in ("ka10001", "daily"):
+        api_id_value = os.getenv("KIWOOM_DAILY_API_ID")
+    elif t in ("ka10081", "day", "daychart", "daily_chart"):
+        api_id_value = os.getenv("KIWOOM_DAILY_CHART_API_ID") or os.getenv("KIWOOM_DAILY_API_ID")
+    elif t in ("ka10082", "week", "weekly", "chart"):
+        api_id_value = os.getenv("KIWOOM_WEEK_CHART_API_ID")
+
     if not api_id_value:
-        t = str(tr_id).lower()
-        if t in ("ka10027", "rank", "ranking"):
-            api_id_value = os.getenv("KIWOOM_RANK_API_ID")
-        elif t in ("ka10001", "daily"):
-            api_id_value = os.getenv("KIWOOM_DAILY_API_ID")
-        elif t in ("ka10082", "week", "weekly", "chart"):
-            api_id_value = os.getenv("KIWOOM_WEEK_CHART_API_ID")
+        api_id_value = fallback_api_id
     api_id_value = _norm_tid(api_id_value)
     if not api_id_value:
         api_id_value = tr_id
+    cont_header = 'N' if cont_yn is None else (str(cont_yn).strip().upper() or 'N')
+    next_header = '' if next_key is None else str(next_key)
     headers = {
         "Content-Type": "application/json;charset=UTF-8",
         "tr_id": tr_id,
         "api-id": api_id_value,
         "authorization": authorization,
-        "cont-yn": "N",
-        "next-key": "",
+        "cont-yn": cont_header,
+        "next-key": next_header,
     }
+    print(f"[kiwoom_client] tr_id={tr_id} api-id={api_id_value} endpoint={endpoint}")
     try:
         data = _post(sess, base_url, endpoint, headers=headers, body=body, timeout=timeout)
     except requests.HTTPError as exc:
