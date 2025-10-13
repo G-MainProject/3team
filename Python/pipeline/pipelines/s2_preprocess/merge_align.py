@@ -90,6 +90,7 @@ def merge_sources(
 
 def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
     price_df = _load_price_frame(ticker, cfg)
+    price_df = _append_pykrx_extras(price_df, ticker, cfg)
     fund_df = _load_fundamentals(ticker, cfg)
     news_df = _load_news_features(ticker, cfg)
 
@@ -105,6 +106,18 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
 
     merged = frames[0]
     for f in frames[1:]:
+        if f is None or f.empty:
+            continue
+        overlap = [c for c in f.columns if c in merged.columns]
+        if overlap:
+            for col in overlap:
+                try:
+                    merged[col] = merged[col].combine_first(f[col])
+                except Exception:
+                    merged[col] = merged[col].where(pd.notna(merged[col]), f[col])
+            f = f.drop(columns=overlap)
+            if f.empty:
+                continue
         merged = merged.join(f, how="left")
 
     merged = _fill_calendar_and_missing(merged)
@@ -817,6 +830,44 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
         except Exception:
             out[k] = np.nan
     return out
+
+
+def _append_pykrx_extras(df: pd.DataFrame, ticker: str, cfg: MergeConfig) -> pd.DataFrame:
+    """Join pykrx market_cap / shares data even when Kiwoom price is used."""
+    try:
+        pykrx_dir = cfg.raw_root / "pykrx" / ticker
+        if not pykrx_dir.exists():
+            return df
+
+        pads: list[pd.DataFrame] = []
+        for prefix in ("market_cap", "fundamental"):
+            path = _latest_file(pykrx_dir, prefix)
+            if not path:
+                continue
+            try:
+                extra = _read_json_table(path)
+            except Exception:
+                continue
+            if extra is None or extra.empty or "date" not in extra.columns:
+                continue
+            extra["date"] = pd.to_datetime(extra["date"], errors="coerce")
+            extra = extra.dropna(subset=["date"]).copy()
+            extra.set_index("date", inplace=True)
+            pads.append(extra)
+
+        for extra in pads:
+            for col in extra.columns:
+                series = extra[col]
+                if col in df.columns:
+                    try:
+                        df[col] = df[col].combine_first(series)
+                    except Exception:
+                        df[col] = df[col].where(pd.notna(df[col]), series)
+                else:
+                    df[col] = series
+        return df
+    except Exception:
+        return df
 
 
 def _load_news_features(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:

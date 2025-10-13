@@ -39,6 +39,7 @@ except Exception:  # pragma: no cover
 MAIN_RATIO_KEYS = [
     "roe", "roa", "per", "pbr",
     "debt_ratio", "current_ratio", "quick_ratio", "equity_ratio",
+    "market_cap", "shares_outstanding",
 ]
 
 
