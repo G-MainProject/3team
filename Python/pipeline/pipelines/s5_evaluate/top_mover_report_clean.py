@@ -225,6 +225,18 @@ def main(argv: list[str] | None = None) -> int:
         actual_row = actual_prices[sample_idx]
         price_abs_err = np.abs(pred_row - actual_row)
 
+        detail_price = None
+        try:
+            detail_price = float(details_lookup.get(ticker, {}).get("current_price"))
+        except Exception:
+            detail_price = None
+        base_close_val: float | None = None
+        if current_close is not None:
+            try:
+                base_close_val = float(current_close[sample_idx])
+            except Exception:
+                base_close_val = None
+
         base_close = float(current_close[sample_idx]) if current_close is not None else None
         actual_return_row = None
         if base_close is not None and base_close != 0:
@@ -250,6 +262,8 @@ def main(argv: list[str] | None = None) -> int:
                 act_ret = float(actual_return_row[i])
                 row["actual_return"] = act_ret
                 row["return_abs_error"] = abs(pred_ret - act_ret)
+            if detail_price is not None:
+                row["predicted_price_current_basis"] = float(detail_price * (1.0 + pred_ret))
             rows.append(row)
 
         # silver 스냅샷에서 기술지표/기본지표 추출(가능한 경우)
@@ -268,18 +282,40 @@ def main(argv: list[str] | None = None) -> int:
                 det["source"] = "pykrx"
         except Exception:
             pass
+        analysis: list[str] = []
+        if base_close_val is not None and base_close_val > 0 and detail_price is not None:
+            deviation = (detail_price / base_close_val) - 1.0
+            if abs(deviation) >= 0.2:
+                direction = "상승" if deviation > 0 else "하락"
+                analysis.append(
+                    f"현재가는 모델 기준 종가 대비 {abs(deviation)*100:.1f}% {direction}한 상태입니다."
+                )
+        change_pct = None
+        try:
+            change_pct = float(det.get("change_pct")) if det else None
+        except Exception:
+            change_pct = None
+        if change_pct is not None and abs(change_pct) >= 20:
+            sign = "상승" if change_pct > 0 else "하락"
+            analysis.append(f"당일 변동률 {change_pct:.2f}% {sign}으로 변동성이 매우 큽니다.")
+        if detail_price is None and base_close_val is not None:
+            analysis.append("현재가 정보를 확보하지 못해 모델 기준 종가만 활용했습니다.")
+
         entry: dict[str, Any] = {
             "ticker": ticker,
             "name": name_lookup.get(ticker) or ticker,
             "source": det.get("source") or top_source or "pykrx",
             # 현재가: details가 없으면 base_close로 대체
-            "current_price": _num_or_none(det.get("current_price")) if _num_or_none(det.get("current_price")) is not None else (float(base_close) if base_close is not None else None),
+            "current_price": _num_or_none(det.get("current_price")) if _num_or_none(det.get("current_price")) is not None else (float(base_close_val) if base_close_val is not None else None),
             # 변동률: details 없으면 0.0으로 대체(미정의 방지)
             "change_pct": _num_or_none(det.get("change_pct")) if _num_or_none(det.get("change_pct")) is not None else 0.0,
             "horizons": rows,
             "indicators": ind_snap,
             "fundamentals": _with_main_ratio_keys(fund_snap or {}),
         }
+        entry["base_close"] = base_close_val
+        if analysis:
+            entry["analysis"] = analysis
         entries.append(entry)
 
     # 헤더/메타
