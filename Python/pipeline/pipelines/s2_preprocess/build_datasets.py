@@ -126,7 +126,9 @@ def run(
 
 
 def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tuple[np.ndarray, np.ndarray, list[dict[str, object]], np.ndarray, list[int]]:
-    files = sorted(cfg.silver_root.glob("*.parquet"))
+    parquet_files = sorted(cfg.silver_root.glob("*.parquet"))
+    pkl_files = sorted(cfg.silver_root.glob("*.pkl"))
+    files = parquet_files if parquet_files else pkl_files
     if tickers:
         tickers = {ticker for ticker in tickers}
         files = [file for file in files if file.stem in tickers]

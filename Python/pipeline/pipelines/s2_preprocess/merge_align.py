@@ -13,7 +13,7 @@ import logging
 from dataclasses import dataclass
 import csv
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Mapping
 
 import numpy as np
 import pandas as pd
@@ -109,6 +109,26 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
 
     merged = _fill_calendar_and_missing(merged)
 
+    # Derive missing fundamentals from available fields (Kiwoom-only fallback)
+    # - market_cap = close * shares_outstanding (if not present and shares_outstanding available)
+    # - fund_net_income_ttm = eps * shares_outstanding (if not present)
+    # - fund_equity = bps * shares_outstanding (if not present)
+    try:
+        if "market_cap" not in merged.columns and {"close", "shares_outstanding"} <= set(merged.columns):
+            merged["market_cap"] = (merged["close"].astype(float) * merged["shares_outstanding"].astype(float))
+    except Exception:
+        pass
+    try:
+        if "fund_net_income_ttm" not in merged.columns and {"eps", "shares_outstanding"} <= set(merged.columns):
+            merged["fund_net_income_ttm"] = (merged["eps"].astype(float) * merged["shares_outstanding"].astype(float))
+    except Exception:
+        pass
+    try:
+        if "fund_equity" not in merged.columns and {"bps", "shares_outstanding"} <= set(merged.columns):
+            merged["fund_equity"] = (merged["bps"].astype(float) * merged["shares_outstanding"].astype(float))
+    except Exception:
+        pass
+
     # Basic ratios
     def safe_ratio(a: str, b: str, out: str, factor: float = 1.0) -> None:
         if a in merged.columns and b in merged.columns:
@@ -117,15 +137,57 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
 
     safe_ratio("fund_net_income_ttm", "fund_equity", "roe", 1.0)
     safe_ratio("fund_net_income_ttm", "fund_assets", "roa", 1.0)
+    # Only fill PER/PBR if missing; do not override values provided by Kiwoom/DART
     if "market_cap" in merged.columns and "fund_net_income_ttm" in merged.columns:
-        merged["per"] = (merged["market_cap"] / merged["fund_net_income_ttm"]).replace([np.inf, -np.inf], np.nan)
+        try:
+            cand_per = (merged["market_cap"] / merged["fund_net_income_ttm"]).replace([np.inf, -np.inf], np.nan)
+            if "per" in merged.columns:
+                merged["per"] = merged["per"].where(pd.notna(merged["per"]), cand_per)
+            else:
+                merged["per"] = cand_per
+        except Exception:
+            pass
+    elif {"close", "eps"} <= set(merged.columns):
+        # Fallback: PER = Price / EPS
+        try:
+            cand_per = (merged["close"].astype(float) / merged["eps"].astype(float)).replace([np.inf, -np.inf], np.nan)
+            if "per" in merged.columns:
+                merged["per"] = merged["per"].where(pd.notna(merged["per"]), cand_per)
+            else:
+                merged["per"] = cand_per
+        except Exception:
+            pass
     if "market_cap" in merged.columns and "fund_equity" in merged.columns:
-        merged["pbr"] = (merged["market_cap"] / merged["fund_equity"]).replace([np.inf, -np.inf], np.nan)
+        try:
+            cand_pbr = (merged["market_cap"] / merged["fund_equity"]).replace([np.inf, -np.inf], np.nan)
+            if "pbr" in merged.columns:
+                merged["pbr"] = merged["pbr"].where(pd.notna(merged["pbr"]), cand_pbr)
+            else:
+                merged["pbr"] = cand_pbr
+        except Exception:
+            pass
+    elif {"close", "bps"} <= set(merged.columns):
+        # Fallback: PBR = Price / BPS
+        try:
+            cand_pbr = (merged["close"].astype(float) / merged["bps"].astype(float)).replace([np.inf, -np.inf], np.nan)
+            if "pbr" in merged.columns:
+                merged["pbr"] = merged["pbr"].where(pd.notna(merged["pbr"]), cand_pbr)
+            else:
+                merged["pbr"] = cand_pbr
+        except Exception:
+            pass
     safe_ratio("fund_liabilities", "fund_equity", "debt_ratio", 100.0)
     safe_ratio("fund_current_assets", "fund_current_liabilities", "current_ratio", 100.0)
-    if "fund_current_assets" in merged.columns and "fund_current_liabilities" in merged.columns and "fund_inventories" in merged.columns:
+    if {"fund_current_assets", "fund_current_liabilities", "fund_inventories"} <= set(merged.columns):
         merged["quick_ratio"] = ((merged["fund_current_assets"] - merged["fund_inventories"]) / merged["fund_current_liabilities"]) * 100.0
         merged["quick_ratio"] = merged["quick_ratio"].replace([np.inf, -np.inf], np.nan)
+    elif {"fund_current_assets", "fund_current_liabilities"} <= set(merged.columns):
+        # Approximate quick ratio when inventories are unavailable
+        try:
+            merged["quick_ratio"] = (merged["fund_current_assets"] / merged["fund_current_liabilities"]) * 100.0
+            merged["quick_ratio"] = merged["quick_ratio"].replace([np.inf, -np.inf], np.nan)
+        except Exception:
+            pass
     safe_ratio("fund_equity", "fund_assets", "equity_ratio", 100.0)
 
     merged["ticker"] = ticker
@@ -195,12 +257,31 @@ def _load_pykrx_price(directory: Path) -> pd.DataFrame:
 def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
     daily = _latest_file(directory, "ka10001")
     if daily is None:
-        raise FileNotFoundError(f"No kiwoom ka10001 file in {directory}")
+        daily = _latest_file(directory, "ka10081")
+    if daily is None:
+        raise FileNotFoundError(f"No kiwoom ka10001/ka10081 file in {directory}")
     payload = _read_json(daily)
     response = payload.get("response", {}) if isinstance(payload, dict) else {}
-    rows = response.get("output") or response.get("items") or response.get("data") or response.get("body")
+    if not response and isinstance(payload, dict):
+        response = payload
+    rows = (
+        response.get("output")
+        or response.get("stk_dt_pole_chart_qry")
+        or response.get("items")
+        or response.get("data")
+        or response.get("body")
+    )
+    if not rows and isinstance(response, Mapping):
+        for key in ("chart_rows", "chart", "result"):
+            candidate = response.get(key)
+            if isinstance(candidate, Mapping):
+                rows = candidate.get("output") or candidate.get("stk_dt_pole_chart_qry")
+            elif isinstance(candidate, list):
+                rows = candidate
+            if rows:
+                break
     if not rows:
-        raise FileNotFoundError(f"Kiwoom ka10001 response empty: {daily}")
+        raise FileNotFoundError(f"Kiwoom price response empty: {daily}")
     df = pd.DataFrame(rows)
     rename_map = {
         "trd_date": "date",
@@ -224,10 +305,14 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
     if "date" not in df.columns:
         df["date"] = df.get("trd_date")
     # support yyyymmdd or ISO
+    original_dates = df.get("date").copy() if "date" in df.columns else None
     try:
         df["date"] = pd.to_datetime(df["date"], format="%Y%m%d", errors="coerce")
     except Exception:
         df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    else:
+        if original_dates is not None and df["date"].isna().all():
+            df["date"] = pd.to_datetime(original_dates, errors="coerce")
     df = df.dropna(subset=["date"]).copy()
     df.set_index("date", inplace=True)
     df.sort_index(inplace=True)
@@ -524,6 +609,99 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
         except Exception:
             pass
 
+    # Prefer Kiwoom raw snapshots (financials_/ratios_) if present
+    try:
+        k_dir = cfg.raw_root / "kiwoom" / ticker
+        if k_dir.exists():
+            def _iter_dicts(obj):
+                """Recursively yield all dict nodes from a nested payload."""
+                if isinstance(obj, dict):
+                    yield obj
+                    for v in obj.values():
+                        yield from _iter_dicts(v)
+                elif isinstance(obj, list):
+                    for it in obj:
+                        yield from _iter_dicts(it)
+
+            def _coerce_num2(x: object) -> float:
+                try:
+                    if x is None:
+                        return float("nan")
+                    if isinstance(x, (int, float)):
+                        return float(x)
+                    s = str(x).strip()
+                    if not s or s in ("-", "--"):
+                        return float("nan")
+                    neg = False
+                    if s.startswith("(") and s.endswith(")"):
+                        neg = True; s = s[1:-1]
+                    s = s.replace(",", "")
+                    if s.endswith("%"):
+                        s = s[:-1]
+                    val = float(s)
+                    return -val if neg else val
+                except Exception:
+                    return float("nan")
+
+            aliases = {
+                "eps": {"eps", "EPS"},
+                "bps": {"bps", "BPS"},
+                "per": {"per", "PER"},
+                "pbr": {"pbr", "PBR"},
+                "roe": {"roe", "ROE"},
+                "roa": {"roa", "ROA"},
+                "debt_ratio": {"debt_ratio", "debtRt", "debt_rate", "debt_rto"},
+                "current_ratio": {"current_ratio", "currentRt", "current_rate", "cur_ratio", "cur_rto"},
+                "quick_ratio": {"quick_ratio", "quickRt", "quick_rate"},
+                "equity_ratio": {"equity_ratio", "equityRt", "equity_rate", "equity_rto"},
+                "fund_assets": {"assets", "total_assets"},
+                "fund_liabilities": {"liabilities", "total_liabilities"},
+                "fund_equity": {"equity", "total_equity"},
+                "fund_current_assets": {"current_assets"},
+                "fund_current_liabilities": {"current_liabilities"},
+                "fund_inventories": {"inventories"},
+                # Kiwoom ka10001 additional keys
+                "fund_revenue": {"sale_amt"},                 # 매출액
+                "fund_operating_income": {"bus_pro"},         # 영업이익
+                "fund_net_income": {"cup_nga"},               # 당기순이익(YTD/분기 추정)
+                "enterprise_value": {"ev", "EV"},
+                # 유통주식(dstr_stk)은 총발행주식수가 아니므로 별도 보조 필드로 보관
+                "float_shares": {"dstr_stk"},                 # 유통주식수(보조)
+                "float_ratio": {"dstr_rt"},                   # 유통비율
+                "foreign_exhaustion_rate": {"for_exh_rt"},    # 외인소진률
+                "replacement_price": {"repl_pric"},           # 대용가
+            }
+
+            def _apply_from(prefix: str) -> None:
+                p = _latest_file(k_dir, prefix)
+                if not p:
+                    return
+                try:
+                    payload = _read_json(p)
+                except Exception:
+                    return
+                for node in _iter_dicts(payload):
+                    # case-insensitive key mapping for this node
+                    if not isinstance(node, dict):
+                        continue
+                    lower_map = {str(k).strip().lower(): k for k in node.keys()}
+                    for dest, keys in aliases.items():
+                        if dest in values:
+                            continue
+                        for k in keys:
+                            lk = str(k).strip().lower()
+                            actual_key = lower_map.get(lk)
+                            if actual_key is not None:
+                                v = _coerce_num2(node.get(actual_key))
+                                if pd.notna(v):
+                                    values.setdefault(dest, float(v))
+                                    break
+
+            _apply_from("financials")
+            _apply_from("ratios")
+    except Exception:
+        pass
+
     # Fallbacks from pykrx-derived fields (per/pbr/market_cap)
     try:
         mc = float(price_df["market_cap"].dropna().iloc[-1]) if "market_cap" in price_df.columns else float("nan")
@@ -548,6 +726,86 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
             values["fund_net_income_ttm"] = float(mc) / float(per)
         except Exception:
             pass
+
+    # Best-effort: pull additional fundamentals/ratios from Kiwoom raw dumps
+    # (financials_*.json, ratios_*.json) if present. Treat as latest snapshot.
+    try:
+        k_dir = cfg.raw_root / "kiwoom" / ticker
+        if k_dir.exists():
+            def _flatten_rows(payload) -> list[dict]:
+                if isinstance(payload, dict):
+                    for key in ("response", "data", "body", "items", "output"):
+                        v = payload.get(key)
+                        if isinstance(v, list):
+                            return [r for r in v if isinstance(r, dict)]
+                    for v in payload.values():
+                        if isinstance(v, list):
+                            return [r for r in v if isinstance(r, dict)]
+                elif isinstance(payload, list):
+                    return [r for r in payload if isinstance(r, dict)]
+                return []
+
+            def _coerce_num2(x: object) -> float:
+                try:
+                    if x is None:
+                        return float("nan")
+                    if isinstance(x, (int, float)):
+                        return float(x)
+                    s = str(x).strip()
+                    if not s or s in ("-", "--"):
+                        return float("nan")
+                    neg = False
+                    if s.startswith("(") and s.endswith(")"):
+                        neg = True; s = s[1:-1]
+                    s = s.replace(",", "")
+                    val = float(s)
+                    return -val if neg else val
+                except Exception:
+                    return float("nan")
+
+            aliases = {
+                "eps": {"eps", "EPS"},
+                "bps": {"bps", "BPS"},
+                "per": {"per", "PER"},
+                "pbr": {"pbr", "PBR"},
+                "roe": {"roe", "ROE"},
+                "roa": {"roa", "ROA"},
+                "debt_ratio": {"debt_ratio", "debtRt", "debt_rate"},
+                "current_ratio": {"current_ratio", "currentRt", "current_rate"},
+                "quick_ratio": {"quick_ratio", "quickRt", "quick_rate"},
+                "equity_ratio": {"equity_ratio", "equityRt", "equity_rate"},
+                "fund_assets": {"assets", "total_assets"},
+                "fund_liabilities": {"liabilities", "total_liabilities"},
+                "fund_equity": {"equity", "total_equity"},
+                "fund_current_assets": {"current_assets"},
+                "fund_current_liabilities": {"current_liabilities"},
+                "fund_inventories": {"inventories"},
+            }
+
+            def _apply_from(path_prefix: str) -> None:
+                p = _latest_file(k_dir, path_prefix)
+                if not p:
+                    return
+                try:
+                    payload = _read_json(p)
+                except Exception:
+                    return
+                rows = _flatten_rows(payload)
+                for row in rows:
+                    for dest, keys in aliases.items():
+                        if dest in values:
+                            continue
+                        for k in keys:
+                            if k in row:
+                                v = _coerce_num2(row.get(k))
+                                if pd.notna(v):
+                                    values.setdefault(dest, float(v))
+                                    break
+
+            _apply_from("financials")
+            _apply_from("ratios")
+    except Exception:
+        pass
 
     if not values:
         return pd.DataFrame()

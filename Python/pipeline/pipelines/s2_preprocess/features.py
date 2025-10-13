@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional, Set
 
 import numpy as np
 import pandas as pd
@@ -39,6 +39,11 @@ def run(
         pass
 
     targets = list(tickers) if tickers else _discover_tickers(bronze_dir)
+    # ETF 식별 집합 로드(가능하면 pykrx 사용, 실패 시 빈 집합)
+    try:
+        etf_set = _load_etf_ticker_set()
+    except Exception:
+        etf_set = set()
     outputs: list[Path] = []
     for ticker in targets:
         bronze_path = _load_bronze_path(bronze_dir, ticker)
@@ -49,7 +54,9 @@ def run(
         if df.empty:
             LOGGER.warning("Bronze dataset empty for %s", ticker)
             continue
-        enriched = _build_features(df, windows)
+        # is_etf 플래그 주입(모델이 타입 차이를 인지하도록)
+        is_etf = _is_etf_ticker(ticker, etf_set)
+        enriched = _build_features(df, windows, is_etf=is_etf)
         target = silver_dir / f"{ticker}.parquet"
         output_path = _write_table(enriched, target)
         outputs.append(output_path)
@@ -61,10 +68,15 @@ def run(
 # 지표 계산 함수
 # ---------------------------------------------------------------------------
 
-def _build_features(df: pd.DataFrame, windows: Iterable[int]) -> pd.DataFrame:
+def _build_features(df: pd.DataFrame, windows: Iterable[int], *, is_etf: bool = False) -> pd.DataFrame:
     """가격/거래량 기반 지표를 계산하고 결측을 보정한다."""
 
     df = df.copy()
+    # 타입 플래그(ETF=1, 기업=0)
+    try:
+        df["is_etf"] = 1.0 if is_etf else 0.0
+    except Exception:
+        pass
     if "date" in df.columns:
         df["date"] = pd.to_datetime(df["date"])
         df.sort_values("date", inplace=True)
@@ -264,6 +276,32 @@ def _resolve_silver_root(silver_root: str | Path | None) -> Path:
     return _find_project_root() / "data" / "silver"
 
 
+def _load_etf_ticker_set() -> Set[str]:
+    """pykrx에서 ETF 티커 집합을 로드(실패 시 빈 집합).
+
+    KRX 형식 6자리 문자열로 반환.
+    """
+    tickers: Set[str] = set()
+    try:
+        from pykrx import stock  # type: ignore
+        lst = stock.get_etf_ticker_list()
+        for t in lst:
+            s = str(t).strip()
+            if s:
+                digits = ''.join(ch for ch in s if ch.isdigit())
+                tickers.add(digits.zfill(6) if digits else s)
+    except Exception:
+        pass
+    return tickers
+
+
+def _is_etf_ticker(ticker: str, etf_set: Set[str]) -> bool:
+    raw = str(ticker or "").strip()
+    digits = ''.join(ch for ch in raw if ch.isdigit())
+    key = digits.zfill(6) if digits else raw.zfill(6)
+    return key in etf_set
+
+
 def _find_project_root() -> Path:
     current = Path(__file__).resolve()
     for parent in current.parents:
@@ -299,4 +337,3 @@ def _write_table(df: pd.DataFrame, path: Path) -> Path:
         df.to_pickle(fallback)
         LOGGER.warning('pyarrow/fastparquet 미설치로 pickle로 저장합니다: %s', fallback)
         return fallback
-

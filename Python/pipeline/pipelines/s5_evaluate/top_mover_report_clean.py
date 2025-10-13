@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import math
 from pathlib import Path
 from typing import Any, Optional
 from time import perf_counter
@@ -39,6 +40,41 @@ MAIN_RATIO_KEYS = [
     "roe", "roa", "per", "pbr",
     "debt_ratio", "current_ratio", "quick_ratio", "equity_ratio",
 ]
+
+
+def _load_overfit_summary() -> dict:
+    metrics_path = Path("Python/pipeline/artifacts/models/training_metrics.json")
+    if not metrics_path.exists():
+        return {"status": "unavailable"}
+    try:
+        payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+    except Exception:
+        return {"status": "error"}
+
+    final = payload.get("final") or {}
+    train_entry = final.get("train") or {}
+    val_entry = final.get("val") or {}
+    overfit = final.get("overfit") or {}
+
+    def _clean(value):
+        try:
+            num = float(value)
+        except Exception:
+            return None
+        return num if math.isfinite(num) else None
+
+    return {
+        "status": "ok",
+        "category": overfit.get("category") or "unknown",
+        "score": _clean(overfit.get("score")),
+        "ratio": _clean(overfit.get("ratio")),
+        "final_train_loss": _clean(train_entry.get("loss")),
+        "final_val_loss": _clean(val_entry.get("loss")),
+        "epochs": payload.get("epochs"),
+        "best_epoch": (payload.get("best") or {}).get("epoch"),
+    }
+
+
 
 
 def _tlog(msg: str) -> None:
@@ -287,6 +323,8 @@ def main(argv: list[str] | None = None) -> int:
         },
     }
 
+    overfit_summary = _load_overfit_summary()
+
     output = {
         "date": top_data.get("date"),
         "market": top_data.get("market"),
@@ -295,7 +333,10 @@ def main(argv: list[str] | None = None) -> int:
         "count": len(entries),
         "horizons": horizons,
         "entries": entries,
-        "meta": {"fields_ko": meta_fields_ko},
+        "meta": {
+            "fields_ko": meta_fields_ko,
+            "overfitting": overfit_summary,
+        },
     }
 
     opts.output.parent.mkdir(parents=True, exist_ok=True)
