@@ -26,6 +26,7 @@ FAIL_MESSAGE = "본문을 찾을 수 없습니다. (검수 필요)"
 DEFAULT_SEARCH_WORD_FALLBACK = "한화"
 MAX_ARTICLES_DEFAULT = 30
 WINDOW_DAYS_DEFAULT = 7
+WINDOW_YEARS_DEFAULT = 10
 SENTIMENT_POS_THRESHOLD = 0.03
 SENTIMENT_NEG_THRESHOLD = -0.03
 
@@ -504,16 +505,79 @@ def main() -> None:
 
     if aggregated_reports:
         try:
-            final_payload = aggregated_reports if len(aggregated_reports) > 1 else aggregated_reports[0]
+            final_payload = (
+                aggregated_reports
+                if len(aggregated_reports) > 1
+                else aggregated_reports[0]
+            )
             with base_output.open("w", encoding="utf-8") as fp:
                 json.dump(final_payload, fp, ensure_ascii=False, indent=4)
             print(f"\n보고서를 '{base_output}'에 저장했습니다.")
         except Exception as exc:
             print(f"보고서 저장 중 오류가 발생했습니다: {exc}")
 
+    ten_year_window_days = WINDOW_YEARS_DEFAULT * 365
+    ten_year_output = base_output.parent / "10years_sentiment_report.json"
+    ten_year_output.parent.mkdir(parents=True, exist_ok=True)
+
+    ten_year_max_articles = max(args.max_articles, ten_year_window_days)
+    ten_year_reports: list[dict] = []
+    ten_year_failed_targets: list[str] = []
+
+    if WINDOW_YEARS_DEFAULT > 0:
+        print(
+            f"\n=== 10년 기간 분석을 시작합니다 (기준 일수: {ten_year_window_days}일) ==="
+        )
+        for idx, search_word in enumerate(search_words, start=1):
+            print(
+                f"\n=== [10년][{idx}/{len(search_words)}] '{search_word}' 분석 시작 ==="
+            )
+            news_data = fetch_recent_news(
+                search_word,
+                client_id=client_id,
+                client_secret=client_secret,
+                window_days=ten_year_window_days,
+            )
+            if not news_data:
+                print("뉴스를 충분히 가져오지 못해 보고서를 생성하지 않습니다.")
+                ten_year_failed_targets.append(search_word)
+                continue
+
+            stock_code = DEFAULT_STOCK_CODE_MAP.get(search_word)
+            report = generate_comprehensive_report(
+                search_word,
+                news_data,
+                resources_dir=str(script_dir),
+                stock_code=stock_code,
+                market=DEFAULT_MARKET,
+            )
+
+            ten_year_reports.append(report)
+            print("\n10년 분석 리포트를 메모리에 누적했습니다.")
+
+        if ten_year_reports:
+            try:
+                final_payload = (
+                    ten_year_reports
+                    if len(ten_year_reports) > 1
+                    else ten_year_reports[0]
+                )
+                with ten_year_output.open("w", encoding="utf-8") as fp:
+                    json.dump(final_payload, fp, ensure_ascii=False, indent=4)
+                print(
+                    f"\n10년 기간 분석 결과를 '{ten_year_output}'에 저장했습니다."
+                )
+            except Exception as exc:
+                print(f"10년 분석 결과 저장 중 오류가 발생했습니다: {exc}")
+
     if failed_targets:
-        print("\n생성에 실패한 검색어:")
+        print("\n[기본 분석] 실패한 검색어:")
         for word in failed_targets:
+            print(f" - {word}")
+
+    if ten_year_failed_targets:
+        print("\n[10년 분석] 실패한 검색어:")
+        for word in ten_year_failed_targets:
             print(f" - {word}")
 
 if __name__ == "__main__":
