@@ -436,16 +436,44 @@ export default function Dashboard() {
 			return 0;
 		});
 		
-		// 거래량 데이터도 동일하게 정렬
-		const sortedVolumeData = realtimeVolumeData ? [...realtimeVolumeData].sort((a, b) => {
-			if (a.timestamp && b.timestamp) {
-				return new Date(a.timestamp) - new Date(b.timestamp);
-			}
-			if (a.time && b.time) {
-				return a.time.localeCompare(b.time);
-			}
-			return 0;
-		}) : [];
+		// 거래량 데이터도 동일하게 정렬 (realtimeVolumeData가 없으면 realtimeStockData에서 추출)
+		let sortedVolumeData = [];
+		if (realtimeVolumeData && realtimeVolumeData.length > 0) {
+			sortedVolumeData = [...realtimeVolumeData].sort((a, b) => {
+				if (a.timestamp && b.timestamp) {
+					return new Date(a.timestamp) - new Date(b.timestamp);
+				}
+				if (a.time && b.time) {
+					return a.time.localeCompare(b.time);
+				}
+				return 0;
+			});
+		} else if (realtimeStockData && realtimeStockData.length > 0) {
+			// realtimeVolumeData가 없으면 realtimeStockData에서 거래량 추출
+			sortedVolumeData = [...realtimeStockData].map(item => ({
+				time: item.time,
+				volume: item.volume || 0,
+				timestamp: item.timestamp,
+				marketCloseTime: item.marketCloseTime
+			})).sort((a, b) => {
+				if (a.timestamp && b.timestamp) {
+					return new Date(a.timestamp) - new Date(b.timestamp);
+				}
+				if (a.time && b.time) {
+					return a.time.localeCompare(b.time);
+				}
+				return 0;
+			});
+		}
+		
+		// 디버깅: 거래량 데이터 확인
+		console.log('📊 Dashboard - 거래량 데이터 처리:', {
+			realtimeVolumeDataLength: realtimeVolumeData ? realtimeVolumeData.length : 0,
+			realtimeStockDataLength: realtimeStockData ? realtimeStockData.length : 0,
+			sortedVolumeDataLength: sortedVolumeData.length,
+			sortedVolumeDataSample: sortedVolumeData.slice(0, 5),
+			firstStockData: realtimeStockData ? realtimeStockData[0] : null
+		});
 		
 		// 5분~1시간 간격에서는 정규화 후 중복 제거 (전체 데이터에서)
 		let processedData = sortedData;

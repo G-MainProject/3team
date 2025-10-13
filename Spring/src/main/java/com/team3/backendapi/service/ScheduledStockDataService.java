@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +43,16 @@ public class ScheduledStockDataService {
     @Scheduled(cron = "0 * * * * *")
     public void collectStockData() {
         log.info("🔄 주식 데이터 수집 시작 - 현재 시간: {}", java.time.LocalDateTime.now());
+        
+        // 장마감 시간 확인 (15:30 이후)
+        LocalDateTime now = LocalDateTime.now();
+        boolean isMarketClosed = isMarketClosed(now);
+        
+        if (isMarketClosed) {
+            log.info("📴 장마감 시간 - 캐시된 데이터 유지 모드");
+            maintainCachedData();
+            return;
+        }
         
         try {
             // sentiment_report.json에서 주식 목록 가져오기
@@ -224,6 +233,85 @@ public class ScheduledStockDataService {
         // 기본 주식 코드들 (파일을 읽을 수 없을 때 사용)
         // TODO: 설정 파일이나 데이터베이스에서 기본 종목 리스트를 관리하도록 개선 필요
         return List.of("005930"); // 삼성전자만 기본으로 설정
+    }
+    
+    // 장마감 시간 확인 메서드
+    private boolean isMarketClosed(LocalDateTime now) {
+        int dayOfWeek = now.getDayOfWeek().getValue(); // 1=월요일, 7=일요일
+        
+        // 주말이면 장마감
+        if (dayOfWeek == 6 || dayOfWeek == 7) { // 토요일, 일요일
+            return true;
+        }
+        
+        // 평일 15:30 이후면 장마감
+        int hour = now.getHour();
+        int minute = now.getMinute();
+        return hour > 15 || (hour == 15 && minute >= 30);
+    }
+    
+    // 장마감 후 캐시된 데이터 유지 메서드
+    private void maintainCachedData() {
+        try {
+            List<String> stockCodes = getStockCodesFromFile();
+            log.info("📊 캐시된 데이터 유지 - {}개 종목 확인", stockCodes.size());
+            
+            for (String stockCode : stockCodes) {
+                try {
+                    // 기존 캐시된 데이터의 TTL을 연장
+                    extendCacheTTL(stockCode);
+                } catch (Exception e) {
+                    log.warn("❌ 캐시 TTL 연장 실패: {} - {}", stockCode, e.getMessage());
+                }
+            }
+            
+            log.info("✅ 캐시된 데이터 유지 완료");
+        } catch (Exception e) {
+            log.error("❌ 캐시된 데이터 유지 중 오류 발생: {}", e.getMessage());
+        }
+    }
+    
+    // 캐시 TTL 연장 메서드
+    private void extendCacheTTL(String stockCode) {
+        try {
+            // 각 캐시 키의 TTL을 1시간으로 연장
+            Duration extendedTTL = Duration.ofHours(1);
+            
+            // 주식 요약 정보 캐시 연장
+            String summaryCacheKey = "stock:" + stockCode;
+            Object summaryData = redisTemplate.opsForValue().get(summaryCacheKey);
+            if (summaryData != null) {
+                redisTemplate.opsForValue().set(summaryCacheKey, summaryData, extendedTTL);
+                log.debug("✅ 주식 요약 캐시 TTL 연장: {}", stockCode);
+            }
+            
+            // 실시간 주가 데이터 캐시 연장
+            String realtimeCacheKey = "realtime:" + stockCode + ":1m";
+            Object realtimeData = redisTemplate.opsForValue().get(realtimeCacheKey);
+            if (realtimeData != null) {
+                redisTemplate.opsForValue().set(realtimeCacheKey, realtimeData, extendedTTL);
+                log.debug("✅ 실시간 주가 캐시 TTL 연장: {}", stockCode);
+            }
+            
+            // 거래량 데이터 캐시 연장
+            String volumeCacheKey = "volume:" + stockCode + ":1m";
+            Object volumeData = redisTemplate.opsForValue().get(volumeCacheKey);
+            if (volumeData != null) {
+                redisTemplate.opsForValue().set(volumeCacheKey, volumeData, extendedTTL);
+                log.debug("✅ 거래량 캐시 TTL 연장: {}", stockCode);
+            }
+            
+            // 통합 데이터 캐시 연장
+            String unifiedCacheKey = "unified:" + stockCode + ":1m";
+            Object unifiedData = redisTemplate.opsForValue().get(unifiedCacheKey);
+            if (unifiedData != null) {
+                redisTemplate.opsForValue().set(unifiedCacheKey, unifiedData, extendedTTL);
+                log.debug("✅ 통합 데이터 캐시 TTL 연장: {}", stockCode);
+            }
+            
+        } catch (Exception e) {
+            log.error("❌ 캐시 TTL 연장 실패: {} - {}", stockCode, e.getMessage());
+        }
     }
     
 }
