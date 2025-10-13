@@ -352,7 +352,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Select top movers via pykrx or Kiwoom")
     p.add_argument("--source", choices=["pykrx", "kiwoom", "auto"], default="kiwoom", help="Top mover source (auto/pykrx/kiwoom)")
     p.add_argument("--date", default=datetime.now().strftime("%Y%m%d"), help="기준일 (YYYYMMDD)")
-    p.add_argument("--market", default="KOSPI", help="시장 (KOSPI, KOSDAQ, ALL)")
+    p.add_argument("--market", default="ALL", help="시장 (KOSPI, KOSDAQ, ALL)")
     p.add_argument("--count", type=int, default=5, help="선정 종목 수")
     p.add_argument("--kiwoom-use-mock", action="store_true")
     p.add_argument("--output", type=Path)
