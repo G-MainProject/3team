@@ -890,8 +890,12 @@ def _align_news_to_trading_days(df: pd.DataFrame, trading_index: pd.Index) -> pd
     grouped.index.name = None
     ti = pd.to_datetime(pd.Index(trading_index))
     out = grouped.reindex(ti)
+    # Forward-fill sentiment for a limited lookback window (default 5 trading days).
+    limit_days = int(os.getenv("SENTIMENT_FFILL_LIMIT", "5"))
     for col in list(out.columns):
         if str(col).startswith("news_"):
+            out[col] = out[col].fillna(method="ffill", limit=limit_days)
+            out[col] = out[col].fillna(method="bfill", limit=limit_days)
             out[col] = out[col].fillna(0.0)
     return out.sort_index()
 

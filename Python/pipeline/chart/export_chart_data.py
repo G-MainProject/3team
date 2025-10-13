@@ -319,10 +319,16 @@ def main(argv: Optional[list[str]] = None) -> int:
             "count": len(payloads),
             "items": payloads,
         }
-        (args.output_dir).mkdir(parents=True, exist_ok=True)
-        out_path = args.output_dir / "chart_data.json"
-        out_path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"Exported {len(payloads)} tickers to {out_path}")
+    target_path = args.output_dir
+    if target_path == Path("data/outputs/chart_data"):
+        target_path = Path("data/outputs/chart_data.json")
+        if target_path.suffix:
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            target_path.mkdir(parents=True, exist_ok=True)
+            target_path = target_path / "chart_data.json"
+        target_path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"Exported {len(payloads)} tickers to {target_path}")
         return 0
 
     print("No chart data exported. Check silver files or date range.")
