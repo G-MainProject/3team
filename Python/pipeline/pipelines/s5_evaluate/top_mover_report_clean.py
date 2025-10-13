@@ -37,9 +37,18 @@ except Exception:  # pragma: no cover
 
 # 핵심 재무지표 키(리포트 스키마 고정용)
 MAIN_RATIO_KEYS = [
+    # Profitability/valuation ratios
     "roe", "roa", "per", "pbr",
+    # Leverage/Liquidity/Capital structure
     "debt_ratio", "current_ratio", "quick_ratio", "equity_ratio",
+    # Scale
     "market_cap", "shares_outstanding",
+    # Income statement snapshots (from Kiwoom/DART when available)
+    # - fund_revenue: 매출액 (sale_amt)
+    # - fund_operating_income: 영업이익 (bus_pro)
+    # - fund_net_income: 당기순이익 (cup_nga or derived)
+    # - fund_net_income_ttm: 최근 4분기 누적 당기순이익(추정)
+    "fund_revenue", "fund_operating_income", "fund_net_income", "fund_net_income_ttm",
 ]
 
 
