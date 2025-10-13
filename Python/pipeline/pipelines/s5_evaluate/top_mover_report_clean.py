@@ -263,7 +263,15 @@ def main(argv: list[str] | None = None) -> int:
                 row["actual_return"] = act_ret
                 row["return_abs_error"] = abs(pred_ret - act_ret)
             if detail_price is not None:
-                row["predicted_price_current_basis"] = float(detail_price * (1.0 + pred_ret))
+                adjusted_price = float(detail_price * (1.0 + pred_ret))
+                row["predicted_price_current_basis"] = adjusted_price
+                if base_close_val is not None and base_close_val > 0:
+                    deviation = (detail_price / base_close_val) - 1.0
+                    if abs(deviation) >= 0.2:
+                        row.setdefault("adjustments", {})
+                        row["adjustments"]["predicted_price_original"] = pred_val
+                        row["adjustments"]["predicted_price_adjusted"] = adjusted_price
+                        row["adjustments"]["basis"] = "current_price"
             rows.append(row)
 
         # silver 스냅샷에서 기술지표/기본지표 추출(가능한 경우)
