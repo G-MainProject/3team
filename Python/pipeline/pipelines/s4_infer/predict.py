@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -118,6 +119,18 @@ def main(argv: Optional[list[str]] = None) -> int:
             preds = model(p_t, t_t, base_scalar).cpu().numpy()
         except TypeError:
             preds = model(p_t, t_t).cpu().numpy()
+
+    clip_env = os.getenv("RETURN_CLIP_MAX")
+    clip_val = None
+    if clip_env:
+        try:
+            clip_val = float(clip_env)
+        except Exception:
+            clip_val = None
+    if clip_val is None:
+        clip_val = 0.3
+    if clip_val and clip_val > 0:
+        np.clip(preds, -clip_val, clip_val, out=preds)
 
     # preds: returns (N, H)
     close_values = _resolve_close_values(price_data, opts.close_values, opts.close_index)

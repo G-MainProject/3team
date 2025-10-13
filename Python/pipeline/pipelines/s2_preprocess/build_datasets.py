@@ -235,6 +235,16 @@ def _assemble_sequences(cfg: DatasetConfig, tickers: Iterable[str] | None) -> tu
             returns = future / close - 1
             targets.append(returns)
         target_matrix = np.stack(targets, axis=1)
+        clip_env = os.getenv("RETURN_CLIP_MAX")
+        if clip_env:
+            try:
+                clip_val = float(clip_env)
+            except Exception:
+                clip_val = None
+        else:
+            clip_val = 0.3
+        if clip_val and clip_val > 0:
+            np.clip(target_matrix, -clip_val, clip_val, out=target_matrix)
 
         valid_mask = ~np.isnan(target_matrix).any(axis=1)
         valid_mask[: seq_len - 1] = False  # 시작 부분 윈도우 부족 제거

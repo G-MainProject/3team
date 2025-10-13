@@ -212,7 +212,46 @@ def _select_columns(df, indicators: Iterable[str]) -> list[str]:
     return cols
 
 
-def export_for_ticker(opts: Options, ticker: str, top_data: dict | None) -> Optional[Path]:
+def _build_annual_summary(df, *, want_cols: list[str]) -> list[dict[str, Any]]:
+    """연도별 재무/지표 요약 생성.
+
+    - 각 연도 마지막 거래일 스냅샷을 사용해 지정 컬럼을 추출
+    - 존재하는 컬럼만 포함하고 NaN/inf 는 제외
+    """
+    try:
+        _pd = _ensure_pandas()
+        frame = df.copy()
+        if "date" not in frame.columns:
+            return []
+        frame["date"] = _pd.to_datetime(frame["date"]).dt.normalize()
+        frame["__year"] = frame["date"].dt.year
+        cols = [c for c in want_cols if c in frame.columns]
+        if not cols:
+            return []
+        agg = (
+            frame.sort_values("date")
+                 .groupby("__year", as_index=False)
+                 .tail(1)
+                 .sort_values("__year")
+        )
+        out: list[dict[str, Any]] = []
+        for _, row in agg.iterrows():
+            try:
+                year_val = int(row["__year"])  # type: ignore
+            except Exception:
+                continue
+            item: dict[str, Any] = {"year": year_val}
+            for c in cols:
+                v = _coerce_float(row.get(c))
+                if v is not None:
+                    item[c] = v
+            out.append(item)
+        return out
+    except Exception:
+        return []
+
+
+def export_for_ticker(opts: Options, ticker: str, top_data: dict | None) -> Optional[dict[str, Any]]:
     tbl = _load_silver_table(opts.silver_root, ticker)
     if tbl is None or len(tbl) == 0:
         return None
@@ -239,6 +278,16 @@ def export_for_ticker(opts: Options, ticker: str, top_data: dict | None) -> Opti
             item[c] = _coerce_float(row.get(c))
         out_rows.append(item)
 
+    # 연도별 재무 요약(가능 시)
+    annual_cols = [
+        "fund_revenue",
+        "fund_operating_income",
+        "fund_net_income",
+        "fund_net_income_ttm",
+        "per", "pbr", "roe", "roa", "market_cap",
+    ]
+    annual = _build_annual_summary(df, want_cols=annual_cols)
+
     # 메타데이터 구성
     name = _resolve_name(ticker, top_data)
     meta = {
@@ -249,13 +298,13 @@ def export_for_ticker(opts: Options, ticker: str, top_data: dict | None) -> Opti
         "count": len(out_rows),
         "columns": ["date", *use_cols],
         "indicators": [c for c in use_cols if c not in ("open", "high", "low", "close", "volume")],
+        "annual_fields": [c for c in annual_cols if c in df.columns],
     }
 
-    opts.output_dir.mkdir(parents=True, exist_ok=True)
-    out_path = opts.output_dir / f"{ticker}.json"
     payload = {"meta": meta, "rows": out_rows}
-    out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    return out_path
+    if annual:
+        payload["annual_financials"] = annual
+    return payload
 
 
 def _load_top_movers(path: Optional[Path]) -> dict | None:
@@ -309,31 +358,33 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     # export
     top_data = _load_top_movers(opts.top_movers)
-    exported: list[dict[str, Any]] = []
+    payloads: list[dict[str, Any]] = []
     for tk in opts.tickers:
-        path = export_for_ticker(opts, tk, top_data)
-        if path is None:
+        payload = export_for_ticker(opts, tk, top_data)
+        if payload is None:
             continue
-        try:
-            meta = _read_json_utf8(path).get("meta", {})
-        except Exception:
-            meta = {"ticker": tk}
-        exported.append(meta)
+        payloads.append(payload)
 
-    # 인덱스 파일 작성
-    if exported:
-        idx = {
+    if payloads:
+        bundle = {
             "generated_at": datetime.utcnow().isoformat() + "Z",
-            "count": len(exported),
-            "items": exported,
+            "count": len(payloads),
+            "items": payloads,
         }
-        (args.output_dir).mkdir(parents=True, exist_ok=True)
-        (args.output_dir / "index.json").write_text(json.dumps(idx, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"Exported {len(exported)} tickers to {args.output_dir}")
+    target_path = args.output_dir
+    if target_path == Path("data/outputs/chart_data"):
+        target_path = Path("data/outputs/chart_data.json")
+        if target_path.suffix:
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            target_path.mkdir(parents=True, exist_ok=True)
+            target_path = target_path / "chart_data.json"
+        target_path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"Exported {len(payloads)} tickers to {target_path}")
         return 0
-    else:
-        print("No chart data exported. Check silver files or date range.")
-        return 1
+
+    print("No chart data exported. Check silver files or date range.")
+    return 1
 
 
 if __name__ == "__main__":  # pragma: no cover
