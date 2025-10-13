@@ -20,6 +20,11 @@ from pathlib import Path
 from typing import Iterable, Mapping, MutableMapping, Sequence
 
 import requests
+import csv
+import io
+import zipfile
+import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta
 
 LOGGER = logging.getLogger(__name__)
 BASE_URL = "https://opendart.fss.or.kr/api"
@@ -65,6 +70,12 @@ def fetch_filings(
     api_key = os.getenv("DART_API_KEY")
     if not api_key:
         raise RuntimeError("DART_API_KEY 환경변수가 설정되어 있지 않습니다.")
+
+    # Best-effort: refresh corpcode CSV once per day (non-blocking)
+    try:
+        _update_corpcode_csv_if_stale(api_key, max_age_hours=24)
+    except Exception:
+        pass
 
     raw_root = _resolve_raw_dir(raw_dir) / "dart"
     raw_root.mkdir(parents=True, exist_ok=True)
@@ -300,3 +311,111 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
     path.mkdir(parents=True, exist_ok=True)
     return path
 
+
+# ---------------------------------------------------------------------------
+# corpCode.xml -> data/dart_corpcode.csv (daily refresh)
+# ---------------------------------------------------------------------------
+
+def _corpcode_csv_path() -> Path:
+    root = _find_project_root()
+    return root / "data" / "dart_corpcode.csv"
+
+
+def _update_corpcode_csv_if_stale(api_key: str, *, max_age_hours: int = 24) -> Path | None:
+    """Update data/dart_corpcode.csv at most once per ``max_age_hours``.
+
+    If the CSV is missing or too old, fetch corpCode.xml and rewrite it.
+    Any failure is swallowed to avoid breaking the pipeline.
+    """
+    csv_path = _corpcode_csv_path()
+    try:
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
+
+    try:
+        if csv_path.exists():
+            mtime = datetime.fromtimestamp(csv_path.stat().st_mtime)
+            if datetime.now() - mtime < timedelta(hours=max_age_hours):
+                return csv_path
+    except Exception:
+        pass
+
+    rows = _download_corpcode_rows(api_key)
+    if not rows:
+        # Fallback: try to build from existing raw filings
+        try:
+            rows = _build_corpcode_rows_from_raws()
+        except Exception:
+            rows = []
+        if not rows:
+            return None
+    rows = _sort_corpcode_rows(rows)
+    with csv_path.open("w", encoding="utf-8-sig", newline="") as fp:
+        w = csv.writer(fp)
+        w.writerow(["corp_code", "corp_name", "stock_code"])
+        for r in rows:
+            w.writerow([r.get("corp_code", ""), r.get("corp_name", ""), r.get("stock_code", "")])
+    return csv_path
+
+
+def _download_corpcode_rows(api_key: str) -> list[dict[str, str]]:
+    url = "https://opendart.fss.or.kr/api/corpCode.xml"
+    resp = requests.get(url, params={"crtfc_key": api_key}, timeout=30)
+    resp.raise_for_status()
+    with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+        name = next((n for n in zf.namelist() if n.lower().endswith(".xml")), None)
+        if not name:
+            return []
+        xml_bytes = zf.read(name)
+    root = ET.fromstring(xml_bytes)
+    out: list[dict[str, str]] = []
+    for el in root.findall("list"):
+        corp_code = (el.findtext("corp_code") or "").strip()
+        corp_name = (el.findtext("corp_name") or "").strip()
+        stock_code = (el.findtext("stock_code") or "").strip()
+        out.append({"corp_code": corp_code, "corp_name": corp_name, "stock_code": stock_code})
+    return out
+
+
+def _build_corpcode_rows_from_raws() -> list[dict[str, str]]:
+    """Fallback: derive corp_code -> stock_code from existing fnlttMultiAcnt raws."""
+    rows: dict[str, dict[str, str]] = {}
+    root = _find_project_root() / "data" / "raws" / "dart"
+    if not root.exists():
+        return []
+    for corp_dir in sorted(p for p in root.iterdir() if p.is_dir()):
+        corp_code = corp_dir.name.strip()
+        multi_files = sorted(corp_dir.glob("fnlttMultiAcnt_*.json"))
+        for mf in multi_files:
+            try:
+                payload = json.loads(mf.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            found = False
+            for rec in payload or []:
+                for row in (rec.get("rows") or []):
+                    stock_code = str(row.get("stock_code") or "").strip()
+                    corp_name = str(row.get("corp_name") or row.get("corp_nm") or "").strip()
+                    if stock_code:
+                        rows[corp_code] = {
+                            "corp_code": corp_code,
+                            "corp_name": corp_name,
+                            "stock_code": stock_code,
+                        }
+                        found = True
+                        break
+                if found:
+                    break
+            if found:
+                break
+    return list(rows.values())
+
+
+def _sort_corpcode_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    def _key(row: dict[str, str]) -> tuple[int, str, str]:
+        stock = (row.get("stock_code") or "").strip()
+        corp = (row.get("corp_code") or "").strip()
+        return (0 if stock else 1, stock, corp)
+
+    return sorted(rows, key=_key)

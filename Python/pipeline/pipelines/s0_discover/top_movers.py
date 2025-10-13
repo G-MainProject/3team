@@ -76,6 +76,30 @@ try:  # pykrx
 except Exception:  # pragma: no cover
     stock = None  # type: ignore
 
+_ETF_CACHE: set[str] | None = None
+
+
+def _load_etf_set() -> set[str]:
+    """Return a cached set of ETF tickers (zero-padded)."""
+    global _ETF_CACHE
+    if _ETF_CACHE is not None:
+        return _ETF_CACHE
+    etfs: set[str] = set()
+    if stock is not None:
+        try:
+            etfs = {str(t).strip().zfill(6) for t in stock.get_etf_ticker_list()}
+        except Exception:
+            etfs = set()
+    _ETF_CACHE = etfs
+    return _ETF_CACHE
+
+
+def _is_etf_ticker(ticker: str) -> bool:
+    tk = str(ticker or "").strip().zfill(6)
+    if not tk:
+        return False
+    return tk in _load_etf_set()
+
 
 def _find_latest_trading_date(date_str: str) -> str:
     """기준일로부터 최근 거래일(YYYYMMDD) 반환(pykrx 필요)."""
@@ -115,9 +139,9 @@ def _fetch_top_movers_pykrx(date: str, market: str, count: int) -> List[dict[str
     c_open = pick("open", "시가"); c_high = pick("high", "고가"); c_low = pick("low", "저가"); c_close = pick("close", "종가")
     frame["volatility"] = (frame[c_high] - frame[c_low]).abs() / frame[c_open].replace(0, float("nan"))
     frame = frame.dropna(subset=["volatility"]).sort_values("volatility", ascending=False)
-    top = frame.head(count)
+    etf_set = _load_etf_set()
     out: list[dict[str, Any]] = []
-    for _, row in top.iterrows():
+    for _, row in frame.iterrows():
         try:
             cur = float(row[c_close])
         except Exception:
@@ -127,12 +151,17 @@ def _fetch_top_movers_pykrx(date: str, market: str, count: int) -> List[dict[str
             chg = ((cur / opn) - 1.0) * 100.0 if (cur is not None and opn not in (None, 0.0)) else None
         except Exception:
             chg = None
+        ticker_str = str(row["ticker"]).strip()
+        if ticker_str.zfill(6) in etf_set:
+            continue
         out.append({
-            "ticker": str(row["ticker"]),
+            "ticker": ticker_str,
             "volatility": float(row["volatility"]),
             "current_price": cur,
             "change_pct": chg,
         })
+        if len(out) >= count:
+            break
     return out
 
 
@@ -203,7 +232,7 @@ def _issue_token(sess: requests.Session, base: str, appkey: str, secret: str) ->
     return f"{token_type} {token}"
 
 
-def _extract_rank_items(data: Any, *, max_count: int) -> list[dict[str, Any]]:
+def _extract_rank_items(data: Any, *, max_count: int, exclude: set[str] | None = None) -> list[dict[str, Any]]:
     items: list[Any] = []
     if isinstance(data, Mapping):
         for key in ("response", "data", "body", "output", "output1", "output2", "movers", "items", "stock_list", "pred_pre_flu_rt_upper"):
@@ -216,8 +245,11 @@ def _extract_rank_items(data: Any, *, max_count: int) -> list[dict[str, Any]]:
     for it in items:
         if not isinstance(it, Mapping):
             continue
-        tk = it.get("ticker") or it.get("stk_cd") or it.get("symbol") or it.get("code") or it.get("isu_cd")
-        if not tk:
+        tk_raw = it.get("ticker") or it.get("stk_cd") or it.get("symbol") or it.get("code") or it.get("isu_cd")
+        if not tk_raw:
+            continue
+        tk = str(tk_raw).strip()
+        if exclude and tk.zfill(6) in exclude:
             continue
         def fnum(x):
             try:
@@ -227,7 +259,7 @@ def _extract_rank_items(data: Any, *, max_count: int) -> list[dict[str, Any]]:
             except Exception:
                 return None
         out.append({
-            "ticker": str(tk),
+            "ticker": tk,
             "name": it.get("stk_nm") or it.get("name"),
             "change_pct": fnum(it.get("flu_rt") or it.get("change_pct")),
             "current_price": fnum(it.get("cur_prc") or it.get("price")),
@@ -309,7 +341,7 @@ def _fetch_top_movers_kiwoom(market: str, count: int, *, use_mock: bool = False)
                 print(f"[s0:kiwoom] raw saved -> {raw_path}")
             except Exception:
                 pass
-        return _extract_rank_items(data, max_count=count)
+        return _extract_rank_items(data, max_count=count, exclude=_load_etf_set())
     finally:
         sess.close()
 
@@ -394,6 +426,13 @@ def main(argv: list[str] | None = None) -> int:
     for e in entries:
         for k in ("change_pct", "current_price", "base_price"):
             e.setdefault(k, None)
+
+    etf_set_final = _load_etf_set()
+    entries = [
+        e for e in entries
+        if str(e.get("ticker") or "").strip().zfill(6) not in etf_set_final
+    ]
+    entries = entries[: args.count]
 
     tickers = [str(e.get("ticker")) for e in entries if e.get("ticker")]
     output_path = Path(args.output) if args.output else (_project_root() / "data" / "raw" / f"top_movers_{today}.json")
