@@ -821,24 +821,47 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
 
 def _load_news_features(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
     # Optional: load precomputed news features from cfg.news_dir if present
-    if not cfg.news_dir:
-        return pd.DataFrame()
-    # Look for <news_dir>/<ticker>.json or .parquet
-    j = cfg.news_dir / f"{ticker}.json"
-    if j.exists():
+    frames: list[pd.DataFrame] = []
+    if cfg.news_dir:
+        j = cfg.news_dir / f"{ticker}.json"
+        if j.exists():
+            try:
+                df = _read_json_table(j)
+                if "date" in df.columns:
+                    df["date"] = pd.to_datetime(df["date"], errors="coerce")
+                    df = df.dropna(subset=["date"]).copy()
+                    df.set_index("date", inplace=True)
+                    df.sort_index(inplace=True)
+                    for c in df.columns:
+                        df[c] = pd.to_numeric(df[c], errors="coerce")
+                    frames.append(df)
+            except Exception:
+                pass
+    report_path = _find_project_root() / "data" / "raws" / "sentiment_report.json"
+    if report_path.exists():
         try:
-            df = _read_json_table(j)
-            if "date" in df.columns:
-                df["date"] = pd.to_datetime(df["date"], errors="coerce")
-                df = df.dropna(subset=["date"]).copy()
-                df.set_index("date", inplace=True)
-                df.sort_index(inplace=True)
-                for c in df.columns:
-                    df[c] = pd.to_numeric(df[c], errors="coerce")
-                return df
+            extra = _load_sentiment_report(report_path, ticker)
+            if extra is not None and not extra.empty:
+                frames.append(extra)
         except Exception:
-            return pd.DataFrame()
-    return pd.DataFrame()
+            pass
+    if not frames:
+        return pd.DataFrame()
+    combined = pd.concat(frames, axis=0).sort_index()
+    if combined.empty:
+        return combined
+    group = combined.groupby(combined.index)
+    agg: dict[str, str] = {}
+    for col in combined.columns:
+        if str(col).startswith("news_"):
+            if col in {"news_count", "news_pos", "news_neu", "news_neg"}:
+                agg[col] = "sum"
+            else:
+                agg[col] = "mean"
+        else:
+            agg[col] = "mean"
+    combined = group.agg(agg)
+    return combined
 
 
 def _align_news_to_trading_days(df: pd.DataFrame, trading_index: pd.Index) -> pd.DataFrame:
@@ -871,6 +894,68 @@ def _align_news_to_trading_days(df: pd.DataFrame, trading_index: pd.Index) -> pd
         if str(col).startswith("news_"):
             out[col] = out[col].fillna(0.0)
     return out.sort_index()
+
+
+def _load_sentiment_report(path: Path, ticker: str) -> pd.DataFrame:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return pd.DataFrame()
+    if not isinstance(data, list):
+        return pd.DataFrame()
+    rows: list[dict[str, float]] = []
+    want = str(ticker or "").strip().zfill(6)
+    for entry in data:
+        try:
+            code = str(entry.get("stockCode") or entry.get("ticker") or "").strip()
+            if not code:
+                continue
+            if code.zfill(6) != want:
+                continue
+            analysis_date = entry.get("analysisDate") or entry.get("date")
+            if not analysis_date:
+                continue
+            ts = pd.to_datetime(analysis_date, errors="coerce")
+            if pd.isna(ts):
+                continue
+            sentiment = entry.get("sentimentAnalysis") or {}
+            dist = sentiment.get("sentimentDistribution") if isinstance(sentiment, Mapping) else {}
+            avg = sentiment.get("averageScore")
+            pos = dist.get("positive") if isinstance(dist, Mapping) else None
+            neu = dist.get("neutral") if isinstance(dist, Mapping) else None
+            neg = dist.get("negative") if isinstance(dist, Mapping) else None
+            total = None
+            try:
+                total = float(pos or 0) + float(neu or 0) + float(neg or 0)
+            except Exception:
+                total = None
+            rows.append(
+                {
+                    "date": ts.normalize(),
+                    "news_sentiment_mean": float(avg) if avg is not None else None,
+                    "news_pos": float(pos) if pos is not None else 0.0,
+                    "news_neu": float(neu) if neu is not None else 0.0,
+                    "news_neg": float(neg) if neg is not None else 0.0,
+                    "news_count": float(total) if total is not None else (
+                        float(pos or 0) + float(neu or 0) + float(neg or 0)
+                    ),
+                }
+            )
+        except Exception:
+            continue
+    if not rows:
+        return pd.DataFrame()
+    df = pd.DataFrame(rows)
+    df = df.groupby("date").agg(
+        {
+            "news_sentiment_mean": "mean",
+            "news_pos": "sum",
+            "news_neu": "sum",
+            "news_neg": "sum",
+            "news_count": "sum",
+        }
+    )
+    return df
 
 
 def _fill_calendar_and_missing(df: pd.DataFrame) -> pd.DataFrame:

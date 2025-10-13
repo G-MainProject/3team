@@ -212,7 +212,7 @@ def _select_columns(df, indicators: Iterable[str]) -> list[str]:
     return cols
 
 
-def export_for_ticker(opts: Options, ticker: str, top_data: dict | None) -> Optional[Path]:
+def export_for_ticker(opts: Options, ticker: str, top_data: dict | None) -> Optional[dict[str, Any]]:
     tbl = _load_silver_table(opts.silver_root, ticker)
     if tbl is None or len(tbl) == 0:
         return None
@@ -251,11 +251,8 @@ def export_for_ticker(opts: Options, ticker: str, top_data: dict | None) -> Opti
         "indicators": [c for c in use_cols if c not in ("open", "high", "low", "close", "volume")],
     }
 
-    opts.output_dir.mkdir(parents=True, exist_ok=True)
-    out_path = opts.output_dir / f"{ticker}.json"
     payload = {"meta": meta, "rows": out_rows}
-    out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    return out_path
+    return payload
 
 
 def _load_top_movers(path: Optional[Path]) -> dict | None:
@@ -309,31 +306,27 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     # export
     top_data = _load_top_movers(opts.top_movers)
-    exported: list[dict[str, Any]] = []
+    payloads: list[dict[str, Any]] = []
     for tk in opts.tickers:
-        path = export_for_ticker(opts, tk, top_data)
-        if path is None:
+        payload = export_for_ticker(opts, tk, top_data)
+        if payload is None:
             continue
-        try:
-            meta = _read_json_utf8(path).get("meta", {})
-        except Exception:
-            meta = {"ticker": tk}
-        exported.append(meta)
+        payloads.append(payload)
 
-    # 인덱스 파일 작성
-    if exported:
-        idx = {
+    if payloads:
+        bundle = {
             "generated_at": datetime.utcnow().isoformat() + "Z",
-            "count": len(exported),
-            "items": exported,
+            "count": len(payloads),
+            "items": payloads,
         }
         (args.output_dir).mkdir(parents=True, exist_ok=True)
-        (args.output_dir / "index.json").write_text(json.dumps(idx, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"Exported {len(exported)} tickers to {args.output_dir}")
+        out_path = args.output_dir / "chart_data.json"
+        out_path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"Exported {len(payloads)} tickers to {out_path}")
         return 0
-    else:
-        print("No chart data exported. Check silver files or date range.")
-        return 1
+
+    print("No chart data exported. Check silver files or date range.")
+    return 1
 
 
 if __name__ == "__main__":  # pragma: no cover
