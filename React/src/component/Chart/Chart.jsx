@@ -101,6 +101,8 @@ const Chart = ({
 						dataKey={xAxisKey}
 						hide={simpleMode}
 						tickFormatter={xAxisTickFormatter}
+						type="category"
+						allowDuplicatedCategory={false}
 					/>
 					<YAxis
 						hide={simpleMode}

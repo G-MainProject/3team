@@ -17,6 +17,16 @@ const safeToFixed = (num, decimals = 1) => {
 	return parsed.toFixed(decimals);
 };
 
+// Helper function to format currency
+const formatCurrency = (value) => {
+	if (value === null || isNaN(value)) return 'N/A';
+	const val = value / 10000; // Convert to Trillions
+	if (val >= 1) {
+		return `${val.toFixed(1)}조`;
+	}
+	return `${value.toFixed(0)}억`;
+};
+
 export default function StockAnalysis() {
 	const { selectedStock, loading: stockLoading } = useStock();
 	const [daysToShow, setDaysToShow] = useState(30);
@@ -46,6 +56,22 @@ export default function StockAnalysis() {
 		if (!stockChartData) return [];
 		return stockChartData.rows.slice(-daysToShow);
 	}, [stockChartData, daysToShow]);
+
+	const financialChartSeries = [
+		{ key: 'revenue', name: '매출액', color: '#3b82f6' },
+		{ key: 'operatingProfit', name: '영업이익', color: '#10b981' },
+		{ key: 'netProfit', name: '순이익', color: '#ef4444' },
+	];
+
+	const financialChartData = useMemo(() => {
+		if (!stockChartData || !stockChartData.annual_financials) return [];
+		return stockChartData.annual_financials.map((row) => ({
+			time: new Date(row.date).getFullYear(),
+			revenue: row.fund_revenue / 10, // Convert to 10억
+			operatingProfit: row.fund_operating_income / 10, // Convert to 10억
+			netProfit: row.fund_net_income / 10, // Convert to 10억
+		}));
+	}, [stockChartData]);
 
 	useEffect(() => {
 		const dashboardMain = document.querySelector(
@@ -204,7 +230,7 @@ export default function StockAnalysis() {
 								<div className={styles['unified-chart-container']}>
 									<div className={styles['chart-header']}>
 										<h3>기준 시점 주가 및 거래량</h3>
-										<div className={styles['chart-controls']}>
+										{/* <div className={styles['chart-controls']}>
 											<button
 												onClick={() => setDaysToShow(30)}
 												disabled={daysToShow === 30}
@@ -217,7 +243,7 @@ export default function StockAnalysis() {
 											>
 												이전 30일 더 보기
 											</button>
-										</div>
+										</div> */}
 									</div>
 									<div className={styles['unified-chart-wrapper']}>
 										<UnifiedStockChart
@@ -296,15 +322,23 @@ export default function StockAnalysis() {
 								<div className={styles['financial-cards']}>
 									<div className={styles['financial-card']}>
 										<h3>매출액</h3>
-										<p className={styles['financial-value']}>N/A</p>
+										<p className={styles['financial-value']}>
+											{formatCurrency(stockInfo.fundamentals?.fund_revenue)}
+										</p>
 									</div>
 									<div className={styles['financial-card']}>
 										<h3>영업이익</h3>
-										<p className={styles['financial-value']}>N/A</p>
+										<p className={styles['financial-value']}>
+											{formatCurrency(
+												stockInfo.fundamentals?.fund_operating_income
+											)}
+										</p>
 									</div>
 									<div className={styles['financial-card']}>
 										<h3>당기순이익</h3>
-										<p className={styles['financial-value']}>N/A</p>
+										<p className={styles['financial-value']}>
+											{formatCurrency(stockInfo.fundamentals?.fund_net_income)}
+										</p>
 									</div>
 								</div>
 
@@ -314,7 +348,10 @@ export default function StockAnalysis() {
 										<h3>연도별 재무 성과 (단위 : 10억원)</h3>
 									</div>
 									<div className={styles['unified-chart-wrapper']}>
-										<Chart data={[]} series={[]} />
+										<Chart
+											data={financialChartData}
+											series={financialChartSeries}
+										/>
 									</div>
 								</div>
 
@@ -444,7 +481,8 @@ export default function StockAnalysis() {
 												{safeToFixed(
 													(stockInfo?.indicators?.obv || 0) / 1000000,
 													1
-												)}M
+												)}
+												M
 											</p>
 										</div>
 										<p className={styles['technical-description']}>
