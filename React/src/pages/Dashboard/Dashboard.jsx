@@ -164,6 +164,14 @@ export default function Dashboard() {
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
 
+	const timeframeToDataKey = {
+		'1d': '하루',
+		'1w': '일주일',
+		'1m': '한 달',
+		'6m': '6개월',
+		'1y': '일 년',
+	};
+
 	// 투자 기간에 따른 프롬프트 변환 함수
 	const getTimeframePrompt = (timeframe) => {
 		const timeframeMap = {
@@ -1375,9 +1383,14 @@ export default function Dashboard() {
 								<div className={styles['ai-analysis-container']}>
 									<div className={styles['ai-analysis-content']}>
 										<h3>종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)</h3>
-										<p>
-											{AiAnalysisData.response || '분석 데이터가 없습니다.'}
-										</p>
+										<div className={styles.aiAnalysisText}>
+											{(AiAnalysisData.periods[timeframeToDataKey[selectedTimeframe]]?.text || '분석 데이터가 없습니다.').replace(/^\s*-\s*판정:.*$/m, '').trim().split('\n').map((line, index) => (
+												<React.Fragment key={index}>
+													{line}
+													<br />
+												</React.Fragment>
+											))}
+										</div>
 									</div>
 									<div className={styles['ai-prediction']}>
 										<div className={styles['prediction-item']}>
@@ -1390,9 +1403,13 @@ export default function Dashboard() {
 												1일 (1d):
 											</button>
 											<span
-												className={`${styles['prediction-value']} ${styles['positive']}`}
+												className={`${styles['prediction-value']} ${
+													AiAnalysisData.periods['하루']?.verdict === '매수' ? styles.positive :
+													AiAnalysisData.periods['하루']?.verdict === '보유' ? styles.neutral :
+													styles.negative
+												}`}
 											>
-												N/A
+												{AiAnalysisData.periods['하루']?.verdict || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1405,9 +1422,13 @@ export default function Dashboard() {
 												1주 (1w):
 											</button>
 											<span
-												className={`${styles['prediction-value']} ${styles['positive']}`}
+												className={`${styles['prediction-value']} ${
+													AiAnalysisData.periods['일주일']?.verdict === '매수' ? styles.positive :
+													AiAnalysisData.periods['일주일']?.verdict === '보유' ? styles.neutral :
+													styles.negative
+												}`}
 											>
-												N/A
+												{AiAnalysisData.periods['일주일']?.verdict || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1420,9 +1441,13 @@ export default function Dashboard() {
 												1개월 (1m):
 											</button>
 											<span
-												className={`${styles['prediction-value']} ${styles['positive']}`}
+												className={`${styles['prediction-value']} ${
+													AiAnalysisData.periods['한 달']?.verdict === '매수' ? styles.positive :
+													AiAnalysisData.periods['한 달']?.verdict === '보유' ? styles.neutral :
+													styles.negative
+												}`}
 											>
-												N/A
+												{AiAnalysisData.periods['한 달']?.verdict || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1435,9 +1460,13 @@ export default function Dashboard() {
 												6개월 (6m):
 											</button>
 											<span
-												className={`${styles['prediction-value']} ${styles['positive']}`}
+												className={`${styles['prediction-value']} ${
+													AiAnalysisData.periods['여섯 달']?.verdict === '매수' ? styles.positive :
+													AiAnalysisData.periods['여섯 달']?.verdict === '보유' ? styles.neutral :
+													styles.negative
+												}`}
 											>
-												N/A
+												{AiAnalysisData.periods['여섯 달']?.verdict || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1450,9 +1479,13 @@ export default function Dashboard() {
 												1년 (1y):
 											</button>
 											<span
-												className={`${styles['prediction-value']} ${styles['negative']}`}
+												className={`${styles['prediction-value']} ${
+													AiAnalysisData.periods['일 년']?.verdict === '매수' ? styles.positive :
+													AiAnalysisData.periods['일 년']?.verdict === '보유' ? styles.neutral :
+													styles.negative
+												}`}
 											>
-												N/A
+												{AiAnalysisData.periods['일 년']?.verdict || 'N/A'}
 											</span>
 										</div>
 									</div>

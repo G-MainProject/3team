@@ -1,9 +1,9 @@
 ﻿# -*- coding: utf-8 -*-
-"""Post-process top_mover_forecast.json to match display requirements.
+"""top_mover_forecast.json을 화면 표시 규칙에 맞춰 후처리합니다.
 
-- Remove *_display keys from fundamentals dict
-- Remove fundamentals_raw_display section
-- Ensure fundamentals keys exist; missing values show '-'
+- fundamentals 딕셔너리의 *_display 키를 제거합니다.
+- fundamentals_raw_display 섹션을 삭제합니다.
+- 핵심 지표가 비어 있으면 '-' 문자로 채웁니다.
 """
 from __future__ import annotations
 
@@ -69,12 +69,12 @@ def process(path: Path, out: Path | None = None) -> None:
     target.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Post-process top mover report JSON")
+    parser = argparse.ArgumentParser(description="Top mover 리포트 JSON 후처리")
     parser.add_argument("--input", type=Path, default=Path("data/outputs/top_mover_forecast.json"))
-    parser.add_argument("--output", type=Path, help="Write to a different file (optional)")
+    parser.add_argument("--output", type=Path, help="결과를 다른 파일로 저장 (선택 사항)")
     args = parser.parse_args(argv)
     process(args.input, args.output)
-    print(f"Post-processed -> {str(args.output or args.input)}")
+    print(f"후처리 완료 -> {str(args.output or args.input)}")
     return 0
 
 if __name__ == "__main__":

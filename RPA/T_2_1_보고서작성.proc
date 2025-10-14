@@ -1,0 +1,1671 @@
+<Process id="52d1f205-d23d-45cf-be50-1a184d812ccc" type="task" workType="foreground" name="T_2_1_보고서작성" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="56" Orientation="horizontal">
+  <Properties>
+    <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="18" />
+    <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
+    <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
+    <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-26 15:48:20" />
+    <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-10-14 16:47:57" />
+    <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
+    <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+    <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+  </Properties>
+  <LinkItems />
+  <Variables>
+    <Variable name="Gemini_Api_isFileExist" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF94AF9F" showMarker="False" />
+    <Variable name="top_mover_forecast_isFileExist" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF38E54D" showMarker="False" />
+    <Variable name="sentiment_report_isFileExist" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF19A7CE" showMarker="False" />
+    <Variable name="Gemini_Api" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFE49393" showMarker="False" />
+    <Variable name="chart_data" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="JSON" colorValue="#FF1A4D2E" showMarker="False" />
+    <Variable name="top_mover_forecast" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="주가 예측 파이프라인 JSON" colorValue="#FF7149C6" showMarker="False" />
+    <Variable name="sentiment_report" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="뉴스 감정분석 JSON" colorValue="#FFFF9F29" showMarker="False" />
+    <Variable name="report_IsDirectoryExist" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="보고서 저장할 파일 경로 유무 확인" colorValue="#FF0E8388" showMarker="False" />
+    <Variable name="create_excel" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="보고서 파일 유무 확인" colorValue="#FF617143" showMarker="False" />
+    <Variable name="read_path" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="JSON파일 경로" colorValue="#FFD27685" showMarker="False" />
+    <Variable name="subject" scope="Normal" valueType="Any" formatType="Any" initValue="[]" desc="보고서 표(제목 + 내용)" colorValue="#FFF7DB6A" showMarker="False" />
+    <Variable name="header" scope="Normal" valueType="Any" formatType="Any" initValue="[]" desc="보고서 제목" colorValue="#FF7149C6" showMarker="False" />
+    <Variable name="datetime" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="날짜 + 시간" colorValue="#FF563D02" showMarker="False" />
+  </Variables>
+  <Steps>
+    <Step id="S6c4b976e3f264980a9f5e95a6c24123a" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="1f1d216d-4737-4845-8f2f-5f9d8f2e7ee5" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="날짜및 보고서 상단 설정" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="//엑셀 기준 B2 = (0, 0)&#xD;&#xA;&#xD;&#xA;//작성날짜&#xD;&#xA;this.datetime = new Date();&#xD;&#xA;Global.date = this.datetime.toISOString().slice(0, 10);&#xD;&#xA;&#xD;&#xA;let year = Global.date.slice(0, 4);&#xD;&#xA;let month = Global.date.slice(5, 7);&#xD;&#xA;let hour = String(this.datetime.getHours()).padStart(2, '0');&#xD;&#xA;let minute = String(this.datetime.getMinutes()).padStart(2, '0');&#xD;&#xA;&#xD;&#xA;// 보고서 저장 위치&#xD;&#xA;Global.report_path = Global.file_path.replace(/raws$/, &quot;outputs&quot;);&#xD;&#xA;Global.report_path = Global.report_path + '\\보고서\\' + year + '\\' + month&#xD;&#xA;&#xD;&#xA;this.datetime = Global.date + ' ' + hour + ':' + minute;&#xD;&#xA;&#xD;&#xA;//보고서 상단&#xD;&#xA;this.header[0] = []&#xD;&#xA;this.header[0][0] = '핵심 이슈 및 투자 정보 리포트'&#xD;&#xA;this.header[2] = []&#xD;&#xA;this.header[2][0] = '작성자'&#xD;&#xA;this.header[2][3] = 'SIGNAL.KR'&#xD;&#xA;this.header[3] = []&#xD;&#xA;this.header[3][0] = '작성일'&#xD;&#xA;this.header[3][3] = '\'' + Global.datetime&#xD;&#xA;this.header[4] = []&#xD;&#xA;this.header[4][0] = '출처'&#xD;&#xA;this.header[4][3] = '키움 API, 네이버 API'&#xD;&#xA;&#xD;&#xA;this.datetime = Global.date + '_' + hour + '_' + minute;&#xD;&#xA;" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[//엑셀 기준 B2 = (0, 0)
+
+//작성날짜
+this.datetime = new Date();
+Global.date = this.datetime.toISOString().slice(0, 10);
+
+let year = Global.date.slice(0, 4);
+let month = Global.date.slice(5, 7);
+let hour = String(this.datetime.getHours()).padStart(2, '0');
+let minute = String(this.datetime.getMinutes()).padStart(2, '0');
+
+// 보고서 저장 위치
+Global.report_path = Global.file_path.replace(/raws$/, "outputs");
+Global.report_path = Global.report_path + '\\보고서\\' + year + '\\' + month
+
+this.datetime = Global.date + ' ' + hour + ':' + minute;
+
+//보고서 상단
+this.header[0] = []
+this.header[0][0] = '핵심 이슈 및 투자 정보 리포트'
+this.header[2] = []
+this.header[2][0] = '작성자'
+this.header[2][3] = 'SIGNAL.KR'
+this.header[3] = []
+this.header[3][0] = '작성일'
+this.header[3][3] = '\'' + Global.datetime
+this.header[4] = []
+this.header[4][0] = '출처'
+this.header[4][3] = '키움 API, 네이버 API'
+
+this.datetime = Global.date + '_' + hour + '_' + minute;
+]]></Script>
+    </Step>
+    <Step id="Se09083f37d4742deb575e94b9fcc4b6d" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="this.sentiment_report_isFileExist" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="d318ad30-7132-48ac-8d2c-b998e389ac67" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="File" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value=" Global.file_path + '\\sentiment_report.json'" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.sentiment_report_isFileExist" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.sentiment_report_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_2);]]></Script>
+    </Step>
+    <Step id="S151fb03235a54eaeaad7132912885cfe" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.sentiment_report_isFileExist == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="a04b4db9-d54a-458a-8dd7-3d9eee8052ab" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.sentiment_report_isFileExist == true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.sentiment_report_isFileExist == true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S0df829d8edb84c98b19e6d7ee85e1126" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (this.sentiment_report_isFileExist == true) {]]></Script>
+    </Step>
+    <Step id="S3ad8aecf36044262ba4e46f245a02766" ver="311241220" createVer="311241220" type="Desktop" name="ReadTextFile" dpName="ReadTextFile" dpValue="this.sentiment_report" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="016309d1-638a-4ce7-8862-fdd3e26b0be1" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.sentiment_report" />
+        <Property type="Desktop" key="Command_Path" controlType="Text" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value=" Global.file_path + '\\sentiment_report.json'" />
+        <Property type="Desktop" key="Command_Encoding" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="UTF8" valuelist="Default;Unicode;BigEndianUnicode;ASCII;UTF8;UTF32;UTF7" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.sentiment_report = StepPlayer.Run('Desktop.ReadTextFile', this.readtextfile_info_4);]]></Script>
+    </Step>
+    <Step id="Sd3e5423528e94fd692aa041acfb00c7d" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="d21b931b-a768-4f74-9366-c0e434ebbf35" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="뉴스 감정분석 추출" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="// 엑셀 기준 B8 = (0, 0)&#xD;&#xA;&#xD;&#xA;this.sentiment_report = ToJson(this.sentiment_report)&#xD;&#xA;&#xD;&#xA;let keys_array = []&#xD;&#xA;let wordCloud = '없음'&#xD;&#xA;&#xD;&#xA;// 초기화&#xD;&#xA;for (let i = 0; i &lt;= 67; i++) {&#xD;&#xA;    this.subject[i] = []&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;// 키워드 상위 5개&#xD;&#xA;for(let i = 0; i &lt; this.sentiment_report.length; i++) {&#xD;&#xA;    wordCloud = this.sentiment_report[i].keywordAnalysis.wordCloud&#xD;&#xA;    if(wordCloud == '없음') {&#xD;&#xA;        break;&#xD;&#xA;    }&#xD;&#xA;    let keys = '';&#xD;&#xA;    let count = 0;&#xD;&#xA;&#xD;&#xA;    for (const key in wordCloud) {&#xD;&#xA;        if (count === 5) {&#xD;&#xA;            break;&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        if (keys !== '') {&#xD;&#xA;            keys += ', ';&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        keys += key;&#xD;&#xA;        count++;&#xD;&#xA;    }&#xD;&#xA;    &#xD;&#xA;    keys_array[i] = keys&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;for (let i = 0; i &lt; this.sentiment_report.length; i++) {&#xD;&#xA;    let row = 63 + i &#xD;&#xA;    this.subject[row][3] = this.sentiment_report[i].sentimentAnalysis.overallSentiment &#xD;&#xA;    this.subject[row][4] = this.sentiment_report[i].sentimentAnalysis.averageScore &#xD;&#xA;    this.subject[row][5] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.positive &#xD;&#xA;    this.subject[row][6] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.neutral &#xD;&#xA;    this.subject[row][7] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.negative&#xD;&#xA;    this.subject[row][8] = keys_array[i]&#xD;&#xA;    &#xD;&#xA;    for(let j = 3; j &lt; 9; j++) {&#xD;&#xA;        if(this.subject[row][j] == undefined) {&#xD;&#xA;            this.subject[row][j] = 0&#xD;&#xA;        }&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;// 분석파일 경로 설정&#xD;&#xA;this.read_path = Global.file_path.replace(/raws$/, &quot;outputs&quot;);&#xD;&#xA;&#xD;&#xA;" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[// 엑셀 기준 B8 = (0, 0)
+
+this.sentiment_report = ToJson(this.sentiment_report)
+
+let keys_array = []
+let wordCloud = '없음'
+
+// 초기화
+for (let i = 0; i <= 67; i++) {
+    this.subject[i] = []
+}
+
+// 키워드 상위 5개
+for(let i = 0; i < this.sentiment_report.length; i++) {
+    wordCloud = this.sentiment_report[i].keywordAnalysis.wordCloud
+    if(wordCloud == '없음') {
+        break;
+    }
+    let keys = '';
+    let count = 0;
+
+    for (const key in wordCloud) {
+        if (count === 5) {
+            break;
+        }
+        
+        if (keys !== '') {
+            keys += ', ';
+        }
+        
+        keys += key;
+        count++;
+    }
+    
+    keys_array[i] = keys
+}
+
+for (let i = 0; i < this.sentiment_report.length; i++) {
+    let row = 63 + i 
+    this.subject[row][3] = this.sentiment_report[i].sentimentAnalysis.overallSentiment 
+    this.subject[row][4] = this.sentiment_report[i].sentimentAnalysis.averageScore 
+    this.subject[row][5] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.positive 
+    this.subject[row][6] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.neutral 
+    this.subject[row][7] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.negative
+    this.subject[row][8] = keys_array[i]
+    
+    for(let j = 3; j < 9; j++) {
+        if(this.subject[row][j] == undefined) {
+            this.subject[row][j] = 0
+        }
+    }
+}
+
+// 분석파일 경로 설정
+this.read_path = Global.file_path.replace(/raws$/, "outputs");
+
+]]></Script>
+    </Step>
+    <Step id="S0df829d8edb84c98b19e6d7ee85e1126" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="5d8efcf0-ad72-4678-a134-45119555dba3" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S151fb03235a54eaeaad7132912885cfe" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S8d772459d21d43759f4967fff98d3146" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="this.top_mover_forecast_isFileExist" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="d318ad30-7132-48ac-8d2c-b998e389ac67" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="File" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.read_path + '\\top_mover_forecast.json'" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.top_mover_forecast_isFileExist" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.top_mover_forecast_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_7);]]></Script>
+    </Step>
+    <Step id="Sa9825a94463e41bf9fa36eff3b043ba4" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.top_mover_forecast_isFileExist == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="a04b4db9-d54a-458a-8dd7-3d9eee8052ab" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.top_mover_forecast_isFileExist == true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.top_mover_forecast_isFileExist == true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="Scf78b3825c1b45d4ba84b637534a889b" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (this.top_mover_forecast_isFileExist == true) {]]></Script>
+    </Step>
+    <Step id="S8515e536bf3f48feae7f6028b3c6b254" ver="311241220" createVer="311241220" type="Desktop" name="ReadTextFile" dpName="ReadTextFile" dpValue="this.top_mover_forecast" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="016309d1-638a-4ce7-8862-fdd3e26b0be1" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.top_mover_forecast" />
+        <Property type="Desktop" key="Command_Path" controlType="Text" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.read_path + '\\top_mover_forecast.json'" />
+        <Property type="Desktop" key="Command_Encoding" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="UTF8" valuelist="Default;Unicode;BigEndianUnicode;ASCII;UTF8;UTF32;UTF7" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.top_mover_forecast = StepPlayer.Run('Desktop.ReadTextFile', this.readtextfile_info_9);]]></Script>
+    </Step>
+    <Step id="Scf78b3825c1b45d4ba84b637534a889b" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="5d8efcf0-ad72-4678-a134-45119555dba3" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="Sa9825a94463e41bf9fa36eff3b043ba4" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S5a6a5dc971e746ffadccf5ee4406b457" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="this.Gemini_Api_isFileExist" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="d318ad30-7132-48ac-8d2c-b998e389ac67" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="File" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\Gemini_Api.json'" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Gemini_Api_isFileExist" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.Gemini_Api_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_11);]]></Script>
+    </Step>
+    <Step id="Sbf5ed70cfd084055b81224b6518620b5" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.Gemini_Api_isFileExist == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="a04b4db9-d54a-458a-8dd7-3d9eee8052ab" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.Gemini_Api_isFileExist == true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Gemini_Api_isFileExist == true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S6df47d564e904ca0acffb5320f4cd15d" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (this.Gemini_Api_isFileExist == true) {]]></Script>
+    </Step>
+    <Step id="S980ee5654e04461e9914ab42bb12962c" ver="311241220" createVer="311241220" type="Desktop" name="ReadTextFile" dpName="ReadTextFile" dpValue="this.Gemini_Api" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="016309d1-638a-4ce7-8862-fdd3e26b0be1" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.Gemini_Api" />
+        <Property type="Desktop" key="Command_Path" controlType="Text" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\Gemini_Api.json'" />
+        <Property type="Desktop" key="Command_Encoding" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="UTF8" valuelist="Default;Unicode;BigEndianUnicode;ASCII;UTF8;UTF32;UTF7" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.Gemini_Api = StepPlayer.Run('Desktop.ReadTextFile', this.readtextfile_info_13);]]></Script>
+    </Step>
+    <Step id="S6df47d564e904ca0acffb5320f4cd15d" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="5d8efcf0-ad72-4678-a134-45119555dba3" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="Sbf5ed70cfd084055b81224b6518620b5" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S2108a361006f45b9a8c79c53e0d8eebe" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="1f1d216d-4737-4845-8f2f-5f9d8f2e7ee5" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="보고서 제목및 항목 설정" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="//엑셀기준 B8 = (0, 0)&#xD;&#xA;&#xD;&#xA;this.top_mover_forecast = ToJson(this.top_mover_forecast)&#xD;&#xA;&#xD;&#xA;// 각 섹션별 시작 열 인덱스 배열&#xD;&#xA;const sections = [1, 29, 37, 45, 53, 62]&#xD;&#xA;&#xD;&#xA;for (let idx = 0; idx &lt; sections.length; idx++) {&#xD;&#xA;    let row = sections[idx]&#xD;&#xA;    this.subject[row][0] = 'No'&#xD;&#xA;    if(idx == 1) {&#xD;&#xA;        this.subject[row][1] = '기간'&#xD;&#xA;        this.subject[row][2] = '판정'&#xD;&#xA;    }else {&#xD;&#xA;        this.subject[row][1] = '종목명'&#xD;&#xA;        this.subject[row][2] = '종목코드'&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;// 종목 및 종목코드 입력&#xD;&#xA;for (let s = 0; s &lt; sections.length; s++) {&#xD;&#xA;    let base = sections[s] + 1&#xD;&#xA;    &#xD;&#xA;    //기술적 지표&#xD;&#xA;    if(s == 4) {&#xD;&#xA;        base += 1&#xD;&#xA;    }&#xD;&#xA;    &#xD;&#xA;    for (let i = 0; i &lt; this.top_mover_forecast.entries.length; i++) {&#xD;&#xA;        let entry = this.top_mover_forecast.entries[i]&#xD;&#xA;        //기간별 예측값&#xD;&#xA;        let row = base + i&#xD;&#xA;        &#xD;&#xA;        this.subject[row][0] = i + 1&#xD;&#xA;        this.subject[row][1] = entry.name&#xD;&#xA;        this.subject[row][2] = '\'' + entry.ticker&#xD;&#xA;        &#xD;&#xA;        if(s == 0){&#xD;&#xA;            base += 4&#xD;&#xA;        }&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;// 제목 &#xD;&#xA;this.subject[sections[0] - 1][0] = '기간별 예측값'&#xD;&#xA;this.subject[sections[1] - 1][0] = 'AI분석'&#xD;&#xA;this.subject[sections[2] - 1][0] = '기준 시점 주가 및 거래량'&#xD;&#xA;this.subject[sections[3] - 1][0] = '재무제표'&#xD;&#xA;this.subject[sections[4] - 1][0] = '기술적 지표'&#xD;&#xA;this.subject[sections[5] - 1][0] = '뉴스 감정분석'&#xD;&#xA;&#xD;&#xA;// 기간별 예측값&#xD;&#xA;this.subject[sections[0]][3] = '예측 기간'&#xD;&#xA;this.subject[sections[0]][4] = '예측 가격'&#xD;&#xA;this.subject[sections[0]][5] = '실제 가격'&#xD;&#xA;this.subject[sections[0]][6] = '가격 절대오차'&#xD;&#xA;this.subject[sections[0]][7] = '예측 수익률'&#xD;&#xA;this.subject[sections[0]][8] = '실제 수익률'&#xD;&#xA;this.subject[sections[0]][9] = '수익률 절대오차'&#xD;&#xA;this.subject[sections[0]][14] = '비고'&#xD;&#xA;&#xD;&#xA;// AI 분석&#xD;&#xA;this.subject[sections[1]][3] = '요약'&#xD;&#xA;this.subject[sections[1]][14] = '비고'&#xD;&#xA;&#xD;&#xA;// 기준 시점 주가 및 거래량&#xD;&#xA;this.subject[sections[2]][3] = '기준가(현재가)'&#xD;&#xA;this.subject[sections[2]][4] = '전일 대비'&#xD;&#xA;this.subject[sections[2]][5] = '거래량'&#xD;&#xA;this.subject[sections[2]][6] = '시가총액'&#xD;&#xA;this.subject[sections[2]][14] = '비고'&#xD;&#xA;&#xD;&#xA;// 제무제표&#xD;&#xA;this.subject[sections[3]][3] = '매출액'&#xD;&#xA;this.subject[sections[3]][4] = '영업이익'&#xD;&#xA;this.subject[sections[3]][5] = '당기순이익'&#xD;&#xA;this.subject[sections[3]][6] = 'PER'&#xD;&#xA;this.subject[sections[3]][7] = 'PBR'&#xD;&#xA;this.subject[sections[3]][8] = 'ROE'&#xD;&#xA;this.subject[sections[3]][9] = 'ROA'&#xD;&#xA;this.subject[sections[3]][10] = '부채비율'&#xD;&#xA;this.subject[sections[3]][11] = '유동비율'&#xD;&#xA;this.subject[sections[3]][12] = '당좌비율'&#xD;&#xA;this.subject[sections[3]][13] = '자기자본비율'&#xD;&#xA;this.subject[sections[3]][14] = '비고'&#xD;&#xA;&#xD;&#xA;// 기술적 지표&#xD;&#xA;this.subject[sections[4]][3] = 'RSI'&#xD;&#xA;this.subject[sections[4]][5] = 'OBV'&#xD;&#xA;this.subject[sections[4]][6] = 'MACD'&#xD;&#xA;this.subject[sections[4]][7] = '볼린저밴드'&#xD;&#xA;this.subject[sections[4]][14] = '비고'&#xD;&#xA;this.subject[sections[4] + 1][7] = '상단'&#xD;&#xA;this.subject[sections[4] + 1][8] = '중단'&#xD;&#xA;this.subject[sections[4] + 1][9] = '하단'&#xD;&#xA;&#xD;&#xA;//뉴스 감정분석&#xD;&#xA;this.subject[sections[5]][3] = '전반적인 심리'&#xD;&#xA;this.subject[sections[5]][4] = '평균 심리 점수'&#xD;&#xA;this.subject[sections[5]][5] = '긍정 건수'&#xD;&#xA;this.subject[sections[5]][6] = '중립 건수'&#xD;&#xA;this.subject[sections[5]][7] = '부정 건수'&#xD;&#xA;this.subject[sections[5]][8] = '핵심 키워드 5가지'&#xD;&#xA;this.subject[sections[5]][14] = '비고'&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[//엑셀기준 B8 = (0, 0)
+
+this.top_mover_forecast = ToJson(this.top_mover_forecast)
+
+// 각 섹션별 시작 열 인덱스 배열
+const sections = [1, 29, 37, 45, 53, 62]
+
+for (let idx = 0; idx < sections.length; idx++) {
+    let row = sections[idx]
+    this.subject[row][0] = 'No'
+    if(idx == 1) {
+        this.subject[row][1] = '기간'
+        this.subject[row][2] = '판정'
+    }else {
+        this.subject[row][1] = '종목명'
+        this.subject[row][2] = '종목코드'
+    }
+}
+
+// 종목 및 종목코드 입력
+for (let s = 0; s < sections.length; s++) {
+    let base = sections[s] + 1
+    
+    //기술적 지표
+    if(s == 4) {
+        base += 1
+    }
+    
+    for (let i = 0; i < this.top_mover_forecast.entries.length; i++) {
+        let entry = this.top_mover_forecast.entries[i]
+        //기간별 예측값
+        let row = base + i
+        
+        this.subject[row][0] = i + 1
+        this.subject[row][1] = entry.name
+        this.subject[row][2] = '\'' + entry.ticker
+        
+        if(s == 0){
+            base += 4
+        }
+    }
+}
+
+// 제목 
+this.subject[sections[0] - 1][0] = '기간별 예측값'
+this.subject[sections[1] - 1][0] = 'AI분석'
+this.subject[sections[2] - 1][0] = '기준 시점 주가 및 거래량'
+this.subject[sections[3] - 1][0] = '재무제표'
+this.subject[sections[4] - 1][0] = '기술적 지표'
+this.subject[sections[5] - 1][0] = '뉴스 감정분석'
+
+// 기간별 예측값
+this.subject[sections[0]][3] = '예측 기간'
+this.subject[sections[0]][4] = '예측 가격'
+this.subject[sections[0]][5] = '실제 가격'
+this.subject[sections[0]][6] = '가격 절대오차'
+this.subject[sections[0]][7] = '예측 수익률'
+this.subject[sections[0]][8] = '실제 수익률'
+this.subject[sections[0]][9] = '수익률 절대오차'
+this.subject[sections[0]][14] = '비고'
+
+// AI 분석
+this.subject[sections[1]][3] = '요약'
+this.subject[sections[1]][14] = '비고'
+
+// 기준 시점 주가 및 거래량
+this.subject[sections[2]][3] = '기준가(현재가)'
+this.subject[sections[2]][4] = '전일 대비'
+this.subject[sections[2]][5] = '거래량'
+this.subject[sections[2]][6] = '시가총액'
+this.subject[sections[2]][14] = '비고'
+
+// 제무제표
+this.subject[sections[3]][3] = '매출액'
+this.subject[sections[3]][4] = '영업이익'
+this.subject[sections[3]][5] = '당기순이익'
+this.subject[sections[3]][6] = 'PER'
+this.subject[sections[3]][7] = 'PBR'
+this.subject[sections[3]][8] = 'ROE'
+this.subject[sections[3]][9] = 'ROA'
+this.subject[sections[3]][10] = '부채비율'
+this.subject[sections[3]][11] = '유동비율'
+this.subject[sections[3]][12] = '당좌비율'
+this.subject[sections[3]][13] = '자기자본비율'
+this.subject[sections[3]][14] = '비고'
+
+// 기술적 지표
+this.subject[sections[4]][3] = 'RSI'
+this.subject[sections[4]][5] = 'OBV'
+this.subject[sections[4]][6] = 'MACD'
+this.subject[sections[4]][7] = '볼린저밴드'
+this.subject[sections[4]][14] = '비고'
+this.subject[sections[4] + 1][7] = '상단'
+this.subject[sections[4] + 1][8] = '중단'
+this.subject[sections[4] + 1][9] = '하단'
+
+//뉴스 감정분석
+this.subject[sections[5]][3] = '전반적인 심리'
+this.subject[sections[5]][4] = '평균 심리 점수'
+this.subject[sections[5]][5] = '긍정 건수'
+this.subject[sections[5]][6] = '중립 건수'
+this.subject[sections[5]][7] = '부정 건수'
+this.subject[sections[5]][8] = '핵심 키워드 5가지'
+this.subject[sections[5]][14] = '비고'
+
+
+]]></Script>
+    </Step>
+    <Step id="S2d680d13479a4480bec6a15044dbb1c9" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="d21b931b-a768-4f74-9366-c0e434ebbf35" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="분석결과 추출" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="//엑셀 기준 B8 = (0, 0)&#xD;&#xA;&#xD;&#xA;this.top_mover_forecast = ToJson(this.top_mover_forecast)&#xD;&#xA;this.Gemini_Api = ToJson(this.Gemini_Api)&#xD;&#xA;let bass = 0&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;// AI 분석&#xD;&#xA;let row_AI = 30&#xD;&#xA;this.subject[row_AI][1] = '1일'&#xD;&#xA;this.subject[row_AI][2] = this.Gemini_Api.periods['하루'].verdict&#xD;&#xA;this.subject[row_AI][3] = this.Gemini_Api.periods['하루'].text.split(&quot;\n\n&quot;)[1];&#xD;&#xA;this.subject[row_AI + 1][1] = '1주'&#xD;&#xA;this.subject[row_AI + 1][2] = this.Gemini_Api.periods['일주일'].verdict&#xD;&#xA;this.subject[row_AI + 1][3] = this.Gemini_Api.periods['일주일'].text.split(&quot;\n\n&quot;)[1];&#xD;&#xA;this.subject[row_AI + 2][1] = '1개월'&#xD;&#xA;this.subject[row_AI + 2][2] = this.Gemini_Api.periods['한 달'].verdict&#xD;&#xA;this.subject[row_AI + 2][3] = this.Gemini_Api.periods['한 달'].text.split(&quot;\n\n&quot;)[1];&#xD;&#xA;this.subject[row_AI + 3][1] = '6개월'&#xD;&#xA;this.subject[row_AI + 3][2] = this.Gemini_Api.periods['6개월'].verdict&#xD;&#xA;this.subject[row_AI + 3][3] = this.Gemini_Api.periods['6개월'].text.split(&quot;\n\n&quot;)[1];&#xD;&#xA;this.subject[row_AI + 4][1] = '1년'&#xD;&#xA;this.subject[row_AI + 4][2] = this.Gemini_Api.periods['일 년'].verdict&#xD;&#xA;this.subject[row_AI + 4][3] = this.Gemini_Api.periods['일 년'].text.split(&quot;\n\n&quot;)[1];&#xD;&#xA;&#xD;&#xA;for(let i = 0; i &lt; this.top_mover_forecast.entries.length; i++) {&#xD;&#xA;    let entry = this.top_mover_forecast.entries[i]&#xD;&#xA;    &#xD;&#xA;    // 기간별 예측값&#xD;&#xA;    bass = 4 * i + i &#xD;&#xA;    let row = 2 + bass&#xD;&#xA;    for(let s = 0; s &lt; entry.horizons.length; s++) {&#xD;&#xA;        if (entry.horizons[s].horizon == '1d') {&#xD;&#xA;            this.subject[row][3] = '1일'&#xD;&#xA;        }else if (entry.horizons[s].horizon == '1w') {&#xD;&#xA;            this.subject[row][3] = '1주'&#xD;&#xA;        }else if (entry.horizons[s].horizon == '1m') {&#xD;&#xA;            this.subject[row][3] = '1개월'&#xD;&#xA;        }else if (entry.horizons[s].horizon == '6m') {&#xD;&#xA;            this.subject[row][3] = '6개월'&#xD;&#xA;        }else if (entry.horizons[s].horizon == '1y') {&#xD;&#xA;            this.subject[row][3] = '1년'&#xD;&#xA;        }else {&#xD;&#xA;            this.subject[row][3] = '그 외'&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        this.subject[row][4] = entry.horizons[s].predicted_price&#xD;&#xA;        this.subject[row][5] = entry.horizons[s].actual_price&#xD;&#xA;        this.subject[row][6] = entry.horizons[s].abs_error&#xD;&#xA;        this.subject[row][7] = entry.horizons[s].predicted_return&#xD;&#xA;        this.subject[row][8] = entry.horizons[s].actual_return&#xD;&#xA;        this.subject[row][9] = entry.horizons[s].return_abs_error&#xD;&#xA;        &#xD;&#xA;        row++&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;for (let i = 0; i &lt; this.top_mover_forecast.entries.length; i++) {&#xD;&#xA;    let entry = this.top_mover_forecast.entries[i]&#xD;&#xA;    &#xD;&#xA;    // 기준 시점 주가 및 거래량&#xD;&#xA;    row = 38 + i &#xD;&#xA;    this.subject[row][3] = entry.current_price&#xD;&#xA;    this.subject[row][4] = entry.change_pct + '%'&#xD;&#xA;    this.subject[row][5] = entry.indicators.obv&#xD;&#xA;    this.subject[row][6] = entry.fundamentals.market_cap&#xD;&#xA;&#xD;&#xA;    // 재무제표&#xD;&#xA;    row = 46 + i &#xD;&#xA;    this.subject[row][3] = entry.fundamentals.fund_revenue&#xD;&#xA;    this.subject[row][4] = entry.fundamentals.fund_operating_income&#xD;&#xA;    this.subject[row][5] = entry.fundamentals.fund_net_income&#xD;&#xA;    this.subject[row][6] = Math.round(entry.fundamentals.per * 100) / 100&#xD;&#xA;    this.subject[row][7] = Math.round(entry.fundamentals.pbr * 100) / 100&#xD;&#xA;    this.subject[row][8] = entry.fundamentals.roe&#xD;&#xA;    this.subject[row][9] = entry.fundamentals.roa&#xD;&#xA;    this.subject[row][10] = Math.round(entry.fundamentals.debt_ratio * 100) / 100 + '%'&#xD;&#xA;    this.subject[row][11] = Math.round(entry.fundamentals.current_ratio * 100) / 100 + '%'&#xD;&#xA;    this.subject[row][12] = Math.round(entry.fundamentals.quick_ratio * 100) / 100 + '%'&#xD;&#xA;    this.subject[row][13] = Math.round(entry.fundamentals.equity_ratio * 100) / 100 + '%'&#xD;&#xA;&#xD;&#xA;    // 기술적 지표&#xD;&#xA;    row = 55 + i &#xD;&#xA;    this.subject[row][3] = Math.round(entry.indicators.rsi)&#xD;&#xA;    &#xD;&#xA;    let rsi_level&#xD;&#xA;    if(this.subject[row][3] &gt;= 71) {&#xD;&#xA;        rsi_level = '과매수'&#xD;&#xA;    }else if((this.subject[row][3] &gt;= 61) &amp;&amp; (this.subject[row][3] &lt;= 70)){&#xD;&#xA;        rsi_level = '과매수 경계'&#xD;&#xA;    }else if((this.subject[row][3] &gt;= 41) &amp;&amp; (this.subject[row][3] &lt;= 60)){&#xD;&#xA;        rsi_level = '중립'&#xD;&#xA;    }else if((this.subject[row][3] &gt;= 31) &amp;&amp; (this.subject[row][3] &lt;= 40)){&#xD;&#xA;        rsi_level = '과매도 경계'&#xD;&#xA;    }else if (this.subject[row][3] &lt;= 30){&#xD;&#xA;        rsi_level = '과매도'&#xD;&#xA;    }else {&#xD;&#xA;        rsi_level = '없음'&#xD;&#xA;    }&#xD;&#xA;    &#xD;&#xA;    this.subject[row][4] = rsi_level&#xD;&#xA;    this.subject[row][5] = entry.indicators.obv&#xD;&#xA;    this.subject[row][6] = entry.indicators.macd&#xD;&#xA;    this.subject[row][7] = entry.indicators.bb_upper&#xD;&#xA;    this.subject[row][8] = entry.indicators.bb_mid&#xD;&#xA;    this.subject[row][9] = entry.indicators.bb_lower&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[//엑셀 기준 B8 = (0, 0)
+
+this.top_mover_forecast = ToJson(this.top_mover_forecast)
+this.Gemini_Api = ToJson(this.Gemini_Api)
+let bass = 0
+
+
+// AI 분석
+let row_AI = 30
+this.subject[row_AI][1] = '1일'
+this.subject[row_AI][2] = this.Gemini_Api.periods['하루'].verdict
+this.subject[row_AI][3] = this.Gemini_Api.periods['하루'].text.split("\n\n")[1];
+this.subject[row_AI + 1][1] = '1주'
+this.subject[row_AI + 1][2] = this.Gemini_Api.periods['일주일'].verdict
+this.subject[row_AI + 1][3] = this.Gemini_Api.periods['일주일'].text.split("\n\n")[1];
+this.subject[row_AI + 2][1] = '1개월'
+this.subject[row_AI + 2][2] = this.Gemini_Api.periods['한 달'].verdict
+this.subject[row_AI + 2][3] = this.Gemini_Api.periods['한 달'].text.split("\n\n")[1];
+this.subject[row_AI + 3][1] = '6개월'
+this.subject[row_AI + 3][2] = this.Gemini_Api.periods['6개월'].verdict
+this.subject[row_AI + 3][3] = this.Gemini_Api.periods['6개월'].text.split("\n\n")[1];
+this.subject[row_AI + 4][1] = '1년'
+this.subject[row_AI + 4][2] = this.Gemini_Api.periods['일 년'].verdict
+this.subject[row_AI + 4][3] = this.Gemini_Api.periods['일 년'].text.split("\n\n")[1];
+
+for(let i = 0; i < this.top_mover_forecast.entries.length; i++) {
+    let entry = this.top_mover_forecast.entries[i]
+    
+    // 기간별 예측값
+    bass = 4 * i + i 
+    let row = 2 + bass
+    for(let s = 0; s < entry.horizons.length; s++) {
+        if (entry.horizons[s].horizon == '1d') {
+            this.subject[row][3] = '1일'
+        }else if (entry.horizons[s].horizon == '1w') {
+            this.subject[row][3] = '1주'
+        }else if (entry.horizons[s].horizon == '1m') {
+            this.subject[row][3] = '1개월'
+        }else if (entry.horizons[s].horizon == '6m') {
+            this.subject[row][3] = '6개월'
+        }else if (entry.horizons[s].horizon == '1y') {
+            this.subject[row][3] = '1년'
+        }else {
+            this.subject[row][3] = '그 외'
+        }
+        
+        this.subject[row][4] = entry.horizons[s].predicted_price
+        this.subject[row][5] = entry.horizons[s].actual_price
+        this.subject[row][6] = entry.horizons[s].abs_error
+        this.subject[row][7] = entry.horizons[s].predicted_return
+        this.subject[row][8] = entry.horizons[s].actual_return
+        this.subject[row][9] = entry.horizons[s].return_abs_error
+        
+        row++
+    }
+}
+
+for (let i = 0; i < this.top_mover_forecast.entries.length; i++) {
+    let entry = this.top_mover_forecast.entries[i]
+    
+    // 기준 시점 주가 및 거래량
+    row = 38 + i 
+    this.subject[row][3] = entry.current_price
+    this.subject[row][4] = entry.change_pct + '%'
+    this.subject[row][5] = entry.indicators.obv
+    this.subject[row][6] = entry.fundamentals.market_cap
+
+    // 재무제표
+    row = 46 + i 
+    this.subject[row][3] = entry.fundamentals.fund_revenue
+    this.subject[row][4] = entry.fundamentals.fund_operating_income
+    this.subject[row][5] = entry.fundamentals.fund_net_income
+    this.subject[row][6] = Math.round(entry.fundamentals.per * 100) / 100
+    this.subject[row][7] = Math.round(entry.fundamentals.pbr * 100) / 100
+    this.subject[row][8] = entry.fundamentals.roe
+    this.subject[row][9] = entry.fundamentals.roa
+    this.subject[row][10] = Math.round(entry.fundamentals.debt_ratio * 100) / 100 + '%'
+    this.subject[row][11] = Math.round(entry.fundamentals.current_ratio * 100) / 100 + '%'
+    this.subject[row][12] = Math.round(entry.fundamentals.quick_ratio * 100) / 100 + '%'
+    this.subject[row][13] = Math.round(entry.fundamentals.equity_ratio * 100) / 100 + '%'
+
+    // 기술적 지표
+    row = 55 + i 
+    this.subject[row][3] = Math.round(entry.indicators.rsi)
+    
+    let rsi_level
+    if(this.subject[row][3] >= 71) {
+        rsi_level = '과매수'
+    }else if((this.subject[row][3] >= 61) && (this.subject[row][3] <= 70)){
+        rsi_level = '과매수 경계'
+    }else if((this.subject[row][3] >= 41) && (this.subject[row][3] <= 60)){
+        rsi_level = '중립'
+    }else if((this.subject[row][3] >= 31) && (this.subject[row][3] <= 40)){
+        rsi_level = '과매도 경계'
+    }else if (this.subject[row][3] <= 30){
+        rsi_level = '과매도'
+    }else {
+        rsi_level = '없음'
+    }
+    
+    this.subject[row][4] = rsi_level
+    this.subject[row][5] = entry.indicators.obv
+    this.subject[row][6] = entry.indicators.macd
+    this.subject[row][7] = entry.indicators.bb_upper
+    this.subject[row][8] = entry.indicators.bb_mid
+    this.subject[row][9] = entry.indicators.bb_lower
+}
+
+
+]]></Script>
+    </Step>
+    <Step id="Sf778cef14bef4312933fa0640aaa3ca3" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="this.report_IsDirectoryExist" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="122f0348-b30c-4bd0-a310-f98df3ec189b" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.report_path" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.report_IsDirectoryExist" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.report_IsDirectoryExist = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_17);]]></Script>
+    </Step>
+    <Step id="S1c7fc2c8fe1244ee9a5e3aa1416017d5" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.report_IsDirectoryExist != true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="797d24cd-8beb-41af-8d85-c419e531fc30" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.report_IsDirectoryExist != true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.report_IsDirectoryExist != true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S40837777a44b437aac2af6e343283f69" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (this.report_IsDirectoryExist != true) {]]></Script>
+    </Step>
+    <Step id="Sf68536505cd54ab38be8ee7396a4cf2c" ver="311241220" createVer="311241220" type="Desktop" name="CreateDirectory" dpName="CreateDirectory" dpValue="Global.report_path" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="72c949b7-8267-4e97-941c-ca2727b42e39" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.report_path" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_19);]]></Script>
+    </Step>
+    <Step id="S40837777a44b437aac2af6e343283f69" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="38bf2dbf-0c65-49d9-be0b-09535a4c1c58" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S1c7fc2c8fe1244ee9a5e3aa1416017d5" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S11aadc2e6bf7404c95b7270b9da669da" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="this.create_excel" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="00e560b1-3db4-422e-882a-2c27d4245745" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="File" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.report_path + '\\보고서_' + Global.date + '.xlsx'" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.create_excel" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.create_excel = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_21);]]></Script>
+    </Step>
+    <Step id="S1fd10fdcab984b9f97afcfdb99c61ce8" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.create_excel != true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="f694772f-4b23-4d0c-b7af-82d25def885a" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.create_excel != true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.create_excel != true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S523a711ac334415992ef4e21c2a03eee" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (this.create_excel != true) {]]></Script>
+    </Step>
+    <Step id="S46037024c454431c8939d21b294bb733" ver="311241220" createVer="311241220" type="Excel" name="CreateExcel" dpName="CreateExcel" dpValue="Global.report_path + '\보고서_' + Global.date + '.xlsx'" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="d26bef3f-fbdb-4aab-8804-211041e023e7" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="File_Path" controlType="Excel" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.report_path + '\\보고서_' + Global.date + '.xlsx'" />
+        <Property type="Excel" key="File_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.CreateExcel', this.createexcel_info_23);]]></Script>
+    </Step>
+    <Step id="S523a711ac334415992ef4e21c2a03eee" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="1c0b9d11-637c-47b2-973b-63464bf2cf94" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S1fd10fdcab984b9f97afcfdb99c61ce8" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S80edd13abdb74566b57033b4833c2df3" ver="311241220" createVer="311241220" type="Excel" name="OpenExcel" dpName="OpenExcel" dpValue="Global.report_path + '\보고서_' + Global.date + '.xlsx'" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="a65e4c23-603c-45b1-bb0a-0a2d2f3f42d7" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Output_OutputExcel" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="RESULT" />
+        <Property type="Excel" key="File_Path" controlType="Excel" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.report_path + '\\보고서_' + Global.date + '.xlsx'" order="11" />
+        <Property type="Excel" key="File_Invisible" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" order="12" />
+        <Property type="Excel" key="File_ReadOnly" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" order="16" />
+        <Property type="Excel" key="File_Maximize" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" order="13" />
+        <Property type="Excel" key="File_ExecuteShell" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" order="14" />
+        <Property type="Excel" key="File_Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="60" order="15" />
+        <Property type="Excel" key="File_UsePassword" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" order="17" />
+        <Property type="Excel" key="File_OpenPassword" controlType="PropertyItemPasswordView" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="Y" value="" order="18" />
+        <Property type="Excel" key="File_WritePassword" controlType="PropertyItemPasswordView" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="Y" value="" order="19" />
+        <Property type="Excel" key="File_TextDelimiter" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Comma(,)" valuelist="Comma(,);Colon(:);Semicolon(;;);Caret(^);Pipe(|);Tab(&#x9;);Space( );Ampersand(&amp;);Ampersat(@);Asterisk(*);Backslash(\);Dollar($);Dot(.);Equals(=);Exclamation(!);Hyphen(-);Percent(%);Plus(+);Question(?);Sharp(#);Slash(/);Tilde(~);Underscore(_);SystemDynamic(System)" order="20" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RESULT = StepPlayer.Run('Excel.OpenExcel', this.openexcel_info_25);]]></Script>
+    </Step>
+    <Step id="S1978ff040f114f789d9dbed6b763e0f4" ver="311241220" createVer="311241220" type="Excel" name="CreateWorkSheet" dpName="CreateWorkSheet" dpValue="this.datetime" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="fb9bc476-f68b-46bc-8117-16982ee7ec0a" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.datetime" />
+        <Property type="Excel" key="Sheet_Position" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.CreateWorkSheet', this.createworksheet_info_26);]]></Script>
+    </Step>
+    <Step id="S6a8f56654da444029d558394e11f5815" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.create_excel != true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="f694772f-4b23-4d0c-b7af-82d25def885a" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.create_excel != true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.create_excel != true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S1c8e8a0307a24d47879b8154712e9f6f" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (this.create_excel != true) {]]></Script>
+    </Step>
+    <Step id="Sdc15378c005246bf82d4803d01aa15bb" ver="311241220" createVer="311241220" type="Excel" name="DeleteWorkSheet" dpName="DeleteWorkSheet" dpValue="Sheet1" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="f380ebfa-fa2f-415d-a2a3-481dac044d50" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'Sheet1'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.DeleteWorkSheet', this.deleteworksheet_info_28);]]></Script>
+    </Step>
+    <Step id="S1c8e8a0307a24d47879b8154712e9f6f" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="1c0b9d11-637c-47b2-973b-63464bf2cf94" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S6a8f56654da444029d558394e11f5815" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S30f45dd43d9d4d938001644190b5946e" ver="311241220" createVer="311241220" type="Excel" name="WriteRange" dpName="WriteRange" dpValue="ACTIVE_SHEET" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="e9ee1126-4ab1-4052-83d5-52718c8ca304" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Input_DataArray" controlType="Object[][]" valueType="System.Object[][]" formatType="Array2D" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.header" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_StartCell" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B2'" />
+        <Property type="Excel" key="File_AutoSave" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.WriteRange', this.writerange_info_30);]]></Script>
+    </Step>
+    <Step id="Sbb660802883b4f0d96684e934d1074d4" ver="311241220" createVer="311241220" type="Excel" name="WriteRange" dpName="WriteRange" dpValue="ACTIVE_SHEET" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="e9ee1126-4ab1-4052-83d5-52718c8ca304" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Input_DataArray" controlType="Object[][]" valueType="System.Object[][]" formatType="Array2D" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.subject" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_StartCell" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B8'" />
+        <Property type="Excel" key="File_AutoSave" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.WriteRange', this.writerange_info_31);]]></Script>
+    </Step>
+    <Step id="S21f83792bc5e4aee8629b1e1d20b2318" ver="311241220" createVer="311241220" type="Excel" name="SelectRange" dpName="SelectRange" dpValue="B2:P2, B4:D4, B5:D5, B6:D6, E4:P4, E5:P5, E6:P6" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="05b61d76-0192-4a8a-a1a5-025b9a2ab923" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B2:P2, B4:D4, B5:D5, B6:D6, E4:P4, E5:P5, E6:P6'" />
+        <Property type="Excel" key="Sheet_MouseType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="None" valuelist="None;LeftClick;RightClick;DoubleClick;Hover" />
+        <Property type="Excel" key="Sheet_MousePos" controlType="String" valueType="System.String" formatType="String_Point" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'-1, -1'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SelectRange', this.selectrange_info_32);]]></Script>
+    </Step>
+    <Step id="Sad64145c18b740868763a037e72a611e" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="04e9a01e-85e7-4d64-97c4-ee25237ea4f2" type="Win">
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LMenu,,H,,M,,C," order="1" ready="True" />
+        <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="20" />
+        <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_33);]]></Script>
+    </Step>
+    <Step id="S486f7fca77e74683a73c62a224a77a0b" ver="311241220" createVer="311241220" type="Excel" name="SelectRange" dpName="SelectRange" dpValue="B10:B14, C10:C14, D10:D14, L9:P9, L10:P10, L11:P11, L12:P12, L13:P13, L14:P14, B15:B19, C15:C19, D15:D19, L15:P15, L16:P16, L17:P17, L18:P18, L19:P19, B20:B24, C20:C24, D20:D24, L20:P20, L21:P21, L22:P22, L23:P23, L24:P24" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="05b61d76-0192-4a8a-a1a5-025b9a2ab923" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B10:B14, C10:C14, D10:D14, L9:P9, L10:P10, L11:P11, L12:P12, L13:P13, L14:P14, B15:B19, C15:C19, D15:D19, L15:P15, L16:P16, L17:P17, L18:P18, L19:P19, B20:B24, C20:C24, D20:D24, L20:P20, L21:P21, L22:P22, L23:P23, L24:P24'" />
+        <Property type="Excel" key="Sheet_MouseType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="None" valuelist="None;LeftClick;RightClick;DoubleClick;Hover" />
+        <Property type="Excel" key="Sheet_MousePos" controlType="String" valueType="System.String" formatType="String_Point" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'-1, -1'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SelectRange', this.selectrange_info_34);]]></Script>
+    </Step>
+    <Step id="Scb700291bcf440f8b3f8d2571d14d4f7" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="04e9a01e-85e7-4d64-97c4-ee25237ea4f2" type="Win">
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LMenu,,H,,M,,C," order="1" ready="True" />
+        <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="20" />
+        <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_35);]]></Script>
+    </Step>
+    <Step id="S9bf2b57baba2494ba80e7dfe51490ecc" ver="311241220" createVer="311241220" type="Excel" name="SelectRange" dpName="SelectRange" dpValue="B25:B29, C25:C29, D25:D29, L25:P25, L26:P26, L27:P27, L28:P28, L29:P29, B30:B34, C30:C34, D30:D34, L30:P30, L31:P31, L32:P32, L33:P33, L34:P34, E36:O36, E37:O37, E38:O38, E39:O39, E40:O40, E41:O41, E42:O42" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="05b61d76-0192-4a8a-a1a5-025b9a2ab923" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B25:B29, C25:C29, D25:D29, L25:P25, L26:P26, L27:P27, L28:P28, L29:P29, B30:B34, C30:C34, D30:D34, L30:P30, L31:P31, L32:P32, L33:P33, L34:P34, E36:O36, E37:O37, E38:O38, E39:O39, E40:O40, E41:O41, E42:O42'" />
+        <Property type="Excel" key="Sheet_MouseType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="None" valuelist="None;LeftClick;RightClick;DoubleClick;Hover" />
+        <Property type="Excel" key="Sheet_MousePos" controlType="String" valueType="System.String" formatType="String_Point" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'-1, -1'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SelectRange', this.selectrange_info_36);]]></Script>
+    </Step>
+    <Step id="Scf0c64c0877f4aa884cea29bcab91e30" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="04e9a01e-85e7-4d64-97c4-ee25237ea4f2" type="Win">
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LMenu,,H,,M,,C," order="1" ready="True" />
+        <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="20" />
+        <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_37);]]></Script>
+    </Step>
+    <Step id="S0c5690e9f6c44489baa6e0c0ef4ba808" ver="311241220" createVer="311241220" type="Excel" name="SelectRange" dpName="SelectRange" dpValue="'I45:P45, I46:P46, I47:P47, I48:P48, I49:P49, I50:P50, B61:B62, C61:C62, D61:D62, E61:F62, G61:G62, H61:H62, I61:K61, L61:P62, L63:P63, L64:P64, L65:P65, L66:P66, L67:P67' " dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="05b61d76-0192-4a8a-a1a5-025b9a2ab923" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'I45:P45, I46:P46, I47:P47, I48:P48, I49:P49, I50:P50, B61:B62, C61:C62, D61:D62, E61:F62, G61:G62, H61:H62, I61:K61, L61:P62, L63:P63, L64:P64, L65:P65, L66:P66, L67:P67' " />
+        <Property type="Excel" key="Sheet_MouseType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="None" valuelist="None;LeftClick;RightClick;DoubleClick;Hover" />
+        <Property type="Excel" key="Sheet_MousePos" controlType="String" valueType="System.String" formatType="String_Point" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'-1, -1'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SelectRange', this.selectrange_info_38);]]></Script>
+    </Step>
+    <Step id="S7d29b68a905d49bb815e370c9bc2ba1c" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="04e9a01e-85e7-4d64-97c4-ee25237ea4f2" type="Win">
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LMenu,,H,,M,,C," order="1" ready="True" />
+        <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="20" />
+        <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_39);]]></Script>
+    </Step>
+    <Step id="Scb0f5d0d967142478587fd43abd3cf0d" ver="311241220" createVer="311241220" type="Excel" name="SelectRange" dpName="SelectRange" dpValue="J70:O70, J71:O71, J72:O72, J73:O73, J74:O74, J75:O75" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="05b61d76-0192-4a8a-a1a5-025b9a2ab923" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'J70:O70, J71:O71, J72:O72, J73:O73, J74:O74, J75:O75'" />
+        <Property type="Excel" key="Sheet_MouseType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="None" valuelist="None;LeftClick;RightClick;DoubleClick;Hover" />
+        <Property type="Excel" key="Sheet_MousePos" controlType="String" valueType="System.String" formatType="String_Point" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'-1, -1'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SelectRange', this.selectrange_info_40);]]></Script>
+    </Step>
+    <Step id="S1abc295fe35d4989a425328c280ab183" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="04e9a01e-85e7-4d64-97c4-ee25237ea4f2" type="Win">
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LMenu,,H,,M,,C," order="1" ready="True" />
+        <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="100" />
+        <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="20" />
+        <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_41);]]></Script>
+    </Step>
+    <Step id="S1bf6d51cc2ef4bdeb3d92a9b796cbf94" ver="311241220" createVer="311241220" type="Excel" name="SetBorderRange" dpName="SetBorderRange" dpValue="B4:P6, B9:P34, B37:P42, B9:P34, B45:P50, B53:P58, B61:P67, B70:P75" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="43d47795-0500-44ff-8864-9ada2d1e2dad" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B4:P6, B9:P34, B37:P42, B9:P34, B45:P50, B53:P58, B61:P67, B70:P75'" />
+        <Property type="Excel" key="Cell_Overlay" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+        <Property type="Excel" key="Cell_Border" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="All Borders" valuelist=";Bottom Border;Top Border;Left Border;Right Border;No Border;All Borders;Outside Borders;Thick Box Border;Bottom Double Border;Thick Bottom Border;Top and Bottom Border;Top and Thick Bottom Border;Top and Double Bottom Border" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SetBorderRange', this.setborderrange_info_42);]]></Script>
+    </Step>
+    <Step id="S35f5544c97514477b53d57505d942f4f" ver="311241220" createVer="311241220" type="Excel" name="SetStyleRange" dpName="SetStyleRange" dpValue="B4:D6, B9:P9, B37:P37, B45:P45, B53:P53, B61:P62, B70:P70" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="5cc0e988-1055-4572-8472-89d291f9e387" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B4:D6, B9:P9, B37:P37, B45:P45, B53:P53, B61:P62, B70:P70'" />
+        <Property type="Excel" key="Cell_FontName" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist="Agency FB;Algerian;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Bahnschrift;Bahnschrift Condensed;Bahnschrift Light;Bahnschrift Light Condensed;Bahnschrift Light SemiCondensed;Bahnschrift SemiBold;Bahnschrift SemiBold Condensed;Bahnschrift SemiBold SemiConden;Bahnschrift SemiCondensed;Bahnschrift SemiLight;Bahnschrift SemiLight Condensed;Bahnschrift SemiLight SemiConde;Baskerville Old Face;Bauhaus 93;Bell MT;Berlin Sans FB;Berlin Sans FB Demi;Bernard MT Condensed;Blackadder ITC;Bodoni MT;Bodoni MT Black;Bodoni MT Condensed;Bodoni MT Poster Compressed;Book Antiqua;Bookman Old Style;Bookshelf Symbol 7;Bradley Hand ITC;Britannic Bold;Broadway;Brush Script MT;Calibri;Calibri Light;Californian FB;Calisto MT;Cambria;Cambria Math;Candara;Candara Light;Castellar;Centaur;Century;Century Gothic;Century Schoolbook;Chiller;Colonna MT;Comic Sans MS;Consolas;Constantia;Cooper Black;Copperplate Gothic Bold;Copperplate Gothic Light;Corbel;Corbel Light;Courier New;Curlz MT;Dubai;Dubai Light;Dubai Medium;Ebrima;Edwardian Script ITC;Elephant;Engravers MT;Eras Bold ITC;Eras Demi ITC;Eras Light ITC;Eras Medium ITC;Felix Titling;Footlight MT Light;Forte;Franklin Gothic Book;Franklin Gothic Demi;Franklin Gothic Demi Cond;Franklin Gothic Heavy;Franklin Gothic Medium;Franklin Gothic Medium Cond;Freestyle Script;French Script MT;Gabriola;Gadugi;Garamond;Georgia;Gigi;Gill Sans MT;Gill Sans MT Condensed;Gill Sans MT Ext Condensed Bold;Gill Sans Ultra Bold;Gill Sans Ultra Bold Condensed;Gloucester MT Extra Condensed;Goudy Old Style;Goudy Stout;Haan Wing2;Haettenschweiler;HancomEQN;Harlow Solid Italic;Harrington;High Tower Text;HoloLens MDL2 Assets;HyhwpEQ;HY견고딕;HY견명조;HY궁서B;HY그래픽M;HY목각파임B;HY신명조;HY얕은샘물M;HY엽서L;HY엽서M;HY중고딕;HY헤드라인M;Impact;Imprint MT Shadow;Informal Roman;Ink Free;Javanese Text;Jokerman;Juice ITC;Kristen ITC;Kunstler Script;Leelawadee;Leelawadee UI;Leelawadee UI Semilight;Lucida Bright;Lucida Calligraphy;Lucida Console;Lucida Fax;Lucida Handwriting;Lucida Sans;Lucida Sans Typewriter;Lucida Sans Unicode;Magneto;Maiandra GD;Marlett;Matura MT Script Capitals;Microsoft Himalaya;Microsoft JhengHei;Microsoft JhengHei Light;Microsoft JhengHei UI;Microsoft JhengHei UI Light;Microsoft New Tai Lue;Microsoft PhagsPa;Microsoft Sans Serif;Microsoft Tai Le;Microsoft Uighur;Microsoft YaHei;Microsoft YaHei Light;Microsoft YaHei UI;Microsoft YaHei UI Light;Microsoft Yi Baiti;MingLiU-ExtB;MingLiU_HKSCS-ExtB;Mistral;Modern No. 20;Mongolian Baiti;Monotype Corsiva;MS Gothic;MS Outlook;MS PGothic;MS Reference Sans Serif;MS Reference Specialty;MS UI Gothic;MT Extra;MV Boli;Myanmar Text;NewJumja;Niagara Engraved;Niagara Solid;Nirmala UI;Nirmala UI Semilight;Noto Sans KR;Noto Sans KR Black;Noto Sans KR DemiLight;Noto Sans KR ExtraBold;Noto Sans KR Light;Noto Sans KR Medium;Noto Sans KR Thin;NSimSun;OCR A Extended;Old English Text MT;Onyx;Palace Script MT;Palatino Linotype;Papyrus;Parchment;Perpetua;Perpetua Titling MT;Playbill;PMingLiU-ExtB;Poor Richard;Pristina;Rage Italic;Ravie;Rockwell;Rockwell Condensed;Rockwell Extra Bold;Script MT Bold;Segoe MDL2 Assets;Segoe Print;Segoe Script;Segoe UI;Segoe UI Black;Segoe UI Emoji;Segoe UI Historic;Segoe UI Light;Segoe UI Semibold;Segoe UI Semilight;Segoe UI Symbol;Showcard Gothic;SimSun;SimSun-ExtB;SimSun-ExtG;Sitka Banner;Sitka Display;Sitka Heading;Sitka Small;Sitka Subheading;Sitka Text;Snap ITC;Stencil;Sylfaen;Symbol;Tahoma;Tempus Sans ITC;Times New Roman;Trebuchet MS;Tw Cen MT;Tw Cen MT Condensed;Tw Cen MT Condensed Extra Bold;Verdana;Viner Hand ITC;Vivaldi;Vladimir Script;Webdings;Wide Latin;Wingdings;Wingdings 2;Wingdings 3;Yu Gothic;Yu Gothic Light;Yu Gothic Medium;Yu Gothic UI;Yu Gothic UI Light;Yu Gothic UI Semibold;Yu Gothic UI Semilight;굴림;굴림체;궁서;궁서체;돋움;돋움체;맑은 고딕;맑은 고딕 Semilight;바탕;바탕체;새굴림;한컴 고딕;한컴산뜻돋움;함초롬돋움;함초롬돋움 확장;함초롬바탕;함초롬바탕 확장;함초롬바탕 확장B;휴먼둥근헤드라인;휴먼매직체;휴먼모음T;휴먼아미체;휴먼엑스포;휴먼옛체;휴먼편지체" />
+        <Property type="Excel" key="Cell_FontBold" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontItalic" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontUnderline" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontSize" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_FontColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_BackgroundColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'217,225,242'" />
+        <Property type="Excel" key="Cell_Width" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_Height" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_AlignHorizontal" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist=";Right;Left;Justify;Distributed;Center;General;Fill;CenterAcrossSelection" />
+        <Property type="Excel" key="Cell_AlignVertical" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist=";Top;Justify;Distributed;Center;Bottom" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_43);]]></Script>
+    </Step>
+    <Step id="Sf87e184b0c2947bea0a33a6a723710e2" ver="311241220" createVer="311241220" type="Excel" name="SetStyleRange" dpName="SetStyleRange" dpValue="B2, B8, B36, B44, B52, B60, B69" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="5cc0e988-1055-4572-8472-89d291f9e387" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B2, B8, B36, B44, B52, B60, B69'" />
+        <Property type="Excel" key="Cell_FontName" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist="Agency FB;Algerian;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Bahnschrift;Bahnschrift Condensed;Bahnschrift Light;Bahnschrift Light Condensed;Bahnschrift Light SemiCondensed;Bahnschrift SemiBold;Bahnschrift SemiBold Condensed;Bahnschrift SemiBold SemiConden;Bahnschrift SemiCondensed;Bahnschrift SemiLight;Bahnschrift SemiLight Condensed;Bahnschrift SemiLight SemiConde;Baskerville Old Face;Bauhaus 93;Bell MT;Berlin Sans FB;Berlin Sans FB Demi;Bernard MT Condensed;Blackadder ITC;Bodoni MT;Bodoni MT Black;Bodoni MT Condensed;Bodoni MT Poster Compressed;Book Antiqua;Bookman Old Style;Bookshelf Symbol 7;Bradley Hand ITC;Britannic Bold;Broadway;Brush Script MT;Calibri;Calibri Light;Californian FB;Calisto MT;Cambria;Cambria Math;Candara;Candara Light;Castellar;Centaur;Century;Century Gothic;Century Schoolbook;Chiller;Colonna MT;Comic Sans MS;Consolas;Constantia;Cooper Black;Copperplate Gothic Bold;Copperplate Gothic Light;Corbel;Corbel Light;Courier New;Curlz MT;Dubai;Dubai Light;Dubai Medium;Ebrima;Edwardian Script ITC;Elephant;Engravers MT;Eras Bold ITC;Eras Demi ITC;Eras Light ITC;Eras Medium ITC;Felix Titling;Footlight MT Light;Forte;Franklin Gothic Book;Franklin Gothic Demi;Franklin Gothic Demi Cond;Franklin Gothic Heavy;Franklin Gothic Medium;Franklin Gothic Medium Cond;Freestyle Script;French Script MT;Gabriola;Gadugi;Garamond;Georgia;Gigi;Gill Sans MT;Gill Sans MT Condensed;Gill Sans MT Ext Condensed Bold;Gill Sans Ultra Bold;Gill Sans Ultra Bold Condensed;Gloucester MT Extra Condensed;Goudy Old Style;Goudy Stout;Haan Wing2;Haettenschweiler;HancomEQN;Harlow Solid Italic;Harrington;High Tower Text;HoloLens MDL2 Assets;HyhwpEQ;HY견고딕;HY견명조;HY궁서B;HY그래픽M;HY목각파임B;HY신명조;HY얕은샘물M;HY엽서L;HY엽서M;HY중고딕;HY헤드라인M;Impact;Imprint MT Shadow;Informal Roman;Ink Free;Javanese Text;Jokerman;Juice ITC;Kristen ITC;Kunstler Script;Leelawadee;Leelawadee UI;Leelawadee UI Semilight;Lucida Bright;Lucida Calligraphy;Lucida Console;Lucida Fax;Lucida Handwriting;Lucida Sans;Lucida Sans Typewriter;Lucida Sans Unicode;Magneto;Maiandra GD;Marlett;Matura MT Script Capitals;Microsoft Himalaya;Microsoft JhengHei;Microsoft JhengHei Light;Microsoft JhengHei UI;Microsoft JhengHei UI Light;Microsoft New Tai Lue;Microsoft PhagsPa;Microsoft Sans Serif;Microsoft Tai Le;Microsoft Uighur;Microsoft YaHei;Microsoft YaHei Light;Microsoft YaHei UI;Microsoft YaHei UI Light;Microsoft Yi Baiti;MingLiU-ExtB;MingLiU_HKSCS-ExtB;Mistral;Modern No. 20;Mongolian Baiti;Monotype Corsiva;MS Gothic;MS Outlook;MS PGothic;MS Reference Sans Serif;MS Reference Specialty;MS UI Gothic;MT Extra;MV Boli;Myanmar Text;NewJumja;Niagara Engraved;Niagara Solid;Nirmala UI;Nirmala UI Semilight;Noto Sans KR;Noto Sans KR Black;Noto Sans KR DemiLight;Noto Sans KR ExtraBold;Noto Sans KR Light;Noto Sans KR Medium;Noto Sans KR Thin;NSimSun;OCR A Extended;Old English Text MT;Onyx;Palace Script MT;Palatino Linotype;Papyrus;Parchment;Perpetua;Perpetua Titling MT;Playbill;PMingLiU-ExtB;Poor Richard;Pristina;Rage Italic;Ravie;Rockwell;Rockwell Condensed;Rockwell Extra Bold;Script MT Bold;Segoe MDL2 Assets;Segoe Print;Segoe Script;Segoe UI;Segoe UI Black;Segoe UI Emoji;Segoe UI Historic;Segoe UI Light;Segoe UI Semibold;Segoe UI Semilight;Segoe UI Symbol;Showcard Gothic;SimSun;SimSun-ExtB;SimSun-ExtG;Sitka Banner;Sitka Display;Sitka Heading;Sitka Small;Sitka Subheading;Sitka Text;Snap ITC;Stencil;Sylfaen;Symbol;Tahoma;Tempus Sans ITC;Times New Roman;Trebuchet MS;Tw Cen MT;Tw Cen MT Condensed;Tw Cen MT Condensed Extra Bold;Verdana;Viner Hand ITC;Vivaldi;Vladimir Script;Webdings;Wide Latin;Wingdings;Wingdings 2;Wingdings 3;Yu Gothic;Yu Gothic Light;Yu Gothic Medium;Yu Gothic UI;Yu Gothic UI Light;Yu Gothic UI Semibold;Yu Gothic UI Semilight;굴림;굴림체;궁서;궁서체;돋움;돋움체;맑은 고딕;맑은 고딕 Semilight;바탕;바탕체;새굴림;한컴 고딕;한컴산뜻돋움;함초롬돋움;함초롬돋움 확장;함초롬바탕;함초롬바탕 확장;함초롬바탕 확장B;휴먼둥근헤드라인;휴먼매직체;휴먼모음T;휴먼아미체;휴먼엑스포;휴먼옛체;휴먼편지체" />
+        <Property type="Excel" key="Cell_FontBold" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontItalic" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontUnderline" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontSize" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_FontColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_BackgroundColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_Width" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_Height" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_AlignHorizontal" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist=";Right;Left;Justify;Distributed;Center;General;Fill;CenterAcrossSelection" />
+        <Property type="Excel" key="Cell_AlignVertical" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist=";Top;Justify;Distributed;Center;Bottom" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_44);]]></Script>
+    </Step>
+    <Step id="Secc8909f73e846b8ba30785eb1122501" ver="311241220" createVer="311241220" type="Excel" name="SetStyleRange" dpName="SetStyleRange" dpValue="B2" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="5cc0e988-1055-4572-8472-89d291f9e387" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B2'" />
+        <Property type="Excel" key="Cell_FontName" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist="Agency FB;Algerian;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Bahnschrift;Bahnschrift Condensed;Bahnschrift Light;Bahnschrift Light Condensed;Bahnschrift Light SemiCondensed;Bahnschrift SemiBold;Bahnschrift SemiBold Condensed;Bahnschrift SemiBold SemiConden;Bahnschrift SemiCondensed;Bahnschrift SemiLight;Bahnschrift SemiLight Condensed;Bahnschrift SemiLight SemiConde;Baskerville Old Face;Bauhaus 93;Bell MT;Berlin Sans FB;Berlin Sans FB Demi;Bernard MT Condensed;Blackadder ITC;Bodoni MT;Bodoni MT Black;Bodoni MT Condensed;Bodoni MT Poster Compressed;Book Antiqua;Bookman Old Style;Bookshelf Symbol 7;Bradley Hand ITC;Britannic Bold;Broadway;Brush Script MT;Calibri;Calibri Light;Californian FB;Calisto MT;Cambria;Cambria Math;Candara;Candara Light;Castellar;Centaur;Century;Century Gothic;Century Schoolbook;Chiller;Colonna MT;Comic Sans MS;Consolas;Constantia;Cooper Black;Copperplate Gothic Bold;Copperplate Gothic Light;Corbel;Corbel Light;Courier New;Curlz MT;Dubai;Dubai Light;Dubai Medium;Ebrima;Edwardian Script ITC;Elephant;Engravers MT;Eras Bold ITC;Eras Demi ITC;Eras Light ITC;Eras Medium ITC;Felix Titling;Footlight MT Light;Forte;Franklin Gothic Book;Franklin Gothic Demi;Franklin Gothic Demi Cond;Franklin Gothic Heavy;Franklin Gothic Medium;Franklin Gothic Medium Cond;Freestyle Script;French Script MT;Gabriola;Gadugi;Garamond;Georgia;Gigi;Gill Sans MT;Gill Sans MT Condensed;Gill Sans MT Ext Condensed Bold;Gill Sans Ultra Bold;Gill Sans Ultra Bold Condensed;Gloucester MT Extra Condensed;Goudy Old Style;Goudy Stout;Haan Wing2;Haettenschweiler;HancomEQN;Harlow Solid Italic;Harrington;High Tower Text;HoloLens MDL2 Assets;HyhwpEQ;HY견고딕;HY견명조;HY궁서B;HY그래픽M;HY목각파임B;HY신명조;HY얕은샘물M;HY엽서L;HY엽서M;HY중고딕;HY헤드라인M;Impact;Imprint MT Shadow;Informal Roman;Ink Free;Javanese Text;Jokerman;Juice ITC;Kristen ITC;Kunstler Script;Leelawadee;Leelawadee UI;Leelawadee UI Semilight;Lucida Bright;Lucida Calligraphy;Lucida Console;Lucida Fax;Lucida Handwriting;Lucida Sans;Lucida Sans Typewriter;Lucida Sans Unicode;Magneto;Maiandra GD;Marlett;Matura MT Script Capitals;Microsoft Himalaya;Microsoft JhengHei;Microsoft JhengHei Light;Microsoft JhengHei UI;Microsoft JhengHei UI Light;Microsoft New Tai Lue;Microsoft PhagsPa;Microsoft Sans Serif;Microsoft Tai Le;Microsoft Uighur;Microsoft YaHei;Microsoft YaHei Light;Microsoft YaHei UI;Microsoft YaHei UI Light;Microsoft Yi Baiti;MingLiU-ExtB;MingLiU_HKSCS-ExtB;Mistral;Modern No. 20;Mongolian Baiti;Monotype Corsiva;MS Gothic;MS Outlook;MS PGothic;MS Reference Sans Serif;MS Reference Specialty;MS UI Gothic;MT Extra;MV Boli;Myanmar Text;NewJumja;Niagara Engraved;Niagara Solid;Nirmala UI;Nirmala UI Semilight;Noto Sans KR;Noto Sans KR Black;Noto Sans KR DemiLight;Noto Sans KR ExtraBold;Noto Sans KR Light;Noto Sans KR Medium;Noto Sans KR Thin;NSimSun;OCR A Extended;Old English Text MT;Onyx;Palace Script MT;Palatino Linotype;Papyrus;Parchment;Perpetua;Perpetua Titling MT;Playbill;PMingLiU-ExtB;Poor Richard;Pristina;Rage Italic;Ravie;Rockwell;Rockwell Condensed;Rockwell Extra Bold;Script MT Bold;Segoe MDL2 Assets;Segoe Print;Segoe Script;Segoe UI;Segoe UI Black;Segoe UI Emoji;Segoe UI Historic;Segoe UI Light;Segoe UI Semibold;Segoe UI Semilight;Segoe UI Symbol;Showcard Gothic;SimSun;SimSun-ExtB;SimSun-ExtG;Sitka Banner;Sitka Display;Sitka Heading;Sitka Small;Sitka Subheading;Sitka Text;Snap ITC;Stencil;Sylfaen;Symbol;Tahoma;Tempus Sans ITC;Times New Roman;Trebuchet MS;Tw Cen MT;Tw Cen MT Condensed;Tw Cen MT Condensed Extra Bold;Verdana;Viner Hand ITC;Vivaldi;Vladimir Script;Webdings;Wide Latin;Wingdings;Wingdings 2;Wingdings 3;Yu Gothic;Yu Gothic Light;Yu Gothic Medium;Yu Gothic UI;Yu Gothic UI Light;Yu Gothic UI Semibold;Yu Gothic UI Semilight;굴림;굴림체;궁서;궁서체;돋움;돋움체;맑은 고딕;맑은 고딕 Semilight;바탕;바탕체;새굴림;한컴 고딕;한컴산뜻돋움;함초롬돋움;함초롬돋움 확장;함초롬바탕;함초롬바탕 확장;함초롬바탕 확장B;휴먼둥근헤드라인;휴먼매직체;휴먼모음T;휴먼아미체;휴먼엑스포;휴먼옛체;휴먼편지체" />
+        <Property type="Excel" key="Cell_FontBold" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontItalic" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontUnderline" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontSize" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="18" />
+        <Property type="Excel" key="Cell_FontColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_BackgroundColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_Width" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_Height" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_AlignHorizontal" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist=";Right;Left;Justify;Distributed;Center;General;Fill;CenterAcrossSelection" />
+        <Property type="Excel" key="Cell_AlignVertical" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist=";Top;Justify;Distributed;Center;Bottom" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_45);]]></Script>
+    </Step>
+    <Step id="Sdcc1dd0b4f2f4fad897b8cbf60f84db3" ver="311241220" createVer="311241220" type="Excel" name="SetStyleRange" dpName="SetStyleRange" dpValue="B4:P6, B9:P34, B37:P42, B9:P34, B45:P50, B53:P58, B61:P67, B70:P75" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="5cc0e988-1055-4572-8472-89d291f9e387" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'B4:P6, B9:P34, B37:P42, B9:P34, B45:P50, B53:P58, B61:P67, B70:P75'" />
+        <Property type="Excel" key="Cell_FontName" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist="Agency FB;Algerian;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Bahnschrift;Bahnschrift Condensed;Bahnschrift Light;Bahnschrift Light Condensed;Bahnschrift Light SemiCondensed;Bahnschrift SemiBold;Bahnschrift SemiBold Condensed;Bahnschrift SemiBold SemiConden;Bahnschrift SemiCondensed;Bahnschrift SemiLight;Bahnschrift SemiLight Condensed;Bahnschrift SemiLight SemiConde;Baskerville Old Face;Bauhaus 93;Bell MT;Berlin Sans FB;Berlin Sans FB Demi;Bernard MT Condensed;Blackadder ITC;Bodoni MT;Bodoni MT Black;Bodoni MT Condensed;Bodoni MT Poster Compressed;Book Antiqua;Bookman Old Style;Bookshelf Symbol 7;Bradley Hand ITC;Britannic Bold;Broadway;Brush Script MT;Calibri;Calibri Light;Californian FB;Calisto MT;Cambria;Cambria Math;Candara;Candara Light;Castellar;Centaur;Century;Century Gothic;Century Schoolbook;Chiller;Colonna MT;Comic Sans MS;Consolas;Constantia;Cooper Black;Copperplate Gothic Bold;Copperplate Gothic Light;Corbel;Corbel Light;Courier New;Curlz MT;Dubai;Dubai Light;Dubai Medium;Ebrima;Edwardian Script ITC;Elephant;Engravers MT;Eras Bold ITC;Eras Demi ITC;Eras Light ITC;Eras Medium ITC;Felix Titling;Footlight MT Light;Forte;Franklin Gothic Book;Franklin Gothic Demi;Franklin Gothic Demi Cond;Franklin Gothic Heavy;Franklin Gothic Medium;Franklin Gothic Medium Cond;Freestyle Script;French Script MT;Gabriola;Gadugi;Garamond;Georgia;Gigi;Gill Sans MT;Gill Sans MT Condensed;Gill Sans MT Ext Condensed Bold;Gill Sans Ultra Bold;Gill Sans Ultra Bold Condensed;Gloucester MT Extra Condensed;Goudy Old Style;Goudy Stout;Haan Wing2;Haettenschweiler;HancomEQN;Harlow Solid Italic;Harrington;High Tower Text;HoloLens MDL2 Assets;HyhwpEQ;HY견고딕;HY견명조;HY궁서B;HY그래픽M;HY목각파임B;HY신명조;HY얕은샘물M;HY엽서L;HY엽서M;HY중고딕;HY헤드라인M;Impact;Imprint MT Shadow;Informal Roman;Ink Free;Javanese Text;Jokerman;Juice ITC;Kristen ITC;Kunstler Script;Leelawadee;Leelawadee UI;Leelawadee UI Semilight;Lucida Bright;Lucida Calligraphy;Lucida Console;Lucida Fax;Lucida Handwriting;Lucida Sans;Lucida Sans Typewriter;Lucida Sans Unicode;Magneto;Maiandra GD;Marlett;Matura MT Script Capitals;Microsoft Himalaya;Microsoft JhengHei;Microsoft JhengHei Light;Microsoft JhengHei UI;Microsoft JhengHei UI Light;Microsoft New Tai Lue;Microsoft PhagsPa;Microsoft Sans Serif;Microsoft Tai Le;Microsoft Uighur;Microsoft YaHei;Microsoft YaHei Light;Microsoft YaHei UI;Microsoft YaHei UI Light;Microsoft Yi Baiti;MingLiU-ExtB;MingLiU_HKSCS-ExtB;Mistral;Modern No. 20;Mongolian Baiti;Monotype Corsiva;MS Gothic;MS Outlook;MS PGothic;MS Reference Sans Serif;MS Reference Specialty;MS UI Gothic;MT Extra;MV Boli;Myanmar Text;NewJumja;Niagara Engraved;Niagara Solid;Nirmala UI;Nirmala UI Semilight;Noto Sans KR;Noto Sans KR Black;Noto Sans KR DemiLight;Noto Sans KR ExtraBold;Noto Sans KR Light;Noto Sans KR Medium;Noto Sans KR Thin;NSimSun;OCR A Extended;Old English Text MT;Onyx;Palace Script MT;Palatino Linotype;Papyrus;Parchment;Perpetua;Perpetua Titling MT;Playbill;PMingLiU-ExtB;Poor Richard;Pristina;Rage Italic;Ravie;Rockwell;Rockwell Condensed;Rockwell Extra Bold;Script MT Bold;Segoe MDL2 Assets;Segoe Print;Segoe Script;Segoe UI;Segoe UI Black;Segoe UI Emoji;Segoe UI Historic;Segoe UI Light;Segoe UI Semibold;Segoe UI Semilight;Segoe UI Symbol;Showcard Gothic;SimSun;SimSun-ExtB;SimSun-ExtG;Sitka Banner;Sitka Display;Sitka Heading;Sitka Small;Sitka Subheading;Sitka Text;Snap ITC;Stencil;Sylfaen;Symbol;Tahoma;Tempus Sans ITC;Times New Roman;Trebuchet MS;Tw Cen MT;Tw Cen MT Condensed;Tw Cen MT Condensed Extra Bold;Verdana;Viner Hand ITC;Vivaldi;Vladimir Script;Webdings;Wide Latin;Wingdings;Wingdings 2;Wingdings 3;Yu Gothic;Yu Gothic Light;Yu Gothic Medium;Yu Gothic UI;Yu Gothic UI Light;Yu Gothic UI Semibold;Yu Gothic UI Semilight;굴림;굴림체;궁서;궁서체;돋움;돋움체;맑은 고딕;맑은 고딕 Semilight;바탕;바탕체;새굴림;한컴 고딕;한컴산뜻돋움;함초롬돋움;함초롬돋움 확장;함초롬바탕;함초롬바탕 확장;함초롬바탕 확장B;휴먼둥근헤드라인;휴먼매직체;휴먼모음T;휴먼아미체;휴먼엑스포;휴먼옛체;휴먼편지체" />
+        <Property type="Excel" key="Cell_FontBold" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontItalic" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontUnderline" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontSize" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_FontColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_BackgroundColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_Width" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_Height" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_AlignHorizontal" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Center" valuelist=";Right;Left;Justify;Distributed;Center;General;Fill;CenterAcrossSelection" />
+        <Property type="Excel" key="Cell_AlignVertical" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist=";Top;Justify;Distributed;Center;Bottom" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_46);]]></Script>
+    </Step>
+    <Step id="S970c3a4c8ac140bda5381808ecb1400c" ver="311241220" createVer="311241220" type="Excel" name="SetStyleRange" dpName="SetStyleRange" dpValue="E4, E5, E6, B8, B36, B44, B52, B60, B69" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="5cc0e988-1055-4572-8472-89d291f9e387" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'E4, E5, E6, B8, B36, B44, B52, B60, B69'" />
+        <Property type="Excel" key="Cell_FontName" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist="Agency FB;Algerian;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Bahnschrift;Bahnschrift Condensed;Bahnschrift Light;Bahnschrift Light Condensed;Bahnschrift Light SemiCondensed;Bahnschrift SemiBold;Bahnschrift SemiBold Condensed;Bahnschrift SemiBold SemiConden;Bahnschrift SemiCondensed;Bahnschrift SemiLight;Bahnschrift SemiLight Condensed;Bahnschrift SemiLight SemiConde;Baskerville Old Face;Bauhaus 93;Bell MT;Berlin Sans FB;Berlin Sans FB Demi;Bernard MT Condensed;Blackadder ITC;Bodoni MT;Bodoni MT Black;Bodoni MT Condensed;Bodoni MT Poster Compressed;Book Antiqua;Bookman Old Style;Bookshelf Symbol 7;Bradley Hand ITC;Britannic Bold;Broadway;Brush Script MT;Calibri;Calibri Light;Californian FB;Calisto MT;Cambria;Cambria Math;Candara;Candara Light;Castellar;Centaur;Century;Century Gothic;Century Schoolbook;Chiller;Colonna MT;Comic Sans MS;Consolas;Constantia;Cooper Black;Copperplate Gothic Bold;Copperplate Gothic Light;Corbel;Corbel Light;Courier New;Curlz MT;Dubai;Dubai Light;Dubai Medium;Ebrima;Edwardian Script ITC;Elephant;Engravers MT;Eras Bold ITC;Eras Demi ITC;Eras Light ITC;Eras Medium ITC;Felix Titling;Footlight MT Light;Forte;Franklin Gothic Book;Franklin Gothic Demi;Franklin Gothic Demi Cond;Franklin Gothic Heavy;Franklin Gothic Medium;Franklin Gothic Medium Cond;Freestyle Script;French Script MT;Gabriola;Gadugi;Garamond;Georgia;Gigi;Gill Sans MT;Gill Sans MT Condensed;Gill Sans MT Ext Condensed Bold;Gill Sans Ultra Bold;Gill Sans Ultra Bold Condensed;Gloucester MT Extra Condensed;Goudy Old Style;Goudy Stout;Haan Wing2;Haettenschweiler;HancomEQN;Harlow Solid Italic;Harrington;High Tower Text;HoloLens MDL2 Assets;HyhwpEQ;HY견고딕;HY견명조;HY궁서B;HY그래픽M;HY목각파임B;HY신명조;HY얕은샘물M;HY엽서L;HY엽서M;HY중고딕;HY헤드라인M;Impact;Imprint MT Shadow;Informal Roman;Ink Free;Javanese Text;Jokerman;Juice ITC;Kristen ITC;Kunstler Script;Leelawadee;Leelawadee UI;Leelawadee UI Semilight;Lucida Bright;Lucida Calligraphy;Lucida Console;Lucida Fax;Lucida Handwriting;Lucida Sans;Lucida Sans Typewriter;Lucida Sans Unicode;Magneto;Maiandra GD;Marlett;Matura MT Script Capitals;Microsoft Himalaya;Microsoft JhengHei;Microsoft JhengHei Light;Microsoft JhengHei UI;Microsoft JhengHei UI Light;Microsoft New Tai Lue;Microsoft PhagsPa;Microsoft Sans Serif;Microsoft Tai Le;Microsoft Uighur;Microsoft YaHei;Microsoft YaHei Light;Microsoft YaHei UI;Microsoft YaHei UI Light;Microsoft Yi Baiti;MingLiU-ExtB;MingLiU_HKSCS-ExtB;Mistral;Modern No. 20;Mongolian Baiti;Monotype Corsiva;MS Gothic;MS Outlook;MS PGothic;MS Reference Sans Serif;MS Reference Specialty;MS UI Gothic;MT Extra;MV Boli;Myanmar Text;NewJumja;Niagara Engraved;Niagara Solid;Nirmala UI;Nirmala UI Semilight;Noto Sans KR;Noto Sans KR Black;Noto Sans KR DemiLight;Noto Sans KR ExtraBold;Noto Sans KR Light;Noto Sans KR Medium;Noto Sans KR Thin;NSimSun;OCR A Extended;Old English Text MT;Onyx;Palace Script MT;Palatino Linotype;Papyrus;Parchment;Perpetua;Perpetua Titling MT;Playbill;PMingLiU-ExtB;Poor Richard;Pristina;Rage Italic;Ravie;Rockwell;Rockwell Condensed;Rockwell Extra Bold;Script MT Bold;Segoe MDL2 Assets;Segoe Print;Segoe Script;Segoe UI;Segoe UI Black;Segoe UI Emoji;Segoe UI Historic;Segoe UI Light;Segoe UI Semibold;Segoe UI Semilight;Segoe UI Symbol;Showcard Gothic;SimSun;SimSun-ExtB;SimSun-ExtG;Sitka Banner;Sitka Display;Sitka Heading;Sitka Small;Sitka Subheading;Sitka Text;Snap ITC;Stencil;Sylfaen;Symbol;Tahoma;Tempus Sans ITC;Times New Roman;Trebuchet MS;Tw Cen MT;Tw Cen MT Condensed;Tw Cen MT Condensed Extra Bold;Verdana;Viner Hand ITC;Vivaldi;Vladimir Script;Webdings;Wide Latin;Wingdings;Wingdings 2;Wingdings 3;Yu Gothic;Yu Gothic Light;Yu Gothic Medium;Yu Gothic UI;Yu Gothic UI Light;Yu Gothic UI Semibold;Yu Gothic UI Semilight;굴림;굴림체;궁서;궁서체;돋움;돋움체;맑은 고딕;맑은 고딕 Semilight;바탕;바탕체;새굴림;한컴 고딕;한컴산뜻돋움;함초롬돋움;함초롬돋움 확장;함초롬바탕;함초롬바탕 확장;함초롬바탕 확장B;휴먼둥근헤드라인;휴먼매직체;휴먼모음T;휴먼아미체;휴먼엑스포;휴먼옛체;휴먼편지체" />
+        <Property type="Excel" key="Cell_FontBold" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontItalic" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontUnderline" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontSize" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_FontColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_BackgroundColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_Width" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_Height" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_AlignHorizontal" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Left" valuelist=";Right;Left;Justify;Distributed;Center;General;Fill;CenterAcrossSelection" />
+        <Property type="Excel" key="Cell_AlignVertical" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist=";Top;Justify;Distributed;Center;Bottom" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_47);]]></Script>
+    </Step>
+    <Step id="Sfe132707776342fd867b3b91f7f8aaa8" ver="311241220" createVer="311241220" type="Excel" name="SetStyleRange" dpName="SetStyleRange" dpValue="E38:O42" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="5cc0e988-1055-4572-8472-89d291f9e387" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'E38:O42'" />
+        <Property type="Excel" key="Cell_FontName" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" valuelist="Agency FB;Algerian;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Bahnschrift;Bahnschrift Condensed;Bahnschrift Light;Bahnschrift Light Condensed;Bahnschrift Light SemiCondensed;Bahnschrift SemiBold;Bahnschrift SemiBold Condensed;Bahnschrift SemiBold SemiConden;Bahnschrift SemiCondensed;Bahnschrift SemiLight;Bahnschrift SemiLight Condensed;Bahnschrift SemiLight SemiConde;Baskerville Old Face;Bauhaus 93;Bell MT;Berlin Sans FB;Berlin Sans FB Demi;Bernard MT Condensed;Blackadder ITC;Bodoni MT;Bodoni MT Black;Bodoni MT Condensed;Bodoni MT Poster Compressed;Book Antiqua;Bookman Old Style;Bookshelf Symbol 7;Bradley Hand ITC;Britannic Bold;Broadway;Brush Script MT;Calibri;Calibri Light;Californian FB;Calisto MT;Cambria;Cambria Math;Candara;Candara Light;Castellar;Centaur;Century;Century Gothic;Century Schoolbook;Chiller;Colonna MT;Comic Sans MS;Consolas;Constantia;Cooper Black;Copperplate Gothic Bold;Copperplate Gothic Light;Corbel;Corbel Light;Courier New;Curlz MT;Dubai;Dubai Light;Dubai Medium;Ebrima;Edwardian Script ITC;Elephant;Engravers MT;Eras Bold ITC;Eras Demi ITC;Eras Light ITC;Eras Medium ITC;Felix Titling;Footlight MT Light;Forte;Franklin Gothic Book;Franklin Gothic Demi;Franklin Gothic Demi Cond;Franklin Gothic Heavy;Franklin Gothic Medium;Franklin Gothic Medium Cond;Freestyle Script;French Script MT;Gabriola;Gadugi;Garamond;Georgia;Gigi;Gill Sans MT;Gill Sans MT Condensed;Gill Sans MT Ext Condensed Bold;Gill Sans Ultra Bold;Gill Sans Ultra Bold Condensed;Gloucester MT Extra Condensed;Goudy Old Style;Goudy Stout;Haan Wing2;Haettenschweiler;HancomEQN;Harlow Solid Italic;Harrington;High Tower Text;HoloLens MDL2 Assets;HyhwpEQ;HY견고딕;HY견명조;HY궁서B;HY그래픽M;HY목각파임B;HY신명조;HY얕은샘물M;HY엽서L;HY엽서M;HY중고딕;HY헤드라인M;Impact;Imprint MT Shadow;Informal Roman;Ink Free;Javanese Text;Jokerman;Juice ITC;Kristen ITC;Kunstler Script;Leelawadee;Leelawadee UI;Leelawadee UI Semilight;Lucida Bright;Lucida Calligraphy;Lucida Console;Lucida Fax;Lucida Handwriting;Lucida Sans;Lucida Sans Typewriter;Lucida Sans Unicode;Magneto;Maiandra GD;Marlett;Matura MT Script Capitals;Microsoft Himalaya;Microsoft JhengHei;Microsoft JhengHei Light;Microsoft JhengHei UI;Microsoft JhengHei UI Light;Microsoft New Tai Lue;Microsoft PhagsPa;Microsoft Sans Serif;Microsoft Tai Le;Microsoft Uighur;Microsoft YaHei;Microsoft YaHei Light;Microsoft YaHei UI;Microsoft YaHei UI Light;Microsoft Yi Baiti;MingLiU-ExtB;MingLiU_HKSCS-ExtB;Mistral;Modern No. 20;Mongolian Baiti;Monotype Corsiva;MS Gothic;MS Outlook;MS PGothic;MS Reference Sans Serif;MS Reference Specialty;MS UI Gothic;MT Extra;MV Boli;Myanmar Text;NewJumja;Niagara Engraved;Niagara Solid;Nirmala UI;Nirmala UI Semilight;Noto Sans KR;Noto Sans KR Black;Noto Sans KR DemiLight;Noto Sans KR ExtraBold;Noto Sans KR Light;Noto Sans KR Medium;Noto Sans KR Thin;NSimSun;OCR A Extended;Old English Text MT;Onyx;Palace Script MT;Palatino Linotype;Papyrus;Parchment;Perpetua;Perpetua Titling MT;Playbill;PMingLiU-ExtB;Poor Richard;Pristina;Rage Italic;Ravie;Rockwell;Rockwell Condensed;Rockwell Extra Bold;Script MT Bold;Segoe MDL2 Assets;Segoe Print;Segoe Script;Segoe UI;Segoe UI Black;Segoe UI Emoji;Segoe UI Historic;Segoe UI Light;Segoe UI Semibold;Segoe UI Semilight;Segoe UI Symbol;Showcard Gothic;SimSun;SimSun-ExtB;SimSun-ExtG;Sitka Banner;Sitka Display;Sitka Heading;Sitka Small;Sitka Subheading;Sitka Text;Snap ITC;Stencil;Sylfaen;Symbol;Tahoma;Tempus Sans ITC;Times New Roman;Trebuchet MS;Tw Cen MT;Tw Cen MT Condensed;Tw Cen MT Condensed Extra Bold;Verdana;Viner Hand ITC;Vivaldi;Vladimir Script;Webdings;Wide Latin;Wingdings;Wingdings 2;Wingdings 3;Yu Gothic;Yu Gothic Light;Yu Gothic Medium;Yu Gothic UI;Yu Gothic UI Light;Yu Gothic UI Semibold;Yu Gothic UI Semilight;굴림;굴림체;궁서;궁서체;돋움;돋움체;맑은 고딕;맑은 고딕 Semilight;바탕;바탕체;새굴림;한컴 고딕;한컴산뜻돋움;함초롬돋움;함초롬돋움 확장;함초롬바탕;함초롬바탕 확장;함초롬바탕 확장B;휴먼둥근헤드라인;휴먼매직체;휴먼모음T;휴먼아미체;휴먼엑스포;휴먼옛체;휴먼편지체" />
+        <Property type="Excel" key="Cell_FontBold" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontItalic" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontUnderline" controlType="PropertyItemToggleExView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Current" toggle="True;Current;False" />
+        <Property type="Excel" key="Cell_FontSize" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_FontColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_BackgroundColor" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="''" />
+        <Property type="Excel" key="Cell_Width" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+        <Property type="Excel" key="Cell_Height" controlType="Double" valueType="System.Double" formatType="Double" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="190" />
+        <Property type="Excel" key="Cell_AlignHorizontal" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Left" valuelist=";Right;Left;Justify;Distributed;Center;General;Fill;CenterAcrossSelection" />
+        <Property type="Excel" key="Cell_AlignVertical" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Center" valuelist=";Top;Justify;Distributed;Center;Bottom" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_48);]]></Script>
+    </Step>
+    <Step id="S36bc331163884088acb2072895037b77" ver="311241220" createVer="311241220" type="Excel" name="SelectCol" dpName="SelectCol" dpValue="ACTIVE_SHEET" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="3a12d9bd-f95b-4377-a12e-5d41fdb01e86" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Position" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'C:P'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SelectCol', this.selectcol_info_49);]]></Script>
+    </Step>
+    <Step id="S26ce0000085e48b59f498d9283124c12" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="04e9a01e-85e7-4d64-97c4-ee25237ea4f2" type="Win">
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LMenu,,H,,O,,I," order="1" ready="True" />
+        <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
+        <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="50" />
+        <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
+        <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_50);]]></Script>
+    </Step>
+    <Step id="Scfc1611da265495b94cb917f2fab73ea" ver="311241220" createVer="311241220" type="Excel" name="SelectRange" dpName="SelectRange" dpValue="I10:K34, J54:K58, F71:F75" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="05b61d76-0192-4a8a-a1a5-025b9a2ab923" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'I10:K34, J54:K58, F71:F75'" />
+        <Property type="Excel" key="Sheet_MouseType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="None" valuelist="None;LeftClick;RightClick;DoubleClick;Hover" />
+        <Property type="Excel" key="Sheet_MousePos" controlType="String" valueType="System.String" formatType="String_Point" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'-1, -1'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SelectRange', this.selectrange_info_51);]]></Script>
+    </Step>
+    <Step id="S894009b6934b48d58b36d765072e1ed4" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="04e9a01e-85e7-4d64-97c4-ee25237ea4f2" type="Win">
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LMenu,,H,,P,,LMenu,,H,,NumPad0," order="1" ready="True" />
+        <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
+        <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="50" />
+        <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
+        <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_52);]]></Script>
+    </Step>
+    <Step id="S4963fb973a064c4a907a652e72a93071" ver="311241220" createVer="311241220" type="Excel" name="SelectRange" dpName="SelectRange" dpValue="F10:H34, E46:E50, G46:H50, E54:G58, G63:K67" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="05b61d76-0192-4a8a-a1a5-025b9a2ab923" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="Sheet_SheetName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_SHEET" />
+        <Property type="Excel" key="Sheet_Range" controlType="String" valueType="System.String" formatType="String_ExcelRange" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'F10:H34, E46:E50, G46:H50, E54:G58, G63:K67'" />
+        <Property type="Excel" key="Sheet_MouseType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="None" valuelist="None;LeftClick;RightClick;DoubleClick;Hover" />
+        <Property type="Excel" key="Sheet_MousePos" controlType="String" valueType="System.String" formatType="String_Point" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="'-1, -1'" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SelectRange', this.selectrange_info_53);]]></Script>
+    </Step>
+    <Step id="S0177dac2604c455893d021e28d4b1b32" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="04e9a01e-85e7-4d64-97c4-ee25237ea4f2" type="Win">
+        <Property type="Win" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Win" key="Keyboard_KeyInput" controlType="PropertyItemKeyInputView" valueType="System.Text.StringBuilder" formatType="StringBuilder" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="LMenu,,H,,K," order="1" ready="True" />
+        <Property type="Win" key="Options_BeforeDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
+        <Property type="Win" key="Options_AfterDelay" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="50" />
+        <Property type="Win" key="Options_Interval" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="10" />
+        <Property type="Win" key="Keyboard_ClearKeyState" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Win.KeyInput', this.keyinput_info_54);]]></Script>
+    </Step>
+    <Step id="S8b33a0e2fdc747a2bef5c5efafe9d5ae" ver="311241220" createVer="311241220" type="Excel" name="SaveExcel" dpName="SaveExcel" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="c41e24f3-0016-4194-90fb-5c17007f472d" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="File_SaveAs" controlType="Excel" valueType="System.String" formatType="String_FilePath" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.SaveExcel', this.saveexcel_info_55);]]></Script>
+    </Step>
+    <Step id="Sa7879042cdc740af9356a56451142a42" ver="311241220" createVer="311241220" type="Excel" name="CloseExcel" dpName="CloseExcel" dpValue="ACTIVE_EXCEL" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="e7bf40b7-3d16-4ac9-90cf-6cb446a5d14c" type="Excel">
+        <Property type="Excel" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Excel" key="Input_InputExcel" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="ACTIVE_EXCEL" />
+        <Property type="Excel" key="File_Force" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="False" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Excel.CloseExcel', this.closeexcel_info_56);]]></Script>
+    </Step>
+  </Steps>
+  <JScript><![CDATA[function T_2_1_보고서작성() {
+
+    this.Gemini_Api_isFileExist;
+    this.top_mover_forecast_isFileExist;
+    this.sentiment_report_isFileExist;
+    this.Gemini_Api;
+    this.chart_data;
+    this.top_mover_forecast;
+    this.sentiment_report;
+    this.report_IsDirectoryExist;
+    this.create_excel;
+    this.read_path;
+    this.subject = [];
+    this.header = [];
+    this.datetime;
+
+    this.RPAGOTOENABLE = false;
+    this.GotoStepRetryCntMap = {};
+    this.GotoBlockMap = {3:[6],8:[10],12:[14],18:[20],22:[24],27:[29]};
+    this.GotoReverseBlockMap = {6:3,10:8,14:12,20:18,24:22,29:27};
+    this.GotoStepBlockTypeMap = {3:'DecisionThen',6:'EndDecisionThen',8:'DecisionThen',10:'EndDecisionThen',12:'DecisionThen',14:'EndDecisionThen',18:'DecisionThen',20:'EndDecisionThen',22:'DecisionThen',24:'EndDecisionThen',27:'DecisionThen',29:'EndDecisionThen'};
+
+
+    this.run = function() {
+
+        //------------------------------------------------
+        STEP('S6c4b976e3f264980a9f5e95a6c24123a', '[1] ExecuteScript');
+        //엑셀 기준 B2 = (0, 0)
+
+        //작성날짜
+        this.datetime = new Date();
+        Global.date = this.datetime.toISOString().slice(0, 10);
+
+        let year = Global.date.slice(0, 4);
+        let month = Global.date.slice(5, 7);
+        let hour = String(this.datetime.getHours()).padStart(2, '0');
+        let minute = String(this.datetime.getMinutes()).padStart(2, '0');
+
+        // 보고서 저장 위치
+        Global.report_path = Global.file_path.replace(/raws$/, "outputs");
+        Global.report_path = Global.report_path + '\\보고서\\' + year + '\\' + month
+
+        this.datetime = Global.date + ' ' + hour + ':' + minute;
+
+        //보고서 상단
+        this.header[0] = []
+        this.header[0][0] = '핵심 이슈 및 투자 정보 리포트'
+        this.header[2] = []
+        this.header[2][0] = '작성자'
+        this.header[2][3] = 'SIGNAL.KR'
+        this.header[3] = []
+        this.header[3][0] = '작성일'
+        this.header[3][3] = '\'' + Global.datetime
+        this.header[4] = []
+        this.header[4][0] = '출처'
+        this.header[4][3] = '키움 API, 네이버 API'
+
+        this.datetime = Global.date + '_' + hour + '_' + minute;
+
+
+        //------------------------------------------------
+        STEP('Se09083f37d4742deb575e94b9fcc4b6d', '[2] IsFileExist');
+        this.sentiment_report_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_2);
+
+        //------------------------------------------------
+        STEP('S151fb03235a54eaeaad7132912885cfe', '[3] IfThen');
+        if (this.sentiment_report_isFileExist == true) {
+
+            //------------------------------------------------
+            STEP('S3ad8aecf36044262ba4e46f245a02766', '[4] ReadTextFile');
+            this.sentiment_report = StepPlayer.Run('Desktop.ReadTextFile', this.readtextfile_info_4);
+
+            //------------------------------------------------
+            STEP('Sd3e5423528e94fd692aa041acfb00c7d', '[5] ExecuteScript');
+            // 엑셀 기준 B8 = (0, 0)
+
+            this.sentiment_report = ToJson(this.sentiment_report)
+
+            let keys_array = []
+            let wordCloud = '없음'
+
+            // 초기화
+            for (let i = 0; i <= 67; i++) {
+                this.subject[i] = []
+            }
+
+            // 키워드 상위 5개
+            for(let i = 0; i < this.sentiment_report.length; i++) {
+                wordCloud = this.sentiment_report[i].keywordAnalysis.wordCloud
+                if(wordCloud == '없음') {
+                    break;
+                }
+                let keys = '';
+                let count = 0;
+
+                for (const key in wordCloud) {
+                    if (count === 5) {
+                        break;
+                    }
+                    
+                    if (keys !== '') {
+                        keys += ', ';
+                    }
+                    
+                    keys += key;
+                    count++;
+                }
+                
+                keys_array[i] = keys
+            }
+
+            for (let i = 0; i < this.sentiment_report.length; i++) {
+                let row = 63 + i 
+                this.subject[row][3] = this.sentiment_report[i].sentimentAnalysis.overallSentiment 
+                this.subject[row][4] = this.sentiment_report[i].sentimentAnalysis.averageScore 
+                this.subject[row][5] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.positive 
+                this.subject[row][6] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.neutral 
+                this.subject[row][7] = this.sentiment_report[i].sentimentAnalysis.sentimentDistribution.negative
+                this.subject[row][8] = keys_array[i]
+                
+                for(let j = 3; j < 9; j++) {
+                    if(this.subject[row][j] == undefined) {
+                        this.subject[row][j] = 0
+                    }
+                }
+            }
+
+            // 분석파일 경로 설정
+            this.read_path = Global.file_path.replace(/raws$/, "outputs");
+
+
+
+        //------------------------------------------------
+        }
+        STEP('S0df829d8edb84c98b19e6d7ee85e1126', '[6] End-IfThen');
+
+        //------------------------------------------------
+        STEP('S8d772459d21d43759f4967fff98d3146', '[7] IsFileExist');
+        this.top_mover_forecast_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_7);
+
+        //------------------------------------------------
+        STEP('Sa9825a94463e41bf9fa36eff3b043ba4', '[8] IfThen');
+        if (this.top_mover_forecast_isFileExist == true) {
+
+            //------------------------------------------------
+            STEP('S8515e536bf3f48feae7f6028b3c6b254', '[9] ReadTextFile');
+            this.top_mover_forecast = StepPlayer.Run('Desktop.ReadTextFile', this.readtextfile_info_9);
+
+        //------------------------------------------------
+        }
+        STEP('Scf78b3825c1b45d4ba84b637534a889b', '[10] End-IfThen');
+
+        //------------------------------------------------
+        STEP('S5a6a5dc971e746ffadccf5ee4406b457', '[11] IsFileExist');
+        this.Gemini_Api_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_11);
+
+        //------------------------------------------------
+        STEP('Sbf5ed70cfd084055b81224b6518620b5', '[12] IfThen');
+        if (this.Gemini_Api_isFileExist == true) {
+
+            //------------------------------------------------
+            STEP('S980ee5654e04461e9914ab42bb12962c', '[13] ReadTextFile');
+            this.Gemini_Api = StepPlayer.Run('Desktop.ReadTextFile', this.readtextfile_info_13);
+
+        //------------------------------------------------
+        }
+        STEP('S6df47d564e904ca0acffb5320f4cd15d', '[14] End-IfThen');
+
+        //------------------------------------------------
+        STEP('S2108a361006f45b9a8c79c53e0d8eebe', '[15] ExecuteScript');
+        //엑셀기준 B8 = (0, 0)
+
+        this.top_mover_forecast = ToJson(this.top_mover_forecast)
+
+        // 각 섹션별 시작 열 인덱스 배열
+        const sections = [1, 29, 37, 45, 53, 62]
+
+        for (let idx = 0; idx < sections.length; idx++) {
+            let row = sections[idx]
+            this.subject[row][0] = 'No'
+            if(idx == 1) {
+                this.subject[row][1] = '기간'
+                this.subject[row][2] = '판정'
+            }else {
+                this.subject[row][1] = '종목명'
+                this.subject[row][2] = '종목코드'
+            }
+        }
+
+        // 종목 및 종목코드 입력
+        for (let s = 0; s < sections.length; s++) {
+            let base = sections[s] + 1
+            
+            //기술적 지표
+            if(s == 4) {
+                base += 1
+            }
+            
+            for (let i = 0; i < this.top_mover_forecast.entries.length; i++) {
+                let entry = this.top_mover_forecast.entries[i]
+                //기간별 예측값
+                let row = base + i
+                
+                this.subject[row][0] = i + 1
+                this.subject[row][1] = entry.name
+                this.subject[row][2] = '\'' + entry.ticker
+                
+                if(s == 0){
+                    base += 4
+                }
+            }
+        }
+
+        // 제목 
+        this.subject[sections[0] - 1][0] = '기간별 예측값'
+        this.subject[sections[1] - 1][0] = 'AI분석'
+        this.subject[sections[2] - 1][0] = '기준 시점 주가 및 거래량'
+        this.subject[sections[3] - 1][0] = '재무제표'
+        this.subject[sections[4] - 1][0] = '기술적 지표'
+        this.subject[sections[5] - 1][0] = '뉴스 감정분석'
+
+        // 기간별 예측값
+        this.subject[sections[0]][3] = '예측 기간'
+        this.subject[sections[0]][4] = '예측 가격'
+        this.subject[sections[0]][5] = '실제 가격'
+        this.subject[sections[0]][6] = '가격 절대오차'
+        this.subject[sections[0]][7] = '예측 수익률'
+        this.subject[sections[0]][8] = '실제 수익률'
+        this.subject[sections[0]][9] = '수익률 절대오차'
+        this.subject[sections[0]][14] = '비고'
+
+        // AI 분석
+        this.subject[sections[1]][3] = '요약'
+        this.subject[sections[1]][14] = '비고'
+
+        // 기준 시점 주가 및 거래량
+        this.subject[sections[2]][3] = '기준가(현재가)'
+        this.subject[sections[2]][4] = '전일 대비'
+        this.subject[sections[2]][5] = '거래량'
+        this.subject[sections[2]][6] = '시가총액'
+        this.subject[sections[2]][14] = '비고'
+
+        // 제무제표
+        this.subject[sections[3]][3] = '매출액'
+        this.subject[sections[3]][4] = '영업이익'
+        this.subject[sections[3]][5] = '당기순이익'
+        this.subject[sections[3]][6] = 'PER'
+        this.subject[sections[3]][7] = 'PBR'
+        this.subject[sections[3]][8] = 'ROE'
+        this.subject[sections[3]][9] = 'ROA'
+        this.subject[sections[3]][10] = '부채비율'
+        this.subject[sections[3]][11] = '유동비율'
+        this.subject[sections[3]][12] = '당좌비율'
+        this.subject[sections[3]][13] = '자기자본비율'
+        this.subject[sections[3]][14] = '비고'
+
+        // 기술적 지표
+        this.subject[sections[4]][3] = 'RSI'
+        this.subject[sections[4]][5] = 'OBV'
+        this.subject[sections[4]][6] = 'MACD'
+        this.subject[sections[4]][7] = '볼린저밴드'
+        this.subject[sections[4]][14] = '비고'
+        this.subject[sections[4] + 1][7] = '상단'
+        this.subject[sections[4] + 1][8] = '중단'
+        this.subject[sections[4] + 1][9] = '하단'
+
+        //뉴스 감정분석
+        this.subject[sections[5]][3] = '전반적인 심리'
+        this.subject[sections[5]][4] = '평균 심리 점수'
+        this.subject[sections[5]][5] = '긍정 건수'
+        this.subject[sections[5]][6] = '중립 건수'
+        this.subject[sections[5]][7] = '부정 건수'
+        this.subject[sections[5]][8] = '핵심 키워드 5가지'
+        this.subject[sections[5]][14] = '비고'
+
+
+
+
+        //------------------------------------------------
+        STEP('S2d680d13479a4480bec6a15044dbb1c9', '[16] ExecuteScript');
+        //엑셀 기준 B8 = (0, 0)
+
+        this.top_mover_forecast = ToJson(this.top_mover_forecast)
+        this.Gemini_Api = ToJson(this.Gemini_Api)
+        let bass = 0
+
+
+        // AI 분석
+        let row_AI = 30
+        this.subject[row_AI][1] = '1일'
+        this.subject[row_AI][2] = this.Gemini_Api.periods['하루'].verdict
+        this.subject[row_AI][3] = this.Gemini_Api.periods['하루'].text.split("\n\n")[1];
+        this.subject[row_AI + 1][1] = '1주'
+        this.subject[row_AI + 1][2] = this.Gemini_Api.periods['일주일'].verdict
+        this.subject[row_AI + 1][3] = this.Gemini_Api.periods['일주일'].text.split("\n\n")[1];
+        this.subject[row_AI + 2][1] = '1개월'
+        this.subject[row_AI + 2][2] = this.Gemini_Api.periods['한 달'].verdict
+        this.subject[row_AI + 2][3] = this.Gemini_Api.periods['한 달'].text.split("\n\n")[1];
+        this.subject[row_AI + 3][1] = '6개월'
+        this.subject[row_AI + 3][2] = this.Gemini_Api.periods['6개월'].verdict
+        this.subject[row_AI + 3][3] = this.Gemini_Api.periods['6개월'].text.split("\n\n")[1];
+        this.subject[row_AI + 4][1] = '1년'
+        this.subject[row_AI + 4][2] = this.Gemini_Api.periods['일 년'].verdict
+        this.subject[row_AI + 4][3] = this.Gemini_Api.periods['일 년'].text.split("\n\n")[1];
+
+        for(let i = 0; i < this.top_mover_forecast.entries.length; i++) {
+            let entry = this.top_mover_forecast.entries[i]
+            
+            // 기간별 예측값
+            bass = 4 * i + i 
+            let row = 2 + bass
+            for(let s = 0; s < entry.horizons.length; s++) {
+                if (entry.horizons[s].horizon == '1d') {
+                    this.subject[row][3] = '1일'
+                }else if (entry.horizons[s].horizon == '1w') {
+                    this.subject[row][3] = '1주'
+                }else if (entry.horizons[s].horizon == '1m') {
+                    this.subject[row][3] = '1개월'
+                }else if (entry.horizons[s].horizon == '6m') {
+                    this.subject[row][3] = '6개월'
+                }else if (entry.horizons[s].horizon == '1y') {
+                    this.subject[row][3] = '1년'
+                }else {
+                    this.subject[row][3] = '그 외'
+                }
+                
+                this.subject[row][4] = entry.horizons[s].predicted_price
+                this.subject[row][5] = entry.horizons[s].actual_price
+                this.subject[row][6] = entry.horizons[s].abs_error
+                this.subject[row][7] = entry.horizons[s].predicted_return
+                this.subject[row][8] = entry.horizons[s].actual_return
+                this.subject[row][9] = entry.horizons[s].return_abs_error
+                
+                row++
+            }
+        }
+
+        for (let i = 0; i < this.top_mover_forecast.entries.length; i++) {
+            let entry = this.top_mover_forecast.entries[i]
+            
+            // 기준 시점 주가 및 거래량
+            row = 38 + i 
+            this.subject[row][3] = entry.current_price
+            this.subject[row][4] = entry.change_pct + '%'
+            this.subject[row][5] = entry.indicators.obv
+            this.subject[row][6] = entry.fundamentals.market_cap
+
+            // 재무제표
+            row = 46 + i 
+            this.subject[row][3] = entry.fundamentals.fund_revenue
+            this.subject[row][4] = entry.fundamentals.fund_operating_income
+            this.subject[row][5] = entry.fundamentals.fund_net_income
+            this.subject[row][6] = Math.round(entry.fundamentals.per * 100) / 100
+            this.subject[row][7] = Math.round(entry.fundamentals.pbr * 100) / 100
+            this.subject[row][8] = entry.fundamentals.roe
+            this.subject[row][9] = entry.fundamentals.roa
+            this.subject[row][10] = Math.round(entry.fundamentals.debt_ratio * 100) / 100 + '%'
+            this.subject[row][11] = Math.round(entry.fundamentals.current_ratio * 100) / 100 + '%'
+            this.subject[row][12] = Math.round(entry.fundamentals.quick_ratio * 100) / 100 + '%'
+            this.subject[row][13] = Math.round(entry.fundamentals.equity_ratio * 100) / 100 + '%'
+
+            // 기술적 지표
+            row = 55 + i 
+            this.subject[row][3] = Math.round(entry.indicators.rsi)
+            
+            let rsi_level
+            if(this.subject[row][3] >= 71) {
+                rsi_level = '과매수'
+            }else if((this.subject[row][3] >= 61) && (this.subject[row][3] <= 70)){
+                rsi_level = '과매수 경계'
+            }else if((this.subject[row][3] >= 41) && (this.subject[row][3] <= 60)){
+                rsi_level = '중립'
+            }else if((this.subject[row][3] >= 31) && (this.subject[row][3] <= 40)){
+                rsi_level = '과매도 경계'
+            }else if (this.subject[row][3] <= 30){
+                rsi_level = '과매도'
+            }else {
+                rsi_level = '없음'
+            }
+            
+            this.subject[row][4] = rsi_level
+            this.subject[row][5] = entry.indicators.obv
+            this.subject[row][6] = entry.indicators.macd
+            this.subject[row][7] = entry.indicators.bb_upper
+            this.subject[row][8] = entry.indicators.bb_mid
+            this.subject[row][9] = entry.indicators.bb_lower
+        }
+
+
+
+
+        //------------------------------------------------
+        STEP('Sf778cef14bef4312933fa0640aaa3ca3', '[17] IsDirectoryExist');
+        this.report_IsDirectoryExist = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_17);
+
+        //------------------------------------------------
+        STEP('S1c7fc2c8fe1244ee9a5e3aa1416017d5', '[18] IfThen');
+        if (this.report_IsDirectoryExist != true) {
+
+            //------------------------------------------------
+            STEP('Sf68536505cd54ab38be8ee7396a4cf2c', '[19] CreateDirectory');
+            StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_19);
+
+        //------------------------------------------------
+        }
+        STEP('S40837777a44b437aac2af6e343283f69', '[20] End-IfThen');
+
+        //------------------------------------------------
+        STEP('S11aadc2e6bf7404c95b7270b9da669da', '[21] IsFileExist');
+        this.create_excel = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_21);
+
+        //------------------------------------------------
+        STEP('S1fd10fdcab984b9f97afcfdb99c61ce8', '[22] IfThen');
+        if (this.create_excel != true) {
+
+            //------------------------------------------------
+            STEP('S46037024c454431c8939d21b294bb733', '[23] CreateExcel');
+            StepPlayer.Run('Excel.CreateExcel', this.createexcel_info_23);
+
+        //------------------------------------------------
+        }
+        STEP('S523a711ac334415992ef4e21c2a03eee', '[24] End-IfThen');
+
+        //------------------------------------------------
+        STEP('S80edd13abdb74566b57033b4833c2df3', '[25] OpenExcel');
+        RESULT = StepPlayer.Run('Excel.OpenExcel', this.openexcel_info_25);
+
+        //------------------------------------------------
+        STEP('S1978ff040f114f789d9dbed6b763e0f4', '[26] CreateWorkSheet');
+        StepPlayer.Run('Excel.CreateWorkSheet', this.createworksheet_info_26);
+
+        //------------------------------------------------
+        STEP('S6a8f56654da444029d558394e11f5815', '[27] IfThen');
+        if (this.create_excel != true) {
+
+            //------------------------------------------------
+            STEP('Sdc15378c005246bf82d4803d01aa15bb', '[28] DeleteWorkSheet');
+            StepPlayer.Run('Excel.DeleteWorkSheet', this.deleteworksheet_info_28);
+
+        //------------------------------------------------
+        }
+        STEP('S1c8e8a0307a24d47879b8154712e9f6f', '[29] End-IfThen');
+
+        //------------------------------------------------
+        STEP('S30f45dd43d9d4d938001644190b5946e', '[30] WriteRange');
+        StepPlayer.Run('Excel.WriteRange', this.writerange_info_30);
+
+        //------------------------------------------------
+        STEP('Sbb660802883b4f0d96684e934d1074d4', '[31] WriteRange');
+        StepPlayer.Run('Excel.WriteRange', this.writerange_info_31);
+
+        //------------------------------------------------
+        STEP('S21f83792bc5e4aee8629b1e1d20b2318', '[32] SelectRange');
+        StepPlayer.Run('Excel.SelectRange', this.selectrange_info_32);
+
+        //------------------------------------------------
+        STEP('Sad64145c18b740868763a037e72a611e', '[33] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_33);
+
+        //------------------------------------------------
+        STEP('S486f7fca77e74683a73c62a224a77a0b', '[34] SelectRange');
+        StepPlayer.Run('Excel.SelectRange', this.selectrange_info_34);
+
+        //------------------------------------------------
+        STEP('Scb700291bcf440f8b3f8d2571d14d4f7', '[35] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_35);
+
+        //------------------------------------------------
+        STEP('S9bf2b57baba2494ba80e7dfe51490ecc', '[36] SelectRange');
+        StepPlayer.Run('Excel.SelectRange', this.selectrange_info_36);
+
+        //------------------------------------------------
+        STEP('Scf0c64c0877f4aa884cea29bcab91e30', '[37] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_37);
+
+        //------------------------------------------------
+        STEP('S0c5690e9f6c44489baa6e0c0ef4ba808', '[38] SelectRange');
+        StepPlayer.Run('Excel.SelectRange', this.selectrange_info_38);
+
+        //------------------------------------------------
+        STEP('S7d29b68a905d49bb815e370c9bc2ba1c', '[39] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_39);
+
+        //------------------------------------------------
+        STEP('Scb0f5d0d967142478587fd43abd3cf0d', '[40] SelectRange');
+        StepPlayer.Run('Excel.SelectRange', this.selectrange_info_40);
+
+        //------------------------------------------------
+        STEP('S1abc295fe35d4989a425328c280ab183', '[41] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_41);
+
+        //------------------------------------------------
+        STEP('S1bf6d51cc2ef4bdeb3d92a9b796cbf94', '[42] SetBorderRange');
+        StepPlayer.Run('Excel.SetBorderRange', this.setborderrange_info_42);
+
+        //------------------------------------------------
+        STEP('S35f5544c97514477b53d57505d942f4f', '[43] SetStyleRange');
+        StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_43);
+
+        //------------------------------------------------
+        STEP('Sf87e184b0c2947bea0a33a6a723710e2', '[44] SetStyleRange');
+        StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_44);
+
+        //------------------------------------------------
+        STEP('Secc8909f73e846b8ba30785eb1122501', '[45] SetStyleRange');
+        StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_45);
+
+        //------------------------------------------------
+        STEP('Sdcc1dd0b4f2f4fad897b8cbf60f84db3', '[46] SetStyleRange');
+        StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_46);
+
+        //------------------------------------------------
+        STEP('S970c3a4c8ac140bda5381808ecb1400c', '[47] SetStyleRange');
+        StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_47);
+
+        //------------------------------------------------
+        STEP('Sfe132707776342fd867b3b91f7f8aaa8', '[48] SetStyleRange');
+        StepPlayer.Run('Excel.SetStyleRange', this.setstylerange_info_48);
+
+        //------------------------------------------------
+        STEP('S36bc331163884088acb2072895037b77', '[49] SelectCol');
+        StepPlayer.Run('Excel.SelectCol', this.selectcol_info_49);
+
+        //------------------------------------------------
+        STEP('S26ce0000085e48b59f498d9283124c12', '[50] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_50);
+
+        //------------------------------------------------
+        STEP('Scfc1611da265495b94cb917f2fab73ea', '[51] SelectRange');
+        StepPlayer.Run('Excel.SelectRange', this.selectrange_info_51);
+
+        //------------------------------------------------
+        STEP('S894009b6934b48d58b36d765072e1ed4', '[52] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_52);
+
+        //------------------------------------------------
+        STEP('S4963fb973a064c4a907a652e72a93071', '[53] SelectRange');
+        StepPlayer.Run('Excel.SelectRange', this.selectrange_info_53);
+
+        //------------------------------------------------
+        STEP('S0177dac2604c455893d021e28d4b1b32', '[54] KeyInput');
+        StepPlayer.Run('Win.KeyInput', this.keyinput_info_54);
+
+        //------------------------------------------------
+        STEP('S8b33a0e2fdc747a2bef5c5efafe9d5ae', '[55] SaveExcel');
+        StepPlayer.Run('Excel.SaveExcel', this.saveexcel_info_55);
+
+        //------------------------------------------------
+        STEP('Sa7879042cdc740af9356a56451142a42', '[56] CloseExcel');
+        StepPlayer.Run('Excel.CloseExcel', this.closeexcel_info_56);
+
+
+    }
+
+    this.execute = function() {
+        var result = null;
+        result = this.run()
+        if (result != null)
+            return result;
+    }
+}
+]]></JScript>
+  <Diagram version="1.300" nodesize="Normal">
+    <StepNodes>
+      <StepNode step_id="S6c4b976e3f264980a9f5e95a6c24123a" group_name="9e3359f5-c21c-4574-ba78-f211aeb9a008_스크립트" folded="False" color="" />
+      <StepNode step_id="Se09083f37d4742deb575e94b9fcc4b6d" group_name="0667fcf5-cf5e-4db6-9c65-d86dab9b9dcc_JSON파일 유무확인" folded="False" color="" />
+      <StepNode step_id="S151fb03235a54eaeaad7132912885cfe" group_name="" folded="False" color="" />
+      <StepNode step_id="S3ad8aecf36044262ba4e46f245a02766" group_name="d7a66b47-0790-415b-a652-3898a9814320_JSON 데이터 가져오기" folded="False" color="" />
+      <StepNode step_id="Sd3e5423528e94fd692aa041acfb00c7d" group_name="d7a66b47-0790-415b-a652-3898a9814320_JSON 데이터 가져오기" folded="False" color="" />
+      <StepNode step_id="S0df829d8edb84c98b19e6d7ee85e1126" group_name="" folded="False" color="" />
+      <StepNode step_id="S8d772459d21d43759f4967fff98d3146" group_name="401ec908-5c9a-40f9-a539-153abbda516a_JSON파일 유무확인" folded="False" color="" />
+      <StepNode step_id="Sa9825a94463e41bf9fa36eff3b043ba4" group_name="" folded="False" color="" />
+      <StepNode step_id="S8515e536bf3f48feae7f6028b3c6b254" group_name="b35d01b8-7915-43c6-b434-7080a1e90a04_JSON 데이터 가져오기" folded="False" color="" />
+      <StepNode step_id="Scf78b3825c1b45d4ba84b637534a889b" group_name="" folded="False" color="" />
+      <StepNode step_id="S5a6a5dc971e746ffadccf5ee4406b457" group_name="7c9c6b61-e4ca-472a-af40-3fd0d5bf0d58_JSON파일 유무확인" folded="False" color="" />
+      <StepNode step_id="Sbf5ed70cfd084055b81224b6518620b5" group_name="" folded="False" color="" />
+      <StepNode step_id="S980ee5654e04461e9914ab42bb12962c" group_name="5a28b0af-261c-4599-80e9-9af1610ca9b0_JSON 데이터 가져오기" folded="False" color="" />
+      <StepNode step_id="S6df47d564e904ca0acffb5320f4cd15d" group_name="" folded="False" color="" />
+      <StepNode step_id="S2108a361006f45b9a8c79c53e0d8eebe" group_name="eba992a7-17fe-4a3f-b094-ac7b99bd25b2_JSON 데이터 가져오기" folded="False" color="" />
+      <StepNode step_id="S2d680d13479a4480bec6a15044dbb1c9" group_name="eba992a7-17fe-4a3f-b094-ac7b99bd25b2_JSON 데이터 가져오기" folded="False" color="" />
+      <StepNode step_id="Sf778cef14bef4312933fa0640aaa3ca3" group_name="566e2228-c93c-4015-8f73-d0049fb525c9_보고서 저장할 폴더 유무확인" folded="False" color="" />
+      <StepNode step_id="S1c7fc2c8fe1244ee9a5e3aa1416017d5" group_name="" folded="False" color="" />
+      <StepNode step_id="Sf68536505cd54ab38be8ee7396a4cf2c" group_name="7a1a1fc0-6399-4e6a-b270-3766476bad55_폴더 생성" folded="False" color="" />
+      <StepNode step_id="S40837777a44b437aac2af6e343283f69" group_name="" folded="False" color="" />
+      <StepNode step_id="S11aadc2e6bf7404c95b7270b9da669da" group_name="3fb014b7-b7de-4e5c-935a-4172ac12869f_보고서파일 유무확인" folded="False" color="" />
+      <StepNode step_id="S1fd10fdcab984b9f97afcfdb99c61ce8" group_name="" folded="False" color="" />
+      <StepNode step_id="S46037024c454431c8939d21b294bb733" group_name="ae5af94d-3796-4d63-a15c-0dbfe9d13586_엑셀 생성" folded="False" color="" />
+      <StepNode step_id="S523a711ac334415992ef4e21c2a03eee" group_name="" folded="False" color="" />
+      <StepNode step_id="S80edd13abdb74566b57033b4833c2df3" group_name="492cfb8e-5f92-487e-b44d-4ab9597ac40c_시트 이름 설정" folded="False" color="" />
+      <StepNode step_id="S1978ff040f114f789d9dbed6b763e0f4" group_name="492cfb8e-5f92-487e-b44d-4ab9597ac40c_시트 이름 설정" folded="False" color="" />
+      <StepNode step_id="S6a8f56654da444029d558394e11f5815" group_name="" folded="False" color="" />
+      <StepNode step_id="Sdc15378c005246bf82d4803d01aa15bb" group_name="3dbd0923-0a42-4bd6-9ba4-a9e6a97c1ecb_시트 이름 설정" folded="False" color="" />
+      <StepNode step_id="S1c8e8a0307a24d47879b8154712e9f6f" group_name="" folded="False" color="" />
+      <StepNode step_id="S30f45dd43d9d4d938001644190b5946e" group_name="77a0b14d-3cff-466e-a7f8-0f1e08f69f7d_작성" folded="False" color="" />
+      <StepNode step_id="Sbb660802883b4f0d96684e934d1074d4" group_name="77a0b14d-3cff-466e-a7f8-0f1e08f69f7d_작성" folded="False" color="" />
+      <StepNode step_id="S21f83792bc5e4aee8629b1e1d20b2318" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="Sad64145c18b740868763a037e72a611e" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="S486f7fca77e74683a73c62a224a77a0b" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="Scb700291bcf440f8b3f8d2571d14d4f7" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="S9bf2b57baba2494ba80e7dfe51490ecc" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="Scf0c64c0877f4aa884cea29bcab91e30" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="S0c5690e9f6c44489baa6e0c0ef4ba808" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="S7d29b68a905d49bb815e370c9bc2ba1c" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="Scb0f5d0d967142478587fd43abd3cf0d" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="S1abc295fe35d4989a425328c280ab183" group_name="28f6ec80-038b-4d78-9b03-06e01b6cee66_셀 병합" folded="False" color="" />
+      <StepNode step_id="S1bf6d51cc2ef4bdeb3d92a9b796cbf94" group_name="2bd104d8-25b4-4b59-aa28-3d7e786f6cde_테두리설정" folded="False" color="" />
+      <StepNode step_id="S35f5544c97514477b53d57505d942f4f" group_name="626a61bf-eff7-41ab-af60-c3584446fc74_바탕색 설정" folded="False" color="" />
+      <StepNode step_id="Sf87e184b0c2947bea0a33a6a723710e2" group_name="a70f18ed-e62e-4164-ab36-43b738099adf_글씨 굵기 설정" folded="False" color="" />
+      <StepNode step_id="Secc8909f73e846b8ba30785eb1122501" group_name="63ae3a1f-7214-4553-a66c-77e0d77d49a2_글씨 크기 설정" folded="False" color="" />
+      <StepNode step_id="Sdcc1dd0b4f2f4fad897b8cbf60f84db3" group_name="e979a69d-e440-4dd3-a611-d11b2e0027bb_정렬" folded="False" color="" />
+      <StepNode step_id="S970c3a4c8ac140bda5381808ecb1400c" group_name="e979a69d-e440-4dd3-a611-d11b2e0027bb_정렬" folded="False" color="" />
+      <StepNode step_id="Sfe132707776342fd867b3b91f7f8aaa8" group_name="e979a69d-e440-4dd3-a611-d11b2e0027bb_정렬" folded="False" color="" />
+      <StepNode step_id="S36bc331163884088acb2072895037b77" group_name="6f3b7b1e-f744-4a65-af0b-fa3886a9ddc5_열 너비 자동맞춤" folded="False" color="" />
+      <StepNode step_id="S26ce0000085e48b59f498d9283124c12" group_name="6f3b7b1e-f744-4a65-af0b-fa3886a9ddc5_열 너비 자동맞춤" folded="False" color="" />
+      <StepNode step_id="Scfc1611da265495b94cb917f2fab73ea" group_name="e9f0eb79-94df-4a8f-aa56-5f781e906f2e_퍼센트 설정" folded="False" color="" />
+      <StepNode step_id="S894009b6934b48d58b36d765072e1ed4" group_name="e9f0eb79-94df-4a8f-aa56-5f781e906f2e_퍼센트 설정" folded="False" color="" />
+      <StepNode step_id="S4963fb973a064c4a907a652e72a93071" group_name="906aa25b-78fd-4699-adab-250533b34a34_쉼표 설정" folded="False" color="" />
+      <StepNode step_id="S0177dac2604c455893d021e28d4b1b32" group_name="906aa25b-78fd-4699-adab-250533b34a34_쉼표 설정" folded="False" color="" />
+      <StepNode step_id="S8b33a0e2fdc747a2bef5c5efafe9d5ae" group_name="f8394ee3-5d53-43a7-bf7e-a72072626059_저장및 닫기" folded="False" color="" />
+      <StepNode step_id="Sa7879042cdc740af9356a56451142a42" group_name="f8394ee3-5d53-43a7-bf7e-a72072626059_저장및 닫기" folded="False" color="" />
+    </StepNodes>
+  </Diagram>
+</Process>
