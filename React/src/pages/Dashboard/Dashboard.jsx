@@ -155,6 +155,14 @@ export default function Dashboard() {
 			([text, value]) => ({ text, value })
 		);
 	}, [selectedStock]);
+
+	const aiStockAnalysis = useMemo(() => {
+		if (!selectedStock || !AiAnalysisData || !AiAnalysisData.stocks) {
+			return null;
+		}
+		return AiAnalysisData.stocks[selectedStock.stockName];
+	}, [selectedStock]);
+
 	const [showFooterButton, setShowFooterButton] = useState(false);
 	const [showFooter, setShowFooter] = useState(false);
 	const [buttonAnimation, setButtonAnimation] = useState('');
@@ -1382,14 +1390,28 @@ export default function Dashboard() {
 							<div className={styles['ai-analysis-section']}>
 								<div className={styles['ai-analysis-container']}>
 									<div className={styles['ai-analysis-content']}>
-										<h3>종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)</h3>
+										<h3>
+											종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)
+										</h3>
 										<div className={styles.aiAnalysisText}>
-											{(AiAnalysisData.periods[timeframeToDataKey[selectedTimeframe]]?.text || '분석 데이터가 없습니다.').replace(/^\s*-\s*판정:.*$/m, '').trim().split('\n').map((line, index) => (
-												<React.Fragment key={index}>
-													{line}
-													<br />
-												</React.Fragment>
-											))}
+											{aiStockAnalysis ? (
+												(
+													aiStockAnalysis.periods[
+														timeframeToDataKey[selectedTimeframe]
+													]?.text || '분석 데이터가 없습니다.'
+												)
+													.replace(/^\s*-\s*판정:.*$/m, '')
+													.trim()
+													.split('\n')
+													.map((line, index) => (
+														<React.Fragment key={index}>
+															{line}
+															<br />
+														</React.Fragment>
+													))
+											) : (
+												'선택된 종목에 대한 AI 분석 데이터가 없습니다.'
+											)}
 										</div>
 									</div>
 									<div className={styles['ai-prediction']}>
@@ -1404,12 +1426,15 @@ export default function Dashboard() {
 											</button>
 											<span
 												className={`${styles['prediction-value']} ${
-													AiAnalysisData.periods['하루']?.verdict === '매수' ? styles.positive :
-													AiAnalysisData.periods['하루']?.verdict === '보유' ? styles.neutral :
-													styles.negative
+													aiStockAnalysis?.periods['하루']?.verdict === '매수' ||
+													aiStockAnalysis?.periods['하루']?.verdict === '강력매수'
+														? styles.positive
+														: aiStockAnalysis?.periods['하루']?.verdict === '보유'
+														? styles.neutral
+														: styles.negative
 												}`}
 											>
-												{AiAnalysisData.periods['하루']?.verdict || 'N/A'}
+												{aiStockAnalysis?.periods['하루']?.verdict || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1423,12 +1448,16 @@ export default function Dashboard() {
 											</button>
 											<span
 												className={`${styles['prediction-value']} ${
-													AiAnalysisData.periods['일주일']?.verdict === '매수' ? styles.positive :
-													AiAnalysisData.periods['일주일']?.verdict === '보유' ? styles.neutral :
-													styles.negative
+													aiStockAnalysis?.periods['일주일']?.verdict === '매수' ||
+													aiStockAnalysis?.periods['일주일']?.verdict === '강력매수'
+														? styles.positive
+														: aiStockAnalysis?.periods['일주일']?.verdict ===
+														  '보유'
+														? styles.neutral
+														: styles.negative
 												}`}
 											>
-												{AiAnalysisData.periods['일주일']?.verdict || 'N/A'}
+												{aiStockAnalysis?.periods['일주일']?.verdict || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1442,12 +1471,16 @@ export default function Dashboard() {
 											</button>
 											<span
 												className={`${styles['prediction-value']} ${
-													AiAnalysisData.periods['한 달']?.verdict === '매수' ? styles.positive :
-													AiAnalysisData.periods['한 달']?.verdict === '보유' ? styles.neutral :
-													styles.negative
+													aiStockAnalysis?.periods['한 달']?.verdict === '매수' ||
+													aiStockAnalysis?.periods['한 달']?.verdict === '강력매수'
+														? styles.positive
+														: aiStockAnalysis?.periods['한 달']?.verdict ===
+														  '보유'
+														? styles.neutral
+														: styles.negative
 												}`}
 											>
-												{AiAnalysisData.periods['한 달']?.verdict || 'N/A'}
+												{aiStockAnalysis?.periods['한 달']?.verdict || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1461,12 +1494,16 @@ export default function Dashboard() {
 											</button>
 											<span
 												className={`${styles['prediction-value']} ${
-													AiAnalysisData.periods['여섯 달']?.verdict === '매수' ? styles.positive :
-													AiAnalysisData.periods['여섯 달']?.verdict === '보유' ? styles.neutral :
-													styles.negative
+													aiStockAnalysis?.periods['6개월']?.verdict === '매수' ||
+													aiStockAnalysis?.periods['6개월']?.verdict === '강력매수'
+														? styles.positive
+														: aiStockAnalysis?.periods['6개월']?.verdict ===
+														  '보유'
+														? styles.neutral
+														: styles.negative
 												}`}
 											>
-												{AiAnalysisData.periods['여섯 달']?.verdict || 'N/A'}
+												{aiStockAnalysis?.periods['6개월']?.verdict || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1480,12 +1517,16 @@ export default function Dashboard() {
 											</button>
 											<span
 												className={`${styles['prediction-value']} ${
-													AiAnalysisData.periods['일 년']?.verdict === '매수' ? styles.positive :
-													AiAnalysisData.periods['일 년']?.verdict === '보유' ? styles.neutral :
-													styles.negative
+													aiStockAnalysis?.periods['일 년']?.verdict === '매수' ||
+													aiStockAnalysis?.periods['일 년']?.verdict === '강력매수'
+														? styles.positive
+														: aiStockAnalysis?.periods['일 년']?.verdict ===
+														  '보유'
+														? styles.neutral
+														: styles.negative
 												}`}
 											>
-												{AiAnalysisData.periods['일 년']?.verdict || 'N/A'}
+												{aiStockAnalysis?.periods['일 년']?.verdict || 'N/A'}
 											</span>
 										</div>
 									</div>
