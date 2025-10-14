@@ -65,13 +65,121 @@ export default function StockAnalysis() {
 
 	const financialChartData = useMemo(() => {
 		if (!stockChartData || !stockChartData.annual_financials) return [];
-		return stockChartData.annual_financials.map((row) => ({
-			time: new Date(row.date).getFullYear(),
-			revenue: row.fund_revenue / 10, // Convert to 10억
-			operatingProfit: row.fund_operating_income / 10, // Convert to 10억
-			netProfit: row.fund_net_income / 10, // Convert to 10억
-		}));
+		return stockChartData.annual_financials
+			.map((row) => {
+				if (!row) return null;
+				let yearStr = null;
+				if (row.date && typeof row.date === 'string') {
+					yearStr = row.date.substring(0, 4);
+				} else if (row.year !== undefined && row.year !== null) {
+					yearStr = String(row.year);
+				}
+				if (!yearStr) return null;
+				return {
+					time: yearStr,
+					revenue:
+						typeof row.fund_revenue === 'number' ? row.fund_revenue / 10 : null,
+					operatingProfit:
+						typeof row.fund_operating_income === 'number'
+							? row.fund_operating_income / 10
+							: null,
+					netProfit:
+						typeof row.fund_net_income === 'number'
+							? row.fund_net_income / 10
+							: null,
+				};
+			})
+			.filter(
+				(r) =>
+					r &&
+					(r.revenue !== null ||
+						r.operatingProfit !== null ||
+						r.netProfit !== null)
+			);
 	}, [stockChartData]);
+
+	const financialRatios = useMemo(() => {
+		const initialRatios = {
+			per: { value: 'N/A', change: 0 },
+			pbr: { value: 'N/A', change: 0 },
+			roe: { value: 'N/A', change: 0 },
+			roa: { value: 'N/A', change: 0 },
+			debt_ratio: { value: 'N/A', change: 0 },
+			current_ratio: { value: 'N/A', change: 0 },
+			quick_ratio: { value: 'N/A', change: 0 },
+			equity_ratio: { value: 'N/A', change: 0 },
+		};
+
+		const calculateChange = (latestVal, previousVal) => {
+			if (typeof latestVal === 'number' && typeof previousVal === 'number') {
+				return latestVal - previousVal;
+			}
+			return 0;
+		};
+
+		// 1. Try to use annual financials data first
+		if (
+			stockChartData?.annual_financials &&
+			stockChartData.annual_financials.length > 0
+		) {
+			const financials = stockChartData.annual_financials;
+			const latest = financials[financials.length - 1];
+
+			if (latest) {
+				initialRatios.per.value = latest.per ?? 'N/A';
+				initialRatios.pbr.value = latest.pbr ?? 'N/A';
+				initialRatios.roe.value = latest.roe ?? 'N/A';
+				initialRatios.roa.value = latest.roa ?? 'N/A';
+				initialRatios.debt_ratio.value = latest.debt_ratio ?? 'N/A';
+				initialRatios.current_ratio.value = latest.current_ratio ?? 'N/A';
+				initialRatios.quick_ratio.value = latest.quick_ratio ?? 'N/A';
+				initialRatios.equity_ratio.value = latest.equity_ratio ?? 'N/A';
+			}
+
+			if (financials.length >= 2) {
+				const previous = financials[financials.length - 2];
+				if (previous) {
+					initialRatios.per.change = calculateChange(latest.per, previous.per);
+					initialRatios.pbr.change = calculateChange(latest.pbr, previous.pbr);
+					initialRatios.roe.change = calculateChange(latest.roe, previous.roe);
+					initialRatios.roa.change = calculateChange(latest.roa, previous.roa);
+					initialRatios.debt_ratio.change = calculateChange(
+						latest.debt_ratio,
+						previous.debt_ratio
+					);
+					initialRatios.current_ratio.change = calculateChange(
+						latest.current_ratio,
+						previous.current_ratio
+					);
+					initialRatios.quick_ratio.change = calculateChange(
+						latest.quick_ratio,
+						previous.quick_ratio
+					);
+					initialRatios.equity_ratio.change = calculateChange(
+						latest.equity_ratio,
+						previous.equity_ratio
+					);
+				}
+			}
+			return initialRatios;
+		}
+
+		// 2. Fallback to fundamentals from top_mover_forecast.json
+		if (stockInfo?.fundamentals) {
+			const { fundamentals } = stockInfo;
+			initialRatios.per.value = fundamentals.per ?? 'N/A';
+			initialRatios.pbr.value = fundamentals.pbr ?? 'N/A';
+			initialRatios.roe.value = fundamentals.roe ?? 'N/A';
+			initialRatios.roa.value = fundamentals.roa ?? 'N/A';
+			initialRatios.debt_ratio.value = fundamentals.debt_ratio ?? 'N/A';
+			initialRatios.current_ratio.value = fundamentals.current_ratio ?? 'N/A';
+			initialRatios.quick_ratio.value = fundamentals.quick_ratio ?? 'N/A';
+			initialRatios.equity_ratio.value = fundamentals.equity_ratio ?? 'N/A';
+			// No change data available in this case
+		}
+
+		return initialRatios;
+	}, [stockChartData, stockInfo]);
 
 	useEffect(() => {
 		const dashboardMain = document.querySelector(
@@ -351,6 +459,7 @@ export default function StockAnalysis() {
 										<Chart
 											data={financialChartData}
 											series={financialChartSeries}
+											xAxisKey="time"
 										/>
 									</div>
 								</div>
@@ -361,7 +470,19 @@ export default function StockAnalysis() {
 										<h4>PER</h4>
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>
-												{safeToFixed(stockInfo?.fundamentals?.per, 1)}
+												{safeToFixed(financialRatios.per.value, 1)}
+											</span>
+											<span
+												className={`${styles['ratio-change']} ${
+													financialRatios.per.change > 0
+														? styles['positive']
+														: styles['negative']
+												}`}
+											>
+												{financialRatios.per.change !== 0
+													? (financialRatios.per.change > 0 ? '+' : '') +
+													  safeToFixed(financialRatios.per.change, 1)
+													: ''}
 											</span>
 										</div>
 										<p className={styles['ratio-description']}>주가수익비율</p>
@@ -370,7 +491,19 @@ export default function StockAnalysis() {
 										<h4>PBR</h4>
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>
-												{safeToFixed(stockInfo?.fundamentals?.pbr, 1)}
+												{safeToFixed(financialRatios.pbr.value, 1)}
+											</span>
+											<span
+												className={`${styles['ratio-change']} ${
+													financialRatios.pbr.change > 0
+														? styles['positive']
+														: styles['negative']
+												}`}
+											>
+												{financialRatios.pbr.change !== 0
+													? (financialRatios.pbr.change > 0 ? '+' : '') +
+													  safeToFixed(financialRatios.pbr.change, 1)
+													: ''}
 											</span>
 										</div>
 										<p className={styles['ratio-description']}>
@@ -381,7 +514,20 @@ export default function StockAnalysis() {
 										<h4>ROE</h4>
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>
-												{safeToFixed(stockInfo?.fundamentals?.roe * 100, 1)}%
+												{safeToFixed(financialRatios.roe.value * 100, 1)}%
+											</span>
+											<span
+												className={`${styles['ratio-change']} ${
+													financialRatios.roe.change > 0
+														? styles['positive']
+														: styles['negative']
+												}`}
+											>
+												{financialRatios.roe.change !== 0
+													? (financialRatios.roe.change > 0 ? '+' : '') +
+													  safeToFixed(financialRatios.roe.change * 100, 1) +
+													  '%p'
+													: ''}
 											</span>
 										</div>
 										<p className={styles['ratio-description']}>
@@ -392,7 +538,20 @@ export default function StockAnalysis() {
 										<h4>ROA</h4>
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>
-												{safeToFixed(stockInfo?.fundamentals?.roa, 1)}%
+												{safeToFixed(financialRatios.roa.value * 100, 1)}%
+											</span>
+											<span
+												className={`${styles['ratio-change']} ${
+													financialRatios.roa.change > 0
+														? styles['positive']
+														: styles['negative']
+												}`}
+											>
+												{financialRatios.roa.change !== 0
+													? (financialRatios.roa.change > 0 ? '+' : '') +
+													  safeToFixed(financialRatios.roa.change * 100, 1) +
+													  '%p'
+													: ''}
 											</span>
 										</div>
 										<p className={styles['ratio-description']}>총자산이익률</p>
@@ -404,32 +563,44 @@ export default function StockAnalysis() {
 										<h4>부채비율</h4>
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>
-												{safeToFixed(stockInfo?.fundamentals?.debt_ratio, 1)}%
+												{safeToFixed(financialRatios.debt_ratio.value, 1)}%
 											</span>
+											{/* <span className={`${styles['ratio-change']} ${financialRatios.debt_ratio.change > 0 ? styles['positive'] : styles['negative']}`}>
+												{financialRatios.debt_ratio.change !== 0 ? (financialRatios.debt_ratio.change > 0 ? '+' : '') + safeToFixed(financialRatios.debt_ratio.change, 1) + '%p' : ''}
+											</span> */}
 										</div>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>유동비율</h4>
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>
-												{safeToFixed(stockInfo?.fundamentals?.current_ratio, 1)}
+												{safeToFixed(financialRatios.current_ratio.value, 1)}%
 											</span>
+											{/* <span className={`${styles['ratio-change']} ${financialRatios.current_ratio.change > 0 ? styles['positive'] : styles['negative']}`}>
+												{financialRatios.current_ratio.change !== 0 ? (financialRatios.current_ratio.change > 0 ? '+' : '') + safeToFixed(financialRatios.current_ratio.change, 1) + '%p' : ''}
+											</span> */}
 										</div>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>당좌비율</h4>
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>
-												{safeToFixed(stockInfo?.fundamentals?.quick_ratio, 1)}
+												{safeToFixed(financialRatios.quick_ratio.value, 1)}%
 											</span>
+											{/* <span className={`${styles['ratio-change']} ${financialRatios.quick_ratio.change > 0 ? styles['positive'] : styles['negative']}`}>
+												{financialRatios.quick_ratio.change !== 0 ? (financialRatios.quick_ratio.change > 0 ? '+' : '') + safeToFixed(financialRatios.quick_ratio.change, 1) + '%p' : ''}
+											</span> */}
 										</div>
 									</div>
 									<div className={styles['ratio-item']}>
 										<h4>자기자본비율</h4>
 										<div className={styles['ratio-value']}>
 											<span className={styles['ratio-number']}>
-												{safeToFixed(stockInfo?.fundamentals?.equity_ratio, 1)}%
+												{safeToFixed(financialRatios.equity_ratio.value, 1)}%
 											</span>
+											{/* <span className={`${styles['ratio-change']} ${financialRatios.equity_ratio.change > 0 ? styles['positive'] : styles['negative']}`}>
+												{financialRatios.equity_ratio.change !== 0 ? (financialRatios.equity_ratio.change > 0 ? '+' : '') + safeToFixed(financialRatios.equity_ratio.change, 1) + '%p' : ''}
+											</span> */}
 										</div>
 									</div>
 								</div>
