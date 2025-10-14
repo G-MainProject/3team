@@ -204,7 +204,7 @@ def fetch_recent_news(
     *,
     client_id: str,
     client_secret: str,
-    max_articles: int = MAX_ARTICLES_DEFAULT,
+    max_articles: int | None = MAX_ARTICLES_DEFAULT,
     window_days: int = WINDOW_DAYS_DEFAULT,
 ) -> list[dict[str, str]]:
     """네이버 뉴스 API로 최신 기사 목록을 가져온다."""
@@ -217,12 +217,15 @@ def fetch_recent_news(
     display_count = 100
     old_article_notice_printed = False
 
+    limit_text = (
+        f"최대 {max_articles}건" if max_articles is not None else "최대 건수 제한 없음"
+    )
     safe_print(
-        f"'{search_word}' 검색 결과를 수집합니다 ({window_days}일 이내, 최대 {max_articles}건)"
+        f"'{search_word}' 검색 결과를 수집합니다 ({window_days}일 이내, {limit_text})"
     )
 
     while (
-        len(successful_articles) < max_articles
+        (max_articles is None or len(successful_articles) < max_articles)
         and start_index <= 1000
     ):
         url = (
@@ -297,12 +300,16 @@ def fetch_recent_news(
                     "content": content,
                 }
             )
+            progress_text = (
+                f"{len(successful_articles)}/{max_articles}"
+                if max_articles is not None
+                else f"{len(successful_articles)}"
+            )
             safe_print(
-                f"- 수집 진행: {len(successful_articles)}/{max_articles}건 확보 - "
-                f"'{clean_title[:40]}...'"
+                f"- 수집 진행: {progress_text}건 확보 - '{clean_title[:40]}...'"
             )
 
-            if len(successful_articles) >= max_articles:
+            if max_articles is not None and len(successful_articles) >= max_articles:
                 break
 
         start_index += display_count
@@ -520,7 +527,7 @@ def main() -> None:
     ten_year_output = base_output.parent / "10years_sentiment_report.json"
     ten_year_output.parent.mkdir(parents=True, exist_ok=True)
 
-    ten_year_max_articles = max(args.max_articles, ten_year_window_days)
+    ten_year_max_articles: int | None = None
     ten_year_reports: list[dict] = []
     ten_year_failed_targets: list[str] = []
 
@@ -536,6 +543,7 @@ def main() -> None:
                 search_word,
                 client_id=client_id,
                 client_secret=client_secret,
+                max_articles=ten_year_max_articles,
                 window_days=ten_year_window_days,
             )
             if not news_data:
