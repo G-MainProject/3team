@@ -1,10 +1,12 @@
-﻿# -*- coding: utf-8 -*-
-"""CLI entrypoint for stage-03 model building and training.
+# -*- coding: utf-8 -*-
+"""3단계 모델 학습·평가 CLI 엔트리 포인트.
 
-?뺤긽?뷀븳 ?뚯꽌/?숈뒿 猷⑦봽瑜??ы븿?⑸땲??
-?듭뀡:
-- --use-base-price-input: 留덉?留?醫낃?(?먮뒗 ?꾩옱媛)瑜??ㅼ뭡???낅젰?쇰줈 寃고빀
-- --close-index: X??留덉?留??쒖젏?먯꽌 醫낃? feature ?몃뜳??- --horizon-weights: ?몃씪?댁쫵蹂??먯떎 媛以묒튂
+이 스크립트는 가격/텍스트 지표를 입력으로 받아 멀티-호라이즌 회귀 모델을 구성하고, 학습·요약·내보내기까지 수행한다.
+
+주요 옵션:
+- --use-base-price-input: 시퀀스 마지막 종가(베이스 가격)를 스칼라 입력으로 추가
+- --close-index: 입력 텐서에서 종가가 위치한 인덱스
+- --horizon-weights: 예측 호라이즌별 손실 가중치
 """
 
 from __future__ import annotations
@@ -29,7 +31,7 @@ from .text_branch import create_text_branch
 
 
 # ---------------------------------------------------------------------------
-# CLI
+# 명령줄 인터페이스
 # ---------------------------------------------------------------------------
 
 
@@ -38,7 +40,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     dataset_cfg = build_datasets._load_config(None, args.gold_root, args.artifacts_root, args.settings)
-    # horizons: gold/horizons.json???덉쑝硫???뼱?
+    # horizons: gold/horizons.json이 있으면 호라이즌 목록을 파일에서 읽는다
     try:
         gold_root = dataset_cfg.gold_root
         hfile = gold_root / "horizons.json"
@@ -55,14 +57,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     if inferred is not None:
         data_seq_len, data_feat_dim = inferred
         if seq_len != data_seq_len:
-            print(f"[s3_model] seq-len {seq_len} -> ?곗씠??湲곗? {data_seq_len} 濡?蹂寃쏀빀?덈떎.")
+            print(f"[s3_model] seq-len {seq_len} -> 데이터 길이 {data_seq_len}로 조정합니다.")
             seq_len = data_seq_len
         if price_dim is None or price_dim != data_feat_dim:
             if price_dim is not None and price_dim != data_feat_dim:
-                print(f"[s3_model] price-dim {price_dim} != ?곗씠??feature {data_feat_dim}; ?곗씠??湲곗??쇰줈 蹂寃쏀빀?덈떎.")
+                print(f"[s3_model] price-dim {price_dim} != 데이터 피처 차원 {data_feat_dim}; 데이터에 맞춰 변경합니다.")
             price_dim = data_feat_dim
     elif price_dim is None:
-        raise RuntimeError("媛寃?feature 李⑥썝??異붾줎?섏? 紐삵뻽?듬땲?? --price-dim ?듭뀡??吏?뺥빐二쇱꽭??")
+        raise RuntimeError("가격 피처 차원을 추론하지 못했습니다. --price-dim 옵션을 지정하세요.")
 
     price_branch = create_price_branch(input_shape=(seq_len, price_dim))
     text_branch = create_text_branch(input_dim=args.text_dim) if args.text_dim is not None else None
@@ -118,51 +120,47 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Stage-03 model assembly / training (multi-target regression)",
+        description="3단계 모델 구성·학습을 위한 CLI",
     )
-    parser.add_argument("--seq-len", type=int, default=30, help="?낅젰 ?쒗??湲몄씠")
-    parser.add_argument("--price-dim", type=int, default=None, help="媛寃?feature 李⑥썝 (?놁쑝硫?gold?먯꽌 異붾줎)")
-    parser.add_argument("--text-dim", type=int, help="?띿뒪??媛吏 ?낅젰 李⑥썝(?듭뀡)")
-    parser.add_argument("--text-hidden", type=int, default=128, help="?띿뒪??媛吏 ???李⑥썝")
-    parser.add_argument("--hidden-dim", type=int, default=128, help="Fusion head ???李⑥썝")
-    parser.add_argument("--dropout", type=float, default=0.4, help="Dropout")
-    parser.add_argument("--export", type=Path, help="?덈젴??媛以묒튂 ???寃쎈줈 (state_dict)")
-
-    parser.add_argument("--train", action="store_true", help="Run training loop")
-    parser.add_argument("--settings", type=Path, help="Path to settings.yaml")
-    parser.add_argument("--gold-root", type=Path, help="Root directory for gold data")
-    parser.add_argument("--artifacts-root", type=Path, help="Root directory for artifacts")
-    parser.add_argument("--epochs", type=int, default=50, help="Number of training epochs")
-    parser.add_argument("--batch-size", type=int, default=32, help="Batch size")
-    parser.add_argument("--learning-rate", type=float, default=1e-3, help="Learning rate")
-    parser.add_argument("--device", default="cuda", help="Device to use (cuda/cpu)")
-    parser.add_argument("--save-best", type=Path, help="Path to save best checkpoint")
-    parser.add_argument("--save-last", type=Path, help="Path to save last checkpoint")
-    # ?꾩옱媛(湲곗?媛) ?ㅼ뭡???낅젰 諛??몃씪?댁쫵 媛以묒튂 ?듭뀡
-    parser.add_argument("--use-base-price-input", action="store_true", help="Include base price scalar input")
-    parser.add_argument("--close-index", type=int, default=3, help="Feature index of close price in X")
-    parser.add_argument("--horizon-weights", nargs="*", type=float, help="Loss weights per horizon")
-    # Early stopping options
-    parser.add_argument("--early-stop", action="store_true", help="Enable early stopping on validation loss")
-    parser.add_argument("--patience", type=int, default=5, help="Early stopping patience (epochs without improvement)")
-    parser.add_argument("--min-delta", type=float, default=0.001, help="Minimum improvement in val loss to reset patience")
-    # Recency weighting: emphasize recent training samples (default: exp, decay=1.5)
-    try:
-        parser.add_argument("--recency-weighting", choices=["none", "linear", "exp"], default="exp", help="Recent-sample weighting (none/linear/exp)")
-        parser.add_argument("--recency-decay", type=float, default=1.5, help="Strength for recency weighting")
-    except Exception:
-        pass
+    parser.add_argument("--seq-len", type=int, default=30, help="입력 시퀀스 길이")
+    parser.add_argument("--price-dim", type=int, default=None, help="가격 피처 차원(지정하지 않으면 gold 데이터에서 추론)")
+    parser.add_argument("--text-dim", type=int, help="텍스트 입력 피처 차원(옵션)")
+    parser.add_argument("--text-hidden", type=int, default=128, help="텍스트 브랜치 은닉 차원")
+    parser.add_argument("--hidden-dim", type=int, default=128, help="퓨전 헤드 은닉 차원")
+    parser.add_argument("--dropout", type=float, default=0.4, help="드롭아웃 비율")
+    parser.add_argument("--device", default="cuda", help="사용할 디바이스(cuda/cpu)")
+    parser.add_argument("--gold-root", type=Path, help="gold 데이터 경로")
+    parser.add_argument("--artifacts-root", type=Path, help="학습 산출물 저장 경로")
+    parser.add_argument("--settings", type=Path, help="settings.yaml 경로")
+    parser.add_argument("--seq-drop", type=int, default=0, help="시퀀스 앞단 샘플을 버릴 개수(0이면 미사용)")
+    parser.add_argument("--batch-size", type=int, default=32, help="배치 크기")
+    parser.add_argument("--epochs", type=int, default=50, help="학습 epoch 수")
+    parser.add_argument("--learning-rate", type=float, default=1e-3, help="학습률")
+    parser.add_argument("--close-index", type=int, default=3, help="입력 텐서에서 종가가 위치한 인덱스")
+    parser.add_argument("--use-base-price-input", action="store_true", help="마지막 종가(베이스 가격)를 스칼라 입력으로 추가")
+    parser.add_argument("--horizon-weights", nargs="*", type=float, help="호라이즌별 손실 가중치")
+    parser.add_argument("--train", action="store_true", help="학습을 수행(미지정 시 모델 요약만 출력)")
+    parser.add_argument("--save-best", type=Path, help="최고 성능 모델 저장 경로")
+    parser.add_argument("--save-last", type=Path, help="마지막 모델 저장 경로")
+    parser.add_argument("--early-stop", action="store_true", help="검증 손실 기준 조기 종료 사용")
+    parser.add_argument("--patience", type=int, default=5, help="조기 종료 대기 epoch 수")
+    parser.add_argument("--min-delta", type=float, default=0.001, help="조기 종료 판단을 위한 최소 개선폭")
+    parser.add_argument("--recency-weighting", choices=["none", "linear", "exp"], default="exp", help="최근 샘플 가중 방식(none/linear/exp)")
+    parser.add_argument("--recency-decay", type=float, default=1.5, help="최근 샘플 가중 강도")
+    parser.add_argument("--export", type=Path, help="학습한 가중치(state_dict) 저장 경로")
+    parser.add_argument("--report-json", type=Path, help="학습 요약 정보를 JSON으로 저장")
     return parser
 
 
+
 # ---------------------------------------------------------------------------
-# Training implementation
+# 학습 구현부
 # ---------------------------------------------------------------------------
 
 
 @dataclass(slots=True)
 class TrainConfig:
-    # Required (no defaults) — must come first
+    # 필수 인자(기본값 없음)는 앞쪽에 배치
     gold_root: Path
     artifacts_root: Path
     epochs: int
@@ -174,21 +172,21 @@ class TrainConfig:
     horizons: list[int]
     horizon_labels: list[str]
 
-    # Optional (with defaults) — after required
+    # 선택 인자(기본값이 있는 항목)는 그 다음에 배치
     close_index: int = 3
     horizon_weights: Optional[list[float]] = None
-    # Recency weighting (optional)
+    # 최근 샘플 가중치 설정
     recency_weighting: str = "none"
     recency_decay: float = 1.5
     sample_weights: Optional[torch.Tensor] = None
-    # Early stopping (optional)
+    # 조기 종료 설정
     early_stop: bool = False
     patience: int = 5
     min_delta: float = 0.001
 
 
 class GoldSequenceDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
-    """gold/X.npy, y.npy瑜??쎌뼱 ?쒗???源껋쓣 諛섑솚."""
+    """gold/X.npy와 y.npy를 읽어 시퀀스 데이터를 반환한다."""
 
     def __init__(self, x_path: Path, y_path: Path) -> None:
         if not x_path.exists() or not y_path.exists():
@@ -196,7 +194,7 @@ class GoldSequenceDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
         self.features = np.load(x_path)
         self.labels = np.load(y_path)
         if self.features.shape[0] != self.labels.shape[0]:
-            raise ValueError("X? y???섑뵆 ?섍? ?쇱튂?섏? ?딆뒿?덈떎.")
+            raise ValueError("features와 labels의 샘플 수가 일치하지 않습니다.")
 
     def __len__(self) -> int:  # type: ignore[override]
         return int(self.features.shape[0])
@@ -216,9 +214,9 @@ def run_training(model: nn.Module, cfg: TrainConfig) -> None:
         for split in ("train", "val", "test")
     }
     if loaders["train"] is None:
-        raise RuntimeError("train split ?곗씠?곕? 李얠? 紐삵뻽?듬땲?? gold/train/X.npy, y.npy 瑜??뺤씤?댁＜?몄슂.")
+        raise RuntimeError("train 분할을 찾을 수 없습니다. gold/train/X.npy, y.npy를 확인하세요.")
 
-    # 媛以??먯떎(reduction='none' ???섎룞 媛以??됯퇏)
+    # SmoothL1Loss(reduction='none')로 호라이즌별 손실을 계산
     criterion = nn.SmoothL1Loss(reduction='none')
     optimizer = torch.optim.Adam(model.parameters(), lr=cfg.learning_rate, weight_decay=2e-4)
 
@@ -393,14 +391,14 @@ def _run_epoch(
         price_seq = price_seq.to(device)
         labels = labels.to(device)
 
-        # base scalar: 留덉?留??쒖젏 醫낃?瑜??ㅼ뭡???낅젰?쇰줈 怨듦툒(?듭뀡)
+        # base scalar: 마지막 시점 종가를 스칼라 형태로 추가(옵션)
         base_scalar = price_seq[:, -1, close_index].unsqueeze(-1)
         try:
             preds = model(price_seq, None, base_scalar)
         except TypeError:
             preds = model(price_seq)
 
-        # compute loss across horizons -> per-sample -> scalar (with optional recency weights)
+        # 호라이즌별 손실을 계산해 샘플 단위로 축약하고 가중치(옵션)를 적용
         loss_mat = criterion(preds, labels)  # (B,H) or scalar
         if loss_mat.dim() == 0:
             per_sample = loss_mat.view(1)
@@ -454,7 +452,7 @@ def _create_loader(root: Path, split: str, batch_size: int) -> Optional[DataLoad
 
 
 # ---------------------------------------------------------------------------
-# Utilities
+# 유틸리티 함수
 # ---------------------------------------------------------------------------
 
 
@@ -467,7 +465,7 @@ def _infer_price_shape(gold_root: Path) -> Optional[tuple[int, int]]:
             array = np.load(x_path, mmap_mode="r")
             return int(array.shape[1]), int(array.shape[2])
         except Exception as exc:  # pragma: no cover - defensive
-            print(f"[s3_model] gold/{split}/X.npy ?쎄린 ?ㅻ쪟: {exc}")
+            print(f"[s3_model] gold/{split}/X.npy 로딩 오류: {exc}")
             continue
     return None
 
@@ -477,7 +475,7 @@ def _summarize_model(model: torch.nn.Module, seq_len: int, price_dim: int, text_
     with torch.no_grad():
         price_dummy = torch.zeros(1, seq_len, price_dim)
         text_dummy = torch.zeros(1, seq_len, text_dim) if text_dim is not None else None
-        # base_scalar dummy
+        # base_scalar 더미 입력
         try:
             outputs = model(price_dummy, text_dummy, torch.zeros(1, 1))
         except TypeError:
@@ -509,4 +507,3 @@ def _format_horizon_labels(horizons: Iterable[int]) -> list[str]:
 
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(main())
-

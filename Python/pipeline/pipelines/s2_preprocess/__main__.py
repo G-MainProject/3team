@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""CLI entrypoint for stage-02 preprocessing (bronze -> silver -> gold)."""
+"""2단계 전처리 파이프라인(bronze → silver → gold)을 실행하는 CLI 진입점."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ else:
 
 
 # ---------------------------------------------------------------------------
-# CLI
+# 명령줄 인터페이스
 # ---------------------------------------------------------------------------
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -66,28 +66,26 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Stage-02 preprocessing pipeline (bronze/silver/gold)",
+        description="2단계 전처리 파이프라인(bronze -> silver -> gold)",
     )
-    parser.add_argument("--tickers", nargs="*", help="처리할 티커 목록 (미지정 시 bronze/silver 파일 전체 대상)")
+    parser.add_argument("--tickers", nargs="*", help="처리할 종목 코드 목록(생략하면 bronze/silver 전체를 대상으로 함)")
     parser.add_argument("--raw-root", type=Path, default=None, help="raw 데이터 루트 경로")
-    parser.add_argument("--bronze-root", type=Path, default=None, help="bronze 저장 경로")
-    parser.add_argument("--silver-root", type=Path, default=None, help="silver 저장 경로")
-    parser.add_argument("--gold-root", type=Path, default=None, help="gold 저장 경로")
+    parser.add_argument("--bronze-root", type=Path, default=None, help="bronze 출력 경로")
+    parser.add_argument("--silver-root", type=Path, default=None, help="silver 출력 경로")
+    parser.add_argument("--gold-root", type=Path, default=None, help="gold 출력 경로")
     parser.add_argument("--artifacts-root", type=Path, default=None, help="artifacts 저장 경로")
     parser.add_argument("--settings", type=Path, default=None, help="settings.yaml 경로")
-    parser.add_argument("--price-source", default="pykrx", choices=["pykrx", "kiwoom"], help="가격 데이터 우선 소스")
-    parser.add_argument("--news-dir", type=Path, help="뉴스 데이터 경로(티커별 하위)"
-    )
-    parser.add_argument("--fundamentals-dir", type=Path, help="재무 데이터 경로(DART 결과 등)")
-    parser.add_argument("--skip-merge", action="store_true", help="merge_align 단계를 건너뛰기")
-    parser.add_argument("--skip-features", action="store_true", help="features 단계를 건너뛰기")
-    parser.add_argument("--skip-datasets", action="store_true", help="build_datasets 단계를 건너뛰기")
+    parser.add_argument("--price-source", default="pykrx", choices=["pykrx", "kiwoom"], help="가격 데이터 소스를 선택")
+    parser.add_argument("--news-dir", type=Path, help="뉴스 특징 파일 경로(티커별 하위 디렉터리)")
+    parser.add_argument("--fundamentals-dir", type=Path, help="재무 데이터 경로(DART 수집 결과)")
+    parser.add_argument("--skip-merge", action="store_true", help="merge_align 단계를 건너뛴다")
+    parser.add_argument("--skip-features", action="store_true", help="features 단계를 건너뛴다")
+    parser.add_argument("--skip-datasets", action="store_true", help="build_datasets 단계를 건너뛴다")
     return parser
-
 
 def _print_summary(summary: Dict[str, list[str]]) -> None:
     if not summary:
-        print("No preprocessing stages executed.")
+        print("실행된 전처리 단계가 없습니다.")
         return
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 

@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Clean inference script for multi-horizon price forecasting (ASCII only).
+"""다중 호라이즌 주가 예측을 수행하는 추론 스크립트.
+
+입력:
+- --model: 학습된 모델 state_dict(.pth) 경로
+- --input: 가격 특성 (N, seq_len, feat_dim) numpy 파일
+- --text-input: (옵션) 텍스트 특성 (N, seq_len, text_dim) numpy 파일
+- --close-values: (옵션) 샘플별 기준 종가 (N,) numpy 파일
+- --close-index: --input에서 종가가 위치한 피처 인덱스(기본값 3)
+
+출력:
+- --output: .json(기본) 또는 .csv 파일로 예측 결과와 메타데이터 저장
+
 
 Inputs
 - --model: path to model state_dict (.pth)
@@ -81,7 +92,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                     horizons.append(pad_val)
     horizon_labels = _format_horizon_labels(horizons)
 
-    # Device
+    # 디바이스 설정
     device = torch.device(opts.device if (opts.device == "cpu" or torch.cuda.is_available()) else "cpu")
 
     # Load arrays
@@ -96,7 +107,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         if text_data.shape[:2] != price_data.shape[:2]:
             raise ValueError("Text input must match (N, seq_len) of price input")
 
-    # Build model
+    # 모델 구축
     price_branch = create_price_branch(input_shape=(seq_len, feat_dim))
     text_branch = create_text_branch(input_dim=text_data.shape[2]) if text_data is not None else None
     model = create_fusion_head(
@@ -110,7 +121,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     model.to(device)
     model.eval()
 
-    # Inference
+    # 추론 실행
     with torch.no_grad():
         p_t = torch.tensor(price_data, dtype=torch.float32, device=device)
         t_t = torch.tensor(text_data, dtype=torch.float32, device=device) if text_data is not None else None
@@ -132,13 +143,13 @@ def main(argv: Optional[list[str]] = None) -> int:
     if clip_val and clip_val > 0:
         np.clip(preds, -clip_val, clip_val, out=preds)
 
-    # preds: returns (N, H)
+    # preds: 예측된 수익률 (N, H)
     close_values = _resolve_close_values(price_data, opts.close_values, opts.close_index)
     if close_values.shape[0] != preds.shape[0]:
         raise ValueError("Length of close vector must match number of samples in predictions")
     predicted_prices = close_values[:, None] * (1.0 + preds)
 
-    # Output
+    # 출력 저장
     out = {
         "model": str(opts.model),
         "input": str(opts.input),

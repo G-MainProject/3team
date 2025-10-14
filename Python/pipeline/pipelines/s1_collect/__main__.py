@@ -26,7 +26,7 @@ if __package__ in (None, ""):
         except ModuleNotFoundError:
             return import_module(f"python.pipeline.pipelines.s1_collect.{name}")
 
-    # Ensure .env is loaded with UTF-8-SIG (BOM-safe)
+    # .env를 UTF-8-SIG로 읽어 들여 인코딩 문제를 방지한다
     try:
         from Python.pipeline.utils.env import load_dotenv_utf8sig, sanitize_environ_bom
     except Exception:
@@ -66,8 +66,8 @@ else:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = _build_parser()
-    # Keep flags required at argparse level, but inject dynamic defaults
-    # (start-date = 10 years ago, end-date = today) when absent.
+    # argparse에서 필수 인자는 유지하되 값이 없으면 동적으로 기본값을 주입한다
+    # (start_date는 10년 전, end_date는 오늘 날짜)
     if argv is None:
         raw_argv = list(sys.argv[1:])
     else:
@@ -120,7 +120,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "유동부채",
                 "재고자산",
             ]
-        # Force standard single-accounts (ensure UTF-8 correctness)
+        # UTF-8 변환 과정에서 깨지지 않도록 단일 계정 항목을 강제로 지정한다
         args.single_accounts = [
             "당기순이익",
             "자산총계",
@@ -387,7 +387,7 @@ def _auto_resolve_corp_codes_v2(tickers: Sequence[str] | None) -> list[str]:
 
 def _download_corpcode_lookup(api_key: str) -> dict[str, str]:
     """DART corpCode.xml(Zip)을 내려받아 stock_code -> corp_code 매핑을 만든다."""
-    import requests  # lazy import
+    import requests  # 필요 시 지연 로드
     url = "https://opendart.fss.or.kr/api/corpCode.xml"
     resp = requests.get(url, params={"crtfc_key": api_key}, timeout=30)
     resp.raise_for_status()

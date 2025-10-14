@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-"""Utility helpers for exporting pykrx data into raw JSON files."""
+"""pykrx 데이터를 원시 JSON 파일로 저장하기 위한 보조 함수 모음."""
 
 from __future__ import annotations
 
@@ -25,12 +25,12 @@ except ImportError as exc:  # pragma: no cover
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_INVESTORS = ("개인", "외국인", "기관")
-DEFAULT_INDEX_CODES = ("1001", "2001")  # KOSPI, KOSDAQ
+DEFAULT_INDEX_CODES = ("1001", "2001")  # KOSPI, KOSDAQ 지수 코드
 DATE_FMT = "%Y-%m-%d"
 
 
 def _find_project_root() -> Path:
-    """Find the project root by looking for .env or data directories."""
+    """상위 디렉터리에서 .env 또는 data 폴더를 찾아 프로젝트 루트를 결정한다."""
 
     current = Path(__file__).resolve()
     for parent in current.parents:
@@ -55,7 +55,7 @@ def run(
     index_codes: Iterable[str] | None = None,
     adjusted: bool = True,
 ) -> Mapping[str, list[Path]]:
-    """Pull raw pykrx datasets and persist them under data/raws/pykrx."""
+    """pykrx 원천 데이터를 내려받아 data/raws/pykrx 이하에 저장한다."""
 
     start = _parse_date(start_date)
     end = _parse_date(end_date)
@@ -121,7 +121,7 @@ def run(
 
 
 def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
-    """Resolve the raw directory root and ensure it exists."""
+    """raw 디렉터리 경로를 확인하고 존재하지 않으면 생성한다."""
 
     if raw_dir is None:
         project_root = _find_project_root()
@@ -132,25 +132,25 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
 
 
 def _parse_date(value: str) -> datetime:
-    """Parse YYYY-MM-DD strings into datetime objects."""
+    """YYYY-MM-DD 형식 문자열을 datetime 객체로 변환한다."""
 
     return datetime.strptime(value, DATE_FMT)
 
 
 def _filename(prefix: str, key: str, start: datetime, end: datetime) -> str:
-    """Build a deterministic filename for a dataset."""
+    """데이터 종류와 기간을 바탕으로 재현 가능한 파일명을 만든다."""
 
     return f"{prefix}_{key}_{start.strftime('%Y%m%d')}_{end.strftime('%Y%m%d')}.json"
 
 
 def _sanitize_for_path(value: str) -> str:
-    """Drop characters that are not safe for filesystem paths."""
+    """파일 경로에 사용할 수 없는 문자를 제거한다."""
 
     return "".join(ch for ch in value if ch.isalnum() or ch in ("-", "_")) or "unknown"
 
 
 def _save_dataframe(df: "pd.DataFrame", path: Path, *, index_name: str) -> Path:
-    """Persist a DataFrame as a JSON payload with metadata."""
+    """DataFrame을 메타 정보와 함께 JSON 파일로 저장한다."""
 
     if df is None or df.empty:
         LOGGER.warning("pykrx returned empty data for %s", path.name)
@@ -186,7 +186,7 @@ def _save_dataframe(df: "pd.DataFrame", path: Path, *, index_name: str) -> Path:
 
 
 def _fetch_trading_value(start_date: str, end_date: str, ticker: str, investor: str):
-    """Try multiple parameter names because the API is inconsistent."""
+    """API 매개변수 이름이 제각각이라 여러 조합을 순차적으로 시도한다."""
 
     candidates = (
         {"ticker": ticker, "investor": investor},

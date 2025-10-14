@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Evaluate multi-horizon predictions against actual prices."""
+"""여러 예측 기간(horizon)에 대한 결과를 실제 가격과 비교·평가합니다."""
 
 from __future__ import annotations
 
@@ -163,7 +163,7 @@ def main(args: list[str] | None = None) -> int:
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Evaluate predicted prices vs actual prices")
+    parser = argparse.ArgumentParser(description="예측 가격과 실제 가격을 비교 평가하는 도구")
     parser.add_argument("--predictions", type=Path, required=True, help="s4 예측 결과 JSON 경로")
     parser.add_argument("--actual-prices", type=Path, required=True, help="실제 가격 numpy (N, len(horizons))")
     parser.add_argument("--horizons", nargs="*", type=int, default=[1, 5, 20, 120, 250], help="평가할 호라이즌 목록")

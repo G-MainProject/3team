@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Top movers 예측 리포트 생성(UTF-8, 간결/안전 버전).
+"""상위 변동 종목(top movers) 예측 리포트를 생성하는 스크립트.
 
-- fundamentals_display 등 파생 필드 제거, 핵심 지표만 유지
-- 깨진 한글/인덴트로 인한 파싱 오류 제거, 최소 의존으로 동작
-- silver 스냅샷/pykrx 보강은 선택적으로만 수행(기본 비활성)
+주요 특징:
+- 불필요한 fundamentals_display 로직을 제거하고 핵심 지표만 노출한다.
+- 깨진 문자나 중복 필드를 정리해 최소 정보 위주로 구성한다.
+- silver 데이터와 pykrx 보강은 옵션으로 제공하며 기본값은 비활성이다.
 """
+
 
 from __future__ import annotations
 
@@ -37,13 +39,13 @@ except Exception:  # pragma: no cover
 
 # 핵심 재무지표 키(리포트 스키마 고정용)
 MAIN_RATIO_KEYS = [
-    # Profitability/valuation ratios
+        # 수익성/가치 평가 지표
     "roe", "roa", "per", "pbr",
-    # Leverage/Liquidity/Capital structure
+        # 레버리지/유동성/자본 구조
     "debt_ratio", "current_ratio", "quick_ratio", "equity_ratio",
-    # Scale
+        # 규모 정보
     "market_cap", "shares_outstanding",
-    # Income statement snapshots (from Kiwoom/DART when available)
+        # 손익계산서 스냅샷(Kiwoom/DART 데이터 사용 시)
     # - fund_revenue: 매출액 (sale_amt)
     # - fund_operating_income: 영업이익 (bus_pro)
     # - fund_net_income: 당기순이익 (cup_nga or derived)
@@ -88,7 +90,7 @@ def _load_overfit_summary() -> dict:
 
 
 def _tlog(msg: str) -> None:
-    # 한글 주석: 상세 타이밍 로그는 환경변수로 제어
+    # 상세 타이밍 로그는 환경변수로 조절
     if os.getenv("PIPELINE_TIMING_VERBOSE") == "1":
         print(msg)
 
@@ -99,7 +101,7 @@ def main(argv: list[str] | None = None) -> int:
 
     t_total = perf_counter()
 
-    # 입력 로드
+    # 입력 데이터 로드
     t = perf_counter()
     top_data = _read_json(opts.top_movers)
     predictions = _read_json(opts.predictions)
@@ -115,14 +117,14 @@ def main(argv: list[str] | None = None) -> int:
     if predicted_prices.shape != actual_prices.shape:
         raise ValueError("Predicted and actual price arrays must have the same shape.")
 
-    # labels
+    # 라벨 로드
     t = perf_counter()
     labels = _load_labels(opts.labels, predicted_prices.shape[0]) if opts.labels else [
         {"ticker": str(i), "index": i} for i in range(predicted_prices.shape[0])
     ]
     _tlog(f"[s5] loaded labels in {perf_counter() - t:.3f}s")
 
-    # name/details/source
+    # 이름 · 상세 · 소스 정보 구성
     name_lookup = {str(e.get("ticker")): e.get("name") for e in top_data.get("details", [])}
     details_lookup = {str(e.get("ticker")): e for e in top_data.get("details", [])}
     top_source = top_data.get("source")
@@ -156,20 +158,20 @@ def main(argv: list[str] | None = None) -> int:
     except Exception:
         pass
 
-    # CSV 기반 보강: data/dart_corpcode.csv에서 이름 맵핑 시도
+    # CSV 기반 보강: data/dart_corpcode.csv에서 이름 매핑 시도
     try:
         _enrich_names_from_corpcode_csv(Path("data/dart_corpcode.csv"), name_lookup)
     except Exception:
         pass
 
-    # source 보정: local-test는 기본값 'pykrx'로 대체
+    # source 보정: 'local-test'는 기본값 'pykrx'로 교체
     try:
         if isinstance(top_source, str) and top_source.strip().lower() == "local-test":
             top_source = "pykrx"
     except Exception:
         pass
 
-    # 현재가 배열(optional)
+    # 현재가 배열(옵션)
     current_close: np.ndarray | None = None
     if opts.close_values and opts.close_values.exists():
         try:
@@ -186,7 +188,7 @@ def main(argv: list[str] | None = None) -> int:
         except Exception:
             current_close = None
 
-    # 리포트 대상 티커(중복 제거: tickers ∪ details.ticker)
+    # 리포트 대상 티커 집합 구성(tickers ∪ details.ticker)
     top_tickers = [str(t) for t in top_data.get("tickers", [])]
     detail_tickers = [str(e.get("ticker")) for e in top_data.get("details", []) if str(e.get("ticker"))]
     seen = set()
@@ -196,7 +198,7 @@ def main(argv: list[str] | None = None) -> int:
             seen.add(tk)
             report_tickers.append(tk)
 
-    # index map
+    # 인덱스 매핑
     index_map: dict[str, list[int]] = {}
     for idx, info in enumerate(labels):
         ticker = str(info.get("ticker", "")).strip()
@@ -341,7 +343,7 @@ def main(argv: list[str] | None = None) -> int:
             entry["analysis"] = analysis
         entries.append(entry)
 
-    # 헤더/메타
+    # 헤더 및 메타 정보
     try:
         if ZoneInfo is not None:
             generated_at = datetime.now(ZoneInfo("Asia/Seoul")).isoformat()
@@ -472,7 +474,7 @@ def _num_or_none(v: Any) -> Optional[float]:
 
 
 def _with_main_ratio_keys(fund: dict[str, Any]) -> dict[str, Any]:
-    # 한글 주석: 필수 키를 '-'로 채워 리포트 스키마를 일정하게 유지
+    # 필수 키는 '-'로 채워 리포트 스키마를 일정하게 유지
     for k in MAIN_RATIO_KEYS:
         if k not in fund or fund[k] in (None, ""):
             fund[k] = "-"
@@ -589,7 +591,7 @@ def _parse_date(text: str | None) -> Optional[date]:
 def _read_json(path: Path) -> Any:
     if not path.exists():
         raise FileNotFoundError(path)
-    # BOM 이 포함된 JSON도 허용(utf-8-sig 우선)
+    # BOM이 포함된 JSON도 허용(utf-8-sig 우선)
     try:
         return json.loads(path.read_text(encoding="utf-8-sig"))
     except Exception:

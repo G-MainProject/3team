@@ -1,13 +1,13 @@
 ﻿# -*- coding: utf-8 -*-
-"""Kiwoom OpenAPI+ REST client (UTF-8, BOM-safe).
+"""Kiwoom OpenAPI+ REST 클라이언트(UTF-8, BOM 안전 처리).
 
-Stores raw JSON responses under data/raws/kiwoom for downstream preprocessing.
+수집 결과를 data/raws/kiwoom 이하에 JSON으로 저장해 후속 전처리 단계에 제공한다.
 
-Environment variables (.env, UTF-8-SIG friendly):
-  - KIWOOM_BASE, KIWOOM_APPKEY, KIWOOM_SECRETKEY
-  - Optional: KIWOOM_API_ID, KIWOOM_TOKEN_API_ID, KIWOOM_RANK_PATH, KIWOOM_RANK_TR_ID
-  - Daily: KIWOOM_DAILY_API_ID, KIWOOM_DAILY_PATH
-  - Chart: KIWOOM_DAILY_CHART_API_ID, KIWOOM_DAILY_CHART_PATH
+환경 변수(.env, UTF-8-SIG 대응):
+  - 필수: KIWOOM_BASE, KIWOOM_APPKEY, KIWOOM_SECRETKEY
+  - 선택: KIWOOM_API_ID, KIWOOM_TOKEN_API_ID, KIWOOM_RANK_PATH, KIWOOM_RANK_TR_ID
+  - 일봉: KIWOOM_DAILY_API_ID, KIWOOM_DAILY_PATH
+  - 차트: KIWOOM_DAILY_CHART_API_ID, KIWOOM_DAILY_CHART_PATH
 """
 
 from __future__ import annotations
@@ -33,12 +33,12 @@ DEFAULT_INTRADAY_ENDPOINT = "/api/dostk/stkinfo"
 DEFAULT_FINANCIAL_ENDPOINT = "/api/dostk/stkinfo"
 DEFAULT_RATIO_ENDPOINT = "/api/dostk/stkinfo"
 DEFAULT_TOP_MOVERS_ENDPOINT = "/api/dostk/rank"
-# Optional metadata endpoint (e.g., shares outstanding)
+# 선택 메타데이터 엔드포인트(예: 발행주식수 등)
 DEFAULT_META_ENDPOINT = "/api/dostk/meta"
 
 
 def _find_project_root() -> Path:
-    """Find project root containing .env or data directory."""
+    """상위 경로에서 .env 또는 data 디렉터리를 찾아 프로젝트 루트를 결정한다."""
     current = Path(__file__).resolve()
     for parent in current.parents:
         if (parent / ".env").exists() or (parent / "data").exists():
@@ -306,7 +306,7 @@ def fetch_top_movers(
     pause: float = 0.2,
     direction: str = "both",
 ) -> list[dict[str, Any]]:
-    """Fetch top movers via Kiwoom REST (ka10027)."""
+    """Kiwoom REST(ka10027)를 호출해 상위 변동 종목을 조회한다."""
     _ensure_env_loaded()
     base_key = "KIWOOM_MOCK_BASE" if use_mock else "KIWOOM_BASE"
     base_url = os.getenv(base_key)
@@ -340,7 +340,7 @@ def fetch_top_movers(
 
     try:
         authorization = _issue_token(session_obj, base_url, appkey, secret)
-        # Try GET with query first if endpoint endswith rkinfo, else POST
+        # 엔드포인트가 rkinfo로 끝나면 먼저 GET 쿼리를 시도하고, 아니면 POST로 요청한다
         data: Any
         if endpoint.rstrip("/").lower().endswith("rkinfo"):
             url = urljoin(_normalize_base(base_url), endpoint)
@@ -386,7 +386,7 @@ def fetch_current_prices(
     session: requests.Session | None = None,
     pause: float = 0.2,
 ) -> dict[str, float]:
-    """Fetch current prices (ka10001) and return {ticker: price}."""
+    """Kiwoom REST(ka10001)에서 현재가를 조회해 {ticker: price} 형태로 반환한다."""
     target_date = _normalize_date_input(date)
     _ensure_env_loaded()
 
@@ -417,7 +417,7 @@ def fetch_current_prices(
                 authorization=authorization,
                 body=body,
             )
-            # Best-effort extraction of price
+            # 가능한 범위에서 가격 필드를 추출한다
             price = None
             if isinstance(data, Mapping):
                 for k in ("price", "close", "current_price", "output"):
@@ -482,7 +482,7 @@ def fetch_quotes(
     try:
         authorization = _issue_token(sess, base_url, appkey, secret)
         for ticker in tickers:
-            # Daily
+            # 일봉 데이터 수집
             _tk = str(ticker).zfill(6)
             _st = _normalize_date_input(start_date)
             _en = _normalize_date_input(end_date)
@@ -575,7 +575,7 @@ def fetch_quotes(
             saved.setdefault(str(ticker).zfill(6), []).append(daily_path)
             time.sleep(max(pause, 0))
 
-            # Optional: financials/raw (same endpoint/TR as daily per user config)
+            # 선택: 일봉과 동일 엔드포인트/TR로 재무 데이터 저장
             if include_financials:
                 try:
                     fin_body = {
@@ -605,7 +605,7 @@ def fetch_quotes(
                 except Exception as exc:
                     LOGGER.warning("Kiwoom financials fetch failed for %s: %s", _tk, exc)
 
-            # Optional: ratios/raw (same endpoint/TR as daily per user config)
+            # 선택: 일봉과 동일 엔드포인트/TR로 재무비율 데이터 저장
             if include_ratios:
                 try:
                     ratio_body = {
@@ -635,7 +635,7 @@ def fetch_quotes(
                 except Exception as exc:
                     LOGGER.warning("Kiwoom ratios fetch failed for %s: %s", _tk, exc)
 
-            # Optional: meta (e.g., shares_outstanding) to enable market_cap computation
+            # 선택: 시가총액 계산을 위한 메타 정보(예: 발행주식수) 저장
             try:
                 meta_endpoint = os.getenv("KIWOOM_META_PATH", "").strip()
                 meta_trid = os.getenv("KIWOOM_META_TR_ID", "ka_shares").strip()
@@ -665,7 +665,7 @@ def fetch_quotes(
             except Exception:
                 pass
 
-            # Intraday (optional)
+            # 선택: 분봉 데이터 수집
             if include_intraday:
                 intraday_endpoint = os.getenv("KIWOOM_INTRADAY_PATH", DEFAULT_INTRADAY_ENDPOINT)
                 intraday_trid = os.getenv("KIWOOM_INTRADAY_TR_ID", "ka10082")
@@ -686,7 +686,7 @@ def fetch_quotes(
                     authorization=authorization,
                     body=body,
                 )
-                # Save intraday under the same per-ticker directory
+                # 분봉 파일도 동일한 종목 디렉터리에 저장한다
                 intraday_path = (_dir if '_dir' in locals() else (raw_root / _tk)) / _filename(
                     "intraday",
                     _tk,
@@ -703,7 +703,7 @@ def fetch_quotes(
 
 
 def _issue_token(sess: requests.Session, base_url: str, appkey: str, secret: str) -> str:
-    """Issue OAuth2 token and return Authorization header value."""
+    """OAuth2 토큰을 발급받아 Authorization 헤더로 사용할 값을 돌려준다."""
     endpoint = "/oauth2/token"
     token_api_id = (os.getenv("KIWOOM_TOKEN_API_ID") or os.getenv("KIWOOM_API_ID") or "au10001").strip()
     headers = {
@@ -726,7 +726,7 @@ def _issue_token(sess: requests.Session, base_url: str, appkey: str, secret: str
 
 
 def _extract_top_movers(data: Any, *, max_count: int) -> list[dict[str, Any]]:
-    """Extract top movers list from various possible payload shapes."""
+    """응답 구조가 달라도 상위 변동 종목 목록을 추출한다."""
     if data is None:
         return []
     items_to_process: list[Any] = []
@@ -736,7 +736,7 @@ def _extract_top_movers(data: Any, *, max_count: int) -> list[dict[str, Any]]:
                 items_to_process = list(data[key])
                 break
         if not items_to_process:
-            # flat list candidate
+            # 단순 리스트 형태의 후보 처리
             if isinstance(data.get("list"), list):
                 items_to_process = list(data.get("list"))
     elif isinstance(data, list):
@@ -775,8 +775,8 @@ def _post_kiwoom(
     next_key: str | None = None,
     timeout: int = 15,
 ):
-    """Perform Kiwoom REST POST with proper headers and error handling."""
-    # Prefer TR-specific API IDs; fall back to global override if provided.
+    """필요한 헤더와 오류 처리를 적용해 Kiwoom REST POST 요청을 수행한다."""
+    # TR 전용 API ID를 우선 사용하고, 없으면 전역 오버라이드 값을 이용한다.
     fallback_api_id = os.getenv("KIWOOM_API_ID")
     api_id_value = None
 
@@ -836,7 +836,7 @@ def _post(
     body: Mapping[str, object],
     timeout: int = 15,
 ):
-    """Plain POST helper."""
+    """단순 POST 요청을 처리하는 보조 함수."""
     url = urljoin(base_url, endpoint)
     response = sess.post(url, headers=headers, json=body, timeout=timeout)
     response.raise_for_status()
@@ -862,7 +862,7 @@ _ENV_LOADED = False
 
 
 def _load_env_cache() -> None:
-    """Legacy loader (kept for compatibility)."""
+    """호환성을 위해 유지하는 레거시 로더."""
     global _ENV_LOADED
     if _ENV_LOADED:
         return
@@ -879,7 +879,7 @@ def _load_env_cache() -> None:
 
 
 def _ensure_env_loaded() -> None:
-    """Load .env with UTF-8-SIG and sanitize BOM (idempotent)."""
+    """UTF-8-SIG로 .env를 읽어 BOM을 제거한다(여러 번 호출해도 안전하다)."""
     global _ENV_LOADED
     if _ENV_LOADED:
         return
@@ -904,7 +904,7 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
         path = project_root / "data" / "raws"
     else:
         path = Path(raw_dir)
-        # Normalize legacy 'data/raw' -> 'data/raws'
+        # 과거 경로인 'data/raw'를 'data/raws'로 정규화한다
         try:
             if path.name == "raw":
                 path = path.with_name("raws")
@@ -919,4 +919,3 @@ def _normalize_base(url: str) -> str:
     if not url.lower().startswith(("http://", "https://")):
         raise RuntimeError(f"Kiwoom BASE URL invalid: {url}")
     return url.rstrip("/")
-
