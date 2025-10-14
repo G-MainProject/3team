@@ -163,6 +163,40 @@ export default function AIInsights() {
 			);
 			if (!dashboardMain) return;
 
+			// ai-analysis-content 영역 내에서 스크롤하는 경우 처리
+			const aiAnalysisContent = e.target.closest(`.${styles['ai-analysis-content']}`);
+			if (aiAnalysisContent) {
+				// ai-analysis-content 내부에서 스크롤할 때
+				const isScrollingDown = e.deltaY > 0;
+				const isScrollingUp = e.deltaY < 0;
+				
+				// 아래로 스크롤할 때: 내부 스크롤이 끝나면 메인 페이지 스크롤로 넘어가되 Footer 이동은 제한
+				if (isScrollingDown) {
+					const isAtBottom = aiAnalysisContent.scrollTop + aiAnalysisContent.clientHeight >= aiAnalysisContent.scrollHeight - 1;
+					if (isAtBottom) {
+						// 내부 스크롤이 끝났으므로 메인 페이지 스크롤로 넘어가되 Footer 이동은 제한
+						const mainScrollTop = dashboardMain.scrollTop;
+						const mainScrollHeight = dashboardMain.scrollHeight;
+						const mainClientHeight = dashboardMain.clientHeight;
+						const mainIsAtBottom = Math.round(mainScrollTop + mainClientHeight) >= mainScrollHeight;
+						
+						if (mainIsAtBottom && !allowScrollToFooter) {
+							e.preventDefault();
+							return;
+						}
+					}
+				}
+				// 위로 스크롤할 때: 내부 스크롤이 끝나면 메인 페이지 스크롤로 넘어가기
+				else if (isScrollingUp) {
+					const isAtTop = aiAnalysisContent.scrollTop <= 1;
+					if (isAtTop) {
+						// 내부 스크롤이 끝났으므로 메인 페이지 스크롤로 넘어가기
+						return;
+					}
+				}
+				return; // ai-analysis-content 내부 스크롤은 정상 진행
+			}
+
 			const scrollTop = dashboardMain.scrollTop;
 			const scrollHeight = dashboardMain.scrollHeight;
 			const clientHeight = dashboardMain.clientHeight;
@@ -436,38 +470,62 @@ export default function AIInsights() {
 										<h3>투자 권고사항</h3>
 										<div className={styles['prediction-item']}>
 											<span className={styles['prediction-label']}>
-												단기 (1-3개월):
+												1일 (1d):
 											</span>
 											<span
 												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.shortTerm]
+													styles[selectedStock.aiAnalysis?.oneDay] || styles['positive']
 												}`}
 											>
-												{selectedStock.aiAnalysis?.shortTerm || 'N/A'}
+												{selectedStock.aiAnalysis?.oneDay || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
 											<span className={styles['prediction-label']}>
-												중기 (3-6개월):
+												1주 (1w):
 											</span>
 											<span
 												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.midTerm]
+													styles[selectedStock.aiAnalysis?.oneWeek] || styles['positive']
 												}`}
 											>
-												{selectedStock.aiAnalysis?.midTerm || 'N/A'}
+												{selectedStock.aiAnalysis?.oneWeek || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
 											<span className={styles['prediction-label']}>
-												장기 (6개월+):
+												1개월 (1m):
 											</span>
 											<span
 												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.longTerm]
+													styles[selectedStock.aiAnalysis?.oneMonth] || styles['positive']
 												}`}
 											>
-												{selectedStock.aiAnalysis?.longTerm || 'N/A'}
+												{selectedStock.aiAnalysis?.oneMonth || 'N/A'}
+											</span>
+										</div>
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>
+												6개월 (6m):
+											</span>
+											<span
+												className={`${styles['prediction-value']} ${
+													styles[selectedStock.aiAnalysis?.sixMonths] || styles['positive']
+												}`}
+											>
+												{selectedStock.aiAnalysis?.sixMonths || 'N/A'}
+											</span>
+										</div>
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>
+												1년 (1y):
+											</span>
+											<span
+												className={`${styles['prediction-value']} ${
+													styles[selectedStock.aiAnalysis?.oneYear] || styles['negative']
+												}`}
+											>
+												{selectedStock.aiAnalysis?.oneYear || 'N/A'}
 											</span>
 										</div>
 									</div>

@@ -1370,7 +1370,7 @@ export default function Dashboard() {
 										<h3>투자 권고사항</h3>
 										<div className={styles['prediction-item']}>
 											<span className={styles['prediction-label']}>
-												단기 (1-3개월):
+												1일 (1d):
 											</span>
 											<span
 												className={`${styles['prediction-value']} ${styles['positive']}`}
@@ -1380,7 +1380,7 @@ export default function Dashboard() {
 										</div>
 										<div className={styles['prediction-item']}>
 											<span className={styles['prediction-label']}>
-												중기 (3-6개월):
+												1주 (1w):
 											</span>
 											<span
 												className={`${styles['prediction-value']} ${styles['positive']}`}
@@ -1390,7 +1390,27 @@ export default function Dashboard() {
 										</div>
 										<div className={styles['prediction-item']}>
 											<span className={styles['prediction-label']}>
-												장기 (6개월+):
+												1개월 (1m):
+											</span>
+											<span
+												className={`${styles['prediction-value']} ${styles['positive']}`}
+											>
+												{'N/A'}
+											</span>
+										</div>
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>
+												6개월 (6m):
+											</span>
+											<span
+												className={`${styles['prediction-value']} ${styles['positive']}`}
+											>
+												{'N/A'}
+											</span>
+										</div>
+										<div className={styles['prediction-item']}>
+											<span className={styles['prediction-label']}>
+												1년 (1y):
 											</span>
 											<span
 												className={`${styles['prediction-value']} ${styles['negative']}`}
