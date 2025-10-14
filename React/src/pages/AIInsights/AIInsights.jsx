@@ -6,6 +6,7 @@ import Footer from '../../component/Footer/Footer';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { useStock } from '../../hooks/useStock';
+import AiAnalysisData from '../../../../data/raws/Gemini_Api.json';
 
 export default function AIInsights() {
 	const { selectedStock, loading: stockLoading } = useStock();
@@ -17,10 +18,23 @@ export default function AIInsights() {
 	const [isInFooter, setIsInFooter] = useState(false);
 	const [newsFilter, setNewsFilter] = useState('all'); // 뉴스 필터 상태 추가
 	const [selectedNews, setSelectedNews] = useState(null); // 선택된 뉴스 상태 추가
+	const [selectedTimeframe, setSelectedTimeframe] = useState('1d'); // 선택된 투자 기간 상태 추가
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
 	const newsSectionRef = useRef(null); // 뉴스 섹션 스크롤을 위한 ref 추가
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장을 위한 ref 추가
+
+	// 투자 기간에 따른 프롬프트 변환 함수
+	const getTimeframePrompt = (timeframe) => {
+		const timeframeMap = {
+			'1d': '1일',
+			'1w': '1주',
+			'1m': '1개월',
+			'6m': '6개월',
+			'1y': '1년'
+		};
+		return timeframeMap[timeframe] || '1일';
+	};
 
 	// 필터링된 뉴스 데이터
 	const filteredNewsData = useMemo(() => {
@@ -161,6 +175,40 @@ export default function AIInsights() {
 				`.${styles['ai-insights-main']}`
 			);
 			if (!dashboardMain) return;
+
+			// ai-analysis-content 영역 내에서 스크롤하는 경우 처리
+			const aiAnalysisContent = e.target.closest(`.${styles['ai-analysis-content']}`);
+			if (aiAnalysisContent) {
+				// ai-analysis-content 내부에서 스크롤할 때
+				const isScrollingDown = e.deltaY > 0;
+				const isScrollingUp = e.deltaY < 0;
+				
+				// 아래로 스크롤할 때: 내부 스크롤이 끝나면 메인 페이지 스크롤로 넘어가되 Footer 이동은 제한
+				if (isScrollingDown) {
+					const isAtBottom = aiAnalysisContent.scrollTop + aiAnalysisContent.clientHeight >= aiAnalysisContent.scrollHeight - 1;
+					if (isAtBottom) {
+						// 내부 스크롤이 끝났으므로 메인 페이지 스크롤로 넘어가되 Footer 이동은 제한
+						const mainScrollTop = dashboardMain.scrollTop;
+						const mainScrollHeight = dashboardMain.scrollHeight;
+						const mainClientHeight = dashboardMain.clientHeight;
+						const mainIsAtBottom = Math.round(mainScrollTop + mainClientHeight) >= mainScrollHeight;
+						
+						if (mainIsAtBottom && !allowScrollToFooter) {
+							e.preventDefault();
+							return;
+						}
+					}
+				}
+				// 위로 스크롤할 때: 내부 스크롤이 끝나면 메인 페이지 스크롤로 넘어가기
+				else if (isScrollingUp) {
+					const isAtTop = aiAnalysisContent.scrollTop <= 1;
+					if (isAtTop) {
+						// 내부 스크롤이 끝났으므로 메인 페이지 스크롤로 넘어가기
+						return;
+					}
+				}
+				return; // ai-analysis-content 내부 스크롤은 정상 진행
+			}
 
 			const scrollTop = dashboardMain.scrollTop;
 			const scrollHeight = dashboardMain.scrollHeight;
@@ -425,48 +473,96 @@ export default function AIInsights() {
 							<div className={styles['ai-analysis-section']}>
 								<div className={styles['ai-analysis-container']}>
 									<div className={styles['ai-analysis-content']}>
-										<h3>종합 분석</h3>
+										<h3>종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)</h3>
 										<p>
-											{selectedStock.aiAnalysis?.summary ||
+											{AiAnalysisData.response ||
 												'분석 데이터가 없습니다.'}
 										</p>
 									</div>
 									<div className={styles['ai-prediction']}>
-										<h3>투자 권고사항</h3>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
-												단기 (1-3개월):
-											</span>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1d' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1d')}
+											>
+												1일 (1d):
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.shortTerm]
+													styles[selectedStock.aiAnalysis?.oneDay] || styles['positive']
 												}`}
 											>
-												{selectedStock.aiAnalysis?.shortTerm || 'N/A'}
+												{selectedStock.aiAnalysis?.oneDay || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
-												중기 (3-6개월):
-											</span>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1w' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1w')}
+											>
+												1주 (1w):
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.midTerm]
+													styles[selectedStock.aiAnalysis?.oneWeek] || styles['positive']
 												}`}
 											>
-												{selectedStock.aiAnalysis?.midTerm || 'N/A'}
+												{selectedStock.aiAnalysis?.oneWeek || 'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
-												장기 (6개월+):
-											</span>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1m' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1m')}
+											>
+												1개월 (1m):
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.longTerm]
+													styles[selectedStock.aiAnalysis?.oneMonth] || styles['positive']
 												}`}
 											>
-												{selectedStock.aiAnalysis?.longTerm || 'N/A'}
+												{selectedStock.aiAnalysis?.oneMonth || 'N/A'}
+											</span>
+										</div>
+										<div className={styles['prediction-item']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '6m' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('6m')}
+											>
+												6개월 (6m):
+											</button>
+											<span
+												className={`${styles['prediction-value']} ${
+													styles[selectedStock.aiAnalysis?.sixMonths] || styles['positive']
+												}`}
+											>
+												{selectedStock.aiAnalysis?.sixMonths || 'N/A'}
+											</span>
+										</div>
+										<div className={styles['prediction-item']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1y' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1y')}
+											>
+												1년 (1y):
+											</button>
+											<span
+												className={`${styles['prediction-value']} ${
+													styles[selectedStock.aiAnalysis?.oneYear] || styles['negative']
+												}`}
+											>
+												{selectedStock.aiAnalysis?.oneYear || 'N/A'}
 											</span>
 										</div>
 									</div>

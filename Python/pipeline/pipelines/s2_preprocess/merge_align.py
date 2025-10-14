@@ -888,12 +888,29 @@ def _load_news_features(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]
                     frames.append(df)
             except Exception:
                 pass
-    report_path = _find_project_root() / "data" / "raws" / "sentiment_report.json"
+    raw_root = _find_project_root() / "data" / "raws"
+    report_path = raw_root / "sentiment_report.json"
     if report_path.exists():
         try:
             extra = _load_sentiment_report(report_path, ticker)
             if extra is not None and not extra.empty:
                 frames.append(extra)
+        except Exception:
+            pass
+
+    # Support directory form: data/raws/sentiment_report/*.json
+    report_dir = raw_root / "sentiment_report"
+    if report_dir.exists():
+        try:
+            for cand in sorted(report_dir.glob("*.json")):
+                if not cand.is_file():
+                    continue
+                try:
+                    extra = _load_sentiment_report(cand, ticker)
+                except Exception:
+                    continue
+                if extra is not None and not extra.empty:
+                    frames.append(extra)
         except Exception:
             pass
     if not frames:

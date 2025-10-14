@@ -663,6 +663,7 @@
 
 .news-detail-body p {
 	margin: 0;
+	padding-bottom: 50px;
 	color: #495057;
 	font-size: 16px;
 	line-height: 1.6;
@@ -934,6 +935,20 @@
 	margin-bottom: 15px;
 }
 
+.ai-analysis-content {
+	overflow-y: auto;
+	max-height: 100%;
+	padding-right: 10px;
+	padding-bottom: 50px;
+	/* 스크롤바 숨기기 */
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* IE and Edge */
+}
+
+.ai-analysis-content::-webkit-scrollbar {
+	display: none; /* Chrome, Safari, Opera */
+}
+
 .ai-analysis-content p {
 	line-height: 1.6;
 	color: #6c757d;
@@ -942,24 +957,45 @@
 .ai-prediction {
 	background: #f8f9fa;
 	border-radius: 8px;
-	padding: 20px;
+	padding: 10px 20px;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 }
 
 .ai-prediction h3 {
 	color: #495057;
-	margin-bottom: 15px;
-	font-size: 1.1em;
+	margin: 0;
+	font-size: 1em;
+}
+
+/* 투자 권고사항 라벨 버튼 */
+.prediction-label-button {
+	background: none;
+	border: none;
+	color: #6c757d;
+	font-size: 1em;
+	cursor: pointer;
+	transition: all 0.1s;
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+
+.prediction-label-button:hover {
+	background-color: #f8f9fa;
+	color: #495057;
+}
+
+.prediction-label-button.active {
+	color: #007bff;
+	font-weight: 600;
 }
 
 .prediction-item {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 8px 0;
+	flex: 1;
 	border-bottom: 1px solid #e9ecef;
 }
 

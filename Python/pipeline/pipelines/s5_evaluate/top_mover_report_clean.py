@@ -15,7 +15,7 @@ import math
 from pathlib import Path
 from typing import Any, Optional
 from time import perf_counter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 try:
     from zoneinfo import ZoneInfo  # Python 3.9+
 except Exception:  # pragma: no cover
@@ -103,6 +103,7 @@ def main(argv: list[str] | None = None) -> int:
     t = perf_counter()
     top_data = _read_json(opts.top_movers)
     predictions = _read_json(opts.predictions)
+    report_date = _parse_date(str(top_data.get("date") or ""))
     predicted_prices = np.array(predictions.get("prices"), dtype=float)
     predicted_returns = np.array(predictions.get("returns"), dtype=float)
     horizons = [str(h) for h in predictions.get("horizons", [])]
@@ -292,6 +293,10 @@ def main(argv: list[str] | None = None) -> int:
                 target_date = str(lbl.get("date"))
         except Exception:
             target_date = None
+        target_date_obj = _parse_date(target_date) if target_date else None
+        if report_date is not None:
+            if target_date_obj is None or target_date_obj < report_date:
+                target_date = report_date.isoformat()
         ind_snap, fund_snap = _load_feature_snapshot(opts.silver_root, ticker, target_date)
 
         det = details_lookup.get(ticker) or {}
@@ -353,29 +358,70 @@ def main(argv: list[str] | None = None) -> int:
             "timezone": "시간대 정보",
             "count": "종목 개수",
             "horizons": "예측 범위(예: 1d, 1w, 1m, 6m, 1y)",
-            "entries": "종목별 예측/지표/펀더멘털",
+            "entries": "종목별 예측/지표/코멘트",
         },
         "entry": {
             "ticker": "종목 코드(6자리)",
             "name": "종목명",
             "source": "탐색 출처(pykrx/kiwoom/기타)",
-            "current_price": "현재가(선택)",
+            "current_price": "현재가(원화)",
             "change_pct": "변동률(%)",
-            "horizons": "기간별 예측 행",
+            "base_close": "모델 입력 기준 종가(스케일링 전)",
+            "horizons": "기간별 예측 값",
             "indicators": "기술적 지표 스냅샷",
-            "fundamentals": "핵심 재무지표 요약('-'은 결측)",
+            "fundamentals": "핵심 재무지표 요약('-'는 결측)",
+            "analysis": "간단 코멘트/해설 목록",
         },
         "horizon_row": {
-            "horizon": "예측 기간 라벨",
-            "predicted_price": "예측 종가",
+            "horizon": "예측 기간 레벨",
+            "predicted_price": "예측 종가(모델 출력 기준)",
             "actual_price": "실제 종가",
             "abs_error": "절대 오차(가격)",
             "predicted_interval": "예측 구간 [하, 상]",
             "predicted_return": "예측 수익률(배수)",
             "actual_return": "실제 수익률(배수)",
             "return_abs_error": "절대 오차(수익률)",
+            "predicted_price_current_basis": "현재가 기준으로 환산한 예측 종가",
+            "adjustments": "예측값 보정 정보(원본/조정값, 기준)",
+        },
+        "adjustments": {
+            "predicted_price_original": "모델 원본 예측값",
+            "predicted_price_adjusted": "현재가 기준 재산출 값",
+            "basis": "보정에 사용한 기준값",
+        },
+        "indicators": {
+            "bb_percent_b": "Bollinger Band %B (0~1 기준, 상단 근접도)",
+            "bb_bandwidth": "Bollinger Band 폭(변동성 지표)",
+            "bb_upper": "Bollinger Band 상단 값",
+            "bb_mid": "Bollinger Band 중심선(일반적으로 이동평균)",
+            "bb_lower": "Bollinger Band 하단 값",
+            "macd": "MACD 값(12-26 EMA 차이)",
+            "macd_signal": "MACD 시그널선(9 EMA)",
+            "macd_hist": "MACD 히스토그램(MACD-시그널)",
+            "rsi": "RSI(상대강도지수, 0~100)",
+            "obv": "OBV(거래량 기반 누적 지표)",
+            "obv_ema": "OBV에 EMA 적용한 스무딩 값",
+            "news_sentiment_mean": "최근 뉴스 감성 점수 평균(-1~1)",
+            "news_count": "감성 분석에 사용된 뉴스 기사 수",
+        },
+        "fundamentals": {
+            "roe": "자기자본이익률(%)",
+            "roa": "총자산이익률(%)",
+            "per": "PER(주가수익비율)",
+            "pbr": "PBR(주가순자산비율)",
+            "debt_ratio": "부채비율(%)",
+            "current_ratio": "유동비율(%)",
+            "quick_ratio": "당좌비율(%)",
+            "equity_ratio": "자기자본비율(%)",
+            "market_cap": "시가총액(원)",
+            "shares_outstanding": "유통 주식 수",
+            "fund_revenue": "매출액(연간/최근 보고 기준)",
+            "fund_operating_income": "영업이익",
+            "fund_net_income": "당기순이익",
+            "fund_net_income_ttm": "TTM 누적 순이익(4분기 합산)",
         },
     }
+
 
     overfit_summary = _load_overfit_summary()
 
@@ -518,6 +564,26 @@ def _load_feature_snapshot(silver_root: Path, ticker: str, date_str: Optional[st
         except Exception:
             continue
     return (indicators or None), (fund or None)
+
+
+def _parse_date(text: str | None) -> Optional[date]:
+    if not text:
+        return None
+    raw = str(text).strip()
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(raw).date()
+    except Exception:
+        pass
+    try:
+        return datetime.strptime(raw, "%Y%m%d").date()
+    except Exception:
+        pass
+    try:
+        return datetime.strptime(raw[:10], "%Y-%m-%d").date()
+    except Exception:
+        return None
 
 
 def _read_json(path: Path) -> Any:
