@@ -1,16 +1,16 @@
-<Process id="70df1108-4c69-4917-b47f-a570fe456190" type="process" workType="foreground" name="P_0_G_MainProject" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="14" Orientation="horizontal">
+<Process id="70df1108-4c69-4917-b47f-a570fe456190" type="process" workType="foreground" name="P_0_G_MainProject" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="19" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="default process" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
-    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="5" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="808" />
     <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-03 09:07:50" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:43:42" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-10-14 16:37:49" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -19,8 +19,8 @@
   <Variables>
     <Variable name="end_time" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="종료시간" colorValue="#FF7149C6" showMarker="False" />
     <Variable name="sec" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="남은 시간 초로 변환" colorValue="#FFFE6244" showMarker="False" />
-    <Variable name="start_time" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="실행시간" colorValue="#FF1A4D2E" showMarker="False" />
-    <Variable name="search_use" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFA555EC" showMarker="True" />
+    <Variable name="start_time" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="실행시작 시간" colorValue="#FF1A4D2E" showMarker="False" />
+    <Variable name="search_isFileExist" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="top_movers_auto.json파일 유무확인" colorValue="#FFA555EC" showMarker="False" />
   </Variables>
   <Steps>
     <Step id="S46ca8070027b457d9ffd22043974cfb4" ver="311241220" createVer="311241220" type="Desktop" name="InputBox" dpName="InputBox" dpValue="Global.file_path" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
@@ -55,38 +55,56 @@
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="실행시간" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.start_time = new Date()&#xD;&#xA;&#xD;&#xA;" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.start_time = new Date()&#xD;&#xA;&#xD;&#xA;//종료시간&#xD;&#xA;if(this.start_time.getHours() &gt; 15 || &#xD;&#xA;  (this.start_time.getHours() === 15 &amp;&amp; this.start_time.getMinutes() &gt;= 30)) {&#xD;&#xA;    Global.loop = false&#xD;&#xA;}" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[this.start_time = new Date()
 
-]]></Script>
+//종료시간
+if(this.start_time.getHours() > 15 || 
+  (this.start_time.getHours() === 15 && this.start_time.getMinutes() >= 30)) {
+    Global.loop = false
+}]]></Script>
     </Step>
-    <Step id="S6996fff62fa142318695727acc2541bf" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="this.search_use" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sa02eb2d13a9948ec820f4a0149db18c5" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="Global.loop == true" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="69423985-76da-4655-af8c-39804934c667" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.loop == true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.loop == true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S17852f957ebf4b67ad7a6463177c9628" type="Flow" name="Else" />
+        <RelatedStep id="S9d410fa4d34d49f095eb3b3ee3f1b79d" type="Flow" name="EndDecision" />
+      </RelatedSteps>
+      <Script><![CDATA[if (Global.loop == true) {]]></Script>
+    </Step>
+    <Step id="S20184d7cff254744a4f8d8c393f27ec6" ver="311241220" createVer="311241220" type="Desktop" name="IsFileExist" dpName="IsFileExist" dpValue="this.search_isFileExist" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="d85e7ed2-3f6b-4a79-972e-d31cd9282eb0" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Command_Path" controlType="File" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\top_movers_auto.json'" />
-        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.search_use" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.search_isFileExist" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.search_use = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_4);]]></Script>
+      <Script><![CDATA[this.search_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_5);]]></Script>
     </Step>
-    <Step id="S82804809ab3a4169b600f5577f25be6d" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="this.search_use == true" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S782da46b88b048dfabec8d8ccb864f3e" ver="311241220" createVer="311241220" type="Flow" name="Decision" dpName="IfElse" dpValue="this.search_isFileExist == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="7da567a3-2fcf-440e-88e3-01124e669da9" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.search_use == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.search_isFileExist == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.search_use == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.search_isFileExist == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="Sa961e515949c4f1c9b804aac564e1163" type="Flow" name="Else" />
-        <RelatedStep id="Se511933f9ed7403a8a10b107944696b2" type="Flow" name="EndDecision" />
+        <RelatedStep id="Sd0a3c285a1d94187ab6103406cfb80ab" type="Flow" name="Else" />
+        <RelatedStep id="Sc4ff74255bce495192ddd56056bf7847" type="Flow" name="EndDecision" />
       </RelatedSteps>
-      <Script><![CDATA[if (this.search_use == true) {]]></Script>
+      <Script><![CDATA[if (this.search_isFileExist == true) {]]></Script>
     </Step>
-    <Step id="S5d9cc987737943718985b05649cee442" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S8cc89019187046119382df26950b1134" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="7661701a-c8f3-4916-8691-ba30138eadff" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -95,7 +113,7 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'T_0_조건설정', null);]]></Script>
     </Step>
-    <Step id="S67dedeb7b5084369982bdeac3217e455" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="Global.l &lt; Global.Stockcode.length" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S6dfedd1cb62445c7b8e0beb7bf275b7d" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="Global.l &lt; Global.Stockcode.length" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="ff00936a-a301-44e0-aaf8-b5889c3cffca" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_InitializeIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.l = 0" />
@@ -103,11 +121,11 @@
         <Property type="Flow" key="Conditions_UpdateIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.l++" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S178d467fe64d415780f5e31382622161" type="Flow" name="EndLoop" />
+        <RelatedStep id="S7ca6b45fb99f41f6bf44c88afca86e91" type="Flow" name="EndLoop" />
       </RelatedSteps>
       <Script><![CDATA[for (Global.l = 0; Global.l < Global.Stockcode.length; Global.l++) {]]></Script>
     </Step>
-    <Step id="S67c6298d8dc44c71a6c1316d247042c1" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sc6a5945af5114cf9b3ea98ef678cd75b" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="8de535c4-d3c0-4b69-b9e5-3038815e886a" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -116,49 +134,57 @@
       <RelatedSteps />
       <Script><![CDATA[RunTask(this, 'P_2_DART', null);]]></Script>
     </Step>
-    <Step id="S178d467fe64d415780f5e31382622161" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
+    <Step id="S7ca6b45fb99f41f6bf44c88afca86e91" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="e69eb6b9-d869-4d6c-a174-e05148af701d" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S67dedeb7b5084369982bdeac3217e455" type="Flow" name="Loop" />
+        <RelatedStep id="S6dfedd1cb62445c7b8e0beb7bf275b7d" type="Flow" name="Loop" />
       </RelatedSteps>
       <Script><![CDATA[}]]></Script>
     </Step>
-    <Step id="Sa961e515949c4f1c9b804aac564e1163" ver="311241220" createVer="311241220" type="Flow" name="Else" dpName="Else" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseOpenBlock" enabled="True" mainSet="0">
+    <Step id="Sd0a3c285a1d94187ab6103406cfb80ab" ver="311241220" createVer="311241220" type="Flow" name="Else" dpName="Else" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseOpenBlock" enabled="True" mainSet="0">
       <Properties id="57b6c6eb-1143-4907-a4fc-32141a598650" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S82804809ab3a4169b600f5577f25be6d" type="Flow" name="Decision" />
+        <RelatedStep id="S782da46b88b048dfabec8d8ccb864f3e" type="Flow" name="Decision" />
       </RelatedSteps>
       <Script><![CDATA[}else{]]></Script>
     </Step>
-    <Step id="Se511933f9ed7403a8a10b107944696b2" ver="311241220" createVer="311241220" type="Flow" name="EndDecision" dpName="End-IfElse" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
+    <Step id="Sc4ff74255bce495192ddd56056bf7847" ver="311241220" createVer="311241220" type="Flow" name="EndDecision" dpName="End-IfElse" dpValue="" dpValue2="" dpImage="" tag="" depth="4" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="c22b689b-e4f7-4bd4-8d16-6f5c666f0cde" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
-        <RelatedStep id="S82804809ab3a4169b600f5577f25be6d" type="Flow" name="Decision" />
+        <RelatedStep id="S782da46b88b048dfabec8d8ccb864f3e" type="Flow" name="Decision" />
       </RelatedSteps>
       <Script><![CDATA[}]]></Script>
     </Step>
-    <Step id="S154e6af06c33468b82c80f834f1307bf" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="Sb0e0f97ce05a4c5c857ca776fee5d029" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="0b9094e2-d11a-4c0a-880b-d0f06b7cbf9a" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_TaskName" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="T_2_1_보고서작성" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RunTask(this, 'T_2_1_보고서작성', null);]]></Script>
+    </Step>
+    <Step id="S99004ffe00a745cba1e09abfea4c9230" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="8187c060-ff90-43e0-b330-643574ae015c" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="실행시간" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.end_time= new Date()&#xD;&#xA;&#xD;&#xA;this.start_time.setHours(this.start_time.getHours() + 1)     //재실행시간&#xD;&#xA;&#xD;&#xA;this.sec = Math.floor((this.start_time - this.end_time) / 1000)&#xD;&#xA;" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.end_time= new Date()&#xD;&#xA;&#xD;&#xA;this.start_time.setHours(this.start_time.getHours() + 1)     //재실행시간&#xD;&#xA;&#xD;&#xA;this.sec = Math.floor((this.start_time - this.end_time) / 1000)" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[this.end_time= new Date()
 
 this.start_time.setHours(this.start_time.getHours() + 1)     //재실행시간
 
-this.sec = Math.floor((this.start_time - this.end_time) / 1000)
-]]></Script>
+this.sec = Math.floor((this.start_time - this.end_time) / 1000)]]></Script>
     </Step>
-    <Step id="S7f6fe37c401c4965b4cfdc5731a180f9" ver="311241220" createVer="311241220" type="Flow" name="Delay" dpName="Delay" dpValue="this.sec sec &amp; 0 msec" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S73399f5df39d4fa5bcd20c96f2b92e55" ver="311241220" createVer="311241220" type="Flow" name="Delay" dpName="Delay" dpValue="this.sec sec &amp; 0 msec" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="810c704d-19fa-4734-9bc6-14b4611507f3" type="Flow">
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -167,6 +193,33 @@ this.sec = Math.floor((this.start_time - this.end_time) / 1000)
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[Delay((this.sec * 1000) + 0);]]></Script>
+    </Step>
+    <Step id="S17852f957ebf4b67ad7a6463177c9628" ver="311241220" createVer="311241220" type="Flow" name="Else" dpName="Else" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseOpenBlock" enabled="True" mainSet="0">
+      <Properties id="87ebfaf4-3cd1-42ab-ae3e-c5e5f6cc39cd" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="Sa02eb2d13a9948ec820f4a0149db18c5" type="Flow" name="Decision" />
+      </RelatedSteps>
+      <Script><![CDATA[}else{]]></Script>
+    </Step>
+    <Step id="S6d6ef06c03ad49beb73b77c05e157895" ver="311241220" createVer="311241220" type="Flow" name="RunTask" dpName="RunTask" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="919e1809-8397-4f5e-942f-34a9fab433a7" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_TaskName" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="T_2_2_이메일전송" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[RunTask(this, 'T_2_2_이메일전송', null);]]></Script>
+    </Step>
+    <Step id="S9d410fa4d34d49f095eb3b3ee3f1b79d" ver="311241220" createVer="311241220" type="Flow" name="EndDecision" dpName="End-IfElse" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="2d1dd427-e290-42f9-bf1c-7661867ee2f1" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="Sa02eb2d13a9948ec820f4a0149db18c5" type="Flow" name="Decision" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
     </Step>
     <Step id="S7eb4d50bf08441d6860e1f2f4fc2d206" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-While" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="c7c20540-39d9-4dc9-9cdb-e020ca0b25ab" type="Flow">
@@ -183,13 +236,13 @@ this.sec = Math.floor((this.start_time - this.end_time) / 1000)
     this.end_time;
     this.sec;
     this.start_time;
-    this.search_use;
+    this.search_isFileExist;
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {2:[14],5:[10,11],7:[9]};
-    this.GotoReverseBlockMap = {14:2,10:5,11:5,9:7};
-    this.GotoStepBlockTypeMap = {2:'UntilLoop',14:'EndLoop',5:'Decision',10:'Else',11:'EndDecision',7:'Loop',9:'EndLoop'};
+    this.GotoBlockMap = {2:[19],4:[16,18],6:[11,12],8:[10]};
+    this.GotoReverseBlockMap = {19:2,16:4,18:4,11:6,12:6,10:8};
+    this.GotoStepBlockTypeMap = {2:'UntilLoop',19:'EndLoop',4:'Decision',16:'Else',18:'EndDecision',6:'Decision',11:'Else',12:'EndDecision',8:'Loop',10:'EndLoop'};
 
 
     this.run = function() {
@@ -206,56 +259,79 @@ this.sec = Math.floor((this.start_time - this.end_time) / 1000)
             STEP('S74c4b65b184b48ae8d9d5dc5f714a883', '[3] ExecuteScript');
             this.start_time = new Date()
 
-
+            //종료시간
+            if(this.start_time.getHours() > 15 || 
+              (this.start_time.getHours() === 15 && this.start_time.getMinutes() >= 30)) {
+                Global.loop = false
+            }
 
             //------------------------------------------------
-            STEP('S6996fff62fa142318695727acc2541bf', '[4] IsFileExist');
-            this.search_use = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_4);
-
-            //------------------------------------------------
-            STEP('S82804809ab3a4169b600f5577f25be6d', '[5] IfElse');
-            if (this.search_use == true) {
+            STEP('Sa02eb2d13a9948ec820f4a0149db18c5', '[4] IfElse');
+            if (Global.loop == true) {
 
                 //------------------------------------------------
-                STEP('S5d9cc987737943718985b05649cee442', '[6] RunTask');
-                RunTask(this, 'T_0_조건설정', null);
+                STEP('S20184d7cff254744a4f8d8c393f27ec6', '[5] IsFileExist');
+                this.search_isFileExist = StepPlayer.Run('Desktop.IsFileExist', this.isfileexist_info_5);
 
                 //------------------------------------------------
-                STEP('S67dedeb7b5084369982bdeac3217e455', '[7] For');
-                for (Global.l = 0; Global.l < Global.Stockcode.length; Global.l++) {
+                STEP('S782da46b88b048dfabec8d8ccb864f3e', '[6] IfElse');
+                if (this.search_isFileExist == true) {
 
                     //------------------------------------------------
-                    STEP('S67c6298d8dc44c71a6c1316d247042c1', '[8] RunTask');
-                    RunTask(this, 'P_2_DART', null);
+                    STEP('S8cc89019187046119382df26950b1134', '[7] RunTask');
+                    RunTask(this, 'T_0_조건설정', null);
+
+                    //------------------------------------------------
+                    STEP('S6dfedd1cb62445c7b8e0beb7bf275b7d', '[8] For');
+                    for (Global.l = 0; Global.l < Global.Stockcode.length; Global.l++) {
+
+                        //------------------------------------------------
+                        STEP('Sc6a5945af5114cf9b3ea98ef678cd75b', '[9] RunTask');
+                        RunTask(this, 'P_2_DART', null);
+
+                    //------------------------------------------------
+                    }
+                    STEP('S7ca6b45fb99f41f6bf44c88afca86e91', '[10] End-For');
+
+                //------------------------------------------------
+                }else{
+                    STEP('Sd0a3c285a1d94187ab6103406cfb80ab', '[11] Else');
 
                 //------------------------------------------------
                 }
-                STEP('S178d467fe64d415780f5e31382622161', '[9] End-For');
+                STEP('Sc4ff74255bce495192ddd56056bf7847', '[12] End-IfElse');
+
+                //------------------------------------------------
+                STEP('Sb0e0f97ce05a4c5c857ca776fee5d029', '[13] RunTask');
+                RunTask(this, 'T_2_1_보고서작성', null);
+
+                //------------------------------------------------
+                STEP('S99004ffe00a745cba1e09abfea4c9230', '[14] ExecuteScript');
+                this.end_time= new Date()
+
+                this.start_time.setHours(this.start_time.getHours() + 1)     //재실행시간
+
+                this.sec = Math.floor((this.start_time - this.end_time) / 1000)
+
+                //------------------------------------------------
+                STEP('S73399f5df39d4fa5bcd20c96f2b92e55', '[15] Delay');
+                Delay((this.sec * 1000) + 0);
 
             //------------------------------------------------
             }else{
-                STEP('Sa961e515949c4f1c9b804aac564e1163', '[10] Else');
+                STEP('S17852f957ebf4b67ad7a6463177c9628', '[16] Else');
+
+                //------------------------------------------------
+                STEP('S6d6ef06c03ad49beb73b77c05e157895', '[17] RunTask');
+                RunTask(this, 'T_2_2_이메일전송', null);
 
             //------------------------------------------------
             }
-            STEP('Se511933f9ed7403a8a10b107944696b2', '[11] End-IfElse');
-
-            //------------------------------------------------
-            STEP('S154e6af06c33468b82c80f834f1307bf', '[12] ExecuteScript');
-            this.end_time= new Date()
-
-            this.start_time.setHours(this.start_time.getHours() + 1)     //재실행시간
-
-            this.sec = Math.floor((this.start_time - this.end_time) / 1000)
-
-
-            //------------------------------------------------
-            STEP('S7f6fe37c401c4965b4cfdc5731a180f9', '[13] Delay');
-            Delay((this.sec * 1000) + 0);
+            STEP('S9d410fa4d34d49f095eb3b3ee3f1b79d', '[18] End-IfElse');
 
         //------------------------------------------------
         }
-        STEP('S7eb4d50bf08441d6860e1f2f4fc2d206', '[14] End-While');
+        STEP('S7eb4d50bf08441d6860e1f2f4fc2d206', '[19] End-While');
 
 
     }
@@ -273,16 +349,21 @@ this.sec = Math.floor((this.start_time - this.end_time) / 1000)
       <StepNode step_id="S46ca8070027b457d9ffd22043974cfb4" group_name="de0264f3-2a6c-4e71-9e74-82335e7a5dce_종목 검색할 파일경로 입력" folded="False" color="" />
       <StepNode step_id="S12082b69508d421a9e53263482d391f3" group_name="" folded="False" color="" />
       <StepNode step_id="S74c4b65b184b48ae8d9d5dc5f714a883" group_name="d78acd9a-4669-40aa-9292-83dcb8c46df8_시작시간 가져오기" folded="False" color="" />
-      <StepNode step_id="S6996fff62fa142318695727acc2541bf" group_name="77199ee7-3452-4d5f-846a-210aa394bbab_종목 검색할 파일유무 확인" folded="False" color="" />
-      <StepNode step_id="S82804809ab3a4169b600f5577f25be6d" group_name="" folded="False" color="" />
-      <StepNode step_id="S5d9cc987737943718985b05649cee442" group_name="" folded="False" color="" />
-      <StepNode step_id="S67dedeb7b5084369982bdeac3217e455" group_name="" folded="False" color="" />
-      <StepNode step_id="S67c6298d8dc44c71a6c1316d247042c1" group_name="" folded="False" color="" />
-      <StepNode step_id="S178d467fe64d415780f5e31382622161" group_name="" folded="False" color="" />
-      <StepNode step_id="Sa961e515949c4f1c9b804aac564e1163" group_name="" folded="False" color="" />
-      <StepNode step_id="Se511933f9ed7403a8a10b107944696b2" group_name="" folded="False" color="" />
-      <StepNode step_id="S154e6af06c33468b82c80f834f1307bf" group_name="3fa50a8b-aa69-4f3a-955d-390733cdfe2e_남은 시간 계산" folded="False" color="" />
-      <StepNode step_id="S7f6fe37c401c4965b4cfdc5731a180f9" group_name="1e23cea1-769e-4654-90ba-99300a00c73b_남은 시간동안 지연" folded="False" color="" />
+      <StepNode step_id="Sa02eb2d13a9948ec820f4a0149db18c5" group_name="" folded="False" color="" />
+      <StepNode step_id="S20184d7cff254744a4f8d8c393f27ec6" group_name="bd3be5ea-4955-4dbc-911e-623a38a508cd_종목 검색할 파일유무 확인" folded="False" color="" />
+      <StepNode step_id="S782da46b88b048dfabec8d8ccb864f3e" group_name="" folded="False" color="" />
+      <StepNode step_id="S8cc89019187046119382df26950b1134" group_name="" folded="False" color="" />
+      <StepNode step_id="S6dfedd1cb62445c7b8e0beb7bf275b7d" group_name="" folded="False" color="" />
+      <StepNode step_id="Sc6a5945af5114cf9b3ea98ef678cd75b" group_name="" folded="False" color="" />
+      <StepNode step_id="S7ca6b45fb99f41f6bf44c88afca86e91" group_name="" folded="False" color="" />
+      <StepNode step_id="Sd0a3c285a1d94187ab6103406cfb80ab" group_name="" folded="False" color="" />
+      <StepNode step_id="Sc4ff74255bce495192ddd56056bf7847" group_name="" folded="False" color="" />
+      <StepNode step_id="Sb0e0f97ce05a4c5c857ca776fee5d029" group_name="" folded="False" color="" />
+      <StepNode step_id="S99004ffe00a745cba1e09abfea4c9230" group_name="ebdf483d-c6a6-4b8f-bb23-fcd352e97732_남은 시간 계산" folded="False" color="" />
+      <StepNode step_id="S73399f5df39d4fa5bcd20c96f2b92e55" group_name="03da09e5-37f7-49eb-a209-60781d0dfd9f_남은 시간동안 지연" folded="False" color="" />
+      <StepNode step_id="S17852f957ebf4b67ad7a6463177c9628" group_name="" folded="False" color="" />
+      <StepNode step_id="S6d6ef06c03ad49beb73b77c05e157895" group_name="" folded="False" color="" />
+      <StepNode step_id="S9d410fa4d34d49f095eb3b3ee3f1b79d" group_name="" folded="False" color="" />
       <StepNode step_id="S7eb4d50bf08441d6860e1f2f4fc2d206" group_name="" folded="False" color="" />
     </StepNodes>
   </Diagram>

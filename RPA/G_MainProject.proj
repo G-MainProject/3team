@@ -16,13 +16,16 @@
     <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="15" name="T_1_4_DART_엑셀저장">
       <Properties />
     </LinkItem>
-    <LinkItem id="52d1f205-d23d-45cf-be50-1a184d812ccc" category="NormalTask" isChanged="Y" desc="" stepCount="55" name="T_2_1_보고서작성">
+    <LinkItem id="52d1f205-d23d-45cf-be50-1a184d812ccc" category="NormalTask" isChanged="Y" desc="" stepCount="56" name="T_2_1_보고서작성">
+      <Properties />
+    </LinkItem>
+    <LinkItem id="01e0b7ca-fefd-43c2-b346-25f6683b56f1" category="NormalTask" isChanged="Y" desc="" stepCount="6" name="T_2_2_이메일전송">
       <Properties />
     </LinkItem>
   </NormalTask>
   <Event isExpended="false" />
   <Process isExpended="true">
-    <LinkItem id="70df1108-4c69-4917-b47f-a570fe456190" category="Process" isChanged="Y" desc="default process" stepCount="14" name="P_0_G_MainProject">
+    <LinkItem id="70df1108-4c69-4917-b47f-a570fe456190" category="Process" isChanged="Y" desc="default process" stepCount="19" name="P_0_G_MainProject">
       <Properties />
     </LinkItem>
     <LinkItem id="667af7e0-2f32-477c-9407-c0ef19d8e2e7" category="Process" isChanged="Y" desc="" stepCount="6" name="P_2_DART">
@@ -37,18 +40,16 @@
   <Asset />
   <Library />
   <Variables>
-    <Variable name="chrome_id" scope="Global" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF62B6B7" showMarker="True" />
+    <Variable name="date" scope="Global" valueType="Any" formatType="Any" initValue="" desc="날짜" colorValue="#FFFF9F29" showMarker="False" />
+    <Variable name="report_path" scope="Global" valueType="Any" formatType="Any" initValue="" desc="보고서 저장 경로" colorValue="#FFD864A9" showMarker="False" />
+    <Variable name="chrome_id" scope="Global" valueType="Any" formatType="Any" initValue="" desc="크롬 id" colorValue="#FF62B6B7" showMarker="False" />
     <Variable name="loop" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FFEBB02D" showMarker="False" />
     <Variable name="file_path" scope="Global" valueType="Any" formatType="Any" initValue="" desc="경로설정" colorValue="#FFFFB100" showMarker="False" />
-    <Variable name="Naver_flag" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FFF7DB6A" showMarker="True" />
     <Variable name="Data_use" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="" colorValue="#FF76B600" showMarker="False" />
     <Variable name="l" scope="Global" valueType="Any" formatType="Any" initValue="" desc="for문" colorValue="#FFF7DB6A" showMarker="False" />
     <Variable name="DART_File_name" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="이름" colorValue="#FFCB1C8D" showMarker="False" />
     <Variable name="DART_File_type" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="확장자" colorValue="#FF38E54D" showMarker="False" />
-    <Variable name="Stockcode" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="" colorValue="#FFA555EC" showMarker="False" />
-    <Variable name="DART_flag" scope="Global" valueType="Any" formatType="Any" initValue="true" desc="다운로드경로 설정" colorValue="#FF98DFD6" showMarker="False" />
-    <Variable name="Naver_j" scope="Global" valueType="Any" formatType="Any" initValue="" desc="for문" colorValue="#FF0E8388" showMarker="False" />
-    <Variable name="Naver_Data" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="" colorValue="#FFFF731D" showMarker="False" />
+    <Variable name="Stockcode" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="종목 코드" colorValue="#FFA555EC" showMarker="False" />
     <Variable name="Stock" scope="Global" valueType="Any" formatType="Any" initValue="[]" desc="종목명" colorValue="#FFFA0101" showMarker="False" />
   </Variables>
   <Properties>

@@ -10,38 +10,38 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-11 12:09:35" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:43:43" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-10-14 12:10:13" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
   <Variables>
-    <Variable name="save_file_path" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFE49393" showMarker="False" />
+    <Variable name="DART_isDirectoryExist" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="DART 결과 저장폴더 유무 확인" colorValue="#FFE49393" showMarker="False" />
   </Variables>
   <Steps>
-    <Step id="S39d10b5de2504d469162b63135eabcd5" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="this.save_file_path" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+    <Step id="S39d10b5de2504d469162b63135eabcd5" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="this.DART_isDirectoryExist" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="62f5b31a-931d-40f7-859d-c320d9bac91e" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\'" />
-        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.save_file_path" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.DART_isDirectoryExist" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.save_file_path = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);]]></Script>
+      <Script><![CDATA[this.DART_isDirectoryExist = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);]]></Script>
     </Step>
-    <Step id="S3f0c2d081c4145a68c81a9b43dd4469d" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.save_file_path == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S3f0c2d081c4145a68c81a9b43dd4469d" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.DART_isDirectoryExist == true" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="88ec9f77-adda-403c-adbc-88819dee310b" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.save_file_path == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.DART_isDirectoryExist == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.save_file_path == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.DART_isDirectoryExist == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S4048adec0ebd4be0aa21f786f51df1cc" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (this.save_file_path == true) {]]></Script>
+      <Script><![CDATA[if (this.DART_isDirectoryExist == true) {]]></Script>
     </Step>
     <Step id="Sf201b3f138ca4c35a5e60956a24bad2c" ver="311241220" createVer="311241220" type="Desktop" name="DeleteDirectory" dpName="DeleteDirectory" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="340306a0-b516-4022-8142-c41e0bc54831" type="Desktop">
@@ -95,7 +95,7 @@ for (let i = 0; i < RESULT.details.length; i++) {
   </Steps>
   <JScript><![CDATA[function T_0_조건설정() {
 
-    this.save_file_path;
+    this.DART_isDirectoryExist;
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
@@ -108,11 +108,11 @@ for (let i = 0; i < RESULT.details.length; i++) {
 
         //------------------------------------------------
         STEP('S39d10b5de2504d469162b63135eabcd5', '[1] IsDirectoryExist');
-        this.save_file_path = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);
+        this.DART_isDirectoryExist = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_1);
 
         //------------------------------------------------
         STEP('S3f0c2d081c4145a68c81a9b43dd4469d', '[2] IfThen');
-        if (this.save_file_path == true) {
+        if (this.DART_isDirectoryExist == true) {
 
             //------------------------------------------------
             STEP('Sf201b3f138ca4c35a5e60956a24bad2c', '[3] DeleteDirectory');
