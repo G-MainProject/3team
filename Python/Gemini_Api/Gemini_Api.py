@@ -14,7 +14,7 @@ DATA_DIR = BASE_DIR.parent.parent / "data"
 RAWS_DIR = DATA_DIR / "raws"
 RAWS_DIR.mkdir(parents=True, exist_ok=True)
 
-PERIOD_ORDER = ["하루", "일주일", "한 달", "여섯 달", "일 년"]
+PERIOD_ORDER = ["하루", "일주일", "한 달", "6개월", "일 년"]
 ALLOWED_VERDICTS = {"강력매수", "매수", "보유", "매도", "강력매도"}
 
 
@@ -124,7 +124,7 @@ def summarize_chart_data(chart_payload) -> str:
         "하루": 1,
         "일주일": 7,
         "한 달": 30,
-        "여섯 달": 180,
+        "6개월": 180,
         "일 년": 365,
     }
 
@@ -218,7 +218,7 @@ def split_response_by_period(text: str) -> dict[str, str]:
             if current_period is not None:
                 sections[current_period] = "\n".join(collected_lines).strip()
             current_period = matched_period
-            collected_lines = [line]
+            collected_lines = []
         elif current_period is not None:
             collected_lines.append(line)
 
@@ -264,7 +264,7 @@ prompt = f"""
 1. 반드시 한글로 답변하고 높임말을 사용하십시오.
 2. 어떠한 마크업 언어도 사용하지 마십시오.
 3. 서두에 꾸밈말 없이 본론으로 바로 시작하십시오.
-4. 전체 답변은 `- 하루`, `- 일주일`, `- 한 달`, `- 여섯 달`, `- 일 년` 순서의 다섯 카테고리로 구성하십시오. 각 카테고리 이름 앞에는 하이픈(-)을 붙이십시오.
+4. 전체 답변은 `- 하루`, `- 일주일`, `- 한 달`, `- 6개월`, `- 일 년` 순서의 다섯 카테고리로 구성하십시오. 각 카테고리 이름 앞에는 하이픈(-)을 붙이십시오.
 5. 각 카테고리 내부에서는 다음 소제목을 순서대로 포함하십시오.
    - 주요 동향: 감성·수급·뉴스 관점에서 핵심 흐름을 요약하십시오.
    - 기술적 분석: 상승 종목과 수급 변화를 활용해 기술적 관점을 제시하십시오.
