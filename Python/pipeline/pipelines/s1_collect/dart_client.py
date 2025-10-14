@@ -71,7 +71,7 @@ def fetch_filings(
     if not api_key:
         raise RuntimeError("DART_API_KEY 환경변수가 설정되어 있지 않습니다.")
 
-    # Best-effort: refresh corpcode CSV once per day (non-blocking)
+    # 가능하다면 하루에 한 번 corpcode CSV를 비동기 방식으로 갱신한다
     try:
         _update_corpcode_csv_if_stale(api_key, max_age_hours=24)
     except Exception:
@@ -313,7 +313,7 @@ def _resolve_raw_dir(raw_dir: str | Path | None) -> Path:
 
 
 # ---------------------------------------------------------------------------
-# corpCode.xml -> data/dart_corpcode.csv (daily refresh)
+# corpCode.xml을 내려받아 data/dart_corpcode.csv 파일을 매일 갱신한다
 # ---------------------------------------------------------------------------
 
 def _corpcode_csv_path() -> Path:
@@ -322,10 +322,10 @@ def _corpcode_csv_path() -> Path:
 
 
 def _update_corpcode_csv_if_stale(api_key: str, *, max_age_hours: int = 24) -> Path | None:
-    """Update data/dart_corpcode.csv at most once per ``max_age_hours``.
+    """``max_age_hours`` 동안은 data/dart_corpcode.csv를 한 번만 갱신한다.
 
-    If the CSV is missing or too old, fetch corpCode.xml and rewrite it.
-    Any failure is swallowed to avoid breaking the pipeline.
+    CSV가 없거나 오래되면 corpCode.xml을 내려받아 다시 작성하고,
+    파이프라인이 중단되지 않도록 예외는 조용히 무시한다.
     """
     csv_path = _corpcode_csv_path()
     try:
@@ -343,7 +343,7 @@ def _update_corpcode_csv_if_stale(api_key: str, *, max_age_hours: int = 24) -> P
 
     rows = _download_corpcode_rows(api_key)
     if not rows:
-        # Fallback: try to build from existing raw filings
+        # 실패 시 기존에 수집한 공시 원본으로부터 정보를 다시 구성한다
         try:
             rows = _build_corpcode_rows_from_raws()
         except Exception:
@@ -379,7 +379,7 @@ def _download_corpcode_rows(api_key: str) -> list[dict[str, str]]:
 
 
 def _build_corpcode_rows_from_raws() -> list[dict[str, str]]:
-    """Fallback: derive corp_code -> stock_code from existing fnlttMultiAcnt raws."""
+    """기존 fnlttMultiAcnt 원본 데이터에서 corp_code→stock_code 매핑을 추출한다."""
     rows: dict[str, dict[str, str]] = {}
     root = _find_project_root() / "data" / "raws" / "dart"
     if not root.exists():

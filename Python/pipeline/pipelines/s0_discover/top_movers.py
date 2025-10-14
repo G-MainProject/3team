@@ -18,7 +18,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, List, Mapping
 
-try:  # Python 3.9+
+try:  # Python 3.9 이상
     from zoneinfo import ZoneInfo  # type: ignore
 except Exception:  # pragma: no cover
     ZoneInfo = None  # type: ignore
@@ -34,11 +34,11 @@ def _project_root() -> Path:
     - 2순위: Python 또는 data 디렉터리가 존재하는 상위 디렉터리
     """
     here = Path(__file__).resolve()
-    # Prefer directory that actually contains .env
+    # 실제 .env 파일이 있는 디렉터리를 우선 사용한다
     for p in here.parents:
         if (p / ".env").exists():
             return p
-    # Fallback: a directory that looks like project root
+    # 프로젝트 루트로 보이는 디렉터리를 예비 후보로 사용한다
     for p in here.parents:
         if (p / "Python").exists() or (p / "data").exists():
             return p
@@ -70,8 +70,8 @@ def _debug_enabled() -> bool:
     return (os.getenv("KIWOOM_DEBUG") or "").strip() == "1"
 
 
-# -------- pykrx helpers --------
-try:  # pykrx
+# -------- pykrx 관련 보조 함수 --------
+try:  # pykrx 라이브러리
     from pykrx import stock  # type: ignore
 except Exception:  # pragma: no cover
     stock = None  # type: ignore
@@ -234,7 +234,7 @@ def _enrich_names_from_csv(entries: list[dict[str, Any]], csv_path: Path) -> Non
         pass
 
 
-# -------- Kiwoom direct --------
+# -------- Kiwoom 직접 호출 관련 --------
 
 def _post(sess: requests.Session, base: str, endpoint: str, *, headers: Mapping[str, str], body: Mapping[str, object], timeout: int = 15):
     url = urljoin(base.rstrip("/"), endpoint)
@@ -368,7 +368,7 @@ def _fetch_top_movers_kiwoom(market: str, count: int, *, use_mock: bool = False)
         sess.close()
 
 
-# -------- Main --------
+# -------- 메인 실행부 --------
 
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Select top movers via pykrx or Kiwoom")

@@ -10,19 +10,19 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-10 14:30:56" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-30 16:49:54" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-10-14 12:10:13" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
   <Variables>
-    <Variable name="download_btn_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF19A7CE" showMarker="False" />
-    <Variable name="download_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFAA77FF" showMarker="False" />
-    <Variable name="popup_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFFFB100" showMarker="False" />
-    <Variable name="search_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFF7DB6A" showMarker="False" />
-    <Variable name="tmp" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFE49393" showMarker="True" />
-    <Variable name="DART_id" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF2DCDDF" showMarker="False" />
+    <Variable name="DART_flag" scope="Normal" valueType="Any" formatType="Any" initValue="true" desc="첨부파일 다운로드경로 설정 유무" colorValue="#FF396D66" showMarker="False" />
+    <Variable name="download_btn_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="영문보기 버튼 유무 확인" colorValue="#FF19A7CE" showMarker="False" />
+    <Variable name="popup_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="팝업창 유무 확인" colorValue="#FFFFB100" showMarker="False" />
+    <Variable name="search_IsVisible" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="검색 결과 확인" colorValue="#FFF7DB6A" showMarker="False" />
+    <Variable name="tmp" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="첨부파일 다운로드 경로 저장" colorValue="#FFE49393" showMarker="False" />
+    <Variable name="DART_id" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="상세페이지 접근 id" colorValue="#FFF6FF00" showMarker="False" />
     <Variable name="DART_File_path" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="주소" colorValue="#FFF7DB6A" showMarker="False" />
     <Variable name="DART_index" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF617143" showMarker="False" />
   </Variables>
@@ -2073,27 +2073,27 @@ Global.Data_use = true]]></Script>
         <Property type="Win" key="Target_IsEditable" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="Win" key="Target_SizeTolerance" controlType="Size" valueType="System.Windows.Size" formatType="Size" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="30,15" />
         <Property type="Win" key="Target_TimeStamp" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="2025-09-16 09:30:02.961" />
-        <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="popup_isvisible" />
+        <Property type="Win" key="Conditions_Result" controlType="OutputControlType" valueType="System.Boolean" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.popup_IsVisible" />
         <Property type="Win" key="Target_CapturedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="Designer" />
         <Property type="Win" key="Target_Capture" controlType="Bitmap" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="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" />
         <Property type="Win" key="Target_ImageCompareBounds" controlType="Rect" valueType="System.Windows.Rect" formatType="Rect" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="96,40,20,21" />
         <Property type="Win" key="Target_PointOnImage" controlType="String" valueType="System.String" formatType="String_Point" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="'10, 10.5'" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[popup_isvisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_41);]]></Script>
+      <Script><![CDATA[this.popup_IsVisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_41);]]></Script>
     </Step>
-    <Step id="S7732bf51657248d289a76187de07ddb4" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="popup_isvisible == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="S7732bf51657248d289a76187de07ddb4" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.popup_IsVisible == true" dpValue2="" dpImage="" tag="" depth="3" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="312a1013-6aaa-49f0-b3b3-9fea51928385" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="popup_isvisible == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.popup_IsVisible == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="popup_isvisible == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.popup_IsVisible == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="Sb9ba4413eaf74a95a494bd7b3b4c9364" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (popup_isvisible == true) {]]></Script>
+      <Script><![CDATA[if (this.popup_IsVisible == true) {]]></Script>
     </Step>
     <Step id="S91f78c2c2fbd425995a3af7d65eeab21" ver="311241220" createVer="311241220" type="Chrome" name="ChromeClick" dpName="ChromeClick" dpValue="Global.chrome_id" dpValue2="아이에스티이/주주총회소집공고/2025.03.14 - Chrome" dpImage="Target_Capture" tag="" depth="4" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="4a0a108a-636d-4516-9fb0-986d40997ea1" type="Chrome">
@@ -2736,18 +2736,18 @@ if (index !== -1) {
       </RelatedSteps>
       <Script><![CDATA[if (download_isvisible == true) {]]></Script>
     </Step>
-    <Step id="Sf47735335b8e40c482e842ef664e3b3f" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.DART_flag == true" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
+    <Step id="Sf47735335b8e40c482e842ef664e3b3f" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.DART_flag == true" dpValue2="" dpImage="" tag="" depth="4" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="2b870ac4-afd5-4e1c-bc47-038b091593e4" type="Flow">
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.DART_flag == true" order="1" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.DART_flag == true" order="1" />
         <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
-        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.DART_flag == true" order="3" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.DART_flag == true" order="3" />
         <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
       </Properties>
       <RelatedSteps>
         <RelatedStep id="S02a98be601534b8c9361f2a404c15ffb" type="Flow" name="EndDecisionThen" />
       </RelatedSteps>
-      <Script><![CDATA[if (Global.DART_flag == true) {]]></Script>
+      <Script><![CDATA[if (this.DART_flag == true) {]]></Script>
     </Step>
     <Step id="Sa3037b3d28174bab8cff06392cd4ab74" ver="311241220" createVer="311241220" type="Win" name="Click" dpName="Click" dpValue="다른 이름으로 저장" dpValue2="Download - Chrome" dpImage="Target_Capture" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="99b5fb5b-e338-473a-9bfe-65251c179b2e" type="Win">
@@ -2821,11 +2821,11 @@ if (index !== -1) {
         <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="다운로드경로필요여부" />
-        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.tmp = Global.file_path + '\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'&#xD;&#xA;Global.DART_flag = false" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.tmp = Global.file_path + '\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'&#xD;&#xA;this.DART_flag = false" />
       </Properties>
       <RelatedSteps />
       <Script><![CDATA[this.tmp = Global.file_path + '\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'
-Global.DART_flag = false]]></Script>
+this.DART_flag = false]]></Script>
     </Step>
     <Step id="S57d6f350751b438694909d95cf5547f7" ver="311241220" createVer="311241220" type="Win" name="KeyInput" dpName="KeyInput" dpValue="" dpValue2="" dpImage="" tag="" depth="5" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="a3867c6c-22dc-4a16-b932-54d7b8d21e9d" type="Win">
@@ -2981,8 +2981,8 @@ Global.DART_flag = false]]></Script>
   </Steps>
   <JScript><![CDATA[function T_1_2_DART_데이터추출() {
 
+    this.DART_flag = true;
     this.download_btn_IsVisible;
-    this.download_IsVisible;
     this.popup_IsVisible;
     this.search_IsVisible;
     this.tmp;
@@ -3167,11 +3167,11 @@ Global.DART_flag = false]]></Script>
 
                 //------------------------------------------------
                 STEP('Sf02c71c1f2074ff28f8de002fcb31df0', '[41] IsVisible');
-                popup_isvisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_41);
+                this.popup_IsVisible = StepPlayer.Run('Win.IsVisible', this.isvisible_info_41);
 
                 //------------------------------------------------
                 STEP('S7732bf51657248d289a76187de07ddb4', '[42] IfThen');
-                if (popup_isvisible == true) {
+                if (this.popup_IsVisible == true) {
 
                     //------------------------------------------------
                     STEP('S91f78c2c2fbd425995a3af7d65eeab21', '[43] ChromeClick');
@@ -3269,7 +3269,7 @@ Global.DART_flag = false]]></Script>
 
                     //------------------------------------------------
                     STEP('Sf47735335b8e40c482e842ef664e3b3f', '[59] IfThen');
-                    if (Global.DART_flag == true) {
+                    if (this.DART_flag == true) {
 
                         //------------------------------------------------
                         STEP('Sa3037b3d28174bab8cff06392cd4ab74', '[60] Click');
@@ -3278,7 +3278,7 @@ Global.DART_flag = false]]></Script>
                         //------------------------------------------------
                         STEP('S49d2b788c03346ff96b5fe69d59b908a', '[61] ExecuteScript');
                         this.tmp = Global.file_path + '\\DART\\' + Global.Stock[Global.DATE_I] +'\\pdf'
-                        Global.DART_flag = false
+                        this.DART_flag = false
 
                         //------------------------------------------------
                         STEP('S57d6f350751b438694909d95cf5547f7', '[62] KeyInput');

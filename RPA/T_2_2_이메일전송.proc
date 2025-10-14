@@ -1,0 +1,189 @@
+<Process id="01e0b7ca-fefd-43c2-b346-25f6683b56f1" type="task" workType="foreground" name="T_2_2_이메일전송" version="" designerVersion="3.1.125.00701" lastPublishedServer="" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="6" Orientation="horizontal">
+  <Properties>
+    <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onAfter" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="onError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
+    <Property key="Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="0" />
+    <Property key="RunningTime" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="23" />
+    <Property key="Os" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="Microsoft Windows 10 Pro64비트" />
+    <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
+    <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-10-13 10:02:50" />
+    <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-10-14 16:10:42" />
+    <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
+    <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+    <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+  </Properties>
+  <LinkItems />
+  <Variables>
+    <Variable name="user" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFA555EC" showMarker="False" />
+    <Variable name="email" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFFE6244" showMarker="False" />
+    <Variable name="ouput" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="DB 필드" colorValue="#FF00E7FF" showMarker="False" />
+    <Variable name="DataSource" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="DB 데이터소스" colorValue="#FF94AF9F" showMarker="False" />
+    <Variable name="connection" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="DB 연결정보" colorValue="#FF1A4D2E" showMarker="False" />
+  </Variables>
+  <Steps>
+    <Step id="Sac38be6a2e274e27a3984081465010b4" ver="311241220" createVer="311241220" type="Desktop" name="DBConnection" dpName="DBConnection" dpValue="this.connection, this.DataSource" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="8f23c9d7-d778-407f-a93b-5d872d01cd50" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Connection_Connection" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.connection" />
+        <Property type="Desktop" key="DataSource_DataSource" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.DataSource" />
+        <Property type="Desktop" key="Connection_DSN" controlType="PropertyItemDBLibraryView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="team3_db" />
+        <Property type="Desktop" key="Connection_UID" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'root'" />
+        <Property type="Desktop" key="Connection_PWD" controlType="PropertyItemPasswordView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="True" id="cf578c74-6d3f-42cf-a1bb-663ea38fb1cc" isChanged="Y" encryptedFrom="" value="cLfVc7LeyZlN8MxhGcGFkw==" />
+        <Property type="Desktop" key="Connection_Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="15" />
+        <Property type="Desktop" key="DataSource_SourceType" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="TABLE" valuelist="TABLE;VIEW" />
+        <Property type="Desktop" key="DataSource_Source" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="users" valuelist="users" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.connection = StepPlayer.Run('Desktop.DBConnection', this.dbconnection_info_1); this.DataSource = 'TABLE?users']]></Script>
+    </Step>
+    <Step id="S34e145ac816f4e2c818598d3eb6a9776" ver="311241220" createVer="311241220" type="Desktop" name="GetDBData" dpName="GetDBData" dpValue="this.ouput" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="8b1f7d83-c47d-458c-af5e-a080505f6e04" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="DataSource_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.ouput" />
+        <Property type="Desktop" key="Connection_Connection" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.connection" />
+        <Property type="Desktop" key="Connection_Timeout" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="30" />
+        <Property type="Desktop" key="DataSource_DataSource" controlType="InputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.DataSource" />
+        <Property type="Desktop" key="DataSource_UseSource" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+        <Property type="Desktop" key="DataSource_Command" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="True" visible="False" readonly="False" encrypted="False" isChanged="N" value="''" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.ouput = StepPlayer.Run('Desktop.GetDBData', this.getdbdata_info_2);]]></Script>
+    </Step>
+    <Step id="Sc47b3439dc684f2f83979d07bcfb01e1" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="e290b393-aa2b-4cfb-bb96-163f1434b975" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="이메일 추출" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="let index = 0;&#xD;&#xA;this.email = []&#xD;&#xA;this.user = []&#xD;&#xA;for(let i = 0; i &lt; this.ouput.length; i++) {&#xD;&#xA;    if(this.ouput[i][8] == 'True') {&#xD;&#xA;        this.email[index] = this.ouput[i][1]&#xD;&#xA;        this.user[index++] = this.ouput[i][2]&#xD;&#xA;    }&#xD;&#xA;}" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[let index = 0;
+this.email = []
+this.user = []
+for(let i = 0; i < this.ouput.length; i++) {
+    if(this.ouput[i][8] == 'True') {
+        this.email[index] = this.ouput[i][1]
+        this.user[index++] = this.ouput[i][2]
+    }
+}]]></Script>
+    </Step>
+    <Step id="S830c6f03379b468c9e2aca0349ce3349" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="this.i &lt; this.email.length" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="b2a74922-c564-40be-a9e1-b32c2114cad4" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_InitializeIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.i = 0" />
+        <Property type="Flow" key="Conditions_LoopCondition" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.i &lt; this.email.length" />
+        <Property type="Flow" key="Conditions_UpdateIndex" controlType="Object" valueType="System.Object" formatType="Expression" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.i++" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S554f8babbc85485f89f3f09f6ad78f77" type="Flow" name="EndLoop" />
+      </RelatedSteps>
+      <Script><![CDATA[for (this.i = 0; this.i < this.email.length; this.i++) {]]></Script>
+    </Step>
+    <Step id="S4914432faf444640a0100ac4931f1ba4" ver="311241220" createVer="311241220" type="Net" name="SendMail" dpName="SendMail" dpValue="[핵심 이슈 및 투자 정보 리포트] 투자 분석 및 최신 동향 공유" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="9a0b3991-e0c9-4d9b-8797-d52ea42ab4fe" type="Net">
+        <Property type="Net" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Net" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Net" key="Mail_HostName" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'smtp.gmail.com'" />
+        <Property type="Net" key="Mail_Port" controlType="Int32" valueType="System.Int32" formatType="Integer" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="25" />
+        <Property type="Net" key="Mail_UseSSL" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+        <Property type="Net" key="Mail_ID" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'ohjuhei@gmail.com'" />
+        <Property type="Net" key="Mail_Password" controlType="PropertyItemPasswordView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="True" isChanged="Y" encryptedFrom="" value="SuDMwUTEPcRtsgb08tEcvVDO1Znjyy4Ct4LiHHrNfMc=" secureType="Secure" />
+        <Property type="Net" key="Mail_Sender" controlType="String" valueType="System.String" formatType="String_Email" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'ohjuhei@gmail.com'" />
+        <Property type="Net" key="Mail_Receivers" controlType="String" valueType="System.String" formatType="String_Email" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.email[this.i]" />
+        <Property type="Net" key="Mail_CCs" controlType="String" valueType="System.String" formatType="String_Email" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Net" key="Mail_BCCs" controlType="String" valueType="System.String" formatType="String_Email" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Net" key="Mail_Subject" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'[핵심 이슈 및 투자 정보 리포트] 투자 분석 및 최신 동향 공유'" />
+        <Property type="Net" key="Mail_Body" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="'&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;&lt;head&gt;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;&lt;title&gt;Untitled&lt;/title&gt;&lt;style type=&quot;text/css&quot;&gt;\r\np { margin-top: 0px;margin-bottom: 0px;line-height: 1.15; } \r\nbody { font-family: \'Verdana\';font-style: Normal;font-weight: normal;font-size: 16px; } \r\n.Normal { telerik-style-type: paragraph;telerik-style-name: Normal;border-collapse: collapse; } \r\n.TableNormal { telerik-style-type: table;telerik-style-name: TableNormal;border-collapse: collapse; } \r\n.p_BCFE9F { telerik-style-type: local;margin-top: 6.66px;margin-bottom: 6.66px; } \r\n.s_2C3B84B0 { telerik-style-type: local;font-family: \'Times New Roman\';font-size: 16px; } \r\n.s_11F18BC1 { telerik-style-type: local;font-family: \'Times New Roman\';font-size: 16px;color: #000000; } \r\n.s_272780EB { telerik-style-type: local;font-family: \'Times New Roman\';font-weight: bold;font-size: 16px;color: #000000; } \r\n.p_C8E2BEE6 { telerik-style-type: local;margin-top: 6.66px;margin-right: 0px;margin-bottom: 6.66px;margin-left: 24px;text-indent: 0px;font-family: \'Verdana\';font-style: Normal;font-weight: normal;font-size: 16px;color: #000000; } \r\n.li_F1008B32 { telerik-style-type: local;margin-left: 24px;text-indent: 0px;font-family: \'Times New Roman\';font-style: Normal;font-weight: normal;font-size: 16px;color: #000000; } \r\n.s_9689847C { telerik-style-type: local;font-family: \'Times New Roman\';font-style: Normal;font-weight: bold;font-size: 16px;color: #000000; } \r\n.p_58EC8738 { telerik-style-type: local;margin-top: 6.66px;margin-right: 0px;margin-bottom: 6.66px;margin-left: 48px;text-indent: 0px;font-family: \'Verdana\';font-style: Normal;font-weight: normal;font-size: 16px;color: #000000; } \r\n.li_18F0A271 { telerik-style-type: local;margin-left: 48px;text-indent: 0px;font-family: \'Symbol\';font-style: Normal;font-weight: normal;font-size: 16px;color: #000000; } \r\n.s_EF85C640 { telerik-style-type: local;font-family: \'Times New Roman\';font-style: Normal;font-weight: normal;font-size: 16px;color: #000000; } &lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_2C3B84B0&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;안녕하세요, SIGNAL.KR 입니다,&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;첨부된 &lt;/span&gt;&lt;span class=&quot;s_272780EB&quot;&gt;핵심 이슈 및 투자 정보 리포트&lt;/span&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;를 공유드립니다. &lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;본 리포트에는 최근 주식 시장 및 산업의 핵심 이슈를 중심으로, 투자에 도움이 될 분석 내용이 포함되어 있습니다. &lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;주요 내용은 아래와 같습니다.&lt;/span&gt;&lt;/p&gt;&lt;ol start=&quot;1&quot; style=&quot;list-style-type:decimal&quot;&gt;&lt;li value=&quot;1&quot; class=&quot;li_F1008B32&quot;&gt;&lt;p class=&quot;Normal p_C8E2BEE6&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;핵심 투자 이슈&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;ul style=&quot;list-style-type:disc&quot;&gt;&lt;li value=&quot;1&quot; class=&quot;li_18F0A271&quot;&gt;&lt;p class=&quot;Normal p_58EC8738&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;예측값 및 AI 분석&lt;/span&gt;&lt;span class=&quot;s_EF85C640&quot;&gt;: 주식 시장의 예측값을 제공하고, 이를 통해 향후 주가 변동성을 예측합니다.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;li value=&quot;2&quot; class=&quot;li_18F0A271&quot;&gt;&lt;p class=&quot;Normal p_58EC8738&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;기준 시점 주가 및 거래량&lt;/span&gt;&lt;span class=&quot;s_EF85C640&quot;&gt;: 주가 및 거래량 변화를 분석하여 매수/매도 타이밍을 제시합니다.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;li value=&quot;3&quot; class=&quot;li_18F0A271&quot;&gt;&lt;p class=&quot;Normal p_58EC8738&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;뉴스 감정분석&lt;/span&gt;&lt;span class=&quot;s_EF85C640&quot;&gt;: 최근 뉴스와 시장 감정 분석을 통해 기업 이슈와 시장 반응을 파악합니다.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;li value=&quot;2&quot; class=&quot;li_F1008B32&quot;&gt;&lt;p class=&quot;Normal p_C8E2BEE6&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;산업 동향&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;ul style=&quot;list-style-type:disc&quot;&gt;&lt;li value=&quot;1&quot; class=&quot;li_18F0A271&quot;&gt;&lt;p class=&quot;Normal p_58EC8738&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;산업별 분석&lt;/span&gt;&lt;span class=&quot;s_EF85C640&quot;&gt;: 기술, 헬스케어 등 주요 산업의 동향과 경제적/정치적 요소를 다룹니다.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;li value=&quot;2&quot; class=&quot;li_18F0A271&quot;&gt;&lt;p class=&quot;Normal p_58EC8738&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;재무제표 분석&lt;/span&gt;&lt;span class=&quot;s_EF85C640&quot;&gt;: 주요 기업들의 재무제표를 기반으로 재정 건전성 및 성장 가능성을 평가합니다.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;li value=&quot;3&quot; class=&quot;li_F1008B32&quot;&gt;&lt;p class=&quot;Normal p_C8E2BEE6&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;기타 중요 사항&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;ul style=&quot;list-style-type:disc&quot;&gt;&lt;li value=&quot;1&quot; class=&quot;li_18F0A271&quot;&gt;&lt;p class=&quot;Normal p_58EC8738&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;기술적 지표 분석&lt;/span&gt;&lt;span class=&quot;s_EF85C640&quot;&gt;: 주요 주식의 기술적 분석을 통해 매수/매도 신호를 제공합니다.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;li value=&quot;2&quot; class=&quot;li_18F0A271&quot;&gt;&lt;p class=&quot;Normal p_58EC8738&quot;&gt;&lt;span class=&quot;s_9689847C&quot;&gt;향후 투자 전략 수립&lt;/span&gt;&lt;span class=&quot;s_EF85C640&quot;&gt;: 시장을 기반으로 향후 투자 전략을 제시하고 리스크 관리 방법을 안내합니다.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/ol&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;리포트를 통해 향후 투자 결정을 내리시기에 유용한 정보를 얻으시길 바랍니다.&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_11F18BC1&quot;&gt;감사합니다.&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;Normal p_BCFE9F&quot;&gt;&lt;span class=&quot;s_2C3B84B0&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;'" />
+        <Property type="Net" key="Mail_IsHtml" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
+        <Property type="Net" key="Mail_Attachments" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.report_path + '\\보고서_' + Global.date + '.xlsx'" />
+        <Property type="Net" key="Mail_CheckFileSize" controlType="Int32" valueType="System.Int32" formatType="Integer" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="26" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Net.SendMail', this.sendmail_info_5);]]></Script>
+    </Step>
+    <Step id="S554f8babbc85485f89f3f09f6ad78f77" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="1cb9afbd-2d77-4927-a886-3d88336d5ea8" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S830c6f03379b468c9e2aca0349ce3349" type="Flow" name="Loop" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+  </Steps>
+  <JScript><![CDATA[function T_2_2_이메일전송() {
+
+    this.user;
+    this.email;
+    this.ouput;
+    this.DataSource;
+    this.connection;
+
+    this.RPAGOTOENABLE = false;
+    this.GotoStepRetryCntMap = {};
+    this.GotoBlockMap = {4:[6]};
+    this.GotoReverseBlockMap = {6:4};
+    this.GotoStepBlockTypeMap = {4:'Loop',6:'EndLoop'};
+
+
+    this.run = function() {
+
+        //------------------------------------------------
+        STEP('Sac38be6a2e274e27a3984081465010b4', '[1] DBConnection');
+        this.connection = StepPlayer.Run('Desktop.DBConnection', this.dbconnection_info_1); this.DataSource = 'TABLE?users'
+
+        //------------------------------------------------
+        STEP('S34e145ac816f4e2c818598d3eb6a9776', '[2] GetDBData');
+        this.ouput = StepPlayer.Run('Desktop.GetDBData', this.getdbdata_info_2);
+
+        //------------------------------------------------
+        STEP('Sc47b3439dc684f2f83979d07bcfb01e1', '[3] ExecuteScript');
+        let index = 0;
+        this.email = []
+        this.user = []
+        for(let i = 0; i < this.ouput.length; i++) {
+            if(this.ouput[i][8] == 'True') {
+                this.email[index] = this.ouput[i][1]
+                this.user[index++] = this.ouput[i][2]
+            }
+        }
+
+        //------------------------------------------------
+        STEP('S830c6f03379b468c9e2aca0349ce3349', '[4] For');
+        for (this.i = 0; this.i < this.email.length; this.i++) {
+
+            //------------------------------------------------
+            STEP('S4914432faf444640a0100ac4931f1ba4', '[5] SendMail');
+            StepPlayer.Run('Net.SendMail', this.sendmail_info_5);
+
+        //------------------------------------------------
+        }
+        STEP('S554f8babbc85485f89f3f09f6ad78f77', '[6] End-For');
+
+
+    }
+
+    this.execute = function() {
+        var result = null;
+        result = this.run()
+        if (result != null)
+            return result;
+    }
+}
+]]></JScript>
+  <Diagram version="1.300" nodesize="Normal">
+    <StepNodes>
+      <StepNode step_id="Sac38be6a2e274e27a3984081465010b4" group_name="78d023fe-4c87-4f22-8dd9-a531052a3a05_DB연결" folded="False" color="" />
+      <StepNode step_id="S34e145ac816f4e2c818598d3eb6a9776" group_name="79b49ebe-a8a8-4757-878a-647b54bfe9eb_user테이블 정보 가져오기" folded="False" color="" />
+      <StepNode step_id="Sc47b3439dc684f2f83979d07bcfb01e1" group_name="79b49ebe-a8a8-4757-878a-647b54bfe9eb_user테이블 정보 가져오기" folded="False" color="" />
+      <StepNode step_id="S830c6f03379b468c9e2aca0349ce3349" group_name="" folded="False" color="" />
+      <StepNode step_id="S4914432faf444640a0100ac4931f1ba4" group_name="7e79e5be-7027-425d-aed4-1975ee3b2195_이메일 전송" folded="False" color="" />
+      <StepNode step_id="S554f8babbc85485f89f3f09f6ad78f77" group_name="" folded="False" color="" />
+    </StepNodes>
+  </Diagram>
+</Process>

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Merge raw inputs into bronze-level daily datasets (clean ASCII version).
+"""raw 데이터를 병합해 일 단위 bronze 레이어를 생성한다.
 
-This module loads price data (Kiwoom preferred, then pykrx), optional
-fundamentals and news features, joins them on date, fills gaps, and writes a
-per-ticker bronze table under data/bronze.
+Kiwoom(우선) 또는 pykrx 가격과 선택적 재무·뉴스 특성을 날짜 기준으로 결합하고,
+결측을 보정해 data/bronze 아래에 종목별 bronze 테이블을 저장한다.
 """
 
 from __future__ import annotations
@@ -40,7 +39,7 @@ def run(
     news_dir: str | Path | None = None,
     fundamentals_dir: str | Path | None = None,
 ) -> list[Path]:
-    """Process all tickers and return written bronze file paths."""
+    """지정된 종목들을 처리해 생성된 bronze 파일 경로 목록을 반환한다."""
 
     resolved_raw = _resolve_raw_root(raw_root)
     selected = list(tickers) if tickers else _discover_raw_tickers(resolved_raw, price_source)
@@ -84,7 +83,7 @@ def merge_sources(
 
 
 # ---------------------------------------------------------------------------
-# Internal
+# 내부 유틸리티 함수
 # ---------------------------------------------------------------------------
 
 
@@ -122,10 +121,10 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
 
     merged = _fill_calendar_and_missing(merged)
 
-    # Derive missing fundamentals from available fields (Kiwoom-only fallback)
-    # - market_cap = close * shares_outstanding (if not present and shares_outstanding available)
-    # - fund_net_income_ttm = eps * shares_outstanding (if not present)
-    # - fund_equity = bps * shares_outstanding (if not present)
+    # Kiwoom 수집 데이터만으로 결측 재무 항목을 보완한다
+    # - market_cap = close * shares_outstanding (발행주식 수가 있으면 계산)
+    # - fund_net_income_ttm = eps * shares_outstanding (없으면 EPS 기반 추정)
+    # - fund_equity = bps * shares_outstanding (없으면 BPS 기반 추정)
     try:
         if "market_cap" not in merged.columns and {"close", "shares_outstanding"} <= set(merged.columns):
             merged["market_cap"] = (merged["close"].astype(float) * merged["shares_outstanding"].astype(float))
@@ -142,7 +141,7 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
     except Exception:
         pass
 
-    # Basic ratios
+    # 기본 재무 비율 계산
     def safe_ratio(a: str, b: str, out: str, factor: float = 1.0) -> None:
         if a in merged.columns and b in merged.columns:
             merged[out] = (merged[a] / merged[b]) * factor
@@ -150,7 +149,7 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
 
     safe_ratio("fund_net_income_ttm", "fund_equity", "roe", 1.0)
     safe_ratio("fund_net_income_ttm", "fund_assets", "roa", 1.0)
-    # Only fill PER/PBR if missing; do not override values provided by Kiwoom/DART
+    # Kiwoom/DART 값이 있으면 유지하고 결측일 때만 PER/PBR을 계산한다
     if "market_cap" in merged.columns and "fund_net_income_ttm" in merged.columns:
         try:
             cand_per = (merged["market_cap"] / merged["fund_net_income_ttm"]).replace([np.inf, -np.inf], np.nan)
@@ -161,7 +160,7 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
         except Exception:
             pass
     elif {"close", "eps"} <= set(merged.columns):
-        # Fallback: PER = Price / EPS
+        # 대안 계산: PER = Price / EPS
         try:
             cand_per = (merged["close"].astype(float) / merged["eps"].astype(float)).replace([np.inf, -np.inf], np.nan)
             if "per" in merged.columns:
@@ -180,7 +179,7 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
         except Exception:
             pass
     elif {"close", "bps"} <= set(merged.columns):
-        # Fallback: PBR = Price / BPS
+        # 대안 계산: PBR = Price / BPS
         try:
             cand_pbr = (merged["close"].astype(float) / merged["bps"].astype(float)).replace([np.inf, -np.inf], np.nan)
             if "pbr" in merged.columns:
@@ -195,7 +194,7 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
         merged["quick_ratio"] = ((merged["fund_current_assets"] - merged["fund_inventories"]) / merged["fund_current_liabilities"]) * 100.0
         merged["quick_ratio"] = merged["quick_ratio"].replace([np.inf, -np.inf], np.nan)
     elif {"fund_current_assets", "fund_current_liabilities"} <= set(merged.columns):
-        # Approximate quick ratio when inventories are unavailable
+        # 재고 데이터가 없으면 당좌비율을 근사 계산
         try:
             merged["quick_ratio"] = (merged["fund_current_assets"] / merged["fund_current_liabilities"]) * 100.0
             merged["quick_ratio"] = merged["quick_ratio"].replace([np.inf, -np.inf], np.nan)
@@ -212,7 +211,7 @@ def _build_single_bronze(ticker: str, cfg: MergeConfig) -> Path:
 
 
 def _load_price_frame(ticker: str, cfg: MergeConfig) -> pd.DataFrame:
-    """Load price from Kiwoom (preferred) or pykrx into a daily index frame."""
+    """Kiwoom(우선) 또는 pykrx에서 일별 가격 데이터를 불러온다."""
 
     k_dir = cfg.raw_root / "kiwoom" / ticker
     p_dir = cfg.raw_root / "pykrx" / ticker
@@ -239,7 +238,7 @@ def _load_pykrx_price(directory: Path) -> pd.DataFrame:
         if extra is None:
             continue
         ex = _read_json_table(extra)
-        # ensure date present
+        # date 컬럼이 있는지 확인
         if ex.empty or "date" not in ex.columns:
             continue
         ex["date"] = pd.to_datetime(ex["date"], errors="coerce")
@@ -306,8 +305,8 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
         "tr_value": "tr_value",
         "market_cap": "market_cap",
         "shares_outstanding": "shares_outstanding",
-        # Kiwoom ka10001 alias keys
-        "mac": "market_cap",  # market cap (alias provided by gateway)
+        # Kiwoom ka10001 응답에서 사용하는 별칭 키
+        "mac": "market_cap",  # 게이트웨이에서 제공하는 시총 별칭
         "mktcap": "market_cap",
         "tot_mkt_val": "market_cap",
         "list_shrs": "shares_outstanding",
@@ -317,7 +316,7 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
     df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns}, inplace=True)
     if "date" not in df.columns:
         df["date"] = df.get("trd_date")
-    # support yyyymmdd or ISO
+    # yyyymmdd 또는 ISO 형태의 날짜를 지원
     original_dates = df.get("date").copy() if "date" in df.columns else None
     try:
         df["date"] = pd.to_datetime(df["date"], format="%Y%m%d", errors="coerce")
@@ -332,20 +331,20 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Try to enrich from optional kiwoom meta (shares_outstanding)
+    # 선택적인 Kiwoom 메타(발행주식 수)로 보강 시도
     meta = _latest_file(directory, "meta")
     if meta is not None:
         try:
             meta_payload = _read_json(meta)
             meta_rows = None
             if isinstance(meta_payload, dict):
-                # Common containers
+                # 자주 등장하는 컨테이너 구조
                 for key in ("response", "data", "body"):
                     if key in meta_payload and isinstance(meta_payload[key], list):
                         meta_rows = meta_payload[key]
                         break
                 if meta_rows is None:
-                    # flat list under some other key
+                    # 다른 키 아래 단순 리스트 형태
                     for v in meta_payload.values():
                         if isinstance(v, list):
                             meta_rows = v; break
@@ -353,8 +352,8 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
                 meta_rows = meta_payload
             if meta_rows:
                 mdf = pd.DataFrame(meta_rows)
-                # Normalize columns
-                # expected keys: date, shares_outstanding (but tolerate variations)
+                # 컬럼 이름을 정규화
+                # 기본 키: date, shares_outstanding (변형도 허용)
                 if "date" not in mdf.columns:
                     cand = next((c for c in ("trd_date","basDt","dt","Date","DATE") if c in mdf.columns), None)
                     if cand:
@@ -368,7 +367,7 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
                         mdf.sort_index(inplace=True)
                         df["shares_outstanding"] = df["shares_outstanding"].combine_first(pd.to_numeric(mdf[so_col], errors="coerce")) if "shares_outstanding" in df.columns else pd.to_numeric(mdf[so_col], errors="coerce").reindex(df.index)
                     else:
-                        # no date info: treat as constant snapshot
+                        # 날짜 정보가 없으면 상수 스냅샷으로 간주
                         try:
                             const_val = float(pd.to_numeric(mdf[so_col], errors="coerce").dropna().iloc[-1])
                             df["shares_outstanding"] = df.get("shares_outstanding").combine_first(pd.Series(const_val, index=df.index)) if "shares_outstanding" in df.columns else const_val
@@ -377,7 +376,7 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
         except Exception:
             pass
 
-    # Compute market_cap if possible
+    # 가능하면 market_cap을 계산
     if "market_cap" not in df.columns or df["market_cap"].isna().all():
         try:
             if "close" in df.columns and "shares_outstanding" in df.columns:
@@ -390,18 +389,17 @@ def _load_kiwoom_price(directory: Path) -> pd.DataFrame:
 
 
 def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
-    """Load fundamentals from DART raws if available, with robust fallbacks.
+    """필요하면 DART 원본에서 재무 데이터를 불러오고 다양한 예외 케이스를 보완한다.
 
-    Strategy
-    - Prefer DART multi-account (balance sheet) latest values per corp_code.
-      Extract: equity, assets, liabilities, current assets/liabilities, inventories.
-    - If DART missing, derive minimal fundamentals from pykrx:
-        fund_equity ≈ market_cap / pbr (if pbr>0)
-        fund_net_income_ttm ≈ market_cap / per (if per>0)
-    - Align to price trading-day index by repeating last-known snapshot.
+    전략:
+    - DART 다중 계정(대차대조표) 자료에서 최신 값을 corp_code 기준으로 우선 사용한다.
+      추출 항목: 자본, 자산, 부채, 유동자산/유동부채, 재고.
+    - DART 데이터가 없으면 pykrx 값으로 최소한의 재무 지표를 계산한다:
+        fund_equity ≈ market_cap / pbr (pbr > 0일 때)
+        fund_net_income_ttm ≈ market_cap / per (per > 0일 때)
+    - 가격 거래일 인덱스에 맞춰 마지막 스냅샷을 반복해 정렬한다.
     """
-
-    # Ensure price index to align outputs
+    # 결과 정렬을 위해 가격 인덱스를 맞춘다
     try:
         price_df = _load_price_frame(ticker, cfg)
         idx = price_df.index
@@ -410,7 +408,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
 
     values: dict[str, float] = {}
 
-    # Helper: base ticker (common stock) for corp_code lookup
+    # 보조 함수: 보통주 코드로 corp_code를 조회
     def _base(code: object) -> str:
         raw = str(code or "").strip()
         digits = "".join(ch for ch in raw if ch.isdigit())
@@ -419,7 +417,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
         d = digits.zfill(6)
         return d[:-1] + "0"
 
-    # Helper: parse numbers like "1,234" or "-" safely
+    # 보조 함수: '1,234'나 '-' 같은 숫자 문자열을 안전하게 파싱
     def _num(x: object) -> float:
         try:
             if x is None:
@@ -429,7 +427,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
             s = str(x).strip()
             if not s or s in ("-", "--"):
                 return float("nan")
-            # Handle parentheses negatives and commas
+            # 괄호를 이용한 음수와 콤마를 처리
             neg = False
             if s.startswith("(") and s.endswith(")"):
                 neg = True
@@ -440,7 +438,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
         except Exception:
             return float("nan")
 
-    # Map ticker -> corp_code via data/dart_corpcode.csv
+    # data/dart_corpcode.csv로 ticker를 corp_code에 매핑
     corp_code: str | None = None
     try:
         root = _find_project_root()
@@ -462,7 +460,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
     except Exception:
         corp_code = None
 
-    # Fallback: scan dart raws to discover corp_code by stock_code
+    # 대안: DART 원본을 훑어 stock_code로 corp_code를 찾는다
     if corp_code is None:
         try:
             dart_root = cfg.raw_root / "dart"
@@ -493,7 +491,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
         except Exception:
             pass
 
-    # Try DART multi-account snapshot
+    # DART 다중계정 스냅샷을 우선 시도
     try:
         if corp_code:
             dart_dir = cfg.raw_root / "dart" / corp_code
@@ -505,13 +503,13 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
 
     if multi is not None and multi.exists():
         try:
-            # Load all available multi-account files for current and previous years
+            # 해당 연도와 이전 연도의 다중계정 파일을 모두 불러온다
             dart_dir = multi.parent
             multi_files = sorted(dart_dir.glob("fnlttMultiAcnt_*.json"))
             prefer = {"11014": 0, "11013": 1, "11012": 2, "11011": 3}
 
-            # Collect BS accounts (latest first by reprt_code preference)
-            # Accept common synonyms/variants per account
+            # reprt_code 우선순위에 따라 대차대조표 계정을 최신부터 수집
+            # 계정별로 자주 쓰이는 동의어/변형을 허용
             mapping_variants: dict[str, list[str]] = {
                 "fund_equity": ["자본총계", "총자본", "자본 총계"],
                 "fund_assets": ["자산총계", "총자산", "자산 총계"],
@@ -531,7 +529,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
                 return None
             seen_bs: set[str] = set()
 
-            # For TTM: gather YTD net income by (year, reprt_code)
+            # TTM 계산을 위해 (연도, reprt_code)별 YTD 순이익을 모은다
             net_ytd: dict[tuple[int, str], float] = {}
 
             def _is_net_income(name: str) -> bool:
@@ -554,20 +552,20 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
                     for row in (rec.get("rows") or []):
                         nm = str(row.get("account_nm", "")).strip()
                         val = _num(row.get("thstrm_amount"))
-                        # Balance sheet snapshots (latest preferred)
+                        # 대차대조표 스냅샷(가장 최신 우선)
                         if pri <= 3 and nm:
                             dest = _match_account(nm)
                             if dest and dest not in seen_bs and pd.notna(val):
                                 values[dest] = float(val)
                                 seen_bs.add(dest)
-                        # Net income YTD for TTM
+                        # TTM 계산용 누적 순이익
                         if _is_net_income(nm) and pd.notna(val) and y:
-                            # Store highest precedence (lowest pri) per (year, rc)
+                            # (연도, reprt_code)별 최고 우선순위 항목만 저장
                             key = (y, rc)
                             if key not in net_ytd or pri < prefer.get(key[1], 9):
                                 net_ytd[key] = float(val)
 
-            # Fallback: if equity missing but assets and liabilities present
+            # 대안: 자본이 없고 자산/부채가 있으면 계산
             if ("fund_equity" not in values) and ("fund_assets" in values) and ("fund_liabilities" in values):
                 try:
                     ae = float(values.get("fund_assets", float("nan")))
@@ -577,7 +575,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
                 except Exception:
                     pass
 
-            # Derive quarterly net income and TTM from YTD and FY
+            # YTD와 FY로 분기 순이익 및 TTM을 계산
             def _quarters_from_ytd(year: int) -> dict[int, float]:
                 q: dict[int, float] = {}
                 ytd_q1 = net_ytd.get((year, "11011"))
@@ -602,15 +600,15 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
                 latest_year = max(years)
                 q_latest = _quarters_from_ytd(latest_year)
                 q_prev = _quarters_from_ytd(latest_year - 1) if (latest_year - 1) in years else {}
-                # Determine latest reported quarter available this year
+                # 해당 연도에서 최신 보고 분기를 파악
                 latest_q = max(q_latest.keys()) if q_latest else None
                 if latest_q is None and (latest_year in years) and (latest_year, "11014") in net_ytd:
-                    # Annual only
+                    # 연간 데이터만 있을 때
                     values["fund_net_income_ttm"] = float(net_ytd[(latest_year, "11014")])
                 elif latest_q is not None:
                     seq = [(latest_year - 1, 2), (latest_year - 1, 3), (latest_year - 1, 4),
                            (latest_year, 1), (latest_year, 2), (latest_year, 3), (latest_year, 4)]
-                    # up to latest_q of latest_year
+                    # 최신 연도의 최신 분기까지만 반영
                     upto = [(y, q) for (y, q) in seq if (y < latest_year) or (y == latest_year and q <= latest_q)]
                     quarters: list[float] = []
                     for y, q in upto:
@@ -622,7 +620,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
         except Exception:
             pass
 
-    # Prefer Kiwoom raw snapshots (financials_/ratios_) if present
+    # Kiwoom 원본(financials_/ratios_)이 있으면 우선 사용
     try:
         k_dir = cfg.raw_root / "kiwoom" / ticker
         if k_dir.exists():
@@ -673,12 +671,12 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
                 "fund_current_assets": {"current_assets"},
                 "fund_current_liabilities": {"current_liabilities"},
                 "fund_inventories": {"inventories"},
-                # Kiwoom ka10001 additional keys
+                # Kiwoom ka10001 응답의 추가 필드
                 "fund_revenue": {"sale_amt"},                 # 매출액
                 "fund_operating_income": {"bus_pro"},         # 영업이익
                 "fund_net_income": {"cup_nga"},               # 당기순이익(YTD/분기 추정)
                 "enterprise_value": {"ev", "EV"},
-                # 유통주식(dstr_stk)은 총발행주식수가 아니므로 별도 보조 필드로 보관
+                # 유통주식(dstr_stk)은 총발행주식수가 아니므로 참고용으로만 저장
                 "float_shares": {"dstr_stk"},                 # 유통주식수(보조)
                 "float_ratio": {"dstr_rt"},                   # 유통비율
                 "foreign_exhaustion_rate": {"for_exh_rt"},    # 외인소진률
@@ -694,7 +692,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
                 except Exception:
                     return
                 for node in _iter_dicts(payload):
-                    # case-insensitive key mapping for this node
+                    # 이 노드에 대해 대소문자 구분 없이 키를 매핑
                     if not isinstance(node, dict):
                         continue
                     lower_map = {str(k).strip().lower(): k for k in node.keys()}
@@ -715,7 +713,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
     except Exception:
         pass
 
-    # Fallbacks from pykrx-derived fields (per/pbr/market_cap)
+    # pykrx에서 파생된 필드(per/pbr/market_cap)로 대체
     try:
         mc = float(price_df["market_cap"].dropna().iloc[-1]) if "market_cap" in price_df.columns else float("nan")
     except Exception:
@@ -740,8 +738,8 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
         except Exception:
             pass
 
-    # Best-effort: pull additional fundamentals/ratios from Kiwoom raw dumps
-    # (financials_*.json, ratios_*.json) if present. Treat as latest snapshot.
+    # Kiwoom 원본 덤프에서 추가 재무/비율 데이터를 가능한 범위에서 수집
+    # (financials_*.json, ratios_*.json)이 있으면 최신 스냅샷으로 간주
     try:
         k_dir = cfg.raw_root / "kiwoom" / ticker
         if k_dir.exists():
@@ -833,7 +831,7 @@ def _load_fundamentals(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
 
 
 def _append_pykrx_extras(df: pd.DataFrame, ticker: str, cfg: MergeConfig) -> pd.DataFrame:
-    """Join pykrx market_cap / shares data even when Kiwoom price is used."""
+    """Kiwoom 가격을 사용하더라도 pykrx의 시총·주식수 데이터를 결합한다."""
     try:
         pykrx_dir = cfg.raw_root / "pykrx" / ticker
         if not pykrx_dir.exists():
@@ -871,7 +869,7 @@ def _append_pykrx_extras(df: pd.DataFrame, ticker: str, cfg: MergeConfig) -> pd.
 
 
 def _load_news_features(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]:
-    # Optional: load precomputed news features from cfg.news_dir if present
+    # 필요 시 cfg.news_dir에 있는 사전 계산 뉴스 특징을 불러온다
     frames: list[pd.DataFrame] = []
     if cfg.news_dir:
         j = cfg.news_dir / f"{ticker}.json"
@@ -898,7 +896,7 @@ def _load_news_features(ticker: str, cfg: MergeConfig) -> Optional[pd.DataFrame]
         except Exception:
             pass
 
-    # Support directory form: data/raws/sentiment_report/*.json
+    # data/raws/sentiment_report/*.json 형태의 디렉터리도 지원
     report_dir = raw_root / "sentiment_report"
     if report_dir.exists():
         try:
@@ -958,7 +956,7 @@ def _align_news_to_trading_days(df: pd.DataFrame, trading_index: pd.Index) -> pd
     grouped.index.name = None
     ti = pd.to_datetime(pd.Index(trading_index))
     out = grouped.reindex(ti)
-    # Forward-fill sentiment for a limited lookback window (default 5 trading days).
+    # 감성 지표는 기본 5거래일까지만 앞선 값을 보간한다
     limit_days = int(os.getenv("SENTIMENT_FFILL_LIMIT", "5"))
     for col in list(out.columns):
         if str(col).startswith("news_"):
@@ -1034,7 +1032,7 @@ def _fill_calendar_and_missing(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty:
         return df
     df = df.sort_index()
-    # forward fill price columns where appropriate
+    # 가격 관련 컬럼은 필요 시 값을 보간한다
     for c in df.columns:
         if c in ("open", "high", "low", "close", "volume", "tr_value"):
             df[c] = df[c].astype(float)
@@ -1064,7 +1062,7 @@ def _read_json_table(path: Path) -> pd.DataFrame:
     if data is None:
         return pd.DataFrame()
     df = pd.DataFrame(data)
-    # Normalize a date-like column if available
+    # 날짜로 보이는 컬럼이 있으면 형식을 정규화한다
     if df.columns.size:
         if "date" not in df.columns:
             candidates = ["date", "trd_date", "trd_dd", "basDt", "dt", "Date", "DATE"]
