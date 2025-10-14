@@ -973,26 +973,50 @@
 .ai-prediction {
 	background: #f8f9fa;
 	border-radius: 8px;
-	padding: 15px;
+	padding: 10px 20px;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 }
 
 .ai-prediction h3 {
 	color: #495057;
-	margin-bottom: 10px;
+	margin: 0;
 	font-size: 1em;
+}
+
+/* 투자 권고사항 라벨 버튼 */
+.prediction-label-button {
+	background: none;
+	border: none;
+	color: #6c757d;
+	font-size: 1em;
+	cursor: pointer;
+	transition: all 0.1s;
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+
+.prediction-label-button:hover {
+	background-color: #f8f9fa;
+	color: #495057;
+}
+
+.prediction-label-button.active {
+	color: #007bff;
+	font-weight: 600;
 }
 
 .prediction-item {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 8px 12px;
-	border-radius: 6px;
-	margin-bottom: 6px;
+	flex: 1;
+	border-bottom: 1px solid #e9ecef;
+}
+
+.prediction-item:last-child {
+	border-bottom: none;
 }
 
 .prediction-label {
@@ -1001,9 +1025,9 @@
 }
 
 .prediction-value {
-	font-weight: bold;
-	padding: 5px 10px;
-	border-radius: 15px;
+	font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 4px;
 	font-size: 0.9em;
 }
 

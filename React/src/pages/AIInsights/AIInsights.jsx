@@ -18,10 +18,23 @@ export default function AIInsights() {
 	const [isInFooter, setIsInFooter] = useState(false);
 	const [newsFilter, setNewsFilter] = useState('all'); // 뉴스 필터 상태 추가
 	const [selectedNews, setSelectedNews] = useState(null); // 선택된 뉴스 상태 추가
+	const [selectedTimeframe, setSelectedTimeframe] = useState('1d'); // 선택된 투자 기간 상태 추가
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
 	const newsSectionRef = useRef(null); // 뉴스 섹션 스크롤을 위한 ref 추가
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장을 위한 ref 추가
+
+	// 투자 기간에 따른 프롬프트 변환 함수
+	const getTimeframePrompt = (timeframe) => {
+		const timeframeMap = {
+			'1d': '1일',
+			'1w': '1주',
+			'1m': '1개월',
+			'6m': '6개월',
+			'1y': '1년'
+		};
+		return timeframeMap[timeframe] || '1일';
+	};
 
 	// 필터링된 뉴스 데이터
 	const filteredNewsData = useMemo(() => {
@@ -460,18 +473,22 @@ export default function AIInsights() {
 							<div className={styles['ai-analysis-section']}>
 								<div className={styles['ai-analysis-container']}>
 									<div className={styles['ai-analysis-content']}>
-										<h3>종합 분석</h3>
+										<h3>종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)</h3>
 										<p>
 											{AiAnalysisData.response ||
 												'분석 데이터가 없습니다.'}
 										</p>
 									</div>
 									<div className={styles['ai-prediction']}>
-										<h3>투자 권고사항</h3>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1d' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1d')}
+											>
 												1일 (1d):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${
 													styles[selectedStock.aiAnalysis?.oneDay] || styles['positive']
@@ -481,9 +498,14 @@ export default function AIInsights() {
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1w' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1w')}
+											>
 												1주 (1w):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${
 													styles[selectedStock.aiAnalysis?.oneWeek] || styles['positive']
@@ -493,9 +515,14 @@ export default function AIInsights() {
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1m' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1m')}
+											>
 												1개월 (1m):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${
 													styles[selectedStock.aiAnalysis?.oneMonth] || styles['positive']
@@ -505,9 +532,14 @@ export default function AIInsights() {
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '6m' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('6m')}
+											>
 												6개월 (6m):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${
 													styles[selectedStock.aiAnalysis?.sixMonths] || styles['positive']
@@ -517,9 +549,14 @@ export default function AIInsights() {
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1y' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1y')}
+											>
 												1년 (1y):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${
 													styles[selectedStock.aiAnalysis?.oneYear] || styles['negative']

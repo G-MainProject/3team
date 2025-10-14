@@ -160,8 +160,21 @@ export default function Dashboard() {
 	const [buttonAnimation, setButtonAnimation] = useState('');
 	const [allowScrollToFooter, setAllowScrollToFooter] = useState(false);
 	const [isInFooter, setIsInFooter] = useState(false);
+	const [selectedTimeframe, setSelectedTimeframe] = useState('1d'); // 선택된 투자 기간 상태 추가
 	const footerRef = useRef(null);
 	const showFooterButtonRef = useRef(false);
+
+	// 투자 기간에 따른 프롬프트 변환 함수
+	const getTimeframePrompt = (timeframe) => {
+		const timeframeMap = {
+			'1d': '1일',
+			'1w': '1주',
+			'1m': '1개월',
+			'6m': '6개월',
+			'1y': '1년'
+		};
+		return timeframeMap[timeframe] || '1일';
+	};
 
 	// 차트 간격 설정 상태
 	const [chartInterval, setChartInterval] = useState('1m'); // 1m, 5m, 15m, 30m, 1h
@@ -1361,61 +1374,85 @@ export default function Dashboard() {
 							<div className={styles['ai-analysis-section']}>
 								<div className={styles['ai-analysis-container']}>
 									<div className={styles['ai-analysis-content']}>
-										<h3>종합 분석</h3>
+										<h3>종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)</h3>
 										<p>
 											{AiAnalysisData.response || '분석 데이터가 없습니다.'}
 										</p>
 									</div>
 									<div className={styles['ai-prediction']}>
-										<h3>투자 권고사항</h3>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1d' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1d')}
+											>
 												1일 (1d):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${styles['positive']}`}
 											>
-												{'N/A'}
+												N/A
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1w' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1w')}
+											>
 												1주 (1w):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${styles['positive']}`}
 											>
-												{'N/A'}
+												N/A
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1m' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1m')}
+											>
 												1개월 (1m):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${styles['positive']}`}
 											>
-												{'N/A'}
+												N/A
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '6m' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('6m')}
+											>
 												6개월 (6m):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${styles['positive']}`}
 											>
-												{'N/A'}
+												N/A
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
-											<span className={styles['prediction-label']}>
+											<button
+												className={`${styles['prediction-label-button']} ${
+													selectedTimeframe === '1y' ? styles['active'] : ''
+												}`}
+												onClick={() => setSelectedTimeframe('1y')}
+											>
 												1년 (1y):
-											</span>
+											</button>
 											<span
 												className={`${styles['prediction-value']} ${styles['negative']}`}
 											>
-												{'N/A'}
+												N/A
 											</span>
 										</div>
 									</div>
