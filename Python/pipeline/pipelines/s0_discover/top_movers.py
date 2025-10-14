@@ -80,17 +80,23 @@ _ETF_CACHE: set[str] | None = None
 
 
 def _load_etf_set() -> set[str]:
-    """Return a cached set of ETF tickers (zero-padded)."""
+    """Return a cached set of ETF/ETN tickers (zero-padded)."""
     global _ETF_CACHE
     if _ETF_CACHE is not None:
         return _ETF_CACHE
-    etfs: set[str] = set()
+    tickers: set[str] = set()
     if stock is not None:
-        try:
-            etfs = {str(t).strip().zfill(6) for t in stock.get_etf_ticker_list()}
-        except Exception:
-            etfs = set()
-    _ETF_CACHE = etfs
+        def _collect(name: str) -> None:
+            getter = getattr(stock, name, None)
+            if callable(getter):
+                try:
+                    tickers.update(str(t).strip().zfill(6) for t in getter())
+                except Exception:
+                    pass
+
+        _collect("get_etf_ticker_list")
+        _collect("get_etn_ticker_list")
+    _ETF_CACHE = tickers
     return _ETF_CACHE
 
 
@@ -99,6 +105,22 @@ def _is_etf_ticker(ticker: str) -> bool:
     if not tk:
         return False
     return tk in _load_etf_set()
+
+
+def _is_structured_product(entry: Mapping[str, Any], etf_set: set[str]) -> bool:
+    """Return True if entry looks like ETF/ETN based on ticker or name."""
+    tk = str(entry.get("ticker") or "").strip().zfill(6)
+    if tk and tk in etf_set:
+        return True
+    name = entry.get("name")
+    if isinstance(name, str):
+        upper = name.upper()
+        if "ETF" in upper or "ETN" in upper:
+            return True
+    category = entry.get("category")
+    if isinstance(category, str) and category.upper() in {"ETF", "ETN"}:
+        return True
+    return False
 
 
 def _find_latest_trading_date(date_str: str) -> str:
@@ -428,10 +450,7 @@ def main(argv: list[str] | None = None) -> int:
             e.setdefault(k, None)
 
     etf_set_final = _load_etf_set()
-    entries = [
-        e for e in entries
-        if str(e.get("ticker") or "").strip().zfill(6) not in etf_set_final
-    ]
+    entries = [e for e in entries if not _is_structured_product(e, etf_set_final)]
     entries = entries[: args.count]
 
     tickers = [str(e.get("ticker")) for e in entries if e.get("ticker")]

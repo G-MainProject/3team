@@ -284,7 +284,19 @@ def export_for_ticker(opts: Options, ticker: str, top_data: dict | None) -> Opti
         "fund_operating_income",
         "fund_net_income",
         "fund_net_income_ttm",
-        "per", "pbr", "roe", "roa", "market_cap",
+        "fund_assets",
+        "fund_liabilities",
+        "fund_equity",
+        "per",
+        "pbr",
+        "roe",
+        "roa",
+        "debt_ratio",
+        "current_ratio",
+        "quick_ratio",
+        "equity_ratio",
+        "market_cap",
+        "shares_outstanding",
     ]
     annual = _build_annual_summary(df, want_cols=annual_cols)
 
