@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -12,6 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR.parent.parent / "data"
 RAWS_DIR = DATA_DIR / "raws"
 RAWS_DIR.mkdir(parents=True, exist_ok=True)
+
+PERIOD_ORDER = ["하루", "일주일", "한 달", "여섯 달", "일 년"]
+ALLOWED_VERDICTS = {"강력매수", "매수", "보유", "매도", "강력매도"}
 
 
 dotenv.load_dotenv()
@@ -34,7 +38,7 @@ def load_json(path: Path):
 
 def summarize_sentiment_report(entries) -> str:
     lines = []
-    for entry in entries:
+    for entry in entries or []:
         name = entry.get("stockName", "N/A")
         code = entry.get("stockCode", "N/A")
         analysis = entry.get("sentimentAnalysis", {}) or {}
@@ -101,7 +105,9 @@ def summarize_top_movers(report) -> str:
         change_display = (
             f"{change_pct:.2f}%" if isinstance(change_pct, (int, float)) else "N/A"
         )
-        price_display = price if price is not None else "N/A"
+        price_display = (
+            f"{price:,.2f}" if isinstance(price, (int, float)) else "N/A"
+        )
         lines.append(
             f"  - 종목:{name}({ticker}) | 변동률:{change_display} | 현재가:{price_display}"
         )
@@ -109,37 +115,165 @@ def summarize_top_movers(report) -> str:
     return "\n".join(lines) if lines else "자료 없음"
 
 
+def summarize_chart_data(chart_payload) -> str:
+    items = chart_payload.get("items") if isinstance(chart_payload, dict) else None
+    if not items:
+        return "자료 없음"
+
+    period_map = {
+        "하루": 1,
+        "일주일": 7,
+        "한 달": 30,
+        "여섯 달": 180,
+        "일 년": 365,
+    }
+
+    lines = []
+    for item in items:
+        meta = item.get("meta", {}) or {}
+        name = meta.get("name", "N/A")
+        ticker = meta.get("ticker", "N/A")
+        rows = item.get("rows", []) or []
+
+        if not rows:
+            lines.append(f"- 종목:{name}({ticker}) | 시세 데이터가 없습니다.")
+            continue
+
+        rows_sorted = sorted(rows, key=lambda row: row.get("date", ""))
+        latest = rows_sorted[-1]
+        latest_date = latest.get("date", "N/A")
+        latest_close = latest.get("close")
+        latest_close_text = (
+            f"{latest_close:,.2f}" if isinstance(latest_close, (int, float)) else "N/A"
+        )
+        lines.append(
+            f"- 종목:{name}({ticker}) | 최신 종가:{latest_close_text} | 기준일:{latest_date}"
+        )
+
+        for label, days in period_map.items():
+            required = days + 1
+            if len(rows_sorted) < required:
+                lines.append(f"  - {label}: 데이터가 충분하지 않습니다.")
+                continue
+
+            subset = rows_sorted[-required:]
+            start_close = subset[0].get("close")
+            end_close = subset[-1].get("close")
+            if not isinstance(start_close, (int, float)) or not isinstance(
+                end_close, (int, float)
+            ):
+                lines.append(f"  - {label}: 가격 정보가 불완전합니다.")
+                continue
+            if start_close == 0:
+                lines.append(f"  - {label}: 기준가가 0이라 수익률을 계산할 수 없습니다.")
+                continue
+
+            change_pct = ((end_close - start_close) / start_close) * 100
+
+            recent_slice = subset[-days:]
+            volumes = [
+                row.get("volume")
+                for row in recent_slice
+                if isinstance(row.get("volume"), (int, float))
+            ]
+            avg_volume = sum(volumes) / len(volumes) if volumes else None
+
+            highs = [
+                row.get("high")
+                for row in recent_slice
+                if isinstance(row.get("high"), (int, float))
+            ]
+            lows = [
+                row.get("low")
+                for row in recent_slice
+                if isinstance(row.get("low"), (int, float))
+            ]
+
+            high_text = f"{max(highs):,.2f}" if highs else "N/A"
+            low_text = f"{min(lows):,.2f}" if lows else "N/A"
+            avg_volume_text = f"{avg_volume:,.0f}" if avg_volume is not None else "N/A"
+
+            lines.append(
+                f"  - {label}: 수익률 {change_pct:.2f}% | 고가 {high_text} | "
+                f"저가 {low_text} | 평균 거래량 {avg_volume_text}"
+            )
+
+        lines.append("")
+
+    return "\n".join(lines).strip() or "자료 없음"
+
+
+def split_response_by_period(text: str) -> dict[str, str]:
+    sections = {period: "" for period in PERIOD_ORDER}
+    current_period = None
+    collected_lines: list[str] = []
+
+    for line in text.splitlines():
+        stripped = line.strip()
+        matched_period = next(
+            (period for period in PERIOD_ORDER if stripped.startswith(f"- {period}")),
+            None,
+        )
+        if matched_period:
+            if current_period is not None:
+                sections[current_period] = "\n".join(collected_lines).strip()
+            current_period = matched_period
+            collected_lines = [line]
+        elif current_period is not None:
+            collected_lines.append(line)
+
+    if current_period is not None:
+        sections[current_period] = "\n".join(collected_lines).strip()
+
+    return sections
+
+
+def extract_verdicts(responses: dict[str, str]) -> dict[str, str]:
+    verdicts: dict[str, str] = {}
+    pattern = re.compile(r"판정:\s*(강력매수|매수|보유|매도|강력매도)")
+    for period, text in responses.items():
+        match = pattern.search(text)
+        verdicts[period] = match.group(1) if match else ""
+    return verdicts
+
+
 sentiment_entries = load_json(RAWS_DIR / "sentiment_report.json")
 top_movers_report = load_json(RAWS_DIR / "top_movers_auto.json")
+chart_data = load_json(RAWS_DIR / "chart_data.json")
+
 sentiment_summary = summarize_sentiment_report(sentiment_entries)
 top_movers_summary = summarize_top_movers(top_movers_report)
+chart_summary = summarize_chart_data(chart_data)
 
 
 prompt = f"""
 지금부터 귀하는 데이터 기반의 냉철한 주식 분석가입니다.
 아래 자료를 분석하고 결과를 바탕으로 향후 주가 흐름에 대한 시나리오를 제시해 주십시오.
 
-답변 규칙:
-1. 반드시 한글로 답변하고 높임말을 사용하십시오.
-2. 어떠한 마크업 언어도 사용하지 마십시오. (*를 사용한 글씨 진하게 효과같은 것 사용X)
-3. 서두에 꾸밈말 없이 본론으로 바로 시작하십시오.
-4. 각 세션 제목 앞에는 항상 하이픈(-)을 붙이십시오.
-5. 다음 세션을 순서대로 포함하십시오: 주요 동향 분석, 기술적 분석, 향후 시나리오, 결론.
-6. 향후 시나리오 세션 아래에는 들여쓴 하이픈(-)으로 긍정적 시나리오와 부정적 시나리오를 각각 작성하십시오.
-7. 데이터에서 확인 가능한 수치나 근거를 반드시 언급하십시오.
-8. 감성 분석 요약과 상승 종목 요약에서 제시된 정보를 논리적 근거로 적극 활용하십시오.
-
+자료 요약:
 감성 분석 요약:
 {sentiment_summary}
 
 상승 종목 요약:
 {top_movers_summary}
 
-추가 지시:
-1. 주요 동향 분석: 데이터 기간 동안의 전반적인 가격 및 거래량 추세를 설명해 줘.
-2. 기술적 분석: 5일 이동평균선을 계산하고 종가와 비교 분석해 줘.
-3. 향후 시나리오: 이 분석을 기반으로 단기적으로 나타날 수 있는 긍정적 시나리오와 부정적 시나리오를 각각 제시해 줘.
-4. 결론: 투자의견을 매수/매도로 제시해 줘.
+차트 데이터 요약:
+{chart_summary}
+
+출력 규칙:
+1. 반드시 한글로 답변하고 높임말을 사용하십시오.
+2. 어떠한 마크업 언어도 사용하지 마십시오.
+3. 서두에 꾸밈말 없이 본론으로 바로 시작하십시오.
+4. 전체 답변은 `- 하루`, `- 일주일`, `- 한 달`, `- 여섯 달`, `- 일 년` 순서의 다섯 카테고리로 구성하십시오. 각 카테고리 이름 앞에는 하이픈(-)을 붙이십시오.
+5. 각 카테고리 내부에서는 다음 소제목을 순서대로 포함하십시오.
+   - 주요 동향: 감성·수급·뉴스 관점에서 핵심 흐름을 요약하십시오.
+   - 기술적 분석: 상승 종목과 수급 변화를 활용해 기술적 관점을 제시하십시오.
+   - 차트 분석: 차트 데이터에서 해당 기간의 수익률, 고가·저가, 평균 거래량 등 수치를 활용해 설명하십시오.
+   - 향후 시나리오: 들여쓴 하이픈(-)으로 긍정적 시나리오와 부정적 시나리오를 각각 제시하십시오.
+   - 결론: 해당 기간 투자 관점을 요약하십시오.
+   - 판정: 반드시 '판정: 강력매수/매수/보유/매도/강력매도' 형식으로 한 줄을 추가하십시오.
+6. 각 소제목 앞에는 하이픈(-)을 붙이되, 들여쓴 하이픈(-)은 향후 시나리오의 하위 항목에만 사용하십시오.
+7. 위 자료에서 확인 가능한 구체적 수치를 근거로 제시하십시오.
 """
 
 
@@ -159,11 +293,23 @@ response = model.generate_content(
 result_text = response.text if getattr(response, "text", None) else ""
 print(result_text)
 
+responses_by_period = split_response_by_period(result_text)
+verdicts_by_period = extract_verdicts(responses_by_period)
+
+period_outputs = {
+    period: {
+        "text": responses_by_period.get(period, ""),
+        "verdict": verdicts_by_period.get(period, ""),
+    }
+    for period in PERIOD_ORDER
+}
+
 output_payload = {
     "generated_at": datetime.now().isoformat(),
     "model": model.model_name,
     "prompt": prompt,
-    "response": result_text,
+    "full_response": result_text,
+    "periods": period_outputs,
 }
 
 output_path = RAWS_DIR / "Gemini_Api.json"
