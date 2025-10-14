@@ -24,6 +24,14 @@ export default function AIInsights() {
 	const newsSectionRef = useRef(null); // 뉴스 섹션 스크롤을 위한 ref 추가
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장을 위한 ref 추가
 
+	const timeframeToDataKey = {
+		'1d': '하루',
+		'1w': '일주일',
+		'1m': '한 달',
+		'6m': '6개월',
+		'1y': '일 년',
+	};
+
 	// 투자 기간에 따른 프롬프트 변환 함수
 	const getTimeframePrompt = (timeframe) => {
 		const timeframeMap = {
@@ -462,114 +470,128 @@ export default function AIInsights() {
 							</div>
 						</div>
 
-						{/* AI 분석 섹션 */}
-						<div className={styles['section-container']}>
-							<div className={styles['section-label']}>
-								<div className={styles['section-title']}>
-									<h2>AI 분석 및 예측</h2>
-									<p>Gemini AI 기반 종합 분석 및 투자 권고</p>
-								</div>
-							</div>
-							<div className={styles['ai-analysis-section']}>
-								<div className={styles['ai-analysis-container']}>
-									<div className={styles['ai-analysis-content']}>
-										<h3>종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)</h3>
-										<p>
-											{AiAnalysisData.response ||
-												'분석 데이터가 없습니다.'}
-										</p>
-									</div>
-									<div className={styles['ai-prediction']}>
-										<div className={styles['prediction-item']}>
-											<button
-												className={`${styles['prediction-label-button']} ${
-													selectedTimeframe === '1d' ? styles['active'] : ''
-												}`}
-												onClick={() => setSelectedTimeframe('1d')}
-											>
-												1일 (1d):
-											</button>
-											<span
-												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.oneDay] || styles['positive']
-												}`}
-											>
-												{selectedStock.aiAnalysis?.oneDay || 'N/A'}
-											</span>
-										</div>
-										<div className={styles['prediction-item']}>
-											<button
-												className={`${styles['prediction-label-button']} ${
-													selectedTimeframe === '1w' ? styles['active'] : ''
-												}`}
-												onClick={() => setSelectedTimeframe('1w')}
-											>
-												1주 (1w):
-											</button>
-											<span
-												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.oneWeek] || styles['positive']
-												}`}
-											>
-												{selectedStock.aiAnalysis?.oneWeek || 'N/A'}
-											</span>
-										</div>
-										<div className={styles['prediction-item']}>
-											<button
-												className={`${styles['prediction-label-button']} ${
-													selectedTimeframe === '1m' ? styles['active'] : ''
-												}`}
-												onClick={() => setSelectedTimeframe('1m')}
-											>
-												1개월 (1m):
-											</button>
-											<span
-												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.oneMonth] || styles['positive']
-												}`}
-											>
-												{selectedStock.aiAnalysis?.oneMonth || 'N/A'}
-											</span>
-										</div>
-										<div className={styles['prediction-item']}>
-											<button
-												className={`${styles['prediction-label-button']} ${
-													selectedTimeframe === '6m' ? styles['active'] : ''
-												}`}
-												onClick={() => setSelectedTimeframe('6m')}
-											>
-												6개월 (6m):
-											</button>
-											<span
-												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.sixMonths] || styles['positive']
-												}`}
-											>
-												{selectedStock.aiAnalysis?.sixMonths || 'N/A'}
-											</span>
-										</div>
-										<div className={styles['prediction-item']}>
-											<button
-												className={`${styles['prediction-label-button']} ${
-													selectedTimeframe === '1y' ? styles['active'] : ''
-												}`}
-												onClick={() => setSelectedTimeframe('1y')}
-											>
-												1년 (1y):
-											</button>
-											<span
-												className={`${styles['prediction-value']} ${
-													styles[selectedStock.aiAnalysis?.oneYear] || styles['negative']
-												}`}
-											>
-												{selectedStock.aiAnalysis?.oneYear || 'N/A'}
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+						                        {/* AI 분석 섹션 */}
+												<div className={styles['section-container']}>
+													<div className={styles['section-label']}>
+														<div className={styles['section-title']}>
+															<h2>AI 분석 및 예측</h2>
+															<p>Gemini AI 기반 종합 분석 및 투자 권고</p>
+														</div>
+													</div>
+													<div className={styles['ai-analysis-section']}>
+														<div className={styles['ai-analysis-container']}>
+															<div className={styles['ai-analysis-content']}>
+																<h3>종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)</h3>
+																<div className={styles.aiAnalysisText}>
+																	{(AiAnalysisData.periods[timeframeToDataKey[selectedTimeframe]]?.text || '분석 데이터가 없습니다.').replace(/^\s*-\s*판정:.*$/m, '').trim().split('\n').map((line, index) => (
+																		<React.Fragment key={index}>
+																			{line}
+																			<br />
+																		</React.Fragment>
+																	))}
+																</div>
+															</div>
+															<div className={styles['ai-prediction']}>
+																<div className={styles['prediction-item']}>
+																	<button
+																		className={`${styles['prediction-label-button']} ${
+																			selectedTimeframe === '1d' ? styles['active'] : ''
+																		}`}
+																		onClick={() => setSelectedTimeframe('1d')}
+																	>
+																		1일 (1d):
+																	</button>
+																	<span
+																		className={`${styles['prediction-value']} ${
+																			AiAnalysisData.periods['하루']?.verdict === '매수' ? styles.positive :
+																			AiAnalysisData.periods['하루']?.verdict === '보유' ? styles.neutral :
+																			styles.negative
+																		}`}
+																	>
+																		{AiAnalysisData.periods['하루']?.verdict || 'N/A'}
+																	</span>
+																</div>
+																<div className={styles['prediction-item']}>
+																	<button
+																		className={`${styles['prediction-label-button']} ${
+																			selectedTimeframe === '1w' ? styles['active'] : ''
+																		}`}
+																		onClick={() => setSelectedTimeframe('1w')}
+																	>
+																		1주 (1w):
+																	</button>
+																	<span
+																		className={`${styles['prediction-value']} ${
+																			AiAnalysisData.periods['일주일']?.verdict === '매수' ? styles.positive :
+																			AiAnalysisData.periods['일주일']?.verdict === '보유' ? styles.neutral :
+																			styles.negative
+																		}`}
+																	>
+																		{AiAnalysisData.periods['일주일']?.verdict || 'N/A'}
+																	</span>
+																</div>
+																<div className={styles['prediction-item']}>
+																	<button
+																		className={`${styles['prediction-label-button']} ${
+																			selectedTimeframe === '1m' ? styles['active'] : ''
+																		}`}
+																		onClick={() => setSelectedTimeframe('1m')}
+																	>
+																		1개월 (1m):
+																	</button>
+																	<span
+																		className={`${styles['prediction-value']} ${
+																			AiAnalysisData.periods['한 달']?.verdict === '매수' ? styles.positive :
+																			AiAnalysisData.periods['한 달']?.verdict === '보유' ? styles.neutral :
+																			styles.negative
+																		}`}
+																	>
+																		{AiAnalysisData.periods['한 달']?.verdict || 'N/A'}
+																	</span>
+																</div>
+																<div className={styles['prediction-item']}>
+																	<button
+																		className={`${styles['prediction-label-button']} ${
+																			selectedTimeframe === '6m' ? styles['active'] : ''
+																		}`}
+																		onClick={() => setSelectedTimeframe('6m')}
+																	>
+																		6개월 (6m):
+																	</button>
+																	<span
+																		className={`${styles['prediction-value']} ${
+																			AiAnalysisData.periods['여섯 달']?.verdict === '매수' ? styles.positive :
+																			AiAnalysisData.periods['여섯 달']?.verdict === '보유' ? styles.neutral :
+																			styles.negative
+																		}`}
+																	>
+																		{AiAnalysisData.periods['여섯 달']?.verdict || 'N/A'}
+																	</span>
+																</div>
+																<div className={styles['prediction-item']}>
+																	<button
+																		className={`${styles['prediction-label-button']} ${
+																			selectedTimeframe === '1y' ? styles['active'] : ''
+																		}`}
+																		onClick={() => setSelectedTimeframe('1y')}
+																	>
+						
+																		1년 (1y):
+																	</button>
+																	<span
+																		className={`${styles['prediction-value']} ${
+																			AiAnalysisData.periods['일 년']?.verdict === '매수' ? styles.positive :
+																			AiAnalysisData.periods['일 년']?.verdict === '보유' ? styles.neutral :
+																			styles.negative
+																		}`}
+																	>
+																		{AiAnalysisData.periods['일 년']?.verdict || 'N/A'}
+																	</span>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>					</div>
 				</div>
 			</div>
 
