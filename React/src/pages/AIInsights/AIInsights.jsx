@@ -6,6 +6,7 @@ import Footer from '../../component/Footer/Footer';
 import CircleGraph from '../../component/CircleGraph/CircleGraph';
 import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { useStock } from '../../hooks/useStock';
+import AiAnalysisData from '../../../../data/raws/Gemini_Api.json';
 
 export default function AIInsights() {
 	const { selectedStock, loading: stockLoading } = useStock();
@@ -427,7 +428,7 @@ export default function AIInsights() {
 									<div className={styles['ai-analysis-content']}>
 										<h3>종합 분석</h3>
 										<p>
-											{selectedStock.aiAnalysis?.summary ||
+											{AiAnalysisData.response ||
 												'분석 데이터가 없습니다.'}
 										</p>
 									</div>

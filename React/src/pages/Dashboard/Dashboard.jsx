@@ -17,6 +17,7 @@ import MyWordCloud from '../../component/WordCloud/MyWordCloud';
 import { useStock } from '../../hooks/useStock';
 import { useRealtimeStockData } from '../../hooks/useRealtimeStockData.jsx';
 import stockAnalysisData from '../../../../data/outputs/top_mover_forecast.json';
+import AiAnalysisData from '../../../../data/raws/Gemini_Api.json';
 
 
 
@@ -1294,11 +1295,7 @@ export default function Dashboard() {
 									<div className={styles['ai-analysis-content']}>
 										<h3>종합 분석</h3>
 										<p>
-											현재 시장 상황을 종합적으로 분석한 결과, 삼성전자는 AI
-											반도체 수요 증가와 글로벌 공급망 안정화로 인해
-											중장기적으로 긍정적인 전망을 보이고 있습니다. 특히 메모리
-											반도체 분야에서의 기술적 우위와 시스템 반도체 확장 전략이
-											수익성 개선에 기여할 것으로 예상됩니다.
+											{AiAnalysisData.response || '분석 데이터가 없습니다.'}
 										</p>
 									</div>
 									<div className={styles['ai-prediction']}>
@@ -1310,7 +1307,7 @@ export default function Dashboard() {
 											<span
 												className={`${styles['prediction-value']} ${styles['positive']}`}
 											>
-												매수
+												{'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1320,7 +1317,7 @@ export default function Dashboard() {
 											<span
 												className={`${styles['prediction-value']} ${styles['positive']}`}
 											>
-												강력 매수
+												{'N/A'}
 											</span>
 										</div>
 										<div className={styles['prediction-item']}>
@@ -1330,7 +1327,7 @@ export default function Dashboard() {
 											<span
 												className={`${styles['prediction-value']} ${styles['negative']}`}
 											>
-												매도
+												{'N/A'}
 											</span>
 										</div>
 									</div>
