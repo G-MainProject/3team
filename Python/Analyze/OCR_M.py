@@ -292,7 +292,38 @@ def process_table_by_box_and_content(image_path, output_path):
         print(f"오류가 발생했습니다: {e}")
 
 if __name__ == "__main__":
-    # 사용자 이미지 경로를 여기에 입력하세요.
-    image_file_path = r"C:\Users\3CLASS_004\Documents\GitHub\3team\Python\Analyze\Asset\TestImg\image38.jpg"
-    output_csv_path = r"C:\Users\3CLASS_004\Documents\GitHub\3team\Python\Analyze\Asset\Result\OCR_result.csv"
-    process_table_by_box_and_content(image_file_path, output_csv_path)
+    # 스크립트의 현재 위치를 기준으로 경로 설정
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 입력 및 출력 디렉토리의 절대 경로 설정
+    input_dir = os.path.join(script_dir, "Asset", "TestImg")
+    output_dir = os.path.join(script_dir, "Asset", "Result")
+
+    # 출력 디렉토리가 없으면 생성
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        print(f"'{output_dir}' 디렉토리를 생성했습니다.")
+
+    # 지원하는 이미지 확장자 목록
+    supported_extensions = ['.jpg', '.jpeg', '.png', '.bmp']
+
+    # 입력 디렉토리의 모든 파일에 대해 반복
+    for filename in os.listdir(input_dir):
+        # 파일의 확장자를 소문자로 가져옴
+        file_ext = os.path.splitext(filename)[1].lower()
+        
+        # 지원하는 이미지 파일인지 확인
+        if file_ext in supported_extensions:
+            # 전체 이미지 파일 경로 구성
+            image_file_path = os.path.join(input_dir, filename)
+            
+            # 출력 CSV 파일 이름 설정 (원본 이미지 파일명 + .csv)
+            output_csv_filename = os.path.splitext(filename)[0] + ".csv"
+            output_csv_path = os.path.join(output_dir, output_csv_filename)
+            
+            print(f"--- 파일 처리 시작: {image_file_path} ---")
+            # OCR 처리 함수 호출
+            process_table_by_box_and_content(image_file_path, output_csv_path)
+            print(f"--- 파일 처리 완료: {output_csv_path} ---\n")
+
+    print("모든 이미지 처리가 완료되었습니다.")
