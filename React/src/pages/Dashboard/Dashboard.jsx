@@ -1712,22 +1712,33 @@ export default function Dashboard() {
 											종합 분석 ({getTimeframePrompt(selectedTimeframe)} 기준)
 										</h3>
 										<div className={styles.aiAnalysisText}>
-											{aiStockAnalysis
-												? (
-														aiStockAnalysis.periods[
-															timeframeToDataKey[selectedTimeframe]
-														]?.text || '분석 데이터가 없습니다.'
-												  )
-														.replace(/^\s*-\s*판정:.*$/m, '')
-														.trim()
-														.split('\n')
-														.map((line, index) => (
-															<React.Fragment key={index}>
-																{line}
-																<br />
-															</React.Fragment>
-														))
-												: '선택된 종목에 대한 AI 분석 데이터가 없습니다.'}
+											{(() => {
+												if (!aiStockAnalysis) {
+													return '선택된 종목에 대한 AI 분석 데이터가 없습니다.';
+												}
+												let text =
+													aiStockAnalysis.periods[
+														timeframeToDataKey[selectedTimeframe]
+													]?.text || '분석 데이터가 없습니다.';
+
+												if (text === '분석 데이터가 없습니다.') {
+													return text;
+												}
+
+												text = text.replace(/^\s*-\s*판정:.*$/m, '').trim();
+
+												const maxLength = 250;
+												if (text.length > maxLength) {
+													text = text.substring(0, maxLength) + '...';
+												}
+
+												return text.split('\n').map((line, index) => (
+													<React.Fragment key={index}>
+														{line}
+														<br />
+													</React.Fragment>
+												));
+											})()}
 										</div>
 									</div>
 									<div className={styles['ai-prediction']}>
