@@ -10,13 +10,13 @@
     <LinkItem id="5c816bc1-553e-4bc4-987b-22e059800553" category="NormalTask" isChanged="Y" desc="" stepCount="70" name="T_1_2_DART_데이터추출">
       <Properties />
     </LinkItem>
-    <LinkItem id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" category="NormalTask" isChanged="Y" desc="" stepCount="8" name="T_1_3_DART_첨부파일가공">
+    <LinkItem id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" category="NormalTask" isChanged="Y" desc="" stepCount="16" name="T_1_3_DART_첨부파일가공">
       <Properties />
     </LinkItem>
     <LinkItem id="bddf2d7b-6929-4ccf-8dd9-2496dc8e2a4a" category="NormalTask" isChanged="Y" desc="" stepCount="15" name="T_1_4_DART_엑셀저장">
       <Properties />
     </LinkItem>
-    <LinkItem id="52d1f205-d23d-45cf-be50-1a184d812ccc" category="NormalTask" isChanged="Y" desc="" stepCount="56" name="T_2_1_보고서작성">
+    <LinkItem id="52d1f205-d23d-45cf-be50-1a184d812ccc" category="NormalTask" isChanged="Y" desc="" stepCount="61" name="T_2_1_보고서작성">
       <Properties />
     </LinkItem>
     <LinkItem id="01e0b7ca-fefd-43c2-b346-25f6683b56f1" category="NormalTask" isChanged="Y" desc="" stepCount="6" name="T_2_2_이메일전송">
