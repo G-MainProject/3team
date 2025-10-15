@@ -274,36 +274,77 @@ python Python/Prediction/main.py --search-word "삼성전자" --output "data/raw
 `Python/pipeline` 폴더는 주가 예측을 위한 전체 머신러닝 파이프라인을 포함합니다. 데이터 수집부터 전처리, 모델 학습, 추론, 최종 리포트 생성까지의 과정을 체계적으로 관리합니다.
 
 - **주요 라이브러리**: `tensorflow`, `pandas`, `pykrx`, `requests`
-- **파이프라인 흐름**:
-  1.  **S0: Discover**: 변동성 상위 종목 탐색
-  2.  **S1: Collect**: 주가, 재무제표 등 원본 데이터 수집
-  3.  **S2: Preprocess**: 모델 학습용 데이터 가공 (Bronze → Silver → Gold)
-  4.  **S3: Model**: CNN 기반 시계열 예측 모델 학습
-  5.  **S4: Infer**: 학습된 모델로 미래 주가 예측
-  6.  **S5: Evaluate**: 모델 성능 평가 및 최종 리포트 생성
 
 <details>
 <summary><strong>📄 상세 설명 및 실행 방법 보기</strong></summary>
 
-### 파이프라인 흐름
+### 전체 워크플로우
 
-파이프라인은 다음과 같은 단계로 구성됩니다.
+파이프라인은 크게 2개의 스크립트로 실행됩니다.
 
-1.  **S0: Discover**: `pykrx`를 사용하여 KOSPI, KOSDAQ 시장에서 변동성이 큰 종목을 탐색합니다.
-2.  **S1: Collect**: Kiwoom API, DART API, `pykrx`를 통해 원본 데이터를 수집합니다.
-3.  **S2: Preprocess**: `pandas`를 활용하여 시계열 데이터를 병합하고 이동평균, RSI, MACD 등 기술적 분석 지표를 특성으로 추가합니다.
-4.  **S3: Model**: `tensorflow`를 사용하여 CNN 기반의 예측 모델을 학습합니다.
-5.  **S4: Infer**: 학습된 모델 가중치를 불러와 미래 수익률과 예상 주가를 계산합니다.
-6.  **S5: Evaluate**: 모든 단계의 결과를 종합하여 최종 분석 리포트(`top_mover_forecast.json`)를 생성합니다.
+1.  **`scripts/run_s0.py`**: **(종목 탐색)** Kiwoom API 또는 `pykrx`를 사용하여 변동성이 큰 상위 종목을 탐색하고, 그 결과를 `top_movers_auto.json` 파일로 저장합니다.
+2.  **`scripts/run_s1_to_s5.py`**: **(전체 파이프라인 실행)** `run_s0.py`에서 생성된 종목 리스트를 입력받아 데이터 수집(S1)부터 최종 리포트 생성(S5)까지의 모든 단계를 순차적으로 실행합니다.
 
-### 실행 방법
+### 사전 준비
 
-1.  **의존성 설치**: `pip install -r Python/requirements.txt`
-2.  **환경 변수 설정**: `.env` 파일에 `DART_API_KEY`, `KIWOOM_API_KEY` 등을 설정합니다.
-3.  **전체 파이프라인 실행**:
-    ```shell
-    python Python/pipeline/scripts/run_s1_to_s5.py --tickers 005930 --start-date 2015-01-01
+1.  **의존성 설치**: `Python/` 폴더의 `requirements.txt`로 필요한 라이브러리를 설치합니다.
+    ```bash
+    pip install -r Python/requirements.txt
     ```
+
+2.  **환경 변수 설정**: 프로젝트 루트에 `.env` 파일을 생성하고, 데이터 수집에 필요한 API 키들을 설정합니다.
+    -   **DART API**: `DART_API_KEY` (필수)
+    -   **Kiwoom API**: `KIWOOM_BASE_URL`, `KIWOOM_APPKEY`, `KIWOOM_SECRETKEY` 등 (S0, S1 단계에서 Kiwoom 소스 사용 시 필요)
+
+### 1단계: `run_s0.py` (종목 탐색)
+
+변동성 상위 종목을 탐색하여 파이프라인의 입력 데이터를 생성합니다.
+
+```bash
+# Kiwoom API를 이용해 코스피 시장의 변동성 상위 5개 종목을 탐색
+python Python/pipeline/scripts/run_s0.py --source kiwoom --market KOSPI --count 5
+
+# pykrx를 이용해 코스닥 시장의 변동성 상위 10개 종목을 탐색
+python Python/pipeline/scripts/run_s0.py --source pykrx --market KOSDAQ --count 10
+```
+
+-   **주요 인자**:
+    -   `--source`: 데이터 소스를 지정합니다 (`kiwoom`, `pykrx`, `auto`). `auto`는 Kiwoom 우선 시도 후 실패 시 `pykrx`로 전환합니다.
+    -   `--market`: 시장을 지정합니다 (`KOSPI`, `KOSDAQ`, `ALL`).
+    -   `--count`: 탐색할 종목의 개수를 지정합니다.
+    -   `--output`: 결과 JSON 파일 경로를 지정합니다. (기본값: `data/raws/top_movers_auto.json`)
+
+### 2단계: `run_s1_to_s5.py` (전체 파이프라인 실행)
+
+`run_s0.py`의 결과를 바탕으로 전체 ML 파이프라인을 실행합니다.
+
+```bash
+# s0 결과로 s1-s5 전체 파이프라인 실행 (가장 일반적인 사용법)
+python Python/pipeline/scripts/run_s1_to_s5.py
+
+# 특정 종목으로만 실행 (s0 결과 무시)
+python Python/pipeline/scripts/run_s1_to_s5.py --tickers 005930 000660
+
+# 데이터 수집(s1)과 학습(s3)을 건너뛰고, 사전 학습된 모델로 추론(s4) 및 평가(s5) 실행
+python Python/pipeline/scripts/run_s1_to_s5.py --skip-s1 --skip-s3 --infer-model "path/to/your/model.pth"
+```
+
+-   **주요 인자**:
+    -   `--tickers`: 분석할 종목 코드를 직접 지정합니다. 지정 시 `top-movers` 파일은 무시됩니다.
+    -   `--top-movers`: `s0` 단계에서 생성된 종목 리스트 JSON 파일 경로를 지정합니다.
+    -   `--skip-s[1-5]`: 특정 단계를 건너뛸 때 사용합니다. (예: `--skip-s1`)
+    -   `--infer-model`: 학습(s3)을 건너뛸 경우, 추론(s4)에 사용할 사전 학습된 모델 파일(`*.pth`) 경로를 지정합니다.
+    -   `--report`: 최종 결과 리포트 파일 경로를 지정합니다. (기본값: `data/outputs/top_mover_forecast.json`)
+    -   `--no-kiwoom`, `--no-dart`: 데이터 수집(s1) 시 특정 API 사용을 비활성화합니다.
+
+### 파이프라인 단계별 설명
+
+-   **S0: Discover**: `pykrx` 또는 Kiwoom API로 변동성 상위 종목을 탐색하여 분석 대상을 선정합니다.
+-   **S1: Collect**: `pykrx`, Kiwoom API, DART API를 통해 주가, 재무제표 등 원본 데이터를 수집합니다.
+-   **S2: Preprocess**: 수집된 데이터를 정제하고, 이동평균, RSI, MACD 등 기술적 분석 지표를 특성으로 추가하여 모델 학습용 데이터셋(Gold)을 생성합니다.
+-   **S3: Model**: `tensorflow`를 사용하여 CNN 기반의 시계열 예측 모델을 학습합니다.
+-   **S4: Infer**: 학습된 모델 가중치를 불러와 미래 수익률과 예상 주가를 예측합니다.
+-   **S5: Evaluate**: 모델의 예측 결과와 실제 값을 비교/평가하고, 모든 분석 결과를 종합하여 최종 리포트(`top_mover_forecast.json`)를 생성합니다.
 
 </details>
 
