@@ -462,26 +462,60 @@ python Python/pipeline/scripts/run_s1_to_s5.py --skip-s1 --skip-s3 --infer-model
 
 `React` 폴더는 3팀 프로젝트의 프론트엔드 애플리케이션입니다. **Vite**를 빌드 도구로 사용하는 모던 React 프로젝트로, 사용자에게 데이터 시각화, AI 분석 결과 등 다양한 정보를 웹 인터페이스를 통해 제공합니다.
 
-- **주요 기능 및 페이지**:
-    - **데이터 시각화**: `recharts` 라이브러리를 활용하여 주가 데이터를 캔들스틱 차트, 통합 주식 차트 등 다양한 형태로 시각화합니다. (`CandleStickChart`, `UnifiedStockChart`, `Dashboard`, `StockAnalysis` 페이지)
-    - **AI 기반 인사이트**: 백엔드에서 처리된 AI 분석 결과를 워드 클라우드 등의 형태로 사용자에게 보여줍니다. (`WordCloud` 컴포넌트, `AIInsights` 페이지)
-    - **실시간 데이터 연동**: WebSocket(`@stomp/stompjs`)을 사용하여 백엔드 서버와 실시간으로 데이터를 주고받아 동적인 화면을 구성합니다.
-    - **사용자 인증**: `firebase`를 연동하여 로그인, 회원가입 기능을 제공하며, `react-router-dom`을 통해 인증 상태에 따른 페이지 접근을 제어합니다. (`Login`, `Signup`, `Mypage` 페이지)
-    - **SNS 데이터 연동**: 백엔드 API를 통해 SNS 데이터를 받아와 화면에 표시합니다. (`Sns` 컴포넌트)
+### 시작 가이드
 
-- **주요 기술 스택**:
-    - **Framework**: `React`
-    - **Build Tool**: `Vite`
-    - **Routing**: `react-router-dom`
-    - **State Management**: React Context API
-    - **Charting**: `recharts`
-    - **WebSocket**: `@stomp/stompjs`, `sockjs-client`
-    - **Styling**: 기본 CSS 및 컴포넌트 기반 스타일링
-    - **Linting**: `ESLint`
-    - **Authentication**: `firebase`
+```bash
+# 1. React 폴더로 이동
+cd React
 
-- **아키텍처**:
-    - **Component-Based Architecture**: 기능별로 컴포넌트(`component`)를 분리하고, 이를 조합하여 페이지(`pages`)를 구성합니다.
-    - **State Management**: React Context API(`contexts`)를 사용하여 전역적으로 필요한 상태(예: 인증 정보, 주식 데이터)를 관리합니다.
-    - **Custom Hooks**: 반복되는 로직을 `hooks`로 추상화하여 코드 재사용성을 높입니다.
-    - **Service Layer**: 백엔드 API 통신 로직을 `services` 폴더에서 관리하여 컴포넌트와 분리합니다.
+# 2. 의존성 설치
+npm install
+
+# 3. 개발 서버 실행
+npm run dev
+```
+
+### 주요 기능 및 페이지
+
+-   **메인 대시보드**: 서비스의 핵심 기능들을 요약하여 보여주는 `Home` 페이지와 상세 분석 데이터를 제공하는 `Dashboard` 페이지.
+-   **주식 분석**: `recharts` 라이브러리를 활용하여 주가 데이터를 시각화하고, `StockAnalysis` 페이지를 통해 심층 분석 정보를 제공합니다.
+-   **AI 기반 인사이트**: `AIInsights` 페이지에서 AI 분석 결과를 `@isoterik/react-word-cloud`를 이용한 워드 클라우드 형태로 시각화하여 제공합니다.
+-   **사용자 인증**: `firebase`를 연동하여 `Login`, `Signup` 페이지를 통한 회원 관리 및 `Mypage`에서 사용자 정보를 관리합니다.
+-   **화면 캡처**: `html2canvas`를 사용하여 현재 화면의 차트나 분석 결과를 이미지로 저장하는 기능을 제공할 수 있습니다.
+-   **실시간 통신**: `@stomp/stompjs`와 `sockjs-client`를 사용하여 백엔드와 WebSocket 통신을 구현, 실시간 데이터 업데이트를 반영합니다.
+
+### 주요 기술 스택
+
+| 구분              | 기술명                               | 설명                                            |
+| ----------------- | ------------------------------------ | ----------------------------------------------- |
+| **Core**          | `react`, `react-dom`                 | UI 구축을 위한 핵심 라이브러리                  |
+| **Build Tool**    | `vite`, `@vitejs/plugin-react-swc`   | SWC 기반의 빠른 빌드 및 개발 환경             |
+| **Routing**       | `react-router-dom` (v7)              | 페이지 라우팅 및 네비게이션 관리                |
+| **Data Fetching** | `@stomp/stompjs`, `sockjs-client`    | WebSocket을 이용한 실시간 데이터 통신           |
+| **Authentication**| `firebase`                           | 사용자 인증 및 관리                           |
+| **Charting**      | `recharts`                           | 데이터 시각화를 위한 차트 라이브러리            |
+| **UI Components** | `@isoterik/react-word-cloud`         | AI 분석 결과 시각화를 위한 워드 클라우드        |
+|                   | `html2canvas`                        | 웹 페이지 요소를 이미지로 변환                  |
+| **Code Quality**  | `eslint`, `@eslint/js`               | 코드 스타일 및 잠재적 오류 검사                 |
+
+### 폴더 구조
+
+```
+React/
+├── public/              # 정적 에셋 (이미지, 폰트 등)
+├── src/
+│   ├── assets/          # CSS, 이미지, 폰트 등 내부 에셋
+│   ├── component/       # 재사용 가능한 UI 컴포넌트 (차트, 네비게이션 등)
+│   ├── contexts/        # Context API를 사용한 전역 상태 관리
+│   ├── hooks/           # 반복되는 로직을 분리한 커스텀 훅
+│   ├── pages/           # 라우팅 단위가 되는 페이지 컴포넌트
+│   ├── services/        # API 연동 및 비즈니스 로직
+│   │   ├── api.js       # 메인 백엔드 서버 API
+│   │   ├── firebase.js  # Firebase 인증 관련 서비스
+│   │   └── yahooFinanceApi.js # Yahoo Finance API 연동
+│   ├── App.jsx          # 메인 애플리케이션 컴포넌트 (라우팅 정의)
+│   └── main.jsx         # 애플리케이션 진입점
+├── .eslintrc.json       # ESLint 설정 파일
+├── package.json         # 프로젝트 의존성 및 스크립트 관리
+└── vite.config.js       # Vite 설정 파일
+```
