@@ -131,15 +131,49 @@
 
 ### 실행 방법
 
-1.  **의존성 설치**: `pip install -r Python/requirements.txt`
-2.  **스크립트 실행**:
-    - `OCR_M.py` 파일 내의 `image_file_path`와 `output_csv_path` 변수를 설정합니다.
-    - 스크립트를 직접 실행합니다.
-      ```shell
-      python Python/Analyze/OCR_M.py
-      ```
+#### 1. 필요 라이브러리 설치
+
+터미널을 열고, 프로젝트의 `Python` 디렉토리로 이동하여 필요한 라이브러리를 설치합니다.
+
+```bash
+cd c:\Code\3team\Python
+pip install -r requirements.txt
+```
+
+#### 2. OCR 실행
+
+1.  **이미지 준비**: 분석할 이미지 파일을 `Python\Analyze\Asset\TestImg\` 폴더에 추가합니다.
+
+2.  **소스 코드 수정**: `Python\Analyze\OCR_M.py` 파일을 열어 파일 하단의 `if __name__ == "__main__":` 블록을 다음과 같이 수정합니다.
+
+    - `image_file_path`: 분석할 이미지의 전체 경로를 입력합니다.
+    - `output_csv_path`: 결과 CSV 파일이 저장될 전체 경로를 입력합니다.
+
+    ```python
+    if __name__ == "__main__":
+        # 1. 분석할 이미지 파일 경로를 입력하세요.
+        image_file_path = r"...\3team\Python\Analyze\Asset\TestImg\YOUR_IMAGE_NAME.jpg"
+        
+        # 2. 결과를 저장할 CSV 파일 경로를 입력하세요.
+        output_csv_path = r"...\3team\Python\Analyze\Asset\Result\YOUR_RESULT_NAME.csv"
+        
+        # 3. OCR 프로세스 실행
+        process_table_by_box_and_content(image_file_path, output_csv_path)
+    ```
+
+3.  **스크립트 실행**: 터미널에서 `Python\Analyze` 디렉토리로 이동한 후, `OCR_M.py` 스크립트를 실행합니다.
+
+    ```bash
+    python Python/Analyze/OCR_M.py
+    ```
+
+#### 3. 결과 확인
+
+실행이 완료되면 `output_csv_path`에 지정한 경로에 CSV 파일이 생성됩니다. 이 파일을 열어 OCR 변환 결과를 확인할 수 있습니다.
 
 </details>
+
+---
 
 ## <a name="prediction"></a> 📊 감성 분석 및 키워드 추출 (`Python/Prediction`)
 
