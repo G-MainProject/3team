@@ -1,4 +1,4 @@
-<Process id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" type="task" workType="foreground" name="T_1_3_DART_첨부파일가공" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="8" Orientation="horizontal">
+<Process id="485fa3fd-841a-4638-a2bc-f6ed92c1fca6" type="task" workType="foreground" name="T_1_3_DART_첨부파일가공" version="1.0" designerVersion="3.1.125.00701" readonly="false" isValid="true" DesignedBy="Designer" Template="" StepCount="16" Orientation="horizontal">
   <Properties>
     <Property key="Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
     <Property key="onBefore" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" enabled="True" />
@@ -10,17 +10,101 @@
     <Property key="Resolution" controlType="String" valueType="System.String" formatType="String_Size" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="1920x1080" />
     <Property key="CreatedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-09-08 11:49:43" />
     <Property key="CreatedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
-    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-10-13 11:50:55" />
+    <Property key="LastModifiedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="2025-10-15 14:49:35" />
     <Property key="LastModifiedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="True" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedDate" controlType="String" valueType="System.String" formatType="String_DateTime" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
     <Property key="LastPublishedBy" controlType="String" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
   </Properties>
   <LinkItems />
   <Variables>
+    <Variable name="img_filepath_isDirectoryExist" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF94AF9F" showMarker="False" />
+    <Variable name="img_filepath" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFFF731D" showMarker="False" />
     <Variable name="DART_img" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FFFF9F29" showMarker="False" />
     <Variable name="File_list" scope="Normal" valueType="Any" formatType="Any" initValue="" desc="" colorValue="#FF617143" showMarker="False" />
   </Variables>
   <Steps>
+    <Step id="S3d9f30354d9d4d839378038df025d7c9" ver="311241220" createVer="311241220" type="Flow" name="ExecuteScript" dpName="ExecuteScript" dpValue="" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="0e6e3faf-f1a8-4b0c-860e-a8265a7e0fd9" type="Flow">
+        <Property type="Flow" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Title" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="이미지 저장경로 설정" />
+        <Property type="Flow" key="Key_Script" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.img_filepath = Global.file_path.replace(&quot;\\data\\raws&quot;, &quot;\\Python\\Analyze\\Asset\\TestImg&quot;);" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.img_filepath = Global.file_path.replace("\\data\\raws", "\\Python\\Analyze\\Asset\\TestImg");]]></Script>
+    </Step>
+    <Step id="S4ef975d0f60a418b9efd45f46541396b" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="Global.l == 0" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="6b929383-89f6-44e7-a5db-e6bab2076e23" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="Global.l == 0" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.l == 0" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S0445844c5de941baa0882bccb2f1c2ed" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (Global.l == 0) {]]></Script>
+    </Step>
+    <Step id="S974faaf6acc2480d94f18c7b5672becd" ver="311241220" createVer="311241220" type="Desktop" name="IsDirectoryExist" dpName="IsDirectoryExist" dpValue="this.img_filepath_isDirectoryExist" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="bf31406e-f901-4ee0-be9c-a83a2e8538ab" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.img_filepath" />
+        <Property type="Desktop" key="Command_Output" controlType="OutputControlType" valueType="System.Object" formatType="Variable" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.img_filepath_isDirectoryExist" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[this.img_filepath_isDirectoryExist = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_3);]]></Script>
+    </Step>
+    <Step id="Scc38a3fb5f0a4c96975d32bcf94b63c6" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.img_filepath_isDirectoryExist == true" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
+      <Properties id="55f796a4-710f-469f-b16f-887678e7e647" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Flow" key="Conditions_Expression" controlType="PropertyItemTextEditorView" valueType="System.Object" formatType="Condition" required="True" visible="False" readonly="True" encrypted="False" isChanged="N" value="this.img_filepath_isDirectoryExist == true" order="1" />
+        <Property type="Flow" key="Conditions_CombineCondition" controlType="PropertyItemCombineConditionView" valueType="System.Boolean" formatType="Boolean" required="False" visible="False" readonly="False" encrypted="False" isChanged="N" value="True" order="2" />
+        <Property type="Flow" key="Conditions_Expression1" controlType="PropertyItemExpressionView" valueType="System.Object" formatType="Condition" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.img_filepath_isDirectoryExist == true" order="3" />
+        <Property type="Flow" key="Conditions_AddCondition" controlType="PropertyItemAddConditionView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S973dd4e0f99048e2ab5af5e8f06508aa" type="Flow" name="EndDecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[if (this.img_filepath_isDirectoryExist == true) {]]></Script>
+    </Step>
+    <Step id="S31f3f1bb999f45edbd6ca4f116a7c1ce" ver="311241220" createVer="311241220" type="Desktop" name="DeleteDirectory" dpName="DeleteDirectory" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="c6f67007-c531-4bb7-86e8-d5b9fb83d636" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.img_filepath" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_5);]]></Script>
+    </Step>
+    <Step id="S973dd4e0f99048e2ab5af5e8f06508aa" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="788ef0d4-9b88-46af-92bb-398306d7434b" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="Scc38a3fb5f0a4c96975d32bcf94b63c6" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
+    <Step id="S19704de027f74dcd9ff97e2f7766094b" ver="311241220" createVer="311241220" type="Desktop" name="CreateDirectory" dpName="CreateDirectory" dpValue="this.img_filepath" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
+      <Properties id="30f6c3c6-51fd-40f5-8e03-f3f384df7ac9" type="Desktop">
+        <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+        <Property type="Desktop" key="Command_Path" controlType="Folder" valueType="System.String" formatType="String_DirectoryPath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.img_filepath" />
+      </Properties>
+      <RelatedSteps />
+      <Script><![CDATA[StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_7);]]></Script>
+    </Step>
+    <Step id="S0445844c5de941baa0882bccb2f1c2ed" ver="311241220" createVer="311241220" type="Flow" name="EndDecisionThen" dpName="End-IfThen" dpValue="" dpValue2="" dpImage="" tag="" depth="2" stmttype="CloseBlock" enabled="True" mainSet="0">
+      <Properties id="4cfd20d5-4f6f-439e-85f0-63cc56790f9f" type="Flow">
+        <Property type="Flow" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
+      </Properties>
+      <RelatedSteps>
+        <RelatedStep id="S4ef975d0f60a418b9efd45f46541396b" type="Flow" name="DecisionThen" />
+      </RelatedSteps>
+      <Script><![CDATA[}]]></Script>
+    </Step>
     <Step id="S0a9684281a1842b6a8bc9daf0b74c321" ver="311241220" createVer="311241220" type="Desktop" name="GetFileList" dpName="GetFileList" dpValue="this.File_list" dpValue2="" dpImage="" tag="" depth="1" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="e4c87eff-028c-41f0-aa98-d93ac15696dd" type="Desktop">
         <Property type="Desktop" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
@@ -31,7 +115,7 @@
         <Property type="Desktop" key="Command_SearchOption" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="TopDirectoryOnly" valuelist="TopDirectoryOnly;AllDirectories" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.File_list = StepPlayer.Run('Desktop.GetFileList', this.getfilelist_info_1);]]></Script>
+      <Script><![CDATA[this.File_list = StepPlayer.Run('Desktop.GetFileList', this.getfilelist_info_9);]]></Script>
     </Step>
     <Step id="Sf54918377e094bb690ec16c7cebf26ae" ver="311241220" createVer="311241220" type="Flow" name="DecisionThen" dpName="IfThen" dpValue="this.File_list.length !== 0" dpValue2="" dpImage="" tag="" depth="1" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="2315dd44-edd9-41e8-b5bf-ed7e0e7c2764" type="Flow">
@@ -55,7 +139,7 @@
         <Property type="Pdf" key="Input_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_3);]]></Script>
+      <Script><![CDATA[ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_11);]]></Script>
     </Step>
     <Step id="S8a204a4392c84a18a1ff14a03dd4be03" ver="311241220" createVer="311241220" type="Pdf" name="ExtractImageFromPdfActivity" dpName="ExtractImageFromPdf" dpValue="Global.file_path + '\DART' + Global.Stock[Global.l] +'\pdf\추출_' + Global.Stock[Global.l] + '.pdf'" dpValue2="" dpImage="" tag="" depth="2" stmttype="Normal" enabled="True" mainSet="0">
       <Properties id="0e6ad727-0fe3-4983-8822-1f7ddad015d9" type="Pdf">
@@ -67,7 +151,7 @@
         <Property type="Pdf" key="Input_PageRange" controlType="String" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="'All'" order="5" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[this.DART_img = ActivityWorker.Play('Pdf', 'ExtractImageFromPdfActivity', this.activitylibraryitem_info_4);]]></Script>
+      <Script><![CDATA[this.DART_img = ActivityWorker.Play('Pdf', 'ExtractImageFromPdfActivity', this.activitylibraryitem_info_12);]]></Script>
     </Step>
     <Step id="Sb24f97ea049246e6b8e223ded06155cd" ver="311241220" createVer="311241220" type="Flow" name="Loop" dpName="For" dpValue="this.i &lt;  this.DART_img.length" dpValue2="" dpImage="" tag="" depth="2" stmttype="OpenBlock" enabled="True" mainSet="0">
       <Properties id="5f1d9c3d-8fd6-4d0a-9eae-f5e425769c22" type="Flow">
@@ -86,12 +170,12 @@
         <Property type="ImageConverter" key="Options_OnError" controlType="PropertyItemEventHandlerView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="ImageConverter" key="Key_Description" controlType="PropertyItemTextEditorView" valueType="System.String" formatType="String" required="False" visible="True" readonly="False" encrypted="False" isChanged="N" value="" />
         <Property type="ImageConverter" key="ImageConvertAttr_InputBitmap" controlType="InputControlType" valueType="System.Drawing.Bitmap" formatType="Bitmap" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.DART_img[this.i]" />
-        <Property type="ImageConverter" key="ImageFile_SavePath" controlType="Image" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="Global.file_path + '\\DART\\' + Global.Stock[Global.l] +'\\이미지\\' + Global.Stock[Global.l] + '_' + this.i + 1 + '.png'" />
+        <Property type="ImageConverter" key="ImageFile_SavePath" controlType="Image" valueType="System.String" formatType="String_FilePath" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="this.img_filepath + '\\' +Global.Stockcode[Global.l] + '\\' + Global.Stockcode[Global.l] + '_' + this.i + 1 + '.png'" />
         <Property type="ImageConverter" key="ImageFile_OverWrite" controlType="Boolean" valueType="System.Boolean" formatType="Boolean" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="True" />
         <Property type="ImageConverter" key="ImageFile_Encoding" controlType="PropertyItemDropDownView" valueType="System.String" formatType="String" required="True" visible="True" readonly="False" encrypted="False" isChanged="N" value="png" valuelist="png;jpg;bmp" />
       </Properties>
       <RelatedSteps />
-      <Script><![CDATA[StepPlayer.Run('ImageConverter.SaveImage', this.saveimage_info_6);]]></Script>
+      <Script><![CDATA[StepPlayer.Run('ImageConverter.SaveImage', this.saveimage_info_14);]]></Script>
     </Step>
     <Step id="S275f5918ecae47e9804feee283d382ec" ver="311241220" createVer="311241220" type="Flow" name="EndLoop" dpName="End-For" dpValue="" dpValue2="" dpImage="" tag="" depth="3" stmttype="CloseBlock" enabled="True" mainSet="0">
       <Properties id="1eac32e1-b422-4378-aa87-3150c0f544b8" type="Flow">
@@ -114,49 +198,83 @@
   </Steps>
   <JScript><![CDATA[function T_1_3_DART_첨부파일가공() {
 
+    this.img_filepath_isDirectoryExist;
+    this.img_filepath;
     this.DART_img;
     this.File_list;
 
     this.RPAGOTOENABLE = false;
     this.GotoStepRetryCntMap = {};
-    this.GotoBlockMap = {2:[8],5:[7]};
-    this.GotoReverseBlockMap = {8:2,7:5};
-    this.GotoStepBlockTypeMap = {2:'DecisionThen',8:'EndDecisionThen',5:'Loop',7:'EndLoop'};
+    this.GotoBlockMap = {2:[8],4:[6],10:[16],13:[15]};
+    this.GotoReverseBlockMap = {8:2,6:4,16:10,15:13};
+    this.GotoStepBlockTypeMap = {2:'DecisionThen',8:'EndDecisionThen',4:'DecisionThen',6:'EndDecisionThen',10:'DecisionThen',16:'EndDecisionThen',13:'Loop',15:'EndLoop'};
 
 
     this.run = function() {
 
         //------------------------------------------------
-        STEP('S0a9684281a1842b6a8bc9daf0b74c321', '[1] GetFileList');
-        this.File_list = StepPlayer.Run('Desktop.GetFileList', this.getfilelist_info_1);
+        STEP('S3d9f30354d9d4d839378038df025d7c9', '[1] ExecuteScript');
+        this.img_filepath = Global.file_path.replace("\\data\\raws", "\\Python\\Analyze\\Asset\\TestImg");
 
         //------------------------------------------------
-        STEP('Sf54918377e094bb690ec16c7cebf26ae', '[2] IfThen');
-        if (this.File_list.length !== 0) {
+        STEP('S4ef975d0f60a418b9efd45f46541396b', '[2] IfThen');
+        if (Global.l == 0) {
 
             //------------------------------------------------
-            STEP('S181dd12f8fc4471986da46326493db31', '[3] MergePdf');
-            ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_3);
+            STEP('S974faaf6acc2480d94f18c7b5672becd', '[3] IsDirectoryExist');
+            this.img_filepath_isDirectoryExist = StepPlayer.Run('Desktop.IsDirectoryExist', this.isdirectoryexist_info_3);
 
             //------------------------------------------------
-            STEP('S8a204a4392c84a18a1ff14a03dd4be03', '[4] ExtractImageFromPdf');
-            this.DART_img = ActivityWorker.Play('Pdf', 'ExtractImageFromPdfActivity', this.activitylibraryitem_info_4);
-
-            //------------------------------------------------
-            STEP('Sb24f97ea049246e6b8e223ded06155cd', '[5] For');
-            for (this.i = 0; this.i <  this.DART_img.length; this.i++) {
+            STEP('Scc38a3fb5f0a4c96975d32bcf94b63c6', '[4] IfThen');
+            if (this.img_filepath_isDirectoryExist == true) {
 
                 //------------------------------------------------
-                STEP('S20a8dc562f8e4986954bd32517280352', '[6] SaveImage');
-                StepPlayer.Run('ImageConverter.SaveImage', this.saveimage_info_6);
+                STEP('S31f3f1bb999f45edbd6ca4f116a7c1ce', '[5] DeleteDirectory');
+                StepPlayer.Run('Desktop.DeleteDirectory', this.deletedirectory_info_5);
 
             //------------------------------------------------
             }
-            STEP('S275f5918ecae47e9804feee283d382ec', '[7] End-For');
+            STEP('S973dd4e0f99048e2ab5af5e8f06508aa', '[6] End-IfThen');
+
+            //------------------------------------------------
+            STEP('S19704de027f74dcd9ff97e2f7766094b', '[7] CreateDirectory');
+            StepPlayer.Run('Desktop.CreateDirectory', this.createdirectory_info_7);
 
         //------------------------------------------------
         }
-        STEP('S365720df73104d74a841894287b30545', '[8] End-IfThen');
+        STEP('S0445844c5de941baa0882bccb2f1c2ed', '[8] End-IfThen');
+
+        //------------------------------------------------
+        STEP('S0a9684281a1842b6a8bc9daf0b74c321', '[9] GetFileList');
+        this.File_list = StepPlayer.Run('Desktop.GetFileList', this.getfilelist_info_9);
+
+        //------------------------------------------------
+        STEP('Sf54918377e094bb690ec16c7cebf26ae', '[10] IfThen');
+        if (this.File_list.length !== 0) {
+
+            //------------------------------------------------
+            STEP('S181dd12f8fc4471986da46326493db31', '[11] MergePdf');
+            ActivityWorker.Play('Pdf', 'MergePdfActivity', this.activitylibraryitem_info_11);
+
+            //------------------------------------------------
+            STEP('S8a204a4392c84a18a1ff14a03dd4be03', '[12] ExtractImageFromPdf');
+            this.DART_img = ActivityWorker.Play('Pdf', 'ExtractImageFromPdfActivity', this.activitylibraryitem_info_12);
+
+            //------------------------------------------------
+            STEP('Sb24f97ea049246e6b8e223ded06155cd', '[13] For');
+            for (this.i = 0; this.i <  this.DART_img.length; this.i++) {
+
+                //------------------------------------------------
+                STEP('S20a8dc562f8e4986954bd32517280352', '[14] SaveImage');
+                StepPlayer.Run('ImageConverter.SaveImage', this.saveimage_info_14);
+
+            //------------------------------------------------
+            }
+            STEP('S275f5918ecae47e9804feee283d382ec', '[15] End-For');
+
+        //------------------------------------------------
+        }
+        STEP('S365720df73104d74a841894287b30545', '[16] End-IfThen');
 
 
     }
@@ -171,6 +289,14 @@
 ]]></JScript>
   <Diagram version="1.300" nodesize="Normal">
     <StepNodes>
+      <StepNode step_id="S3d9f30354d9d4d839378038df025d7c9" group_name="941ae9fe-6a31-4d8e-87af-d61bbc12da23_이미지 저장경로 설정" folded="False" color="" />
+      <StepNode step_id="S4ef975d0f60a418b9efd45f46541396b" group_name="" folded="False" color="" />
+      <StepNode step_id="S974faaf6acc2480d94f18c7b5672becd" group_name="4010dc5a-e162-46a0-ad2d-16593f4f238a_이미지 저장경로 설정" folded="False" color="" />
+      <StepNode step_id="Scc38a3fb5f0a4c96975d32bcf94b63c6" group_name="" folded="False" color="" />
+      <StepNode step_id="S31f3f1bb999f45edbd6ca4f116a7c1ce" group_name="71cf8e27-9ea8-405c-a1d0-309ee9375831_이미지 저장폴더 삭제" folded="False" color="" />
+      <StepNode step_id="S973dd4e0f99048e2ab5af5e8f06508aa" group_name="" folded="False" color="" />
+      <StepNode step_id="S19704de027f74dcd9ff97e2f7766094b" group_name="54334e86-7379-43d5-99a1-2091bf49ef2f_이미지 저장폴더 생성" folded="False" color="" />
+      <StepNode step_id="S0445844c5de941baa0882bccb2f1c2ed" group_name="" folded="False" color="" />
       <StepNode step_id="S0a9684281a1842b6a8bc9daf0b74c321" group_name="76bedf48-eab8-4ba4-b063-71a45d31f2d7_첨부파일 목록 가져오기" folded="False" color="" />
       <StepNode step_id="Sf54918377e094bb690ec16c7cebf26ae" group_name="" folded="False" color="" />
       <StepNode step_id="S181dd12f8fc4471986da46326493db31" group_name="2eda8228-0a31-4fdc-8efb-928e7a1ea3c9_pdf 병합" folded="False" color="" />
