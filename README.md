@@ -179,19 +179,89 @@ pip install -r c:\Code\3team\Python\requirements.txt
 
 ### 주요 파일
 
-1.  **`main.py`**: 사용자로부터 검색어를 입력받아 전체 분석 프로세스를 실행하고 최종 리포트를 생성합니다.
-2.  **`sentiment_analyzer.py`**: `finance_data.csv` корпу스를 기반으로 텍스트의 감성 점수를 계산합니다.
-3.  **`keyword_extractor.py`**: TextRank 알고리즘과 도메인 특화 용어 가중치를 적용하여 핵심 키워드를 추출합니다.
+1.  **`main.py`**: 전체 분석 프로세스를 관장하는 메인 스크립트입니다. 뉴스 수집, 분석, 리포트 생성을 총괄합니다.
+2.  **`sentiment_analyzer.py`**: `finance_data.csv` 감성 사전을 기반으로 텍스트의 긍정/부정/중립 점수를 계산합니다.
+3.  **`keyword_extractor.py`**: TextRank 알고리즘과 금융 도메인 용어에 가중치를 부여하여 핵심 키워드를 추출합니다.
+
+### 사전 준비
+
+1.  **의존성 설치**: 프로젝트 루트의 `Python` 디렉토리에서 다음 명령어를 실행하여 필요한 라이브러리를 설치합니다.
+    ```bash
+    pip install -r c:\Code\3team\Python\requirements.txt
+    ```
+    *   **참고**: `konlpy` 라이브러리는 내부적으로 Java를 사용하므로, 시스템에 JDK(Java Development Kit)가 설치되어 있어야 정상적으로 동작합니다.
+
+2.  **감성 사전 준비**: `sentiment_analyzer.py`는 `finance_data.csv` 파일이 필요합니다. `finance_sentiment_corpus`와 같은 금융 감성 데이터셋을 내려받아 `Python/Prediction/` 폴더 내에 `finance_data.csv`라는 이름으로 저장해야 합니다.
+
+3.  **환경 변수 설정**: 프로젝트 루트 디렉토리에 `.env` 파일을 생성하고, 네이버 뉴스 API 사용을 위한 `NAVER_CLIENT_ID`와 `NAVER_CLIENT_SECRET` 값을 추가합니다.
+    ```
+    NAVER_CLIENT_ID="YOUR_NAVER_CLIENT_ID"
+    NAVER_CLIENT_SECRET="YOUR_NAVER_CLIENT_SECRET"
+    ```
 
 ### 실행 방법
 
-1.  **의존성 설치**: `pip install -r Python/requirements.txt`
-2.  **환경 변수 설정**: `.env` 파일에 네이버 API 사용을 위한 `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`을 추가합니다.
-3.  **스크립트 실행**:
-    ```shell
-    # 특정 검색어로 분석 실행
-    python Python/Prediction/main.py --search-word "삼성전자"
-    ```
+`Python/Prediction/main.py` 스크립트는 다양한 인자를 통해 분석 과정을 제어할 수 있습니다.
+
+```bash
+# '한화'에 대해 최근 7일간의 기사 30개를 수집하여 분석
+python Python/Prediction/main.py --search-word "한화" --max-articles 30 --window-days 7
+
+# 별도 검색어 없이 실행 시, data/raws/top_movers_auto.json의 종목 리스트로 자동 분석
+python Python/Prediction/main.py
+
+# 결과 파일을 'my_report.json'으로 지정하여 저장
+python Python/Prediction/main.py --search-word "삼성전자" --output "data/raws/my_report.json"
+```
+
+#### 주요 실행 인자
+
+-   `--search-word`: 분석할 검색어(기업명 등)를 지정합니다. 지정하지 않으면 `data/raws/top_movers_auto.json` 파일에 있는 종목들을 순차적으로 분석합니다.
+-   `--max-articles`: 수집할 최대 기사 수를 지정합니다. (기본값: 30)
+-   `--window-days`: 기사를 수집할 기간(일)을 지정합니다. (기본값: 7)
+-   `--output`: 결과 리포트를 저장할 경로와 파일명을 지정합니다. (기본값: `data/raws/sentiment_report.json`)
+
+### 출력 형식
+
+분석 결과는 지정된 `output` 경로에 JSON 파일로 저장됩니다. 하나의 종목을 분석했을 경우 단일 JSON 객체가, 여러 종목을 분석했을 경우 객체 리스트가 저장됩니다.
+
+#### JSON 구조 예시
+
+```json
+{
+    "stockName": "한화",
+    "market": "KOSPI",
+    "stockCode": "000880",
+    "analysisDate": "2024-10-26 15:30:00",
+    "sentimentAnalysis": {
+        "averageScore": 0.085,
+        "overallSentiment": "positive",
+        "sentimentDistribution": {
+            "positive": 15,
+            "neutral": 10,
+            "negative": 5
+        }
+    },
+    "keywordAnalysis": {
+        "wordCloud": {
+            "방산": 10,
+            "수주": 8,
+            "태양광": 7,
+            "우주항공": 5
+        }
+    },
+    "relatedNews": [
+        {
+            "title": "한화, 대규모 방산 수주 계약 체결",
+            "link": "https://news.example.com/123",
+            "date": "2024-10-25",
+            "content": "...",
+            "sentimentClass": "positive",
+            "topKeywords": ["방산", "수주"]
+        }
+    ]
+}
+```
 
 </details>
 
