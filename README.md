@@ -380,19 +380,77 @@ python Python/pipeline/scripts/run_s1_to_s5.py --skip-s1 --skip-s3 --infer-model
     - **외부 데이터 연동**: WebFlux를 사용하여 Reddit 등 외부 서비스의 데이터를 비동기적으로 가져와 가공하고 제공합니다.
     - **캐싱**: Spring Data Redis를 이용해 자주 사용되는 데이터를 캐싱하여 API 응답 성능을 향상시킵니다.
 
-- **주요 기술 스택**:
-    - **Framework**: `Spring Boot`
-    - **Language**: `Java 17`
-    - **Data Access**: `Spring Data JPA`, `Spring Data Redis`
-    - **API**: `Spring Web` (REST API), `Spring WebSocket`
-    - **Security**: `Spring Security`
-    - **Asynchronous HTTP**: `Spring WebFlux`
-    - **Database**: `MySQL` (운영), `H2` (개발)
-    - **Utilities**: `Lombok`, `Jackson`
-
 - **아키텍처**:
     - `controller` - `service` - `repository` 계층으로 구성된 표준적인 **Layered Architecture**를 따릅니다.
     - `User`와 같은 핵심 데이터는 `entity`로 정의하고 JPA를 통해 데이터베이스에 저장하며, 외부 데이터는 DTO(`dto`)를 통해 전달받아 처리합니다.
+
+<details>
+<summary><strong>📄 상세 설명 및 실행 방법 보기</strong></summary>
+
+### 주요 패키지
+
+-   **`config`**: Spring Security, WebSocket, CORS 등 프로젝트의 주요 설정 클래스를 포함합니다.
+-   **`controller`**: HTTP 요청을 수신하여 해당 요청을 처리할 서비스로 연결하는 API 엔드포인트를 정의합니다.
+-   **`service`**: 비즈니스 로직을 구현합니다. 여러 `repository`를 조합하여 복잡한 로직을 처리합니다.
+-   **`repository`**: Spring Data JPA를 사용하여 데이터베이스와 상호작용하는 인터페이스를 정의합니다.
+-   **`entity`**: 데이터베이스 테이블과 매핑되는 JPA 엔티티 클래스를 정의합니다.
+-   **`dto`**: 계층 간 데이터 전송을 위해 사용되는 객체(Data Transfer Object)를 정의합니다.
+
+### 사전 준비
+
+1.  **필수 프로그램 설치**:
+    -   `JDK 17`
+    -   `Maven 3.6+`
+    -   `MySQL Server`
+
+2.  **데이터베이스 설정**:
+    -   MySQL에 접속하여 `team3_db` 이름으로 데이터베이스를 생성합니다.
+        ```sql
+        CREATE DATABASE team3_db;
+        ```
+    -   `Spring/src/main/resources/application.yml` 파일의 `datasource` 섹션에 자신의 MySQL 접속 정보를 업데이트합니다.
+        ```yaml
+        spring:
+          datasource:
+            url: jdbc:mysql://localhost:3306/team3_db?useSSL=false&serverTimezone=UTC
+            username: YOUR_MYSQL_USERNAME
+            password: YOUR_MYSQL_PASSWORD
+        ```
+
+3.  **환경 변수 설정**:
+    -   Reddit API 연동을 위해 시스템 환경 변수로 아래 두 값을 설정해야 합니다.
+        -   `REDDIT_CLIENT_ID`: 발급받은 Reddit API 클라이언트 ID
+        -   `REDDIT_CLIENT_SECRET`: 발급받은 Reddit API 클라이언트 시크릿
+
+### 실행 방법
+
+프로젝트의 `Spring` 폴더로 이동하여 아래 명령어를 실행합니다.
+
+```bash
+# Maven Wrapper를 사용하여 Spring Boot 애플리케이션 실행
+./mvnw spring-boot:run
+```
+
+서버가 정상적으로 실행되면 `localhost:8080`에서 API 요청을 받을 수 있습니다.
+
+### API 테스트
+
+서버 실행 후, 웹 브라우저나 API 테스트 도구(Postman 등)를 사용하여 아래 URL로 접속해 서버의 상태를 확인할 수 있습니다.
+
+-   **Health Check URL**: `http://localhost:8080/api/health`
+
+정상적으로 실행되었다면 아래와 같은 JSON 응답을 받게 됩니다.
+
+```json
+{
+    "status": "UP",
+    "timestamp": "2024-10-26T12:00:00.000000",
+    "service": "3Team Backend API",
+    "version": "1.0.0"
+}
+```
+
+</details>
 
 ---
 
