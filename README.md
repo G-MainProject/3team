@@ -133,35 +133,17 @@
 
 #### 1. 필요 라이브러리 설치
 
-터미널을 열고, 프로젝트의 `Python` 디렉토리로 이동하여 필요한 라이브러리를 설치합니다.
+프로젝트의 `Python` 디렉토리에서 필요한 라이브러리를 설치합니다.
 
 ```bash
-cd c:\Code\3team\Python
-pip install -r requirements.txt
+pip install -r c:\Code\3team\Python\requirements.txt
 ```
 
 #### 2. OCR 실행
 
-1.  **이미지 준비**: 분석할 이미지 파일을 `Python\Analyze\Asset\TestImg\` 폴더에 추가합니다.
+1.  **이미지 준비**: 분석할 이미지 파일(들)을 `Python/Analyze/Asset/TestImg/` 폴더에 추가합니다.
 
-2.  **소스 코드 수정**: `Python\Analyze\OCR_M.py` 파일을 열어 파일 하단의 `if __name__ == "__main__":` 블록을 다음과 같이 수정합니다.
-
-    - `image_file_path`: 분석할 이미지의 전체 경로를 입력합니다.
-    - `output_csv_path`: 결과 CSV 파일이 저장될 전체 경로를 입력합니다.
-
-    ```python
-    if __name__ == "__main__":
-        # 1. 분석할 이미지 파일 경로를 입력하세요.
-        image_file_path = r"...\3team\Python\Analyze\Asset\TestImg\YOUR_IMAGE_NAME.jpg"
-        
-        # 2. 결과를 저장할 CSV 파일 경로를 입력하세요.
-        output_csv_path = r"...\3team\Python\Analyze\Asset\Result\YOUR_RESULT_NAME.csv"
-        
-        # 3. OCR 프로세스 실행
-        process_table_by_box_and_content(image_file_path, output_csv_path)
-    ```
-
-3.  **스크립트 실행**: 터미널에서 `Python\Analyze` 디렉토리로 이동한 후, `OCR_M.py` 스크립트를 실행합니다.
+2.  **스크립트 실행**: 프로젝트 **루트 디렉토리 (`C:\3team`)** 에서 다음 명령어를 실행합니다. 스크립트가 `TestImg` 폴더 내의 모든 이미지 파일을 자동으로 감지하여 순차적으로 처리합니다.
 
     ```bash
     python Python/Analyze/OCR_M.py
@@ -169,7 +151,9 @@ pip install -r requirements.txt
 
 #### 3. 결과 확인
 
-실행이 완료되면 `output_csv_path`에 지정한 경로에 CSV 파일이 생성됩니다. 이 파일을 열어 OCR 변환 결과를 확인할 수 있습니다.
+실행이 완료되면 `Python/Analyze/Asset/Result/` 폴더에 각 이미지 파일명에 해당하는 CSV 파일이 생성됩니다. 
+
+예를 들어, `image1.jpg`를 처리했다면 `image1.csv` 파일이 생성됩니다. 이 파일을 열어 OCR 변환 결과를 확인할 수 있습니다.
 
 </details>
 
