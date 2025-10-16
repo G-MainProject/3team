@@ -13,29 +13,21 @@ public class WebSocketController {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    /**
-     * 특정 종목의 실시간 데이터를 모든 구독자에게 브로드캐스트
-     */
     public void broadcastStockData(String symbol, UnifiedStockData data) {
         try {
             String destination = "/topic/stock/" + symbol;
             messagingTemplate.convertAndSend(destination, data);
-            log.info("📡 WebSocket 브로드캐스트: {} - {}", symbol, destination);
         } catch (Exception e) {
-            log.error("❌ WebSocket 브로드캐스트 실패: {} - {}", symbol, e.getMessage());
+            log.error("WebSocket broadcast failed for {}: {}", symbol, e.getMessage());
         }
     }
 
-    /**
-     * 모든 종목의 실시간 데이터를 모든 구독자에게 브로드캐스트
-     */
     public void broadcastAllStockData(String symbol, UnifiedStockData data) {
         try {
             String destination = "/topic/stock/all";
             messagingTemplate.convertAndSend(destination, data);
-            log.info("📡 WebSocket 전체 브로드캐스트: {} - {}", symbol, destination);
         } catch (Exception e) {
-            log.error("❌ WebSocket 전체 브로드캐스트 실패: {} - {}", symbol, e.getMessage());
+            log.error("WebSocket broadcast all failed for {}: {}", symbol, e.getMessage());
         }
     }
 }

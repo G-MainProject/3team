@@ -121,11 +121,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
         // 데이터 기반으로 lastUpdate 설정 (장마감 로직 무시)
         setLastUpdateFromData(unifiedData.stockData, unifiedData.volumeData);
       } else {
-        console.warn('⚠️ 통합 API 응답 실패 또는 데이터 없음');
         // 503 에러인 경우 빈 데이터로 설정 (스케줄러가 데이터를 준비 중)
-        if (unifiedResponse.status === 503) {
-          console.log('📊 주식 데이터를 준비 중입니다. 잠시 후 다시 시도해주세요.');
-        }
         setStockData([]);
         setVolumeData([]);
         setSummaryData(null);
@@ -165,12 +161,10 @@ export const useRealtimeStockData = (symbol = '005930') => {
           subscriptionRef.current = null;
         }
         
-        console.log('🔌 WebSocket 구독 시작:', symbol);
         const subscription = subscribe(`/topic/stock/${symbol}`, (message) => {
           try {
             // 장마감 상태 재확인 (구독 중에 장이 마감될 수 있음)
             if (isMarketClosed) {
-              console.log('📴 장마감 - WebSocket 데이터 무시');
               return;
             }
             
@@ -206,7 +200,6 @@ export const useRealtimeStockData = (symbol = '005930') => {
 
       return () => {
         if (subscriptionRef.current) {
-          console.log('🔌 WebSocket 구독 해제:', symbol);
           subscriptionRef.current.unsubscribe();
           subscriptionRef.current = null;
         }
@@ -214,7 +207,6 @@ export const useRealtimeStockData = (symbol = '005930') => {
     } else if (isMarketClosed) {
       // 장마감 시 기존 구독 해제
       if (subscriptionRef.current) {
-        console.log('📴 장마감 - WebSocket 구독 해제');
         subscriptionRef.current.unsubscribe();
         subscriptionRef.current = null;
       }
@@ -270,7 +262,6 @@ export const useRealtimeStockData = (symbol = '005930') => {
     
     // 장이 마감에서 시작으로 변경된 경우 (다음날 장 시작)
     if (wasMarketClosed && !currentMarketStatus) {
-      console.log('🌅 장 시작 - 실시간 갱신 재개');
       loadData(); // 즉시 데이터 갱신
     }
     
@@ -281,10 +272,7 @@ export const useRealtimeStockData = (symbol = '005930') => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (!wsConnected && !isMarketClosed) {
-        console.log('🔄 WebSocket 미연결 - 폴링으로 데이터 갱신');
         loadData();
-      } else if (isMarketClosed) {
-        console.log('📴 장마감 - 폴링 중단');
       }
     }, 60000); // 1분마다
 

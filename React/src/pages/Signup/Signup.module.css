@@ -90,10 +90,13 @@
     border-radius: 3px;
     font-size: 15px;
     transition: border-color 0.1s ease;
+    outline: none;
+    box-shadow: none;
 }
 
 .signupFormGroup > input:focus, .infoId > input:focus {
     outline: none;
+    box-shadow: none;
     border-color: #007BFF;
 }
 
@@ -201,11 +204,14 @@
     border-radius: 3px;
     font-size: 15px;
     transition: border-color 0.1s ease;
+    outline: none;
+    box-shadow: none;
 }
 
 .signupFormGroup > .emailGroup > input:focus,
 .signupFormGroup > .emailGroup > select:focus {
     outline: none;
+    box-shadow: none;
     border-color: #007BFF;
 }
 
@@ -289,10 +295,13 @@ input[type="date"] {
     border-radius: 3px;
     font-size: 15px;
     transition: border-color 0.1s ease;
+    outline: none;
+    box-shadow: none;
 }
 
 input[type="date"]:focus {
     outline: none;
+    box-shadow: none;
     border-color: #007BFF;
 }
 
@@ -353,6 +362,34 @@ input, textarea, select {
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
+}
+
+/* 회원가입 페이지 input focus 스타일 완전 제거 */
+.signupFormGroup > input:focus-visible, 
+.infoId > input:focus-visible,
+input[type="date"]:focus-visible,
+.signupFormGroup > .emailGroup > input:focus-visible,
+.signupFormGroup > .emailGroup > select:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* 브라우저별 focus 스타일 완전 제거 */
+.signupFormGroup > input::-webkit-focus-ring-color,
+.infoId > input::-webkit-focus-ring-color,
+input[type="date"]::-webkit-focus-ring-color,
+.signupFormGroup > .emailGroup > input::-webkit-focus-ring-color,
+.signupFormGroup > .emailGroup > select::-webkit-focus-ring-color {
+    outline: none !important;
+}
+
+.signupFormGroup > input::-moz-focus-inner,
+.infoId > input::-moz-focus-inner,
+input[type="date"]::-moz-focus-inner,
+.signupFormGroup > .emailGroup > input::-moz-focus-inner,
+.signupFormGroup > .emailGroup > select::-moz-focus-inner {
+    border: none !important;
+    outline: none !important;
 }
 
 /* 반응형 디자인 */

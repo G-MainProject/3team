@@ -28,34 +28,24 @@ public class ScheduledSnsDataService {
     // 5분마다 실행 (Reddit은 더 자주 업데이트될 필요 없음)
     @Scheduled(fixedRate = 300000)
     public void collectSnsData() {
-        log.info("SNS 데이터 수집 시작");
-        
         try {
-            // sentiment_report.json에서 주식 목록 가져오기
             List<String> stockCodes = getStockCodesFromFile();
             
             for (String stockCode : stockCodes) {
                 try {
                     String stockName = getStockNameFromFile(stockCode);
-                    
-                    // Reddit 데이터 수집 (Mono를 블로킹으로 변환)
                     List<SnsPostDto> redditPosts = redditApiService.getRedditPostsBySymbol(stockCode, stockName).block();
                     
                     if (redditPosts != null && !redditPosts.isEmpty()) {
-                        // Redis에 캐시 저장 (10분 TTL)
                         String cacheKey = "sns:" + stockCode;
                         redisTemplate.opsForValue().set(cacheKey, redditPosts, Duration.ofMinutes(10));
-                        
-                        log.info("SNS 데이터 수집 완료: {} - {}개 Reddit 포스트", stockCode, redditPosts.size());
                     }
                 } catch (Exception e) {
-                    log.error("SNS 데이터 수집 실패: {} - {}", stockCode, e.getMessage());
+                    log.error("SNS data collection failed for {}: {}", stockCode, e.getMessage());
                 }
             }
-            
-            log.info("SNS 데이터 수집 완료 - 총 {}개 종목", stockCodes.size());
         } catch (Exception e) {
-            log.error("SNS 데이터 수집 중 오류 발생: {}", e.getMessage());
+            log.error("SNS data collection error: {}", e.getMessage());
         }
     }
     
@@ -68,7 +58,7 @@ public class ScheduledSnsDataService {
             File file = new File(filePath);
             
             if (!file.exists()) {
-                log.warn("sentiment_report.json 파일을 찾을 수 없습니다: {}", filePath);
+                log.warn("sentiment_report.json file not found: {}", filePath);
                 return getDefaultStockCodes();
             }
             
@@ -83,10 +73,8 @@ public class ScheduledSnsDataService {
                 }
             }
             
-            log.info("파일에서 {}개 주식 코드를 읽었습니다", stockCodes.size());
-            
         } catch (IOException e) {
-            log.error("sentiment_report.json 파일 읽기 실패: {}", e.getMessage());
+            log.error("Failed to read sentiment_report.json: {}", e.getMessage());
             return getDefaultStockCodes();
         }
         
@@ -100,8 +88,8 @@ public class ScheduledSnsDataService {
             File file = new File(filePath);
             
             if (!file.exists()) {
-                log.warn("sentiment_report.json 파일을 찾을 수 없습니다: {}", filePath);
-                return "알 수 없는 주식";
+                log.warn("sentiment_report.json file not found: {}", filePath);
+                return "Unknown Stock";
             }
             
             List<Map<String, Object>> data = objectMapper.readValue(file, new TypeReference<List<Map<String, Object>>>() {});
@@ -113,12 +101,12 @@ public class ScheduledSnsDataService {
                 }
             }
             
-            log.warn("주식 코드 {}에 해당하는 이름을 찾을 수 없습니다", symbol);
-            return "알 수 없는 주식";
+            log.warn("Stock name not found for code: {}", symbol);
+            return "Unknown Stock";
             
         } catch (IOException e) {
-            log.error("sentiment_report.json 파일 읽기 실패: {}", e.getMessage());
-            return "알 수 없는 주식";
+            log.error("Failed to read sentiment_report.json: {}", e.getMessage());
+            return "Unknown Stock";
         }
     }
     

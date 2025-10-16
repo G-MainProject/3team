@@ -654,16 +654,6 @@ export default function Dashboard() {
 				});
 		}
 
-		// 디버깅: 거래량 데이터 확인
-		console.log('📊 Dashboard - 거래량 데이터 처리:', {
-			realtimeVolumeDataLength: realtimeVolumeData
-				? realtimeVolumeData.length
-				: 0,
-			realtimeStockDataLength: realtimeStockData ? realtimeStockData.length : 0,
-			sortedVolumeDataLength: sortedVolumeData.length,
-			sortedVolumeDataSample: sortedVolumeData.slice(0, 5),
-			firstStockData: realtimeStockData ? realtimeStockData[0] : null,
-		});
 
 		// 5분~1시간 간격에서는 정규화 후 중복 제거 (전체 데이터에서)
 		let processedData = sortedData;

@@ -69,10 +69,15 @@
     font-size: 15px;
     outline: none;
     transition: border-color 0.1s ease;
+    box-shadow: none;
 }
 
 .emailOrUsername:focus, .password:focus {
     border-bottom-color: #007BFF;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    border-bottom: 1px solid #007BFF;
 }
 
 .emailOrUsername {
@@ -267,6 +272,25 @@
     border-radius: 4px;
     padding: 8px;
     animation: pulse 1s ease-in-out;
+}
+
+/* 전역 input focus 스타일 제거 */
+.emailOrUsername:focus-visible, 
+.password:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* 브라우저별 focus 스타일 완전 제거 */
+.emailOrUsername::-webkit-focus-ring-color,
+.password::-webkit-focus-ring-color {
+    outline: none !important;
+}
+
+.emailOrUsername::-moz-focus-inner,
+.password::-moz-focus-inner {
+    border: none !important;
+    outline: none !important;
 }
 
 @keyframes pulse {
