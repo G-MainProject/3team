@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import styles from './StockAnalysis.module.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
@@ -28,8 +29,35 @@ const formatCurrency = (value) => {
 };
 
 export default function StockAnalysis() {
-	const { selectedStock, loading: stockLoading } = useStock();
-	const [daysToShow, setDaysToShow] = useState(30);
+    const location = useLocation();
+    const [highlightSection, setHighlightSection] = useState(null);
+    const stockInfoRef = useRef(null);
+    const financialRef = useRef(null);
+
+    useEffect(() => {
+        if (location.state && location.state.section) {
+            setHighlightSection(location.state.section);
+            const timer = setTimeout(() => setHighlightSection(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [location.state]);
+
+    useEffect(() => {
+        if (!highlightSection) return;
+        const targetMap = {
+            'stock-info': stockInfoRef,
+            'financial': financialRef,
+        };
+        const targetRef = targetMap[highlightSection];
+        if (targetRef && targetRef.current) {
+            // 다음 페인트 이후 스크롤 트리거 (중앙 정렬)
+            requestAnimationFrame(() => {
+                targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+    }, [highlightSection]);
+    const { selectedStock, loading: stockLoading } = useStock();
+    const [daysToShow, _setDaysToShow] = useState(30);
 	const [showFooterButton, setShowFooterButton] = useState(false);
 	const [showFooter, setShowFooter] = useState(false);
 	const [buttonAnimation, setButtonAnimation] = useState('');
@@ -314,7 +342,7 @@ export default function StockAnalysis() {
 	}
 
 	return (
-		<div className={styles['stock-analysis-container']}>
+        <div className={styles['stock-analysis-container']}>
 			<div className={styles['stock-analysis-content']}>
 				<LeftNav />
 				<div className={styles['stock-analysis-main']}>
@@ -323,8 +351,8 @@ export default function StockAnalysis() {
 					</div>
 
 					<div className={styles['stock-analysis-grid2']}>
-						{/* 리포트 기준 주가 섹션 */}
-						<div className={styles['section-container']}>
+                        {/* 리포트 기준 주가 섹션 */}
+                        <div ref={stockInfoRef} className={`${styles['section-container']} ${highlightSection === 'stock-info' ? styles['route-highlight'] : ''}`}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
 									<h2>
@@ -417,8 +445,8 @@ export default function StockAnalysis() {
 							</div>
 						</div>
 
-						{/* 재무제표 섹션 */}
-						<div className={styles['section-container']}>
+                        {/* 재무제표 섹션 */}
+                        <div ref={financialRef} className={`${styles['section-container']} ${highlightSection === 'financial' ? styles['route-highlight'] : ''}`}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
 									<h2>재무제표 분석</h2>

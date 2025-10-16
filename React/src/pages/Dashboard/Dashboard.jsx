@@ -5,6 +5,7 @@ import React, {
 	useMemo,
 	useCallback,
 } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
@@ -35,6 +36,7 @@ const safeToFixed = (num, decimals = 1) => {
 // ];
 
 export default function Dashboard() {
+	const navigate = useNavigate();
 	const { selectedStock, loading: stockLoading } = useStock();
 
 	// 통합된 실시간 주식 데이터 훅 사용 (WebSocket + 폴링)
@@ -1437,8 +1439,8 @@ export default function Dashboard() {
 											{stockInfo.name}/{stockInfo.ticker}/KOSPI
 										</h2>
 										<p>{stockAnalysisData.date} 기준 주가 및 지표</p>
-									</div>
-									<button className={styles['detail-button']}>
+							</div>
+							<button className={styles['detail-button']} onClick={() => navigate('/stock-analysis', { state: { section: 'stock-info' } })}>
 										상세보기
 										<i className="fas fa-chevron-right"></i>
 									</button>
@@ -1530,8 +1532,8 @@ export default function Dashboard() {
 									<div className={styles['section-title']}>
 										<h2>재무제표 분석</h2>
 										<p>DART API 기반 종합 재무 분석</p>
-									</div>
-									<button className={styles['detail-button']}>
+							</div>
+							<button className={styles['detail-button']} onClick={() => navigate('/stock-analysis', { state: { section: 'financial' } })}>
 										상세보기
 										<i className="fas fa-chevron-right"></i>
 									</button>
@@ -1605,8 +1607,8 @@ export default function Dashboard() {
 								<div className={styles['section-title']}>
 									<h2>뉴스 기사</h2>
 									<p>최신 관련 뉴스 및 시장 동향</p>
-								</div>
-								<button className={styles['detail-button']}>
+						</div>
+						<button className={styles['detail-button']} onClick={() => navigate('/ai-insights', { state: { section: 'news' } })}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
@@ -1648,8 +1650,8 @@ export default function Dashboard() {
 								<div className={styles['section-title']}>
 									<h2>뉴스 감성 분석</h2>
 									<p>뉴스 기사의 감정 분석 결과</p>
-								</div>
-								<button className={styles['detail-button']}>
+						</div>
+						<button className={styles['detail-button']} onClick={() => navigate('/ai-insights', { state: { section: 'sentiment' } })}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
@@ -1668,8 +1670,8 @@ export default function Dashboard() {
 								<div className={styles['section-title']}>
 									<h2>핵심 키워드</h2>
 									<p>뉴스에서 자주 언급되는 주요 키워드</p>
-								</div>
-								<button className={styles['detail-button']}>
+						</div>
+						<button className={styles['detail-button']} onClick={() => navigate('/ai-insights', { state: { section: 'wordcloud' } })}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>
@@ -1689,8 +1691,8 @@ export default function Dashboard() {
 								<div className={styles['section-title']}>
 									<h2>AI 분석 및 예측</h2>
 									<p>Gemini AI 기반 종합 분석 및 투자 권고</p>
-								</div>
-								<button className={styles['detail-button']}>
+						</div>
+						<button className={styles['detail-button']} onClick={() => navigate('/ai-insights', { state: { section: 'ai' } })}>
 									상세보기
 									<i className="fas fa-chevron-right"></i>
 								</button>

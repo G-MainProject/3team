@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import styles from './AIInsights.module.css';
 import LeftNav from '../../component/Nav/LeftNav';
 import TopNav from '../../component/Nav/TopNav';
@@ -10,6 +11,36 @@ import RawAiAnalysisData from '../../../../data/raws/Gemini_Api.json';
 
 export default function AIInsights() {
 	const { selectedStock, loading: stockLoading } = useStock();
+    const location = useLocation();
+    const [highlightSection, setHighlightSection] = useState(null);
+    const newsRef = useRef(null);
+    const sentimentRef = useRef(null);
+    const wordcloudRef = useRef(null);
+    const aiRef = useRef(null);
+
+    useEffect(() => {
+        if (location.state && location.state.section) {
+            setHighlightSection(location.state.section);
+            const timer = setTimeout(() => setHighlightSection(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [location.state]);
+
+    useEffect(() => {
+        if (!highlightSection) return;
+        const targetMap = {
+            'news': newsRef,
+            'sentiment': sentimentRef,
+            'wordcloud': wordcloudRef,
+            'ai': aiRef,
+        };
+        const targetRef = targetMap[highlightSection];
+        if (targetRef && targetRef.current) {
+            requestAnimationFrame(() => {
+                targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+    }, [highlightSection]);
 
 	const AiAnalysisData = useMemo(() => {
 		if (selectedStock && RawAiAnalysisData.stocks) {
@@ -315,7 +346,7 @@ export default function AIInsights() {
 
 					<div className={styles['ai-insights-grid2']}>
 						{/* 뉴스 섹션 */}
-						<div className={styles['section-container']}>
+						<div ref={newsRef} className={`${styles['section-container']} ${highlightSection === 'news' ? styles['route-highlight'] : ''}`}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
 									<h2>뉴스 기사</h2>
@@ -437,7 +468,7 @@ export default function AIInsights() {
 						</div>
 
 						{/* 감성 분석 섹션 */}
-						<div className={styles['section-container']}>
+						<div ref={sentimentRef} className={`${styles['section-container']} ${highlightSection === 'sentiment' ? styles['route-highlight'] : ''}`}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
 									<h2>뉴스 감성 분석</h2>
@@ -468,7 +499,7 @@ export default function AIInsights() {
 						</div>
 
 						{/* 워드 클라우드 섹션 */}
-						<div className={styles['section-container']}>
+						<div ref={wordcloudRef} className={`${styles['section-container']} ${highlightSection === 'wordcloud' ? styles['route-highlight'] : ''}`}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
 									<h2>핵심 키워드</h2>
@@ -485,7 +516,7 @@ export default function AIInsights() {
 						</div>
 
 						{/* AI 분석 섹션 */}
-						<div className={styles['section-container']}>
+						<div ref={aiRef} className={`${styles['section-container']} ${highlightSection === 'ai' ? styles['route-highlight'] : ''}`}>
 							<div className={styles['section-label']}>
 								<div className={styles['section-title']}>
 									<h2>AI 분석 및 예측</h2>
