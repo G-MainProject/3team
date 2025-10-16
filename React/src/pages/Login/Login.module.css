@@ -106,24 +106,50 @@
     margin-bottom: 20px;
 }
 
+/* 회원가입과 동일한 순수 CSS 체크박스 */
 .loginFormGroup > input[type="checkbox"] {
     display: none;
 }
 
-.loginFormGroup > label {
+.loginFormGroup > label[for="remember-check"] {
     user-select: none;
     color: #727272;
     cursor: pointer;
-    padding-left: 26px;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjY2NjIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+');
-    background-repeat: no-repeat;
-    background-size: contain;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 18px;
+    font-size: 14px;
+    position: relative;
     transition: all 0.1s ease;
 }
 
-.loginFormGroup input[type="checkbox"]:checked + label {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iNCIgZmlsbD0iIzY2N2VlYSIgc3Ryb2tlPSIjNjY3ZWVhIiBzdHJva2Utd2lkdGg9IjIiLz4KPHBhdGggZD0iTTYgMTBMMTAgMTRMMTQgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+');
-    color: #000;
+.loginFormGroup > label[for="remember-check"]::before {
+    content: "";
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.loginFormGroup input[type="checkbox"]:checked + label[for="remember-check"]::before {
+    background-color: #007BFF;
+    border-color: #007BFF;
+}
+
+.loginFormGroup input[type="checkbox"]:checked + label[for="remember-check"]::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 3px;
+    transform: rotate(45deg);
+    width: 5px;
+    height: 9px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
 }
 
 .loginFormGroup > button {

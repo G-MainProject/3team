@@ -32,6 +32,7 @@ const Mypage = () => {
   const [deletePassword, setDeletePassword] = useState('');
   const [deletePasswordVisible, setDeletePasswordVisible] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [consentAgreed, setConsentAgreed] = useState(false);
 
 
   // 사용자 정보 초기화 (편집 모드가 아닐 때만)
@@ -51,6 +52,7 @@ const Mypage = () => {
           setEmail(user.email);
         }
       }
+      setConsentAgreed(Boolean(user.consentAgreed));
     }
   }, [user, isEditing]);
 
@@ -269,7 +271,8 @@ const Mypage = () => {
         name: name,
         gender: genderMapping[gender] || 'OTHER',
         birthDate: birthday,
-        username: id
+        username: id,
+        consentAgreed: consentAgreed
       };
 
       // 비밀번호가 입력된 경우에만 포함
@@ -291,7 +294,8 @@ const Mypage = () => {
           email: email,
           gender: genderMapping[gender] || 'OTHER',
           birthDate: birthday,
-          username: id
+          username: id,
+          consentAgreed: consentAgreed
         };
         updateUser(updatedUser);
       } else {
@@ -461,6 +465,22 @@ const Mypage = () => {
                   onChange={e => setBirthday(e.target.value)}
                   disabled={!isEditing}
                 />
+              </div>
+
+              <div className={styles.mypageFormGroup}>
+                <input
+                  id="consent-agree"
+                  type="checkbox"
+                  checked={consentAgreed}
+                  onChange={e => isEditing && setConsentAgreed(e.target.checked)}
+                  disabled={!isEditing}
+                />
+                <label htmlFor="consent-agree" style={{ cursor: isEditing ? 'pointer' : 'default' }}>
+                  마케팅/이벤트 알림 수신에 동의합니다.
+                </label>
+                {user?.consentAgreedAt && (
+                  <div className={styles.helpText}>동의 시각: {new Date(user.consentAgreedAt).toLocaleString()}</div>
+                )}
               </div>
 
               {isEditing && (

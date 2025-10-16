@@ -353,6 +353,51 @@ input, textarea, select {
     user-select: text;
 }
 
+/* 회원가입과 동일한 순수 CSS 체크박스 */
+.mypageFormGroup > input[type="checkbox"] {
+    display: none;
+}
+
+.mypageFormGroup > label[for="consent-agree"] {
+    user-select: none;
+    color: #727272;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 20px;
+    position: relative;
+    transition: all 0.1s ease;
+}
+
+.mypageFormGroup > label[for="consent-agree"]::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.mypageFormGroup input[type="checkbox"]:checked + label[for="consent-agree"]::before {
+    background-color: #007BFF;
+    border-color: #007BFF;
+}
+
+.mypageFormGroup input[type="checkbox"]:checked + label[for="consent-agree"]::after {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 4px;
+    transform: rotate(45deg);
+    width: 6px;
+    height: 10px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .mypageContainer {

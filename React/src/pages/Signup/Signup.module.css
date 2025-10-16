@@ -364,32 +364,52 @@ input, textarea, select {
     user-select: text;
 }
 
-/* 회원가입 페이지 input focus 스타일 완전 제거 */
-.signupFormGroup > input:focus-visible, 
-.infoId > input:focus-visible,
-input[type="date"]:focus-visible,
-.signupFormGroup > .emailGroup > input:focus-visible,
-.signupFormGroup > .emailGroup > select:focus-visible {
-    outline: none !important;
-    box-shadow: none !important;
+/* 수신동의 체크박스 - 로그인과 동일 커스텀 UI */
+.signupFormGroup > input[type="checkbox"] {
+    display: none;
 }
 
-/* 브라우저별 focus 스타일 완전 제거 */
-.signupFormGroup > input::-webkit-focus-ring-color,
-.infoId > input::-webkit-focus-ring-color,
-input[type="date"]::-webkit-focus-ring-color,
-.signupFormGroup > .emailGroup > input::-webkit-focus-ring-color,
-.signupFormGroup > .emailGroup > select::-webkit-focus-ring-color {
-    outline: none !important;
+.signupFormGroup > label[for="consent-agree"] {
+    user-select: none;
+    color: #727272;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 20px; /* 체크박스 높이와 동일하게 고정 */
+    position: relative;
+    transition: all 0.1s ease;
 }
 
-.signupFormGroup > input::-moz-focus-inner,
-.infoId > input::-moz-focus-inner,
-input[type="date"]::-moz-focus-inner,
-.signupFormGroup > .emailGroup > input::-moz-focus-inner,
-.signupFormGroup > .emailGroup > select::-moz-focus-inner {
-    border: none !important;
-    outline: none !important;
+/* 순수 CSS로 체크박스 박스 렌더링 */
+.signupFormGroup > label[for="consent-agree"]::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc; /* 살짝 더 진한 톤 */
+    border-radius: 2px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+/* 체크 상태 배경색 파란색 */
+.signupFormGroup input[type="checkbox"]:checked + label[for="consent-agree"]::before {
+    background-color: #007BFF;
+    border-color: #007BFF;
+}
+
+/* 체크마크 (순수 CSS) */
+.signupFormGroup input[type="checkbox"]:checked + label[for="consent-agree"]::after {
+    content: "";
+    position: absolute;
+    left: 7px; /* 박스(20x20) 기준 시각적 중앙 정렬에 가깝게 */
+    top: 4px;  /* 아래로 치우침 보정 */
+    transform: rotate(45deg);
+    width: 6px;
+    height: 10px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
 }
 
 /* 반응형 디자인 */

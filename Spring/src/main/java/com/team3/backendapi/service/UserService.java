@@ -8,9 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +44,8 @@ public class UserService {
                 .password(encodedPassword)
                 .role(User.UserRole.USER)
                 .isActive(true)
+                .consentAgreed(Boolean.TRUE.equals(request.getConsentAgreed()))
+                .consentAgreedAt(Boolean.TRUE.equals(request.getConsentAgreed()) ? java.time.LocalDateTime.now() : null)
                 .build();
         
         User savedUser = userRepository.save(user);
@@ -127,6 +127,19 @@ public class UserService {
         // 비밀번호가 제공된 경우에만 업데이트
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        
+        // 수신 동의 변경 처리
+        if (request.getConsentAgreed() != null) {
+            boolean newConsent = Boolean.TRUE.equals(request.getConsentAgreed());
+            boolean prevConsent = Boolean.TRUE.equals(user.getConsentAgreed());
+            if (newConsent && !prevConsent) {
+                user.setConsentAgreed(true);
+                user.setConsentAgreedAt(java.time.LocalDateTime.now());
+            } else if (!newConsent && prevConsent) {
+                user.setConsentAgreed(false);
+                user.setConsentAgreedAt(null);
+            }
         }
         
         User updatedUser = userRepository.save(user);
@@ -228,6 +241,8 @@ public class UserService {
                 .isActive(user.getIsActive())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
+                .consentAgreed(user.getConsentAgreed())
+                .consentAgreedAt(user.getConsentAgreedAt())
                 .build();
     }
 }

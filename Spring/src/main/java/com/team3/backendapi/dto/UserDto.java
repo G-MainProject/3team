@@ -22,6 +22,7 @@ public class UserDto {
         private LocalDate birthDate;
         private String username;
         private String password;
+        private Boolean consentAgreed; // 수신 동의 여부
     }
     
     @Data
@@ -35,6 +36,7 @@ public class UserDto {
         private LocalDate birthDate;
         private String username;
         private String password;
+        private Boolean consentAgreed; // 수신 동의 여부(선택)
     }
     
     @Data
@@ -52,6 +54,8 @@ public class UserDto {
         private Boolean isActive;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+        private Boolean consentAgreed;      // 수신 동의 여부
+        private LocalDateTime consentAgreedAt; // 수신 동의 시각
     }
     
     @Data
@@ -76,5 +80,6 @@ public class UserDto {
         private LocalDate birthDate;
         private User.UserRole role;
         private String token; // JWT 토큰 (나중에 구현)
+        private Boolean consentAgreed;      // 수신 동의 여부
     }
 }

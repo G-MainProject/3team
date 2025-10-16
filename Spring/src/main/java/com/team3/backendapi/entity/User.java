@@ -49,6 +49,14 @@ public class User {
     @Builder.Default
     private Boolean isActive = true;
     
+    // 마케팅/알림 수신 동의 여부
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean consentAgreed = false;
+    
+    // 수신 동의에 동반되는 동의 시각(동의 철회 시 null 가능)
+    private LocalDateTime consentAgreedAt;
+    
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

@@ -21,6 +21,7 @@ const Signup = () => {
   const [birthday, setBirthday] = useState('');
   const [gender, setGender] = useState('');
   const [ok, setOk] = useState(1);
+  const [consentAgreed, setConsentAgreed] = useState(false);
 
   const [pwVisible, setPwVisible] = useState(false);
   const [pwReVisible, setPwReVisible] = useState(false);
@@ -185,7 +186,8 @@ const Signup = () => {
         gender: genderMapping[gender] || 'OTHER',
         birthDate: birthday,
         username: id,
-        password: pw
+        password: pw,
+        consentAgreed: consentAgreed
       };
 
       const response = await apiService.post('/auth/register', registerData);
@@ -362,6 +364,16 @@ const Signup = () => {
             onChange={e => setBirthday(e.target.value)}
           />
           <div className={styles.errorMsg}>{errors.birthday}</div>
+        </div>
+
+        <div className={styles.signupFormGroup}>
+          <input
+            type="checkbox"
+            id="consent-agree"
+            checked={consentAgreed}
+            onChange={e => setConsentAgreed(e.target.checked)}
+          />
+          <label htmlFor="consent-agree" style={{ cursor: 'pointer' }}>마케팅/이벤트 알림 수신에 동의합니다.</label>
         </div>
 
         {error && (
