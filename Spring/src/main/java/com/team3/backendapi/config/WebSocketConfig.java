@@ -22,7 +22,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // WebSocket 연결 엔드포인트 등록
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*") // CORS 설정
+                .setAllowedOriginPatterns(
+                    "http://localhost:*", 
+                    "https://localhost:*",
+                    "http://127.0.0.1:*",
+                    "https://127.0.0.1:*",
+                    "http://192.168.*.*:*",
+                    "https://192.168.*.*:*",
+                    "http://10.*.*.*:*",
+                    "https://10.*.*.*:*",
+                    "https://*.ngrok-free.app",
+                    "https://*.devtunnels.ms",  // Dev Tunnels 도메인
+                    "https://3team.fly.dev",
+                    "https://*.fly.dev"
+                )
                 .withSockJS(); // SockJS 지원 (fallback)
     }
 }

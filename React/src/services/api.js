@@ -1,5 +1,10 @@
 // Spring Backend API 연동 서비스
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (window.location.hostname.includes('devtunnels.ms')
+    ? `${window.location.protocol}//${window.location.hostname}/api`  // Dev Tunnels: 포트 번호 제거
+    : window.location.protocol === 'https:' 
+      ? `https://${window.location.hostname}:8080/api`
+      : `http://${window.location.hostname}:8080/api`);
 
 class ApiService {
   constructor() {

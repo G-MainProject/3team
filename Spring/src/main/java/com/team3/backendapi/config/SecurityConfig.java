@@ -46,10 +46,25 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "http://localhost:5173", "https://*.ngrok-free.app", "https://3team.fly.dev/"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // 포트포워딩 환경을 위한 더 유연한 CORS 설정
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+            "http://localhost:*", 
+            "https://localhost:*",
+            "http://127.0.0.1:*",
+            "https://127.0.0.1:*",
+            "http://192.168.*.*:*",  // 로컬 네트워크
+            "https://192.168.*.*:*",
+            "http://10.*.*.*:*",     // 사설 IP 대역
+            "https://10.*.*.*:*",
+            "https://*.ngrok-free.app",
+            "https://*.devtunnels.ms",  // Dev Tunnels 도메인
+            "https://3team.fly.dev",
+            "https://*.fly.dev"
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // preflight 요청 캐시 시간
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 CORS 설정 적용
         return source;

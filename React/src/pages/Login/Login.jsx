@@ -114,6 +114,7 @@ export default function Login() {
                             placeholder="이메일 또는 아이디"
                             value={formData.emailOrUsername}
                             onChange={handleChange}
+                            autoComplete="username"
                             required
                         />
                     </div>
@@ -127,6 +128,7 @@ export default function Login() {
                             placeholder="비밀번호"
                             value={formData.password}
                             onChange={handleChange}
+                            autoComplete="current-password"
                             required
                         />
                         <i

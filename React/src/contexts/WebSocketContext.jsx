@@ -23,8 +23,15 @@ export const WebSocketProvider = ({ children }) => {
       
       try {
         // STOMP 클라이언트 생성
+        const wsUrl = import.meta.env.VITE_WS_URL || 
+          (window.location.hostname.includes('devtunnels.ms')
+            ? `${window.location.protocol}//${window.location.hostname}/ws`  // Dev Tunnels: 포트 번호 제거
+            : window.location.protocol === 'https:' 
+              ? `https://${window.location.hostname}:8080/ws`
+              : `http://${window.location.hostname}:8080/ws`);
+        
         const stompClient = new Client({
-          webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+          webSocketFactory: () => new SockJS(wsUrl),
           debug: () => {
             // STOMP 메시지 처리 (디버깅 로그 제거됨)
           },
