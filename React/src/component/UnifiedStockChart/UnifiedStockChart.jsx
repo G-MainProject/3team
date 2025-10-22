@@ -63,7 +63,7 @@ const UnifiedStockChart = ({
         });
 
 	// Y축 도메인 계산
-	const priceValues = combinedData.map(d => d.price).filter(v => typeof v === 'number');
+	const priceValues = combinedData.map(d => d.value).filter(v => typeof v === 'number');
 	const volumeValues = combinedData.map(d => d.volume).filter(v => typeof v === 'number');
 	
 	const priceMin = Math.min(...priceValues);
@@ -79,7 +79,7 @@ const UnifiedStockChart = ({
 
 	// 툴팁 포맷터
 	const formatTooltipValue = (value, name) => {
-		if (name === 'price') {
+		if (name === 'value') {
 			return [`₩${value.toLocaleString()}`, '주가'];
 		}
 		if (name === 'volume') {
@@ -184,7 +184,7 @@ const UnifiedStockChart = ({
 					<Line
 						yAxisId="price"
 						type="monotone"
-						dataKey="price"
+						dataKey="value"
 						name={isMarketClosed ? "마지막 거래 주가" : "실시간 주가"}
 						stroke={isMarketClosed ? "#6c757d" : "#1976d2"}
 						strokeWidth={3}
