@@ -358,7 +358,7 @@ export default function StockAnalysis() {
 									<h2>
 										{stockInfo.name}/{stockInfo.ticker}/KOSPI
 									</h2>
-									<p>{stockAnalysisData.date} 기준 주가 및 지표</p>
+									<p>{`${stockAnalysisData.date.substring(0, 4)}-${stockAnalysisData.date.substring(4, 6)}-${stockAnalysisData.date.substring(6, 8)}`} 기준 주가 및 지표</p>
 								</div>
 							</div>
 							<div className={styles['stock-info-section']}>

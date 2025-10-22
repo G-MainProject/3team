@@ -1438,7 +1438,7 @@ export default function Dashboard() {
 										<h2>
 											{stockInfo.name}/{stockInfo.ticker}/KOSPI
 										</h2>
-										<p>{stockAnalysisData.date} 기준 주가 및 지표</p>
+										<p>{`${stockAnalysisData.date.substring(0, 4)}-${stockAnalysisData.date.substring(4, 6)}-${stockAnalysisData.date.substring(6, 8)}`} 기준 주가 및 지표</p>
 							</div>
 							<button className={styles['detail-button']} onClick={() => navigate('/stock-analysis', { state: { section: 'stock-info' } })}>
 										상세보기
@@ -1455,31 +1455,33 @@ export default function Dashboard() {
 													분석 시점:
 												</span>
 												<span className={styles['timestamp-value']}>
-													{stockAnalysisData.date}
+													{`${stockAnalysisData.date.substring(0, 4)}-${stockAnalysisData.date.substring(4, 6)}-${stockAnalysisData.date.substring(6, 8)}`}
 												</span>
 											</div>
 										</div>
-										<div className={styles['unified-chart-wrapper']}>
-											{stockInfo.horizons && stockInfo.horizons.length > 0 ? (
-												<UnifiedStockChart
-													stockData={stockInfo.horizons.map((h) => ({
-														time: h.horizon,
-														price: h.actual_price || h.predicted_price,
-														volume: 0,
-													}))}
-													volumeData={stockInfo.horizons.map((h) => ({
-														time: h.horizon,
-														volume: 0,
-													}))}
-													simpleMode={false}
-												/>
-											) : (
-												<div className={styles['no-data-message']}>
-													<p>예측 데이터가 없습니다.</p>
-												</div>
-											)}
-										</div>
-									</div>
+																<div className={styles['unified-chart-wrapper']}>
+																	{stockChartData && stockChartData.rows && stockChartData.rows.length > 0 ? (
+																		<UnifiedStockChart
+																			stockData={stockChartData.rows.slice(-30).map((d) => ({
+																				time: d.date,
+																				open: d.open,
+																				high: d.high,
+																				low: d.low,
+																				close: d.close,
+																				value: d.close,
+																			}))}
+																			volumeData={stockChartData.rows.slice(-30).map((d) => ({
+																				time: d.date,
+																				volume: d.volume,
+																			}))}
+																			simpleMode={false}
+																		/>
+																	) : (
+																		<div className={styles['no-data-message']}>
+																			<p>차트 데이터를 불러올 수 없습니다.</p>
+																		</div>
+																	)}
+																</div>									</div>
 
 									{/* 분석 기준 시점 정보 카드들 */}
 									<div className={styles['stock-cards']}>
